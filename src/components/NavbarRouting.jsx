@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 
-const NavbarSotto = () => {
+const NavbarRouting = () => {
   return (
     	<nav className="absolute bottom-[6%] left-[10%] w-[80%] h-[60px] bg-[#fafafa30] backdrop-blur-sm border border-white/40 rounded-full flex justify-around items-center py-3 shadow-md transition-all duration-300">
 				{[
@@ -37,4 +37,4 @@ const NavbarSotto = () => {
   )
 }
 
-export default NavbarSotto
+export default NavbarRouting;

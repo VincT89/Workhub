@@ -3,7 +3,7 @@ import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import bgImage from "../assets/bg/bg.jpg";
 
 import iconlogo from "../assets/logo/iconaLogo.png";
-import NavbarSotto from "../components/NavbarSotto";
+import NavbarRouting from "../components/NavbarRouting";
 
 const PublicLayout = () => {
 	
@@ -40,7 +40,7 @@ const PublicLayout = () => {
 			</section>
 
 			{/* Navbar inferiore */}
-		<NavbarSotto />
+		<NavbarRouting />
 		</main>
 	);
 };
