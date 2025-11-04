@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import bgImage from "../assets/bg/bg.jpg";
 import iconLogo from "../assets/logo/iconaLogo.png";
 import eyes from "../assets/icons/closedEye.png";
@@ -17,13 +17,13 @@ const LoginPage = () => {
 
   const { user, token, loading, error } = useSelector((state) => state.auth);
 
-  // 🔹 Effettua login quando si preme "Accedi"
+  // Effettua login quando si preme "Accedi"
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(loginAsync({ username, password }));
   };
 
-  // 🔹 Reindirizza alla dashboard quando login riuscito
+  //  Reindirizza alla dashboard quando login riuscito
   useEffect(() => {
     if (token && user) {
       navigate("/dashboard");
@@ -57,7 +57,7 @@ const LoginPage = () => {
             <br />
             <span className="text-[#134a7b] font-bold font-nunito text-sm">
               Credenziali demo: <br />
-              admin/admin123 – supervisor/supervisor123 – user/user123
+              admin/admin123 - supervisor/supervisor123 - user/user123
             </span>
           </div>
 				</div>

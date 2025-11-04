@@ -12,15 +12,18 @@ import TicketPage from "./pages/TicketPage.jsx";
 function App() {
 	return (
 		<Routes>
+			{/* ROTTE PUBBLICHE */}
 			<Route path="/" element={<HomePage />} />
 			<Route path="/login" element={<LoginPage />} />
-			<Route path="/dashboard" element={<PublicLayout />}>
-				<Route path="bacheca" element={<DashboardPage />} /> 
+			<Route path="/settings" element={<SettingsPage />} />
+
+			{/* ROTTE PROTETTE */}
+			<Route path="/" element={<PublicLayout />}>
+				<Route path="dashboard" element={<DashboardPage />} />
 				<Route path="clienti" element={<ClientiPage />} />
 				<Route path="personale" element={<PersonalePage />} />
 				<Route path="magazzino" element={<MagazzinoPage />} />
 				<Route path="ticket" element={<TicketPage />} />
-				<Route path="settings" element={<SettingsPage />} />
 			</Route>
 		</Routes>
 	);

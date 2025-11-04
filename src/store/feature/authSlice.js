@@ -1,32 +1,46 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fakeLogin } from "../../api/authApi";
 
+// Login asincrono
 export const loginAsync = createAsyncThunk(
   "auth/login",
   async ({ username, password }, { rejectWithValue }) => {
     try {
-      return await fakeLogin(username, password);
+      const response = await fakeLogin(username, password);
+
+      // Simula il ruolo utente ricevuto dal server
+      const role =
+        response.user?.role ||
+        (username === "admin"
+          ? "admin"
+          : username === "supervisor"
+          ? "supervisor"
+          : "user");
+
+      return { ...response, user: { ...response.user, role } };
     } catch (error) {
       return rejectWithValue(error.message);
     }
   }
 );
 
+// Slice di autenticazione
 const authSlice = createSlice({
-  name: "Auth",
+  name: "auth",
   initialState: {
     user: null,
     token: null,
+    role: null, 
     loading: false,
-    error: null
+    error: null,
   },
   reducers: {
     logout: (state) => {
       state.user = null;
       state.token = null;
+      state.role = null;
     },
   },
-
   extraReducers: (builder) => {
     builder
       .addCase(loginAsync.pending, (state) => {
@@ -37,6 +51,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.role = action.payload.user.role; 
       })
       .addCase(loginAsync.rejected, (state, action) => {
         state.loading = false;

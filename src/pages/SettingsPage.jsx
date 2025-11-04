@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import bgImage from "../assets/bg/bg.jpg";
 import iconLogo from "../assets/logo/iconaLogo.png";
 import italianFlag from "../assets/icons/Italy.png";
 import englishFlag from "../assets/icons/Great Britain.png";
 import dark from "../assets/icons/Do not Disturb iOS.png";
 import light from "../assets/icons/Sun.png";
-import { Link } from "react-router-dom";
 
 const SettingsPage = () => {
   const [theme, setTheme] = useState("light");
@@ -15,224 +15,143 @@ const SettingsPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
-    const root = document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
+    document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
   const handleSave = (e) => {
     e.preventDefault();
-    if (!username) {
-      alert("Inserisci uno username.");
-      return;
-    }
-    if (newPassword && newPassword !== confirmPassword) {
-      alert("Le password non coincidono.");
-      return;
-    }
-    alert("Modifiche salvate.");
+    if (!username) return alert("Inserisci uno username.");
+    if (newPassword && newPassword !== confirmPassword)
+      return alert("Le password non coincidono.");
+    alert(" Modifiche salvate.");
     setNewPassword("");
     setConfirmPassword("");
   };
 
-  const handleLogout = () => {
-    
-  };
-
   return (
-    <main className="bg-white w-full min-h-screen relative overflow-hidden flex justify-center items-center">
-      <img
-        className="absolute top-0 left-0 w-full h-full object-cover z-0"
-        alt="Background"
-        src={bgImage}
-      />
-      <div className="absolute w-[55%] h-[70%] bg-[#fafafa20] backdrop-blur-sm rounded-[40px] border border-neutral-50/30 z-10" />
-      <div className="relative flex flex-col items-center z-20 w-full max-w-[650px] sm:max-w-[50%] px-4 py-8">
-        <div className="flex items-center gap-4 mb-6">
-          <img className="w-[90px] h-[85px]" alt="Logo" src={iconLogo} />
-          <div className="text-center">
-            <span className="text-[#1C62A0] text-2xl font-bold font-nunito">
-              Impostazioni
-            </span>
-          </div>
+    <main className="relative w-full min-h-screen bg-white flex justify-center items-center overflow-hidden">
+      {/* Background */}
+      <img src={bgImage} alt="Background" className="absolute inset-0 w-full h-full object-cover" />
+      <div className="absolute w-[50%] h-[90%] bg-[#fafafa20] backdrop-blur-md rounded-[40px] border border-white/30 shadow-lg" />
+
+      {/* Main Container */}
+      <div className="relative z-20 w-full max-w-[800px] flex flex-col items-center px-6 py-10 space-y-10">
+
+        {/* Header */}
+        <div className="flex items-center gap-2">
+          <img src={iconLogo} alt="Logo" className="w-20 h-20" />
+          <h1 className="text-[#1C62A0] text-3xl font-bold font-nunito">Impostazioni</h1>
         </div>
 
-        <form onSubmit={handleSave} className="w-full flex flex-col sm:flex-row gap-6">
-          {/* Left Column: Reset Password */}
-          <div className="w-full sm:w-1/2 pb-6 border-b border-[#1C62A0]">
-            <div className="text-[#1C62A0] text-[18px] font-bold font-nunito mb-4">
-              Reset Password
+        {/* SEZIONE 1 — CREDENZIALI */}
+        <section className="w-full bg-white/20 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-sm">
+          <h2 className="text-[#1C62A0] text-xl font-bold mb-4 border-b border-[#1C62A0]/50 pb-2">
+             Gestione Account
+          </h2>
+          <form onSubmit={handleSave} className="flex flex-col gap-4">
+            <div>
+              <label className="text-[#1C62A0] font-semibold block mb-1">Username</label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full p-1 rounded-xl border border-gray-300 bg-[#D9D9D9]/60 text-[#1C62A0] outline-none"
+              />
             </div>
-            <div className="w-full flex flex-col gap-4">
-              <div className="relative w-full">
-                <label
-                  htmlFor="username"
-                  className="block text-[#1C62A0] text-[16px] font-bold font-nunito mb-2"
-                >
-                  Username
-                </label>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  autoComplete="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-[80%] h-8 bg-[#D9D9D9]/30 shadow-md border border-[#FBFBFB] rounded-2xl px-4 text-[#1C62A0] outline-none"
-                  aria-label="Username"
-                />
-              </div>
-              <div className="relative w-full">
-                <label
-                  htmlFor="new-password"
-                  className="block text-[#1C62A0] text-[16px] font-bold font-nunito mb-2"
-                >
-                  Nuova password
-                </label>
-                <input
-                  id="new-password"
-                  name="new-password"
-                  type="password"
-                  autoComplete="new-password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-[80%] h-8 bg-[#D9D9D9]/30 shadow-md border border-[#FBFBFB] rounded-2xl px-4 text-[#1C62A0] outline-none"
-                  aria-label="Nuova password"
-                />
-              </div>
-              <div className="relative w-full">
-                <label
-                  htmlFor="confirm-password"
-                  className="block text-[#1C62A0] text-[16px] font-bold font-nunito mb-2"
-                >
-                  Conferma password
-                </label>
-                <input
-                  id="confirm-password"
-                  name="confirm-password"
-                  type="password"
-                  autoComplete="new-password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-[80%] h-8 bg-[#D9D9D9]/30 shadow-md border border-[#FBFBFB] rounded-2xl px-4 text-[#1C62A0] outline-none"
-                  aria-label="Conferma password"
-                />
-              </div>
+            <div>
+              <label className="text-[#1C62A0] font-semibold block mb-1">Nuova password</label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="w-full p-1 rounded-xl border border-gray-300 bg-[#D9D9D9]/60 text-[#1C62A0] outline-none"
+              />
             </div>
-          </div>
+            <div>
+              <label className="text-[#1C62A0] font-semibold block mb-1">Conferma password</label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full p-1 rounded-xl border border-gray-300 bg-[#D9D9D9]/60 text-[#1C62A0] outline-none"
+              />
+            </div>
+          </form>
+        </section>
 
-          {/* Right Column: Theme and Language */}
-          <div className="w-full sm:w-1/2 pb-6 border-b border-[#1C62A0]">
-            <div className="flex flex-col gap-6">
-              {/* Theme Selection */}
-              <div className="flex flex-col gap-4 items-end">
-                <div className="text-[#1C62A0] text-[18px] font-bold font-nunito mb-2">
-                  Tema
-                </div>
+        {/* SEZIONE 2 — ASPETTO */}
+        <section className="w-full bg-white/20 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-sm">
+          <h2 className="text-[#1C62A0] text-xl font-bold mb-4 border-b border-[#1C62A0]/50 pb-2">
+             Aspetto
+          </h2>
+          <div className="flex flex-col sm:flex-row justify-between gap-4">
+            {/* Tema */}
+            <div className="flex flex-col gap-2 w-full sm:w-1/2">
+              <span className="text-[#1C62A0] font-semibold mb-1">Tema</span>
+              <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => setTheme("light")}
-                  aria-pressed={theme === "light"}
-                  className={`w-[70%] h-9 flex justify-start items-center bg-[#D9D9D9]/30 shadow-md border-2 rounded-2xl p-3 transition-colors ${
-                    theme === "light" ? "border-[#1C62A0]" : "border-[#FBFBFB]"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition ${
+                    theme === "light" ? "border-[#1C62A0] bg-[#D9D9D9]/40" : "border-gray-300"
                   }`}
                 >
-                  <img
-                    className="w-7 h-7 mx-2"
-                    src={light}
-                    alt="Icona tema chiaro"
-                  />
-                  <span className="text-[#1C62A0] text-[16px] font-bold font-nunito">
-                    Light
-                  </span>
+                  <img src={light} alt="Light" className="w-6 h-6" /> Light
                 </button>
                 <button
                   type="button"
                   onClick={() => setTheme("dark")}
-                  aria-pressed={theme === "dark"}
-                  className={`w-[70%] h-9 flex justify-start items-center bg-[#D9D9D9]/30 shadow-md border-2 rounded-2xl p-3 transition-colors ${
-                    theme === "dark" ? "border-[#1C62A0]" : "border-[#FBFBFB]"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition ${
+                    theme === "dark" ? "border-[#1C62A0] bg-[#D9D9D9]/40" : "border-gray-300"
                   }`}
                 >
-                  <img
-                    className="w-7 h-7 mx-2"
-                    src={dark}
-                    alt="Icona tema scuro"
-                  />
-                  <span className="text-[#1C62A0] text-[16px] font-bold font-nunito">
-                    Dark
-                  </span>
+                  <img src={dark} alt="Dark" className="w-6 h-6" /> Dark
                 </button>
               </div>
+            </div>
 
-              {/* Language Selection */}
-              <div className="flex flex-col gap-4 items-end">
-                <div className="text-[#1C62A0] text-[18px] font-bold font-nunito mb-2">
-                  Lingua
-                </div>
+            {/* Lingua */}
+            <div className="flex flex-col gap-2 w-full sm:w-1/2">
+              <span className="text-[#1C62A0] font-semibold mb-1">Lingua</span>
+              <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => setLanguage("it")}
-                  aria-pressed={language === "it"}
-                  className={`w-[70%] h-9 flex justify-start items-center bg-[#D9D9D9]/30 shadow-md border-2 rounded-2xl p-3 transition-colors ${
-                    language === "it" ? "border-[#1C62A0]" : "border-[#FBFBFB]"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition ${
+                    language === "it" ? "border-[#1C62A0] bg-[#D9D9D9]/40" : "border-gray-300"
                   }`}
                 >
-                  <img
-                    className="w-7 h-7 mx-2"
-                    src={italianFlag}
-                    alt="Bandiera italiana"
-                  />
-                  <span className="text-[#1C62A0] text-[16px] font-bold font-nunito">
-                    Italiano
-                  </span>
+                  <img src={italianFlag} alt="Italiano" className="w-6 h-6" /> Italiano
                 </button>
                 <button
                   type="button"
                   onClick={() => setLanguage("en")}
-                  aria-pressed={language === "en"}
-                  className={`w-[70%] h-9 flex justify-start items-center bg-[#D9D9D9]/30 shadow-md border-2 rounded-2xl p-3 transition-colors ${
-                    language === "en" ? "border-[#1C62A0]" : "border-[#FBFBFB]"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition ${
+                    language === "en" ? "border-[#1C62A0] bg-[#D9D9D9]/40" : "border-gray-300"
                   }`}
                 >
-                  <img
-                    className="w-7 h-7 mx-2"
-                    src={englishFlag}
-                    alt="Bandiera inglese"
-                  />
-                  <span className="text-[#1C62A0] text-[16px] font-bold font-nunito">
-                    Inglese
-                  </span>
+                  <img src={englishFlag} alt="Inglese" className="w-6 h-6" /> English
                 </button>
               </div>
             </div>
           </div>
-        </form>
+        </section>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-20 mt-10 w-full">
+        {/* SEZIONE 3 — AZIONI */}
+        <section className="w-full flex flex-col sm:flex-row justify-center gap-6 mt-2">
           <button
-            type="submit"
-            className="w-full sm:w-[200px] py-2 bg-[#1C62A0] shadow-md border border-[#FBFBFB] rounded-2xl flex items-center justify-center hover:bg-[#154d7d] transition-colors"
+            onClick={handleSave}
+            className="w-full sm:w-[200px] py-3 bg-[#1C62A0] text-white font-bold rounded-2xl shadow-md hover:bg-[#154d7d] transition"
           >
-            <span className="text-[#FBFBFB] text-[16px] font-bold font-nunito">
-              Salva modifiche
-            </span>
+             Salva modifiche
           </button>
           <Link
             to="/login"
-            type="button"
-            onClick={handleLogout}
-            className="w-full sm:w-[200px] py-2 bg-[#FF3B3F] shadow-md border border-[#FBFBFB] rounded-2xl flex items-center justify-center hover:bg-[#d63134] transition-colors"
+            className="w-full sm:w-[200px] py-3 bg-[#FF3B3F] text-white font-bold rounded-2xl shadow-md hover:bg-[#d63134] transition text-center"
           >
-            <span className="text-[#FBFBFB] text-[16px] font-bold font-nunito">
-              Esci
-            </span>
+             Esci
           </Link>
-        </div>
+        </section>
       </div>
     </main>
   );
