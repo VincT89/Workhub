@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WORKHUB – Piano Personalizzato</title>
+  <link rel="stylesheet" href="form.css" />
+</head>
+<body>
+  <main class="form-wrapper">
+    <section class="form-section">
+      <h1>Richiedi un piano personalizzato</h1>
+      <form id="personalizedPlanForm">
+        <input type="text" name="nome" placeholder="Nome" required />
+        <input type="text" name="cognome" placeholder="Cognome" required />
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="tel" name="telefono" placeholder="Telefono" required />
+        <textarea name="messaggio" placeholder="Descrivi le tue esigenze..." rows="5" required></textarea>
+        <button type="submit">Invia richiesta</button>
+      </form>
+    </section>
+
+    <div id="toast">✅ Richiesta inviata con successo</div>
+    <div id="return-home">
+      <a href="./la.html#fromFform" class="cta-button">🏠 Torna alla Home</a>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("personalizedPlanForm");
+      const toast = document.getElementById("toast");
+      const returnHome = document.getElementById("return-home");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const nome = form.nome.value;
+        const cognome = form.cognome.value;
+        const email = form.email.value;
+        const telefono = form.telefono.value;
+        const messaggio = form.messaggio.value;
+
+        const destinatario = "tuo@email.com";
+        const corpo = `Richiesta da ${nome} ${cognome}\nEmail: ${email}\nTelefono: ${telefono}\nMessaggio:\n${messaggio}`;
+        const mailtoLink = `mailto:${destinatario}?subject=Richiesta%20piano%20personalizzato&body=${encodeURIComponent(corpo)}`;
+
+        window.location.href = mailtoLink;
+
+        toast.classList.add("show");
+        setTimeout(() => {
+          toast.classList.remove("show");
+          returnHome.classList.add("show");
+        }, 3000);
+      });
+    });
+  </script>
+</body>
+</html>
