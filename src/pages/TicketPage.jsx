@@ -1,0 +1,133 @@
+import React from "react";
+import bgImage from "../assets/bg/bg.jpg";
+import Logo from "../assets/logo/LogoCompletoSenzaBG.png";
+import { Link } from "react-router-dom";
+
+const TicketPage = () => {
+    return (
+        <main className="bg-white w-full min-h-screen relative overflow-hidden">
+            {/* Background */}
+            <img
+                className="absolute top-0 left-0 w-full h-full object-cover"
+                alt="Background gradient"
+                src={bgImage}
+            />
+
+            {/* Overlay effetto vetro che contiene i miei elemnti */}
+            <div className="absolute top-[5%] left-[10%] w-[80%] h-[90%] bg-[#fafafa20] backdrop-blur-sm rounded-[25px] border border-solid shadow-lg border-neutral-50/30 p-6">
+
+                {/* HEADER - Statistiche principali: Ticket Aperti, test-passedTicket Risolti, test-passedTicket in attesa, test-passedTicket urgenti*/}
+                <section className="grid grid-cols-4 gap-4 mb-6">
+                    <div className="flex items-center justify-between bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 shadow">
+                        <span className="flex items-center gap-2 font-semibold text-blue-900">
+                            <img
+                                src="/src/assets/icons/Open Envelope Clock.png"
+                                alt="test-passed"
+                                className="w-5 h-5 object-contain"
+                            />
+                            Ticket Aperti
+                        </span>
+                        <span className="font-bold text-lg text-blue-800">0</span>
+                    </div>
+
+                    <div className="flex items-center justify-between bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 shadow">
+                        <span className="flex items-center gap-2 font-semibold text-blue-900">
+                            <img
+                                src="/src/assets/icons/Instagram Check Mark.png"
+                                alt="test-passed"
+                                className="w-5 h-5 object-contain"
+                            />
+                            Ticket Risolti
+                        </span>
+                        <span className="font-bold text-lg text-blue-800">11</span>
+                    </div>
+
+                    <div className="flex items-center justify-between bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 shadow">
+                        <span className="flex items-center gap-2 font-semibold text-blue-900">
+                            <img
+                                src="/src/assets/icons/Data Pending.png"
+                                alt="test-passed"
+                                className="w-5 h-5 object-contain"
+                            />
+                            Ticket in attesa
+                        </span>
+                        <span className="font-bold text-lg text-blue-800">22</span>
+                    </div>
+
+                    <div className="flex items-center justify-between bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 shadow">
+                        <span className="flex items-center gap-2 font-semibold text-blue-900">
+                            <img
+                                src="/src/assets/icons/Error.png"
+                                alt="test-passed"
+                                className="w-5 h-5 object-contain"
+                            />
+                            Ticket urgenti
+                        </span>
+                        <span className="font-bold text-lg text-blue-800">3</span>
+                    </div>
+                </section>
+
+                {/* CONTENUTO PRINCIPALE: report Ticket(con futuro grafico), ticket recenti, risposte persdonali*/}
+
+                <section className="grid grid-cols-3 gap-6 h-[70%]">
+                    {/* Grafico Report Ticket */}
+                    <div className="col-span-1 bg-white/60 rounded-xl shadow p-4 flex flex-col">
+                        <h2 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                            <img
+                                src="/src/assets/icons/Report File.png"
+                                alt="test-passed"
+                                className="w-5 h-5 object-contain"
+                            />
+                            Report Ticket
+                        </h2>
+                        <div className="flex-1 flex items-center justify-center">
+
+                            {/* al momento ho messo un cerchio colorato, il grafico come lo faremo? */}
+                            <div className="w-40 h-40 bg-gradient-to-br from-blue-400 to-pink-400 rounded-full" />
+                            
+                        </div>
+                    </div>
+
+                    {/* Ticket Recenti */}
+                    <div className="col-span-2 grid grid-rows-2 gap-4">
+                        <div className="bg-white/60 rounded-xl shadow p-4">
+                            <h2 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                                <img
+                                    src="/src/assets/icons/List.png"
+                                    alt="test-passed"
+                                    className="w-5 h-5 object-contain"
+                                />
+                                Ticket Recenti
+                            </h2>
+
+                            {/* se non ho niente nelle rispodte, di default possiamo lasciarlo cosi, con mex: Nessun..... ? */}
+                            <div className="h-full flex items-center justify-center text-gray-500">
+                                Nessun ticket recente
+                            </div>
+                        </div>
+
+                        {/* Risposte Personale */}
+                        <div className="bg-white/60 rounded-xl shadow p-4">
+                            <h2 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                                <img
+                                    src="/src/assets/icons/Test Passed.png"
+                                    alt="test-passed"
+                                    className="w-5 h-5 object-contain"
+                                />
+                                Risposte personale
+                            </h2>
+
+                            {/* se non ho niente nelle rispodte, di default possiamo lasciarlo cosi, con mex: Nessun..... ? */}
+                            <div className="h-full flex items-center justify-center text-gray-500 text-sm">
+                                Nessuna risposta disponibile
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </div>
+        </main>
+    );
+};
+
+export default TicketPage;

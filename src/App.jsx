@@ -5,6 +5,7 @@ import LoginPage from "./pages/LoginPage.jsx";
 // import PublicLayout from "./layouts/PublicLayout.jsx";
 // import LoginPage from "./pages/LoginPage.jsx";
 import SettingsPage from "./pages/SettingsPage.jsx";
+import TicketPage from "./pages/TicketPage.jsx";
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
          <Route path="login" element={<LoginPage />} />
         <Route path="settings" element={<SettingsPage />} />
+        <Route path="ticketing" element={<TicketPage />} />
       {/* </Route> */}
     </Routes>
   );
