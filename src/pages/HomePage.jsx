@@ -26,13 +26,13 @@ const HomePage = () => {
       />
 
       {/* Frase */}
-      <h1 className="absolute top-[55%] left-[58%] transform -translate-x-1/2 text-[#1c629f] text-2xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-normal leading-normal whitespace-nowrap">
+      <h1 className="absolute top-[55%] left-[58%] transform -translate-x-1/2  text-2xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-normal leading-normal whitespace-nowrap">
         Simplify your workflow
       </h1>
 
       {/* Bottone di Benvenuto */}
       <Link to="/login"
-        className="absolute top-[68%] left-1/2 transform -translate-x-1/2 w-[80%] max-w-[350px] h-14 bg-[#fafafa30] backdrop-blur-sm rounded-2xl border border-solid shadow-lg border-neutral-50/30 text-[#1c629f] text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-normal leading-normal flex items-center justify-center cursor-pointer hover:bg-[#fafafa50] transition-colors duration-300"
+        className="absolute top-[68%] left-1/2 transform -translate-x-1/2 w-[80%] max-w-[350px] h-14 bg-[#fafafa30] backdrop-blur-sm rounded-2xl border border-solid shadow-lg border-neutral-50/30 text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-normal leading-normal flex items-center justify-center cursor-pointer hover:bg-[#fafafa50] transition-colors duration-300"
         role="button"
       >
         Benvenuto

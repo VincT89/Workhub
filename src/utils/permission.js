@@ -1,3 +1,4 @@
+// Definisce i permessi per diversi ruoli utente nell'applicazione
 export const permissions = {
   admin: {
     canView: ["dashboard", "clienti", "personale", "magazzino", "ticket", "settings"],

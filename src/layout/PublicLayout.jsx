@@ -2,11 +2,13 @@ import React from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import bgImage from "../assets/bg/bg.jpg";
 
+
 import iconlogo from "../assets/logo/iconaLogo.png";
-import NavbarRouting from "../components/NavbarRouting";
+import BottomNav from "../components/BottomNav";
+import Sidebar from "../components/Sidebar";
+import Topbar from "../components/TopBar";
 
 const PublicLayout = () => {
-	
 	return (
 		<main className="relative w-full min-h-screen overflow-hidden bg-white">
 			{/* Background */}
@@ -30,17 +32,18 @@ const PublicLayout = () => {
 				</div>
 			</div>
 
-			{/* Sidebar sinistra centrata - COMPONENTI */}
 			{/* Navbar superiore - COMPONENTI */}
-			
+			<Topbar />
+			{/* Sidebar sinistra centrata - COMPONENTI */}
+			<Sidebar />
 
 			{/* Contenuto dinamico con effetto Liquid Glass */}
-			<section className="absolute top-[16%] left-[10%] w-[80%] h-[70%] bg-[#fafafa20] backdrop-blur-sm rounded-[25px] border border-white/30 shadow-md p-6 overflow-auto">
+			<section className="absolute top-[16%] left-[10%] w-[80%] h-[70%] bg-[#fafafa20] backdrop-blur-sm rounded-[25px] border border-white/30 shadow-md p-6 overflow-auto ">
 				<Outlet />
 			</section>
 
-			{/* Navbar inferiore */}
-		<NavbarRouting />
+			{/* BottomNav */}
+			<BottomNav />
 		</main>
 	);
 };

@@ -31,7 +31,7 @@ const LoginPage = () => {
   }, [token, user, navigate]);
 
   return (
-    <main className="bg-white w-full min-h-screen relative overflow-hidden flex justify-center items-center">
+    <main className="w-full min-h-screen relative overflow-hidden flex justify-center items-center ">
       {/* Background */}
       <img
         className="absolute top-0 left-0 w-full h-full object-cover z-0"
@@ -51,11 +51,11 @@ const LoginPage = () => {
         <div className="flex items-center justify-center gap-8 mb-8">
           <img className="w-[120px] h-[114px]" alt="Logo" src={iconLogo} />
           <div className="text-center">
-            <span className="text-[#134a7b] text-4xl font-bold font-nunito uppercase">
+            <span className="text-4xl font-bold font-nunito uppercase">
               Entra nel gestionale
             </span>
             <br />
-            <span className="text-[#134a7b] font-bold font-nunito text-sm">
+            <span className=" font-bold font-nunito text-sm">
               Credenziali demo: <br />
               admin/admin123 - supervisor/supervisor123 - user/user123
             </span>
@@ -73,7 +73,7 @@ const LoginPage = () => {
         <div className="m-4">
           <label
             htmlFor="username"
-            className="block text-[#134a7b] text-[18px] font-bold font-nunito mb-2"
+            className="block  text-[18px] font-bold font-nunito mb-2"
           >
             Username
           </label>
@@ -85,7 +85,7 @@ const LoginPage = () => {
             required
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full sm:w-[486px] h-[35px] bg-[#D9D9D9]/30 shadow-md border border-neutral-50/30 rounded-2xl px-4 text-[#134a7b] outline-none"
+            className="w-full sm:w-[486px] h-[35px] bg-[#D9D9D9]/30 shadow-md border border-neutral-50/30 rounded-2xl px-4  outline-none"
           />
         </div>
 
@@ -93,7 +93,7 @@ const LoginPage = () => {
         <div className="relative m-2">
           <label
             htmlFor="password"
-            className="block text-[#134a7b] text-[18px] font-bold font-nunito mb-2"
+            className="block  text-[18px] font-bold font-nunito mb-2"
           >
             Password
           </label>
@@ -105,7 +105,7 @@ const LoginPage = () => {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full sm:w-[486px] h-[35px] bg-[#D9D9D9]/30 shadow-md border border-neutral-50/30 rounded-2xl px-4 pr-12 text-[#134a7b] outline-none"
+            className="w-full sm:w-[486px] h-[35px] bg-[#D9D9D9]/30 shadow-md border border-neutral-50/30 rounded-2xl px-4 pr-12 outline-none"
           />
           {/* Toggle Password */}
           <button
@@ -125,7 +125,7 @@ const LoginPage = () => {
         <div className="w-[63%] flex justify-end">
           <Link
             to="/settings"
-            className="text-[#134a7b] text-[14px] font-bold font-nunito"
+            className=" text-[14px] font-bold font-nunito"
           >
             Dimenticato la password?
           </Link>

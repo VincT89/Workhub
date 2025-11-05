@@ -3,22 +3,21 @@ import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { permissions } from "../utils/permission";
 
-const NavbarRouting = () => {
+const BottomNav = () => {
   const user = useSelector((state) => state.auth.user);
-  const role = user?.ruolo || "user"; // fallback di sicurezza
-  const allowed = permissions[role]?.canView || [];
+  const role = user?.ruolo || "user"; 
+  const allowed = permissions[role]?.canView || []; // Ottieni le sezioni che il ruolo può visualizzare - canView e' un array definito in permission.js
 
-  // Tutte le possibili voci
+  // Tutte le possibili voci di navigazione per poterle filtrare in base ai permessi
   const routes = [
-    { to: "dashboard", label: "Bacheca", key: "dashboard" },
+    { to: "dashboard", label: "Dashboard", key: "dashboard" },
     { to: "clienti", label: "Clienti", key: "clienti" },
     { to: "personale", label: "Personale", key: "personale" },
     { to: "magazzino", label: "Magazzino", key: "magazzino" },
     { to: "ticket", label: "Ticketing", key: "ticket" },
-    { to: "settings", label: "Impostazioni", key: "settings" },
   ];
 
-  // Filtra solo le sezioni che il ruolo può visualizzare
+  // Filtra solo le sezioni che il ruolo può visualizzare, basato sui permessi che prendono dal file permission.js
   const visibleRoutes = routes.filter((r) => allowed.includes(r.key));
 
   return (
@@ -38,7 +37,7 @@ const NavbarRouting = () => {
         >
           {item.label}
 
-          {/* Effetto glow dietro la voce attiva */}
+          {/* Effetto sfocato dietro la voce attiva */}
           {({ isActive }) =>
             isActive && (
               <span className="absolute inset-0 bg-white/50 blur-lg rounded-full -z-10 transition-all duration-300" />
@@ -50,4 +49,4 @@ const NavbarRouting = () => {
   );
 };
 
-export default NavbarRouting;
+export default BottomNav;

@@ -10,4 +10,20 @@
   --font-nunito: 'Nunito', sans-serif;
   --font-anton: 'Anton', sans-serif;
   --font-roboto: 'Roboto', sans-serif;
+
+  --text-light: #134a7b;
+  --text-dark: #ffffff;
+
+  --bgLight: url('/src/assets/bg/bg.jpg');
+  --bgDark: url('/src/assets/bg/bgScuro.png');
+  
+}
+
+
+
+body {
+  @apply bg-cover bg-center bg-no-repeat min-h-screen;
+  font-family: var(--font-nunito);
+  color: var(--text-light);
+
 }

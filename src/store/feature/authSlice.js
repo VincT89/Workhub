@@ -4,7 +4,7 @@ import { fakeLogin } from "../../api/authApi";
 // Login asincrono
 export const loginAsync = createAsyncThunk(
   "auth/login",
-  async ({ username, password }, { rejectWithValue }) => {
+  async ({ username, password }, { rejectWithValue }) => { // rejectWithValue per gestire errori
     try {
       const response = await fakeLogin(username, password);
 
