@@ -5,10 +5,10 @@ import { permissions } from "../utils/permission";
 
 const BottomNav = () => {
   const user = useSelector((state) => state.auth.user);
-  const role = user?.ruolo || "user"; 
-  const allowed = permissions[role]?.canView || []; // Ottieni le sezioni che il ruolo può visualizzare - canView e' un array definito in permission.js
+  const role = user?.ruolo || "user";
+  const allowed = permissions[role]?.canView || [];
 
-  // Tutte le possibili voci di navigazione per poterle filtrare in base ai permessi
+  // Tutte le possibili voci di navigazione
   const routes = [
     { to: "dashboard", label: "Dashboard", key: "dashboard" },
     { to: "clienti", label: "Clienti", key: "clienti" },
@@ -17,11 +17,11 @@ const BottomNav = () => {
     { to: "ticket", label: "Ticketing", key: "ticket" },
   ];
 
-  // Filtra solo le sezioni che il ruolo può visualizzare, basato sui permessi che prendono dal file permission.js
+  // Filtra solo le sezioni che il ruolo può visualizzare
   const visibleRoutes = routes.filter((r) => allowed.includes(r.key));
 
   return (
-    <nav className="absolute bottom-[6%] left-[10%] w-[80%] h-[60px] bg-[#fafafa30] backdrop-blur-sm border border-white/40 rounded-full flex justify-around items-center py-3 shadow-md transition-all duration-300">
+    <nav className="bottomnav">
       {visibleRoutes.map((item) => (
         <NavLink
           key={item.to}
@@ -29,15 +29,15 @@ const BottomNav = () => {
           className={({ isActive }) =>
             `relative px-6 py-2 font-bold text-lg transition-all duration-300 rounded-full ${
               isActive
-                ? "text-[#1C62A0] bg-white shadow-md scale-105"
-                : "text-[#1C62A0]/80 hover:text-[#1C62A0]"
+                ? "text-white bg-primary shadow-md scale-105"
+                : "text-primary/80 hover:text-primary"
             }`
           }
           end
         >
           {item.label}
 
-          {/* Effetto sfocato dietro la voce attiva */}
+          {/* Effetto blur dietro la voce attiva */}
           {({ isActive }) =>
             isActive && (
               <span className="absolute inset-0 bg-white/50 blur-lg rounded-full -z-10 transition-all duration-300" />
