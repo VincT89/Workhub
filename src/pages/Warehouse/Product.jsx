@@ -94,13 +94,42 @@ const Product = () => {
 			const doc = new jsPDF();
 			doc.setFont("helvetica", "bold");
 			doc.text("Scheda prodotto", 20, 20);
+			let y = 40; // coordinata iniziale (da dove part il testo verticalmente)
+
+			// Immagine (se presente)
+			if (prodotto.img) {
+				doc.addImage(prodotto.img, "JPEG", 20, y, 50, 50);
+				y += 60; // spazio dopo l'immagine
+			}
+
+			// Dati prodotto
 			doc.setFont("helvetica", "normal");
-			doc.text(`ID: ${prodotto.id}`, 20, 40);
-			doc.text(`Nome: ${prodotto.nome}`, 20, 50);
-			doc.text(`Categoria: ${prodotto.categoria}`, 20, 60);
-			doc.text(`Quantità: ${prodotto.quantita}`, 20, 70);
-			doc.text(`Soglia riordino: ${prodotto.soglia}`, 20, 80);
-			doc.text(`Note: ${prodotto.note}`, 20, 90);
+			doc.text(`ID: ${prodotto.id}`, 20, y);
+			y += 10; // y+=10 = scrivi partendo dall'attuale posizione + 10, in modo ds non sovrappore le righe
+			doc.text(`Nome: ${prodotto.nome}`, 20, y);
+			y += 10; // 20 distanza da sinistra
+			doc.text(`Categoria: ${prodotto.categoria}`, 20, y);
+			y += 10;
+			doc.text(`Quantità: ${prodotto.quantita}`, 20, y);
+			y += 10;
+			doc.text(`Soglia riordino: ${prodotto.soglia}`, 20, y);
+			y += 10;
+			doc.text(`Note: ${prodotto.note}`, 20, y);
+			y += 10;
+			doc.text(`Disponibilità: ${prodotto.disponibilita}`, 20, y);
+			y += 10;
+
+			// Storico movimenti
+			if (storico.length > 0) {
+				doc.text("Storico movimenti:", 20, y);
+				y += 10;
+				storico.forEach((m) => {
+					doc.text(`- ${m.tipo}, ${m.quantita}, ${m.data}`, 25, y);
+					y += 10;
+				});
+			}
+
+			// Salvataggio PDF
 			doc.save(`Scheda_${prodotto.nome}.pdf`);
 		} catch (e) {
 			// se si verifica errore con jsPDF, messaggio in console e non si interrompe la pagina
