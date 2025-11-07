@@ -1,54 +1,62 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import bgImage from "../assets/bg/bg.jpg";
+import { useTheme } from "../context/ThemeContext";
+import bgLight from "../assets/bg/bg.jpg";
+import bgDark from "../assets/bg/bgScuro.png";
 import iconLogo from "../assets/logo/iconaLogo.png";
 import italianFlag from "../assets/icons/Italy.png";
 import englishFlag from "../assets/icons/Great Britain.png";
-import dark from "../assets/icons/Do not Disturb iOS.png";
-import light from "../assets/icons/Sun.png";
+import darkIcon from "../assets/icons/Do not Disturb iOS.png";
+import lightIcon from "../assets/icons/Sun.png";
 
 const SettingsPage = () => {
-  const [theme, setTheme] = useState("light");
+  const { theme, setTheme } = useTheme();
   const [language, setLanguage] = useState("it");
   const [username, setUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-  }, [theme]);
 
   const handleSave = (e) => {
     e.preventDefault();
     if (!username) return alert("Inserisci uno username.");
     if (newPassword && newPassword !== confirmPassword)
       return alert("Le password non coincidono.");
-    alert("Modifiche salvate.");
+    alert("✅ Modifiche salvate.");
     setNewPassword("");
     setConfirmPassword("");
   };
 
-  return (
-    <main className="main-container bg-white">
-      {/* ===== Background ===== */}
-      <img src={bgImage} alt="Background" className="overlay-full" />
+  const backgroundImage = theme === "dark" ? bgDark : bgLight;
 
-      {/* ===== Liquid Glass Overlay ===== */}
+  const sectionTitleColor =
+    theme === "dark"
+      ? "text-[var(--text-dark)]"
+      : "text-[var(--color-primary)]";
+
+  const sectionLabelColor =
+    theme === "dark"
+      ? "text-[var(--text-dark)]"
+      : "text-[var(--color-primary)]";
+
+  return (
+    <main className="main-container bg-white dark:bg-black transition-colors duration-500">
+      {/* Background dinamico */}
+      <img src={backgroundImage} alt="Background" className="overlay-full transition-opacity duration-700" />
+
+      {/* Liquid Glass Overlay */}
       <div className="absolute w-[50%] h-[90%] glass-card" />
 
-      {/* ===== Main Content ===== */}
+      {/* Main Content */}
       <div className="relative z-20 w-full max-w-[800px] flex flex-col items-center px-6 py-10 space-y-10">
         {/* Header */}
         <div className="flex items-center gap-2">
           <img src={iconLogo} alt="Logo" className="w-20 h-20" />
-          <h1 className="text-primary text-3xl font-bold font-nunito">
-            Impostazioni
-          </h1>
+          <h1 className="text-title text-3xl">Impostazioni</h1>
         </div>
 
         {/* SEZIONE 1 — CREDENZIALI */}
         <section className="w-full glass-card p-6 shadow-sm">
-          <h2 className="text-primary text-xl font-bold mb-4 border-b border-primary/50 pb-2">
+          <h2 className={`${sectionTitleColor} text-xl font-bold mb-4 border-b border-primary pb-2`}>
             Gestione Account
           </h2>
           <form onSubmit={handleSave} className="flex flex-col gap-4">
@@ -84,78 +92,64 @@ const SettingsPage = () => {
 
         {/* SEZIONE 2 — ASPETTO */}
         <section className="w-full glass-card p-6 shadow-sm">
-          <h2 className="text-primary text-xl font-bold mb-4 border-b border-primary/50 pb-2">
+          <h2 className={`${sectionTitleColor} text-xl font-bold mb-4 border-b border-primary pb-2`}>
             Aspetto
           </h2>
           <div className="flex flex-col sm:flex-row justify-between gap-4">
             {/* Tema */}
             <div className="flex flex-col gap-2 w-full sm:w-1/2">
-              <span className="text-primary font-semibold mb-1">
-                Tema
-              </span>
+              <span className={`${sectionLabelColor} font-semibold mb-1`}>Tema</span>
               <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => setTheme("light")}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-colors duration-300 ${
                     theme === "light"
                       ? "border-primary bg-input-bg"
-                      : "border-gray-300"
+                      : "border-gray-300 dark:border-white/30"
                   }`}
                 >
-                  <img src={light} alt="Light" className="w-6 h-6" /> Light
+                  <img src={lightIcon} alt="Light" className="w-6 h-6" /> Light
                 </button>
                 <button
                   type="button"
                   onClick={() => setTheme("dark")}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-colors duration-300 ${
                     theme === "dark"
                       ? "border-primary bg-input-bg"
-                      : "border-gray-300"
+                      : "border-gray-300 dark:border-white/30"
                   }`}
                 >
-                  <img src={dark} alt="Dark" className="w-6 h-6" /> Dark
+                  <img src={darkIcon} alt="Dark" className="w-6 h-6" /> Dark
                 </button>
               </div>
             </div>
 
             {/* Lingua */}
             <div className="flex flex-col gap-2 w-full sm:w-1/2">
-              <span className="text-primary font-semibold mb-1">
-                Lingua
-              </span>
+              <span className={`${sectionLabelColor} font-semibold mb-1`}>Lingua</span>
               <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => setLanguage("it")}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-colors duration-300 ${
                     language === "it"
                       ? "border-primary bg-input-bg"
-                      : "border-gray-300"
+                      : "border-gray-300 dark:border-white/30"
                   }`}
                 >
-                  <img
-                    src={italianFlag}
-                    alt="Italiano"
-                    className="w-6 h-6"
-                  />{" "}
-                  Italiano
+                  <img src={italianFlag} alt="Italiano" className="w-6 h-6" /> Italiano
                 </button>
                 <button
                   type="button"
                   onClick={() => setLanguage("en")}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-colors duration-300 ${
                     language === "en"
                       ? "border-primary bg-input-bg"
-                      : "border-gray-300"
+                      : "border-gray-300 dark:border-white/30"
                   }`}
                 >
-                  <img
-                    src={englishFlag}
-                    alt="Inglese"
-                    className="w-6 h-6"
-                  />{" "}
-                  English
+                  <img src={englishFlag} alt="Inglese" className="w-6 h-6" /> English
                 </button>
               </div>
             </div>
@@ -167,7 +161,7 @@ const SettingsPage = () => {
           <button onClick={handleSave} className="btn-primary w-full sm:w-[200px] py-3">
             Salva modifiche
           </button>
-          <Link to="/login" className="btn-danger w-full sm:w-[200px] py-3 text-center">
+          <Link to="/login" className="btn-primary w-full sm:w-[200px] py-3 text-center">
             Esci
           </Link>
         </section>

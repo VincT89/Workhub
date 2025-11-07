@@ -1,7 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 @import "tailwindcss";
 
-
+/* ======================================================
+   VARIABILI GLOBALI
+   ====================================================== */
 @theme {
   /* Font principale */
   --font-nunito: 'Nunito', sans-serif;
@@ -11,115 +13,94 @@
   --text-dark: #ffffff;    /* Testo su sfondi scuri */
 
   /* Colori primari e di sistema */
-  --color-primary: #1C62A0;          /* Blu principale */
-  --color-primary-dark: #155293;     /* Hover/variante scura */
-  --color-glass: #fafafa20;          /* Sfondo "vetro" semitrasparente */
-  --color-glass-strong: #fafafa30;   /* Variante più visibile */
-  --color-input-bg: rgba(217, 217, 217, 0.3); /* Sfondo input */
-  --color-error: #DC2626;            /* Rosso errori */
-  --color-danger: #FF3B3F;           /* Rosso per pulsanti pericolosi */
-
+  --color-primary: #1C62A0;
+  --color-primary-dark: #155293;
+  --color-glass: #fafafa20;
+  --color-glass-strong: #fafafa30;
+  --color-input-bg: rgba(217, 217, 217, 0.3);
+  --color-error: #DC2626;
+  --color-danger: #FF3B3F;
 }
 
 /* ======================================================
-   Regole generali per tutto il sito.
+   BASE
    ====================================================== */
 body {
   @apply bg-cover bg-center bg-no-repeat min-h-screen;
   font-family: var(--font-nunito);
   color: var(--text-light);
+  background-color: #ffffff;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ======================================================
-   Effetto “vetro liquido” 
+   VETRO / LIQUID GLASS
    ====================================================== */
-
-/* Pannello vetro leggero */
 .glass-card {
   @apply bg-glass backdrop-blur-sm border border-white/30 rounded-[25px] shadow-md;
 }
-
-/* Variante più intensa (usata nei layout principali) */
 .glass-card-strong {
   @apply bg-glass-strong backdrop-blur-md border border-white/40 rounded-[40px] shadow-lg;
 }
-
-/* Overlay fullscreen per sfondi */
 .overlay-full {
   @apply absolute inset-0 w-full h-full object-cover;
 }
-
-/* Contenitore base centrato */
 .main-container {
   @apply w-full min-h-screen flex justify-center items-center relative overflow-hidden;
 }
 
 /* ======================================================
-   INPUTS & FORMS
+   INPUT E FORM
    ====================================================== */
-
-/* Input base (testo/password) */
 .input-base {
   @apply w-full sm:w-[486px] h-[35px] bg-input-bg border border-neutral-50/30 
-         rounded-2xl px-4 shadow-md outline-none text-primary font-semibold;
+         rounded-2xl px-4 shadow-md outline-none text-(--text-light) font-semibold;
 }
-
-/* Stato focus input */
+.input-base::placeholder {
+  color: var(--text-light);
+  opacity: 0.7;
+}
 .input-base:focus {
   @apply ring-2 ring-primary/50;
 }
-
-/* Label generica */
 .label-base {
-  @apply block text-[18px] font-bold font-nunito mb-2 text-primary;
+  @apply block text-[18px] font-bold font-nunito mb-2 text-(--text-light);
 }
-
-/* Testo errore */
 .error-text {
   @apply text-error font-bold mt-3 animate-pulse;
 }
 
 /* ======================================================
-   BUTTONS
+   BOTTONI
    ====================================================== */
-
-/* Bottone primario */
 .btn-primary {
   @apply bg-primary text-(--text-dark) border border-neutral-50/20 
          rounded-2xl shadow-md font-bold font-nunito px-6 py-3 transition-colors duration-300;
 }
 .btn-primary:hover {
-  @apply bg-primary-dark;
+  background: var(--color-primary-dark);
 }
 .btn-primary:disabled {
   @apply opacity-60 cursor-not-allowed;
 }
-
-/* Bottone di pericolo (logout, elimina) */
 .btn-danger {
   @apply bg-danger text-white font-bold rounded-2xl shadow-md 
          hover:bg-[#d63134] transition-colors duration-300;
 }
 
 /* ======================================================
-   TopBar, BottomNav, Sidebar.
+   TOPBAR, BOTTOMNAV, SIDEBAR
    ====================================================== */
-
-/* Barra superiore (TopBar) */
 .topbar {
   @apply absolute top-[6%] left-[10%] w-[80%] h-[75px] bg-glass-strong
          backdrop-blur-sm border border-white/40 rounded-full flex items-center 
          justify-between px-8 py-2 shadow-md;
 }
-
-/* Barra inferiore (BottomNav) */
 .bottomnav {
   @apply absolute bottom-[6%] left-[10%] w-[80%] h-[60px] bg-glass-strong
          backdrop-blur-sm border border-white/40 rounded-full flex justify-around 
          items-center py-3 shadow-md transition-all duration-300;
 }
-
-/* Sidebar sinistra (icone azioni) */
 .sidebar {
   @apply absolute top-1/2 left-[5%] h-[40%] -translate-y-1/2 flex flex-col items-center 
          justify-evenly gap-5 bg-glass backdrop-blur-sm rounded-[50px] 
@@ -127,22 +108,136 @@ body {
 }
 
 /* ======================================================
-   UTILITY CLASSES
+   UTILITIES E GRIGLIE
    ====================================================== */
-
-/* Testo titoli */
 .text-title {
-  @apply text-4xl font-bold font-nunito uppercase text-primary;
+  @apply text-4xl font-bold font-nunito uppercase text-(--text-light);
 }
-
-/* Link piccolo (es. “Password dimenticata”) */
 .text-link {
   @apply text-[14px] font-bold font-nunito hover:text-primary-dark transition;
 }
-
-/* Animazione di caricamento */
 .loading-text {
   @apply animate-pulse text-(--text-dark) font-bold;
 }
+.section-base {
+  @apply grid gap-6 mb-6 w-full transition-colors duration-500;
+}
+.card-base {
+  @apply p-4 rounded-xl shadow transition-colors duration-500;
+}
+.grid-2 {
+  @apply grid grid-cols-2 gap-4;
+}
+.grid-3 {
+  @apply grid grid-cols-3 gap-6;
+}
+.grid-4 {
+  @apply grid grid-cols-4 gap-4;
+}
+.flex-center {
+  @apply flex items-center justify-center;
+}
+.flex-gap-2 {
+  @apply flex items-center gap-2;
+}
+.flex-gap-3 {
+  @apply flex items-center gap-3;
+}
+.section-gap {
+  @apply gap-4;
+}
+.section-content {
+  @apply h-[75%] flex flex-col justify-center;
+}
+.widget-box {
+  @apply flex items-center justify-between rounded-xl px-4 py-3 shadow;
+}
 
+/* ======================================================
+   SCROLLBAR PERSONALIZZATA
+   ====================================================== */
+.custom-scrollbar {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary) transparent;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 30px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: 9999px;
+  opacity: 0.6;
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  opacity: 0.8;
+}
 
+/* Scrollbar invisibile ma attiva */
+.custom-scrollbar-invisible {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.custom-scrollbar-invisible::-webkit-scrollbar {
+  display: none;
+}
+
+/* ======================================================
+   DARK MODE
+   ====================================================== */
+.dark body {
+  background-color: #0e0e0e;
+  color: var(--text-dark);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Testi principali */
+.dark .text-title,
+.dark .label-base,
+.dark .text-link {
+  color: var(--text-dark);
+}
+.dark .text-link:hover {
+  color: var(--color-primary);
+}
+
+/* Input */
+.dark .input-base {
+  background: var(--color-input-bg);
+  color: var(--text-dark);
+}
+.dark .input-base::placeholder {
+  color: var(--text-dark);
+  opacity: 0.7;
+}
+
+/* Bottoni */
+.dark .btn-primary {
+  background: var(--text-dark);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.dark .btn-primary:hover {
+  background: var(--color-primary);
+  color: var(--text-dark);
+}
+
+/* Layout */
+.dark .topbar,
+.dark .bottomnav,
+.dark .sidebar {
+  @apply bg-glass-strong border-white/30 text-(--text-dark);
+}
+
+/* Scrollbar */
+.dark .custom-scrollbar {
+  scrollbar-color: var(--color-glass-strong) transparent;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-glass-strong);
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-primary);
+}

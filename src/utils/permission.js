@@ -15,7 +15,7 @@ export const permissions = {
   },
 
   user: {
-    canView: ["dashboard", "clienti", "magazzino", "ticket"],
+    canView: ["dashboard", "clienti", "personale", "magazzino", "ticket"],
     canAdd: false,
     canEdit: false,
     canDelete: false,
