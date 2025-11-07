@@ -17,20 +17,32 @@ export const loginAsync = createAsyncThunk(
           ? "supervisor"
           : "user");
 
-      return { ...response, user: { ...response.user, role } };
+      const userData = { ...response, user: { ...response.user, role } };
+
+      // --- Salva i dati utente e token nel localStorage ---
+      localStorage.setItem("auth", JSON.stringify(userData));
+
+      return userData;
     } catch (error) {
       return rejectWithValue(error.message);
     }
   }
 );
 
+// Recupera lo stato iniziale da localStorage (se presente)
+const storedAuth = JSON.parse(localStorage.getItem("auth")) || {
+  user: null,
+  token: null,
+  role: null,
+};
+
 // Slice di autenticazione
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: null,
-    token: null,
-    role: null, 
+    user: storedAuth.user,
+    token: storedAuth.token,
+    role: storedAuth.user?.role || null,
     loading: false,
     error: null,
   },
@@ -39,6 +51,8 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.role = null;
+      // --- Rimuove i dati salvati nel localStorage ---
+      localStorage.removeItem("auth");
     },
   },
   extraReducers: (builder) => {
@@ -51,7 +65,10 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        state.role = action.payload.user.role; 
+        state.role = action.payload.user.role;
+
+        // --- Aggiorna anche il localStorage ---
+        localStorage.setItem("auth", JSON.stringify(action.payload));
       })
       .addCase(loginAsync.rejected, (state, action) => {
         state.loading = false;

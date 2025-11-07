@@ -13,32 +13,32 @@ import BoardPage from "./pages/BoardPage.jsx";
 import CustomersRegistry from "./pages/Customers/CustomersRegistry.jsx";
 import CustomersPage from "./pages/Customers/CustomersPage.jsx";
 import EmployeePage from "./pages/Employee/EmployeePage.jsx";
-import AdminEmployeeDetailsPage from "./pages/Employee/AdminEmployeeDetailsPage.jsx";
+import AdminEmployeeDetailsPage from "./pages/Employee/admin/AdminEmployeeDetailsPage.jsx";
 import WarehousePage from "./pages/Warehouse/WarehousePage.jsx";
 import Product from "./pages/Warehouse/Product.jsx";
 import TicketPage from "./pages/TicketPage.jsx";
 
 function App() {
-  return (
-    <Routes>
-      {/* ROTTE PUBBLICHE */}
-      <Route path="/" element={<HomePage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/settings" element={<SettingsPage />} />
+	return (
+		<Routes>
+			{/* ROTTE PUBBLICHE */}
+			<Route path="/" element={<HomePage />} />
+			<Route path="/login" element={<LoginPage />} />
+			<Route path="/settings" element={<SettingsPage />} />
 
-      {/* ROTTE PROTETTE */}
-      <Route path="/" element={<PublicLayout />}>
-        <Route path="dashboard" element={<BoardPage />} />
+			{/* ROTTE PROTETTE */}
+			<Route path="/" element={<PublicLayout />}>
+				<Route path="dashboard" element={<BoardPage />} />
 				<Route path="clienti" element={<CustomersPage />} />
 				<Route path="clienti/:id" element={<CustomersRegistry />} />
 				<Route path="personale" element={<EmployeePage />} />
 				<Route path="personale/:id" element={<AdminEmployeeDetailsPage />} />
-        <Route path="magazzino" element={<WarehousePage />} />
-        <Route path="product/:id" element={<Product />} />
-        <Route path="ticket" element={<TicketPage />} />
-      </Route>
-    </Routes>
-  );
+				<Route path="magazzino" element={<WarehousePage />} />
+				<Route path="product/:id" element={<Product />} />
+				<Route path="ticket" element={<TicketPage />} />
+			</Route>
+		</Routes>
+	);
 }
 
 export default App;
