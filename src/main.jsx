@@ -3,7 +3,7 @@ import { Provider as ReduxProvider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 
 import store from "./store/index.js";
-import { ThemeProvider } from "../src/context/ThemeContext.jsx"; 
+import { ThemeProvider } from "./context/ThemeContext.jsx"; 
 
 import "./index.css";
 import App from "./App.jsx";
