@@ -7,12 +7,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../store/feature/authSlice";
 import { useTheme } from "../context/ThemeContext";
+import { useLanguage } from "../context/LanguageContext";
 
 const TopBar = () => {
-	const user = useSelector((state) => state.auth.user);
+	const user = useSelector((state) => state.auth.user); // Ottieni l'utente dallo stato Redux
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const { theme, setTheme } = useTheme();
+	const { theme, setTheme } = useTheme(); // Prende il tema corrente e la funzione per cambiarlo dal context
+	const { t } = useLanguage(); // Prende la funzione di traduzione dal context
 
 	const handleThemeToggle = () => {
 		setTheme(theme === "dark" ? "light" : "dark");
@@ -37,7 +39,7 @@ const TopBar = () => {
 							: "text-(--text-primary)"
 					}`}
 				>
-					Benvenuto, {user?.role || "Guest"}
+					{t("topbar.benvenuto")} {user?.role || "Guest"}
 				</span>
 			</div>
 
@@ -48,7 +50,7 @@ const TopBar = () => {
 				</Link>
 				<input
 					type="text"
-					placeholder="Cerca..."
+					placeholder={t('topbar.cerca')}
 					className={`bg-transparent outline-none font-semibold w-full transition-colors duration-300 ${
 						theme === "dark"
 							? "text-white placeholder-white/70"

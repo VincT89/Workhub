@@ -1,20 +1,21 @@
 import React from "react";
 import { useTheme } from "../../../context/ThemeContext";
+import { useLanguage } from "../../../context/LanguageContext";
 import calIcon from "../../../assets/icons/Calendar.png";
 import employeeImg from "../../../assets/Employee.webp";
 
 const AdminPage = () => {
 	const { theme } = useTheme();
+	const { t  } = useLanguage();
 
-	const textColor =
-		theme === "dark" ? "text-[var(--text-dark)]" : "text-[var(--text-light)]";
+	const textColor = theme === "dark" ? "text-[var(--text-dark)]" : "text-[var(--text-light)]";
 
 	// ---- ARRAY BOTTONI INFO ----
 	const topButtons = [
-		{ label: "Giorni lavorati", number: 215 },
-		{ label: "Ferie residue", number: 12 },
-		{ label: "Permessi", number: 2 },
-		{ label: "Attività", number: 47 },
+		{ label: t("employees.giorniLavorati"), number: 215 },
+		{ label: t("employees.ferieResidue"), number: 12 },
+		{ label: t("employees.permessi"), number: 2 },
+		{ label: t("employees.attivita"), number: 47 },
 	];
 
 	// ---- DATI ANAGRAFICI  ----
@@ -28,10 +29,10 @@ const AdminPage = () => {
 
 	// ----- TURNI DI ESEMPIO ------
 	const turni = [
-		{ giorno: "Lunedì", orario: "8:00 - 12:00" },
-		{ giorno: "Martedì", orario: "10:00 - 12:00 / 15:00 - 18:30" },
-		{ giorno: "Giovedì", orario: "8:00 - 9:00" },
-		{ giorno: "Venerdì", orario: "15:30 - 16:30" },
+		{ giorno: t("employees.lunedi"), orario: "8:00 - 12:00" },
+		{ giorno: t("employees.martedi"), orario: "10:00 - 12:00 / 15:00 - 18:30" },
+		{ giorno: t("employees.mercoledi"), orario: "8:00 - 9:00" },
+		{ giorno: t("employees.giovedi"), orario: "15:30 - 16:30" },
 	];
 
 	// Array statico di richieste di permesso usato come valore iniziale.
@@ -103,21 +104,21 @@ const AdminPage = () => {
 								className="w-12 h-12 rounded-full object-cover"
 							/>
 							<h2 className={`text-lg font-bold leading-none ${textColor}`}>
-								Anagrafica
+							{t("employees.anagrafica")}
 							</h2>
 						</div>
 						<div className={`flex flex-col gap-2 ${textColor}`}>
 							<div>
-								<strong>Nome:</strong> {anagrafica.nome}
+								<strong>{t("employees.nome")}:</strong> {anagrafica.nome}
 							</div>
 							<div>
-								<strong>Ruolo:</strong> {anagrafica.ruolo}
+								<strong>{t("employees.ruolo")}:</strong> {anagrafica.ruolo}
 							</div>
 							<div>
-								<strong>Matricola:</strong> {anagrafica.matricola}
+								<strong>{t("employees.matricola")}:</strong> {anagrafica.matricola}
 							</div>
 							<div>
-								<strong>Email:</strong> {anagrafica.email}
+								<strong>{t("employees.email")}:</strong> {anagrafica.email}
 							</div>
 						</div>
 					</div>
@@ -131,7 +132,7 @@ const AdminPage = () => {
 								className="w-6 h-6 shrink-0"
 							/>
 							<h2 className={`text-lg font-bold leading-none ${textColor}`}>
-								Turni settimanali
+								{t("employees.turniSettimanali")}
 							</h2>
 						</div>
 
@@ -155,34 +156,34 @@ const AdminPage = () => {
 					<div className="flex-1 glass-card p-6 shadow-md">
 						<div className="flex items-center gap-3 mb-4">
 							<h2 className={`text-lg font-bold leading-none ${textColor}`}>
-								Richieste ferie
+								{t("employees.richiestaFerie")}
 							</h2>
 						</div>
 
 						<div className="flex flex-col gap-2">
-							{permessi.map((t, i) => (
+							{permessi.map((tu, i) => (
 								<div
 									key={i}
 									className="flex items-center justify-between bg-white/40 dark:bg-glass-strong rounded-full p-2 shadow-sm"
 								>
 									{/* Dati richiesta */}
 									<span className={`font-semibold ${textColor}`}>
-										{anagrafica.nome} - {t.data}, {t.orario}
+										{anagrafica.nome} - {tu.data}, {tu.orario}
 									</span>
 
 									{/* Pulsanti */}
 									<div className="flex gap-2">
 										<button
-											onClick={() => handleAccetta(t, anagrafica.nome)}
+											onClick={() => handleAccetta(tu, anagrafica.nome)}
 											className="bg-primary text-(--text-dark) text-sm px-3 py-1 rounded-full hover:bg-primary-dark font-semibold transition"
 										>
-											Accetta
+											{t("employees.accetta")}
 										</button>
 										<button
-											onClick={() => handleRifiuta(t, anagrafica.nome)}
+											onClick={() => handleRifiuta(tu, anagrafica.nome)}
 											className="bg-white/30 dark:bg-glass text-primary text-sm px-3 py-1 rounded-full hover:bg-white/50 dark:hover:bg-primary/20 font-semibold transition"
 										>
-											Rifiuta
+											{t("employees.rifiuta")}
 										</button>
 									</div>
 								</div>
@@ -194,34 +195,34 @@ const AdminPage = () => {
 					<div className="flex-1 glass-card p-6 shadow-md">
 						<div className="flex items-center gap-3 mb-4">
 							<h2 className={`text-lg font-bold leading-none ${textColor}`}>
-								Richieste permessi
+								{t("employees.richiestaPermessi")}
 							</h2>
 						</div>
 
 						<div className="flex flex-col gap-2">
-							{permessi.map((t, i) => (
+							{permessi.map((tu, i) => (
 								<div
 									key={i}
 									className="flex items-center justify-between bg-white/40 dark:bg-glass-strong rounded-full p-2 shadow-sm"
 								>
 									{/* Dati richiesta */}
 									<span className={`font-semibold ${textColor}`}>
-										{anagrafica.nome} - {t.data}, {t.orario}
+										{anagrafica.nome} - {tu.data}, {tu.orarioorario}
 									</span>
 
 									{/* Pulsanti */}
 									<div className="flex gap-2">
 										<button
-											onClick={() => handleAccetta(t, anagrafica.nome)}
+											onClick={() => handleAccetta(tu, anagrafica.nome)}
 											className="bg-primary text-(--text-dark) text-sm px-3 py-1 rounded-full hover:bg-primary-dark font-semibold transition"
 										>
-											Accetta
+											{t("employees.accetta")}
 										</button>
 										<button
-											onClick={() => handleRifiuta(t, anagrafica.nome)}
+											onClick={() => handleRifiuta(tu, anagrafica.nome)}
 											className="bg-white/30 dark:bg-glass text-primary text-sm px-3 py-1 rounded-full hover:bg-white/50 dark:hover:bg-primary/20 font-semibold transition"
 										>
-											Rifiuta
+											{t("employees.rifiuta")}
 										</button>
 									</div>
 								</div>

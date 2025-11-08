@@ -1,0 +1,17 @@
+{
+  "impostazioni": "Impostazioni",
+  "account": "Gestione Account",
+  "username": "Username",
+  "nuovaPassword": "Nuova Password",
+  "confermaPassword": "Conferma Password",
+  "aspetto": "Aspetto",
+  "tema": "Tema",
+  "lingua": "Lingua",
+  "italiano": "Italiano",
+  "inglese": "Inglese",
+  "salvaModifiche": "Salva Modifiche",
+  "esci": "Esci",
+  "inserisciUsername": "Inserisci il tuo username",
+  "passwordNonCoincidono": "Le password non coincidono",
+  "modifiche salvate": "Modifiche salvate con successo"
+}

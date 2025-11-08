@@ -2,6 +2,7 @@ import React from "react";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { desktopOS, valueFormatter } from "../hooks/webUsageState";
 import { useTheme } from "../context/ThemeContext";
+import { useLanguage } from "../context/LanguageContext";
 
 import openIcon from "../assets/icons/Open Envelope Clock.png";
 import checkIcon from "../assets/icons/Instagram Check Mark.png";
@@ -13,6 +14,7 @@ import personalIcon from "../assets/icons/Test Passed.png";
 
 const TicketPage = () => {
   const { theme } = useTheme();
+  const { t } = useLanguage();
 
   // ---- COLORI DINAMICI ----
   const textColor =
@@ -22,10 +24,10 @@ const TicketPage = () => {
 
   // ---- ARRAY BOX RIASSUNTIVI ----
   const stats = [
-    { label: "Ticket aperti", number: 0, icon: openIcon },
-    { label: "Ticket risolti", number: 11, icon: checkIcon },
-    { label: "Ticket in attesa", number: 22, icon: pendingIcon },
-    { label: "Ticket urgenti", number: 3, icon: errorIcon },
+    { label: t("ticketing.ticketAperti"), number: 0, icon: openIcon },
+    { label: t("ticketing.ticketRisolti"), number: 11, icon: checkIcon },
+    { label: t("ticketing.ticketInAttesa"), number: 22, icon: pendingIcon },
+    { label: t("ticketing.ticketUrgenti"), number: 3, icon: errorIcon },
   ];
 
   return (
@@ -61,7 +63,7 @@ const TicketPage = () => {
                   alt="report icon"
                   className="w-5 h-5 object-contain"
                 />
-                Report Ticket
+                {t("ticketing.reportTicket")}
               </h2>
               <div className="flex-1 flex-center">
                 <PieChart
@@ -83,10 +85,10 @@ const TicketPage = () => {
                     alt="list icon"
                     className="w-5 h-5 object-contain"
                   />
-                  Ticket Recenti
+                  {t("ticketing.ticketRecenti")}
                 </h2>
                 <div className={`flex-center h-full ${subTextColor}`}>
-                  <p className="font-nunito">Nessun ticket recente</p>
+                  <p className="font-nunito">{t("ticketing.nessunTicket")}</p>
                 </div>
               </div>
 
@@ -98,10 +100,10 @@ const TicketPage = () => {
                     alt="persona icon"
                     className="w-5 h-5 object-contain"
                   />
-                  Risposte personale
+                  {t("ticketing.rispostePersonale")}
                 </h2>
                 <div className={`flex-center h-full ${subTextColor}`}>
-                  <p className="font-nunito">Nessuna risposta disponibile</p>
+                  <p className="font-nunito">{t("ticketing.nessunaRisposta")}</p>
                 </div>
               </div>
             </div>

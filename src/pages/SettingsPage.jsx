@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { useLanguage } from "../context/LanguageContext"; 
 import bgLight from "../assets/bg/bg.jpg";
 import bgDark from "../assets/bg/bgScuro.png";
 import iconLogo from "../assets/logo/iconaLogo.png";
@@ -11,17 +12,17 @@ import lightIcon from "../assets/icons/Sun.png";
 
 const SettingsPage = () => {
   const { theme, setTheme } = useTheme();
-  const [language, setLanguage] = useState("it");
+  const { lang, toggleLang, t } = useLanguage(); 
   const [username, setUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSave = (e) => {
     e.preventDefault();
-    if (!username) return alert("Inserisci uno username.");
+    if (!username) return alert(t("settings.inserisciUsername"));
     if (newPassword && newPassword !== confirmPassword)
-      return alert("Le password non coincidono.");
-    alert("✅ Modifiche salvate.");
+      return alert(t("settings.passwordNonCoincidono"));
+    alert(t("settings.modifiche salvate"));
     setNewPassword("");
     setConfirmPassword("");
   };
@@ -51,17 +52,17 @@ const SettingsPage = () => {
         {/* Header */}
         <div className="flex items-center gap-2">
           <img src={iconLogo} alt="Logo" className="w-20 h-20" />
-          <h1 className="text-title text-3xl">Impostazioni</h1>
+          <h1 className="text-title text-3xl">{t("settings.impostazioni") }</h1>
         </div>
 
         {/* SEZIONE 1 — CREDENZIALI */}
         <section className="w-full glass-card p-6 shadow-sm">
           <h2 className={`${sectionTitleColor} text-xl font-bold mb-4 border-b border-primary pb-2`}>
-            Gestione Account
+            {t("settings.account")}
           </h2>
           <form onSubmit={handleSave} className="flex flex-col gap-4">
             <div>
-              <label className="label-base">Username</label>
+              <label className="label-base">{t("settings.username")}</label>
               <input
                 type="text"
                 value={username}
@@ -70,7 +71,7 @@ const SettingsPage = () => {
               />
             </div>
             <div>
-              <label className="label-base">Nuova password</label>
+              <label className="label-base">{t("settings.nuovaPassword")}</label>
               <input
                 type="password"
                 value={newPassword}
@@ -79,7 +80,7 @@ const SettingsPage = () => {
               />
             </div>
             <div>
-              <label className="label-base">Conferma password</label>
+              <label className="label-base">{t("settings.confermaPassword")}</label>
               <input
                 type="password"
                 value={confirmPassword}
@@ -93,12 +94,12 @@ const SettingsPage = () => {
         {/* SEZIONE 2 — ASPETTO */}
         <section className="w-full glass-card p-6 shadow-sm">
           <h2 className={`${sectionTitleColor} text-xl font-bold mb-4 border-b border-primary pb-2`}>
-            Aspetto
+            {t("settings.aspetto")}
           </h2>
           <div className="flex flex-col sm:flex-row justify-between gap-4">
             {/* Tema */}
             <div className="flex flex-col gap-2 w-full sm:w-1/2">
-              <span className={`${sectionLabelColor} font-semibold mb-1`}>Tema</span>
+              <span className={`${sectionLabelColor} font-semibold mb-1`}>{t("settings.tema")}</span>
               <div className="flex gap-3">
                 <button
                   type="button"
@@ -127,29 +128,29 @@ const SettingsPage = () => {
 
             {/* Lingua */}
             <div className="flex flex-col gap-2 w-full sm:w-1/2">
-              <span className={`${sectionLabelColor} font-semibold mb-1`}>Lingua</span>
+              <span className={`${sectionLabelColor} font-semibold mb-1`}>{t("settings.lingua")}</span>
               <div className="flex gap-3">
                 <button
                   type="button"
-                  onClick={() => setLanguage("it")}
+                  onClick={() => toggleLang("it")}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-colors duration-300 ${
-                    language === "it"
+                    lang === "it"
                       ? "border-primary bg-input-bg"
                       : "border-gray-300 dark:border-white/30"
                   }`}
                 >
-                  <img src={italianFlag} alt="Italiano" className="w-6 h-6" /> Italiano
+                  <img src={italianFlag} alt="Italiano" className="w-6 h-6" /> {t("settings.italiano")}
                 </button>
                 <button
                   type="button"
-                  onClick={() => setLanguage("en")}
+                  onClick={() => toggleLang("en")}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-colors duration-300 ${
-                    language === "en"
+                    lang === "en"
                       ? "border-primary bg-input-bg"
                       : "border-gray-300 dark:border-white/30"
                   }`}
                 >
-                  <img src={englishFlag} alt="Inglese" className="w-6 h-6" /> English
+                  <img src={englishFlag} alt="Inglese" className="w-6 h-6" /> {t("settings.inglese")}
                 </button>
               </div>
             </div>
@@ -159,10 +160,10 @@ const SettingsPage = () => {
         {/* SEZIONE 3 — AZIONI */}
         <section className="w-full flex flex-col sm:flex-row justify-center gap-6 mt-2">
           <button onClick={handleSave} className="btn-primary w-full sm:w-[200px] py-3">
-            Salva modifiche
+           {t("settings.salvaModifiche") }
           </button>
           <Link to="/login" className="btn-primary w-full sm:w-[200px] py-3 text-center">
-            Esci
+            {t("settings.esci") }
           </Link>
         </section>
       </div>

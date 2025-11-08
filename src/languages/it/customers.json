@@ -1,0 +1,20 @@
+{
+  "clientiAttivi": "Clienti Attivi",
+  "clientiInattivi": "Clienti Inattivi",
+  "ClientiPremium": "Clienti Premium",
+  "clientiMensili": "Clienti Mensili",
+  "listaClienti": "Lista Clienti",
+  "nomeCompleto": "Nome Completo",
+  "indirizzo": "Indirizzo",
+  "email": "Email",
+  "telefono": "Telefono",
+  "livello": "Livello",
+  "saldoPunti": "Saldo Punti",
+  "cliente": "cliente",
+  "anagrafica": "Anagrafica",
+  "storicoOrdini": "Storico Ordini",
+  "ordine": "Ordine",
+  "cardPunti": "Card Punti",
+  "punti": "Punti",
+  "esportaPDF": "Esporta PDF"
+}

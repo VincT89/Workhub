@@ -1,3 +1,4 @@
+// Dati di esempio per il personale
 export const personale = [
   {
     id: 1,

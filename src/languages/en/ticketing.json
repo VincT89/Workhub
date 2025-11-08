@@ -1,0 +1,11 @@
+{
+  "ticketAperti": "Open Tickets",
+  "ticketRisolti": "Resolved Tickets",
+  "ticketInAttesa": "Pending Tickets",
+  "ticketUrgenti": "Urgent Tickets",
+  "reportTicket": "Report Ticket",
+  "ticketRecenti": "Recent Tickets",
+  "rispostePersonale": "Staff Responses",
+  "nessunTicket": "No Tickets Available",
+  "nessunaRisposta": "No Responses Available"
+}

@@ -1,3 +1,4 @@
+// hooks di altin per poter popolare il Ticketing con dati di esempio
 export const desktopOS = [
   {
     label: 'Windows',
@@ -47,7 +48,7 @@ export const platforms = [
   },
 ];
 
-const normalize = (v, v2) => Number.parseFloat(((v * v2) / 100).toFixed(2));
+const normalize = (v, v2) => Number.parseFloat(((v * v2) / 100).toFixed(2)); // normalizza i valori in base alla percentuale della piattaforma
 
 export const mobileAndDesktopOS = [
   ...mobileOS.map((v) => ({
@@ -62,4 +63,4 @@ export const mobileAndDesktopOS = [
   })),
 ];
 
-export const valueFormatter = (item) => `${item.value}%`;
+export const valueFormatter = (item) => `${item.value}%`; // formatta i valori con il simbolo di percentuale

@@ -1,16 +1,19 @@
 import { useTheme } from "../../../context/ThemeContext";
+import { useLanguage } from "../../../context/LanguageContext";
 import calIcon from "../../../assets/icons/Calendar.png";
 import employeeImg from "../../../assets/Employee.webp";
 
 const UserEmployeePage = () => {
 	const { theme } = useTheme();
+	const { t } = useLanguage();
+
 
 	/* --------- DATI STATICI --------- */
 	const topButtons = [
-		{ label: "Giorni lavorati", number: 215 },
-		{ label: "Ferie residue", number: 12 },
-		{ label: "Permessi", number: 2 },
-		{ label: "Attività", number: 47 },
+		{ label: t("employees.giorniLavorati"), number: 215 },
+		{ label: t("employees.ferieResidue"), number: 12 },
+		{ label: t("employees.permessi"), number: 2 },
+		{ label: t("employees.attivita"), number: 47 },
 	];
 
 	const anagrafica = {
@@ -22,10 +25,10 @@ const UserEmployeePage = () => {
 	};
 
 	const turni = [
-		{ giorno: "Lunedì", orario: "8:00 - 12:00" },
-		{ giorno: "Martedì", orario: "10:00 - 12:00 / 15:00 - 18:30" },
-		{ giorno: "Giovedì", orario: "8:00 - 9:00" },
-		{ giorno: "Venerdì", orario: "15:30 - 16:30" },
+		{ giorno: t("employees.lunedi"), orario: "8:00 - 12:00" },
+		{ giorno: t("employees.martedi"), orario: "10:00 - 12:00 / 15:00 - 18:30" },
+		{ giorno: t("employees.mercoledi"), orario: "8:00 - 9:00" },
+		{ giorno: t("employees.giovedi"), orario: "15:30 - 16:30" },
 	];
 
 	const permessi = [
@@ -69,22 +72,22 @@ const UserEmployeePage = () => {
 							className="w-12 h-12 rounded-full object-cover"
 						/>
 						<h2 className={`text-lg font-bold leading-none ${textColor}`}>
-							Anagrafica
+							{t("employees.anagrafica")}
 						</h2>
 					</div>
 
 					<div className={`flex flex-col gap-2 ${textColor}`}>
 						<div>
-							<strong>Nome:</strong> {anagrafica.nome}
+							<strong>{t("employees.nome")}:</strong> {anagrafica.nome}
 						</div>
 						<div>
-							<strong>Ruolo:</strong> {anagrafica.ruolo}
+							<strong>{t("employees.ruolo")}:</strong> {anagrafica.ruolo}
 						</div>
 						<div>
-							<strong>Matricola:</strong> {anagrafica.matricola}
+							<strong>{t("employees.matricola")}:</strong> {anagrafica.matricola}
 						</div>
 						<div>
-							<strong>Email:</strong> {anagrafica.email}
+							<strong>{t("employees.email")}:</strong> {anagrafica.email}
 						</div>
 					</div>
 				</div>
@@ -94,18 +97,18 @@ const UserEmployeePage = () => {
 					<div className="flex items-center gap-3 mb-4">
 						<img src={calIcon} alt="Calendario" className="w-6 h-6" />
 						<h2 className={`text-lg font-bold leading-none ${textColor}`}>
-							Turni settimanali
+							{t("employees.turniSettimanali")}
 						</h2>
 					</div>
 
 					<div className={`flex flex-col gap-2 ${textColor}`}>
-						{turni.map((t, i) => (
+						{turni.map((tu, i) => (
 							<div
 								key={i}
 								className="grid grid-cols-2 bg-white/40 dark:bg-glass-strong rounded-full p-2 shadow-sm"
 							>
-								<span className="font-semibold">{t.giorno}</span>
-								<span>{t.orario}</span>
+								<span className="font-semibold">{tu.giorno}</span>
+								<span>{tu.orario}</span>
 							</div>
 						))}
 					</div>
@@ -118,15 +121,15 @@ const UserEmployeePage = () => {
 				<div className="flex-1 glass-card p-6 shadow-md">
 					<div className="flex items-center gap-3 mb-4">
 						<h2 className={`text-lg font-bold leading-none ${textColor}`}>
-							Ferie
+							{t("employees.ferie")}
 						</h2>
 					</div>
 
 					<div className="grid grid-cols-2 bg-white/40 dark:bg-glass-strong rounded-full p-2 shadow-sm">
-						<span className="font-semibold">Dal 30.12.25 al 7.01.26</span>
+						<span className="font-semibold">{t("employees.dal")} 30.12.25 {t("employees.al")} 7.01.26</span>
 					</div>
 
-					<button className={buttonClass}>Richiesta ferie</button>
+					<button className={buttonClass}>{t("employees.richiestaFerie")}</button>
 				</div>
 
 				{/* PERMESSI */}
@@ -134,7 +137,7 @@ const UserEmployeePage = () => {
 					<div className="flex items-center gap-3 mb-4">
 						<img src={calIcon} alt="Calendario" className="w-6 h-6" />
 						<h2 className={`text-lg font-bold leading-none ${textColor}`}>
-							Permessi
+							{t("employees.permessi")}
 						</h2>
 					</div>
 
@@ -150,7 +153,7 @@ const UserEmployeePage = () => {
 						))}
 					</div>
 
-					<button className={buttonClass}>Richiesta permessi</button>
+					<button className={buttonClass}>{t("employees.richiestaPermessi")}</button>
 				</div>
 			</div>
 		</div>

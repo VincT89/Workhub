@@ -1,4 +1,5 @@
 import { useTheme } from "../../context/ThemeContext";
+import { useLanguage } from "../../context/LanguageContext";
 import deleteUserIcon from "../../assets/icons/Delete User Male.png";
 import groupIcon from "../../assets/icons/Group.png";
 import qualityIcon from "../../assets/icons/Quality.png";
@@ -8,16 +9,15 @@ import { useNavigate } from "react-router-dom";
 const CustomersPage = () => {
 	const navigate = useNavigate();
 	const { theme } = useTheme();
+	const { t } = useLanguage();
 
-	const textColor =
-		theme === "dark" ? "text-[var(--text-dark)]" : "text-[var(--text-light)]";
-	const subTextColor = theme === "dark" ? "text-gray-300" : "text-gray-600";
+	const textColor = theme === "dark" ? "text-[var(--text-dark)]" : "text-[var(--text-light)]"; // determina il colore del testo in base al tema corrente
 
 	const stats = [
-		{ label: "Clienti Attivi", value: 20, icon: groupIcon },
-		{ label: "Clienti Inattivi", value: 4, icon: deleteUserIcon },
-		{ label: "Clienti Premium", value: 12, icon: qualityIcon },
-		{ label: "Clienti Mensili", value: 400, icon: staffIcon },
+		{ label: t("customers.clientiAttivi"), value: 20, icon: groupIcon },
+		{ label: t("customers.clientiInattivi"), value: 4, icon: deleteUserIcon },
+		{ label: t("customers.ClientiPremium"), value: 12, icon: qualityIcon },
+		{ label: t("customers.clientiMensili"), value: 400, icon: staffIcon },
 	];
 
 	const customers = [
@@ -66,16 +66,16 @@ const CustomersPage = () => {
 
 			{/* tabella fatta di div per garantire la compatibilità con le classi tailwind*/}
 			<div className="glass-card p-6 shadow-md flex flex-col gap-2">
-				<h2 className={`text-lg font-bold mb-2 ${textColor}`}>Lista Clienti</h2>
+				<h2 className={`text-lg font-bold mb-2 ${textColor}`}>{t("customers.listaClienti")}</h2>
 
 				{/* header della tabella */}
 				<div className={`grid grid-cols-6 font-bold text-sm mb-2 ${textColor}`}>
-					<span>Nome completo</span>
-					<span>Indirizzo</span>
-					<span>Email</span>
-					<span>Telefono</span>
-					<span>Livello</span>
-					<span>Saldo Punti</span>
+					<span>{t("customers.nomeCompleto")}</span>
+					<span>{t("customers.indirizzo")}</span>
+					<span>{t("customers.email")}</span>
+					<span>{t("customers.telefono")}</span>
+					<span>{t("customers.livello")}</span>
+					<span>{t("customers.saldoPunti")}</span>
         </div>
         
 				{/* lista dei clienti con map per non doverli scrivere uno ad uno manualmente. li rende dinamici e crea un div per ogni elemtno dell'array customers*/}

@@ -1,4 +1,5 @@
 import { useTheme } from "../../../context/ThemeContext.jsx";
+import { useLanguage } from "../../../context/LanguageContext.jsx";
 import deleteUserIcon from "../../../assets/icons/Delete User Male.png";
 import groupIcon from "../../../assets/icons/Group.png";
 import qualityIcon from "../../../assets/icons/Quality.png";
@@ -9,16 +10,15 @@ import { useNavigate } from "react-router-dom";
 const AdminEmployeePage = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { t } = useLanguage();
 
-  const textColor =
-    theme === "dark" ? "text-[var(--text-dark)]" : "text-[var(--text-light)]";
-  const subTextColor = theme === "dark" ? "text-gray-300" : "text-gray-600";
+  const textColor = theme === "dark" ? "text-[var(--text-dark)]" : "text-[var(--text-light)]";
 
   const stats = [
-    { label: "Dipendenti Attivi", value: 20, icon: groupIcon },
-    { label: "Dipendenti Inattivi", value: 4, icon: deleteUserIcon },
-    { label: "Dipendenti Senior", value: 12, icon: qualityIcon },
-    { label: "Totale Dipendenti", value: 400, icon: staffIcon },
+    { label: t("employees.dipendentiAttivi"), value: 20, icon: groupIcon },
+    { label: t("employees.dipendentiInattivi"), value: 4, icon: deleteUserIcon },
+    { label: t("employees.dipendentiSenior"), value: 12, icon: qualityIcon },
+    { label: t("employees.totaleDipendenti"), value: 400, icon: staffIcon },
   ];
 
   const employee = [
@@ -92,18 +92,18 @@ const AdminEmployeePage = () => {
 
       {/* --------- SEZIONE 2: LISTA DIPENDENTI --------- */}
       <div className="glass-card p-6 shadow-md flex flex-col gap-4 h-full">
-        <h2 className={`text-lg font-bold ${textColor}`}>Lista Dipendenti</h2>
+        <h2 className={`text-lg font-bold ${textColor}`}>{t("employees.listaDipendenti")}</h2>
 
         {/* intestazione tabella */}
         <div
           className={`grid grid-cols-5 text-center font-bold text-sm mb-2 ${textColor}`}
         >
-          <span>Foto</span>
-          <span>Nome</span>
-          <span>Ruolo</span>
-          <span>Email</span>
-          <span>Matricola</span>
-        
+          <span>{t("employees.foto")}</span>
+          <span>{t("employees.nome")}</span>
+          <span>{t("employees.ruolo")}</span>
+          <span>{t("employees.email")}</span>
+          <span>{t("employees.matricola")}</span>
+
         </div>
 
         {/* corpo tabella */}

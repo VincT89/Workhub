@@ -7,7 +7,7 @@ import bgDark from "../assets/bg/bgScuro.png";
 import iconlogo from "../assets/logo/iconaLogo.png";
 import BottomNav from "../components/BottomNav";
 import Sidebar from "../components/Sidebar";
-import Topbar from "../components/TopBar";
+import Topbar from "../components/Topbar";
 
 const PublicLayout = () => {
   const { theme } = useTheme();

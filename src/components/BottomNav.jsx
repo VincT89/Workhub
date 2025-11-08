@@ -3,22 +3,24 @@ import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { permissions } from "../utils/permission";
 import { useTheme } from "../context/ThemeContext";
+import { useLanguage } from "../context/LanguageContext";
 
 const BottomNav = () => {
-  const user = useSelector((state) => state.auth.user);
-  const role = user?.ruolo || "user";
-  const allowed = permissions[role]?.canView || [];
-  const { theme } = useTheme();
+  const user = useSelector((state) => state.auth.user); // Ottieni l'utente dallo stato Redux
+  const role = user?.ruolo || "user"; // se l'utente non è definito, usa "user" come ruolo predefinito
+  const allowed = permissions[role]?.canView || []; // Ottieni le rotte consentite in base al ruolo in permissions.js
+  const { theme } = useTheme(); // Prende il tema corrente dal context 
+  const { t } = useLanguage(); // Prende la funzione di traduzione dal context
 
   const routes = [
-    { to: "dashboard", label: "Dashboard", key: "dashboard" },
-    { to: "clienti", label: "Clienti", key: "clienti" },
-    { to: "personale", label: "Personale", key: "personale" },
-    { to: "magazzino", label: "Magazzino", key: "magazzino" },
-    { to: "ticket", label: "Ticketing", key: "ticket" },
+    { to: "dashboard", label: t("bottomNav.dashboard"), key: "dashboard" },
+    { to: "clienti", label: t("bottomNav.clienti"), key: "clienti" },
+    { to: "personale", label: t("bottomNav.personale"), key: "personale" },
+    { to: "magazzino", label: t("bottomNav.magazzino"), key: "magazzino" },
+    { to: "ticket", label: t("bottomNav.ticket"), key: "ticket" },
   ];
 
-  const visibleRoutes = routes.filter((r) => allowed.includes(r.key));
+  const visibleRoutes = routes.filter((r) => allowed.includes(r.key)); // Filtra le rotte in base ai permessi
 
   return (
     <nav className="bottomnav transition-colors duration-300">

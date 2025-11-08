@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext"; 
+import { useLanguage } from "../../context/LanguageContext";
 import warehouseIcon from "../../assets/icons/Warehouse.png";
 import boxIcon from "../../assets/icons/box.png";
 import listIcon from "../../assets/icons/list.png";
@@ -8,19 +9,20 @@ import packageIcon from "../../assets/icons/Package.png";
 import ideaIcon from "../../assets/icons/Idea.png";
 
 const WarehousePage = () => {
-    const { theme } = useTheme();
+  const { theme } = useTheme();
+  const { t } = useLanguage();
 
   const textColor =
-    theme === "dark" ? "text-(--text-dark)" : "text-primary";
+    theme === "dark" ? "text-(--text-dark)" : "text-primary"; // determina il colore del testo in base al tema corrente
   const subTextColor =
-    theme === "dark" ? "text-gray-300" : "text-gray-600";
+    theme === "dark" ? "text-gray-300" : "text-gray-600"; // determina il colore del sottotesto in base al tema corrente
 
   // ---- CREO L'ARRAY PER RENDERE I BOX DINAMICI ----
   const buttons = [
-    { label: "Prodotti totali", number: 240, icon: packageIcon },
-    { label: "Ordini in uscita", number: 32, icon: deliverytimeIcon },
-    { label: "Articoli sotto soglia", number: 12, icon: boxIcon },
-    { label: "Depositi", number: 3, icon: warehouseIcon },
+    { label: t("warehouse.prodottiTotali"), number: 240, icon: packageIcon },
+    { label: t("warehouse.ordiniInUscita"), number: 32, icon: deliverytimeIcon },
+    { label: t("warehouse.articoliSottoSoglia"), number: 12, icon: boxIcon },
+    { label: t("warehouse.depositi"), number: 3, icon: warehouseIcon },
   ];
 
   // ---- CREO L'ARRAY PER LA LISTA PRODOTTI ----
@@ -61,19 +63,19 @@ const WarehousePage = () => {
         {/* ---------- SEZIONE 2: LISTA PRODOTTI (DINAMICA + LINK) ---------- */}
         <div className="flex-gap-2">
           <img src={listIcon} alt="Lista prodotti" className="w-6 h-6" />
-          <h2 className={`text-lg font-bold ${textColor}`}>Lista prodotti</h2>
+          <h2 className={`text-lg font-bold ${textColor}`}>{t("warehouse.listaProdotti")}</h2>
         </div>
 
         {/* Contenitore lista con scrollbar personalizzata */}
         <div className="glass-card p-6 shadow-md flex flex-col gap-2">
           {/* Header tabella */}
           <div className={`grid grid-cols-6 font-bold text-sm mb-2 ${textColor}`}>
-            <span>N.Art</span>
-            <span>Nome</span>
-            <span>Categoria</span>
-            <span>Q.ta disponibile</span>
-            <span>Soglia riordino</span>
-            <span>Note</span>
+            <span>{t("warehouse.numeroArticoli")}</span>
+            <span>{t("warehouse.nome")}</span>
+            <span>{t("warehouse.categoria")}</span>
+            <span>{t("warehouse.qtaDisponibile")}</span>
+            <span>{t("warehouse.sogliaRiordino")}</span>
+            <span>{t("warehouse.note")}</span>
           </div>
 
           {/* Scroll dinamico con classe riutilizzabile */}
@@ -103,11 +105,11 @@ const WarehousePage = () => {
           <div className="flex-1 glass-card p-6 shadow-md">
             <div className="flex-gap-2 mb-4">
               <img src={warehouseIcon} alt="Depositi" className="w-6 h-6" />
-              <h2 className={`text-lg font-bold ${textColor}`}>Depositi</h2>
+              <h2 className={`text-lg font-bold ${textColor}`}>{t("warehouse.depositi")}</h2>
             </div>
             <div className="grid grid-cols-6 bg-white/40 dark:bg-glass-strong rounded-full p-2 shadow-sm">
               <span className={`col-span-6 w-full whitespace-nowrap overflow-hidden text-ellipsis ${subTextColor}`}>
-                Nessuna nota
+                {t("warehouse.nessunaNota")}
               </span>
             </div>
           </div>
@@ -116,11 +118,11 @@ const WarehousePage = () => {
           <div className="flex-1 glass-card p-6 shadow-md">
             <div className="flex-gap-2 mb-4">
               <img src={ideaIcon} alt="Icona suggerimenti" className="w-6 h-6" />
-              <h2 className={`text-lg font-bold ${textColor}`}>Suggerimenti riordino articoli</h2>
+              <h2 className={`text-lg font-bold ${textColor}`}>{t("warehouse.suggerimenti")}</h2>
             </div>
             <div className="grid grid-cols-6 bg-white/40 dark:bg-glass-strong rounded-full p-2 shadow-sm">
               <span className={`col-span-6 w-full whitespace-nowrap overflow-hidden text-ellipsis ${subTextColor}`}>
-                Nessuna nota
+                {t("warehouse.nessunaNota")}
               </span>
             </div>
           </div>

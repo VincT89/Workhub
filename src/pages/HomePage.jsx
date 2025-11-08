@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { useLanguage } from "../context/LanguageContext";
 import bgLight from "../assets/bg/bg.jpg";
 import bgDark from "../assets/bg/bgScuro.png";
 import Logo from "../assets/logo/LogoCompletoSenzaBG.png";
@@ -8,6 +9,8 @@ import Logo from "../assets/logo/LogoCompletoSenzaBG.png";
 const HomePage = () => {
   const { theme } = useTheme();
   const backgroundImage = theme === "dark" ? bgDark : bgLight;
+
+  const { t } = useLanguage();
 
   // Colori dinamici corretti
   const textColor = theme === "dark" ? "text-[var(--text-dark)]" : "text-[var(--color-primary)]";
@@ -37,7 +40,7 @@ const HomePage = () => {
                     text-2xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-normal 
                     leading-normal whitespace-nowrap transition-colors duration-500 ${textColor}`}
       >
-        Simplify your workflow
+        {t("home.slogan")}
       </h1>
 
       {/* Bottone di Benvenuto */}
@@ -50,7 +53,7 @@ const HomePage = () => {
                     cursor-pointer transition-colors duration-300 
                     ${textColor} hover:bg-glass-strong`}
       >
-        Benvenuto
+        {t("home.benvenuto")}
       </Link>
     </main>
   );

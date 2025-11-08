@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAsync } from "../store/feature/authSlice";
 import { useTheme } from "../context/ThemeContext";
+import { useLanguage } from "../context/LanguageContext";
 
 import bgLight from "../assets/bg/bg.jpg";
 import bgDark from "../assets/bg/bgScuro.png";
@@ -14,6 +15,8 @@ const LoginPage = () => {
 	const { theme } = useTheme();
 	const backgroundImage = theme === "dark" ? bgDark : bgLight;
 
+	const { t } = useLanguage();
+
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
@@ -24,7 +27,7 @@ const LoginPage = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		dispatch(loginAsync({ username, password }));
+		dispatch(loginAsync({ username, password })); // Dispatch dell'azione di login con username e password per l'autenticazione
 	};
 
 	useEffect(() => {
@@ -68,14 +71,13 @@ const LoginPage = () => {
 						<span
 							className={`text-4xl font-bold font-nunito uppercase transition-colors duration-500 ${textColor}`}
 						>
-							Entra nel gestionale
+							{t("login.titolo")}
 						</span>
 						<br />
 						<span
 							className={`font-bold font-nunito text-sm transition-colors duration-500 ${textColor}`}
 						>
-							Credenziali demo: <br />
-							admin/admin123 - supervisor/supervisor123 - user/user123
+							{t("login.credenzialiDemo")}
 						</span>
 					</div>
 				</div>
@@ -86,7 +88,7 @@ const LoginPage = () => {
 				{/* Username */}
 				<div className="m-4 w-full sm:w-[486px]">
 					<label htmlFor="username" className={`label-base ${textColor}`}>
-						Username
+						{t("login.username")}
 					</label>
 					<input
 						id="username"
@@ -103,7 +105,7 @@ const LoginPage = () => {
 				{/* Password */}
 				<div className="relative m-2 w-full sm:w-[486px]">
 					<label htmlFor="password" className={`label-base ${textColor}`}>
-						Password
+						{t("login.password")}
 					</label>
 					<input
 						id="password"
@@ -134,7 +136,7 @@ const LoginPage = () => {
 						to="/settings"
 						className={`text-link transition-colors duration-500 ${textColor}`}
 					>
-						Dimenticato la password?
+						{t("login.dimenticato")}
 					</Link>
 				</div>
 
@@ -152,10 +154,10 @@ const LoginPage = () => {
 				>
 					{loading ? (
 						<span className="loading-text text-[18px] font-nunito">
-							Accesso in corso...
+							{t("login.accessoInCorso")}
 						</span>
 					) : (
-						<span className="text-[20px] font-bold font-nunito">Accedi</span>
+						<span className="text-[20px] font-bold font-nunito">{t("login.bottoneAccedi")}</span>
 					)}
 				</button>
 			</form>

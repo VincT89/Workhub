@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
+import { useLanguage } from "../../context/LanguageContext";
 import jsPDF from "jspdf"; // per usare l'export pdf
 
 import sampleProduct from "../../assets/sample-product.jpg";
@@ -16,6 +17,8 @@ const Product = () => {
 	// ---- THEME CONTEXT (per dark mode dinamica) ----
 	const { theme } = useTheme();
 	const textColor = theme === "dark" ? "text-(--text-dark)" : "text-primary";
+
+	const { t } = useLanguage();
 
 	// ---- OTTENGO L'ID DEL PRODOTTO DALL'URL ----
 	const { id } = useParams();
@@ -56,19 +59,19 @@ const Product = () => {
 
 	// ----ARRAY CON BOX DATI ----
 	const buttons = [
-		{ label: "Prodotti totali", number: 240, icon: packageIcon },
-		{ label: "Ordini in uscita", number: 32, icon: packageIcon },
-		{ label: "Articoli sotto soglia", number: 12, icon: boxIcon },
-		{ label: "Depositi", number: 3, icon: warehouseIcon },
+		{ label: t("warehouse.prodottiTotali"), number: 240, icon: packageIcon },
+		{ label: t("warehouse.ordiniInUscita"), number: 32, icon: packageIcon },
+		{ label: t("warehouse.articoliSottoSoglia"), number: 12, icon: boxIcon },
+		{ label: t("warehouse.depositi"), number: 3, icon: warehouseIcon },
 	];
 
 	// ---- SE IL PRODOTTO NON ESISTE MOSTRO UN MESSAGGIO ----
 	if (!prodotto) {
 		return (
 			<div className="w-full min-h-screen flex flex-col justify-center items-center glass-card text-primary dark:text-(--text-dark)">
-				<h2 className="text-2xl font-bold mb-4">Prodotto non trovato</h2>
+				<h2 className="text-2xl font-bold mb-4">{t("warehouse.prodottoNonTrovato")}</h2>
 				<Link to="/magazzino" className="btn-primary">
-					Torna alla lista
+					{t("warehouse.tornaAllaLista")}
 				</Link>
 			</div>
 		);
@@ -194,7 +197,7 @@ const Product = () => {
 						{/* ---- BOTTONE TORNA ALLA LISTA ---- */}
 						<div className="flex items-center justify-between mt-4">
 							<span className={`${textColor} font-semibold mr-4`}>
-								Torna alla lista prodotti
+								{t("warehouse.tornaAllaLista")}
 							</span>
 							<Link
 								to="/magazzino"
@@ -212,27 +215,27 @@ const Product = () => {
 						{/* DIV A SINISTRA: INFO PRODOTTO */}
 						<div className={`flex flex-col gap-3 ${textColor}`}>
 							<div className="grid grid-cols-2 bg-white/40 dark:bg-glass-strong rounded-full p-2 shadow-sm">
-								<span>ID</span>
+								<span>{t("warehouse.id")}</span>
 								<span>{prodotto.id}</span>
 							</div>
 							<div className="grid grid-cols-2 bg-white/40 dark:bg-glass-strong rounded-full p-2 shadow-sm">
-								<span>Nome</span>
+								<span>{t("warehouse.nome")}</span>
 								<span>{prodotto.nome}</span>
 							</div>
 							<div className="grid grid-cols-2 bg-white/40 dark:bg-glass-strong rounded-full p-2 shadow-sm">
-								<span>Categoria</span>
+								<span>{t("warehouse.categoria")}</span>
 								<span>{prodotto.categoria}</span>
 							</div>
 							<div className="grid grid-cols-2 bg-white/40 dark:bg-glass-strong rounded-full p-2 shadow-sm">
-								<span>Quantità</span>
+								<span>{t("warehouse.quantita")}</span>
 								<span>{prodotto.quantita}</span>
 							</div>
 							<div className="grid grid-cols-2 bg-white/40 dark:bg-glass-strong rounded-full p-2 shadow-sm">
-								<span>Soglia riordino</span>
+								<span>{t("warehouse.sogliaRiordino")}</span>
 								<span>{prodotto.soglia}</span>
 							</div>
 							<div className="grid grid-cols-2 bg-white/40 dark:bg-glass-strong rounded-full p-2 shadow-sm">
-								<span>Note</span>
+								<span>{t("warehouse.note")}</span>
 								<span>{prodotto.note}</span>
 							</div>
 						</div>
@@ -274,7 +277,7 @@ const Product = () => {
                 */}
 						<div className="grid grid-cols-6 bg-white/40 dark:bg-glass-strong rounded-full p-2 shadow-sm">
 							<span className="col-span-6 w-full whitespace-nowrap overflow-hidden text-ellipsis">
-								{prodotto.quantita} pezzi
+								{prodotto.quantita} {t("warehouse.pezzi")}
 							</span>
 						</div>
 					</div>
@@ -282,14 +285,14 @@ const Product = () => {
 					{/* BOTTONI: RICHIEDI RIORDINO ED ESPORTA PDF */}
 					<div className="flex-1 flex flex-col justify-center items-center gap-4">
 						<button className="btn-primary w-3/4 text-center">
-							Richiedi riordino
+							{t("warehouse.richiediRiordino")}
 						</button>
 
 						<button
 							onClick={handleExportPDF}
 							className="btn-primary bg-white/50 text-primary hover:bg-white/80 dark:bg-glass-strong dark:text-(--text-dark) w-3/4 text-center"
 						>
-							Esporta PDF
+							{t("warehouse.esportaPDF")}
 						</button>
 					</div>
 				</div>
@@ -299,16 +302,16 @@ const Product = () => {
 					<div className="flex items-center gap-2 mb-4">
 						<img src={ideaIcon} alt="Storico" className="w-6 h-6" />
 						<h2 className={`text-lg font-bold ${textColor}`}>
-							Storico movimenti
+							{t("warehouse.storicoMovimenti")}
 						</h2>
 					</div>
 
 					<div
 						className={`grid grid-cols-3 font-bold text-sm mb-2 ${textColor}`}
 					>
-						<span>Data</span>
-						<span>Tipo</span>
-						<span>Quantità</span>
+						<span>{t("warehouse.data")}</span>
+						<span>{t("warehouse.tipo")}</span>
+						<span>{t("warehouse.quantita")}</span>
 					</div>
 
 					{storico.map((m, i) => (
@@ -328,12 +331,12 @@ const Product = () => {
 					<div className="flex items-center gap-2 mb-4">
 						<img src={boxIcon} alt="Note e allegati" className="w-6 h-6" />
 						<h2 className={`text-lg font-bold ${textColor}`}>
-							Note e allegati
+							{t("warehouse.noteAllegati")}
 						</h2>
 					</div>
 
 					<textarea
-						placeholder="Aggiungi una nota..."
+						placeholder={t("warehouse.aggiungiNota")}
 						className="w-full bg-white/40 dark:bg-glass-strong rounded-xl p-3 mb-4 shadow-sm
              text-primary dark:text-white
              placeholder:text-primary dark:placeholder:text-white
@@ -360,7 +363,7 @@ const Product = () => {
 						{/* Input invisibile, gestito solo da JS */}
 						<input type="file" className="hidden" />
 						{/* Testo personalizzabile */}
-						Scegli file
+						{t("warehouse.scegliFile")}
 					</label>
 				</div>
 			</div>
