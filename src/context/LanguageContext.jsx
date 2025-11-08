@@ -69,21 +69,20 @@ export const LanguageProvider = ({ children }) => {
   // Funzione per tradurre
   const t = (key) => {
    
-    const [section, term] = key.split("."); // separa sezione e termine dalla chiave e li usa per cercare la traduzione
-    const dictionary = translations[lang][section]; // ottiene il dizionario della sezione cioe login, dashboard, ecc. e lo usa per cercare la traduzione
+    const [section, term] = key.split("."); // / divide la chiave in sezione e termine in modo da poter cercare la traduzione corretta
+    const dictionary = translations[lang][section]; // translations[lang] restituisce tutte le traduzioni per la lingua corrente e poi accede alla sezione specifica - translations è l'oggetto che contiene tutte le traduzioni nella cartella languages del progetto
 
     if (dictionary && dictionary[term]) return dictionary[term]; // se trova la traduzione la ritorna
 
-    // Se non trova la traduzione nella sezione specifica, prova a cercarla nella sezione "common"
-    return translations[lang].common[key] || key;
+    return key; // se non trova la traduzione ritorna la chiave originale
   };
 
   useEffect(() => {
-    document.documentElement.lang = lang; // Imposta l'attributo lang dell'elemento HTML con la lingua corrente
+    document.documentElement.lang = lang; // Imposta l'attributo lang dell'elemento HTML con la lingua corrente ogni volta che cambia la lingua
   }, [lang]);
 
   return (
-    <LanguageContext.Provider value={{ lang, toggleLang, t }}>
+    <LanguageContext.Provider value={{ lang, toggleLang, t }}> 
       {children}
     </LanguageContext.Provider>
   );

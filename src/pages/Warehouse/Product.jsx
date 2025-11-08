@@ -268,7 +268,7 @@ const Product = () => {
 								className="w-6 h-6"
 							/>
 							<h2 className={`text-lg font-bold ${textColor}`}>
-								Disponibilità
+								{t("warehouse.disponibilita")}
 							</h2>
 						</div>
 
