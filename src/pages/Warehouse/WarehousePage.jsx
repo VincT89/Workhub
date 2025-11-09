@@ -79,7 +79,7 @@ const WarehousePage = () => {
           </div>
 
           {/* Scroll dinamico con classe riutilizzabile */}
-          <div className="h-64 pr-2 space-y-2 custom-scrollbar">
+          <div className="h-64 pr-2 space-y-2 overflow-y-auto custom-scrollbar">
             {products.map((p) => (
               <Link
                 key={p.id}

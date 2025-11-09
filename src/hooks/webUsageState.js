@@ -1,66 +1,19 @@
-// hooks di altin per poter popolare il Ticketing con dati di esempio
-export const desktopOS = [
-  {
-    label: 'Windows',
-    value: 72.72,
-  },
-  {
-    label: 'OS X',
-    value: 16.38,
-  },
-  {
-    label: 'Linux',
-    value: 3.83,
-  },
-  {
-    label: 'Chrome OS',
-    value: 2.42,
-  },
-  {
-    label: 'Other',
-    value: 4.65,
-  },
-];
+const webUsageState = {
+  series: [
+    {
+      id: 'sync',
+      data: [
+        { value: 3, label: 'A', id: 'A' },
+        { value: 4, label: 'B', id: 'B' },
+        { value: 1, label: 'C', id: 'C' },
+        { value: 6, label: 'D', id: 'D' },
+        { value: 5, label: 'E', id: 'E' },
+      ],
+      highlightScope: { highlight: 'item', fade: 'global' },
+    },
+  ],
+  height: 150,
+  hideLegend: true,
+};
 
-export const mobileOS = [
-  {
-    label: 'Android',
-    value: 70.48,
-  },
-  {
-    label: 'iOS',
-    value: 28.8,
-  },
-  {
-    label: 'Other',
-    value: 0.71,
-  },
-];
-
-export const platforms = [
-  {
-    label: 'Mobile',
-    value: 59.12,
-  },
-  {
-    label: 'Desktop',
-    value: 40.88,
-  },
-];
-
-const normalize = (v, v2) => Number.parseFloat(((v * v2) / 100).toFixed(2)); // normalizza i valori in base alla percentuale della piattaforma
-
-export const mobileAndDesktopOS = [
-  ...mobileOS.map((v) => ({
-    ...v,
-    label: v.label === 'Other' ? 'Other (Mobile)' : v.label,
-    value: normalize(v.value, platforms[0].value),
-  })),
-  ...desktopOS.map((v) => ({
-    ...v,
-    label: v.label === 'Other' ? 'Other (Desktop)' : v.label,
-    value: normalize(v.value, platforms[1].value),
-  })),
-];
-
-export const valueFormatter = (item) => `${item.value}%`; // formatta i valori con il simbolo di percentuale
+export default webUsageState;

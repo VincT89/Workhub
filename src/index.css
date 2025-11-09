@@ -162,18 +162,37 @@ body {
   scrollbar-width: thin;
   scrollbar-color: var(--color-primary) transparent;
 }
+
+/* WebKit (Chrome, Edge, Safari) */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 30px;
+  width: 10px; /* puoi regolare la larghezza */
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: var(--color-primary);
   border-radius: 9999px;
   opacity: 0.6;
   transition: background-color 0.3s ease, opacity 0.3s ease;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   opacity: 0.8;
 }
+
+.custom-scrollbar::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-button:single-button {
+  display: none;
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+
+
 
 /* Scrollbar invisibile ma attiva */
 .custom-scrollbar-invisible {
@@ -183,6 +202,7 @@ body {
 .custom-scrollbar-invisible::-webkit-scrollbar {
   display: none;
 }
+
 
 /* ======================================================
    DARK MODE
@@ -231,13 +251,19 @@ body {
   @apply bg-glass-strong border-white/30 text-(--text-dark);
 }
 
-/* Scrollbar */
+/* ======================================================
+   SCROLLBAR — DARK MODE
+   ====================================================== */
 .dark .custom-scrollbar {
-  scrollbar-color: var(--color-glass-strong) transparent;
+  scrollbar-color: var(--text-dark) transparent;
 }
+
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: var(--color-glass-strong);
+  background-color: var(--text-dark);
+  opacity: 0.5;
 }
+
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  opacity: 0.8;
   background-color: var(--color-primary);
 }

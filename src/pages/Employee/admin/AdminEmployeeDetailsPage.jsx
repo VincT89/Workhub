@@ -10,68 +10,116 @@ const AdminPage = () => {
 
 	const textColor = theme === "dark" ? "text-[var(--text-dark)]" : "text-[var(--text-light)]";
 
-	// ---- ARRAY BOTTONI INFO ----
-	const topButtons = [
-		{ label: t("employees.giorniLavorati"), number: 215 },
-		{ label: t("employees.ferieResidue"), number: 12 },
-		{ label: t("employees.permessi"), number: 2 },
-		{ label: t("employees.attivita"), number: 47 },
-	];
+   // ---- ARRAY BOTTONI INFO ----
+    const topButtons = [
+        { label: "Giorni lavorati", number: 215 },
+        { label: "Ferie residue", number: 12 },
+        { label: "Permessi", number: 2 },
+        { label: "Attività", number: 47 },
+    ];
 
-	// ---- DATI ANAGRAFICI  ----
-	const anagrafica = {
-		nome: "Jennifer Bianchi",
-		ruolo: "Responsabile reparto",
-		matricola: "ADD-0001",
-		email: "jennifer.bianchi@example.com",
-		foto: employeeImg,
-	};
+    // ---- DATI ANAGRAFICI  ----
+    const anagrafica = {
+        nome: "Jennifer Bianchi",
+        ruolo: "Responsabile reparto",
+        matricola: "ADD-0001",
+        email: "jennifer.bianchi@example.com",
+        foto: employeeImg
+    };
 
-	// ----- TURNI DI ESEMPIO ------
-	const turni = [
-		{ giorno: t("employees.lunedi"), orario: "8:00 - 12:00" },
-		{ giorno: t("employees.martedi"), orario: "10:00 - 12:00 / 15:00 - 18:30" },
-		{ giorno: t("employees.mercoledi"), orario: "8:00 - 9:00" },
-		{ giorno: t("employees.giovedi"), orario: "15:30 - 16:30" },
-	];
+    // ----- TURNI DI ESEMPIO ------
+    const turni = [
+        { giorno: "Lunedì", orario: "8:00 - 12:00" },
+        { giorno: "Martedì", orario: "10:00 - 12:00 / 15:00 - 18:30" },
+        { giorno: "Giovedì", orario: "8:00 - 9:00" },
+        { giorno: "Venerdì", orario: "15:30 - 16:30" },
+    ];
 
-	// Array statico di richieste di permesso usato come valore iniziale.
-	// Ogni elemento è un oggetto che rappresenta una singola richiesta.
-	const richiestepermessi = [
-		{ matricola: "ADD-0025", data: "05.06.2026", orario: "8:00 - 18:00" },
-		{ matricola: "ADD-0025", data: "28.12.25", orario: "10:00 - 12:00" },
-	];
+   // ----- PERMESSI DI ESEMPIO ------
+const richiestepermessi = [
+    { matricola: "ADD-0025", data: "05.06.2026", orario: "8:00 - 18:00" },
+    { matricola: "ADD-0025", data: "28.12.25", orario: "10:00 - 12:00" },
+];
 
-	// Stato dinamico dei permessi
-	// React.useState crea uno state locale al componente:
-	// - permessi: contiene l'array attuale di richieste mostrato in UI
-	// - setPermessi: funzione per aggiornare lo stato
-	// Inizializziamo lo stato con l'array richiestepermessi.
-	const [permessi, setPermessi] = React.useState(richiestepermessi);
+/* Stato dinamico dei permessi-
+ React.useState crea uno state locale al componente per aggiorna automaticamente 
+ il rendering del componente ogni volta che chiamiamo setPermessi():
+ - permessi: contiene l'array attuale di richieste mostrato in UI (copia dinamica di richiestaPermessi)
+ - setPermessi: funzione per aggiornare lo stato di "permessi"
+ Inizializziamo lo stato con l'array richiestepermessi. */
+const [permessi, setPermessi] = React.useState(richiestepermessi);
 
-	// Funzione per accettare una richiesta
-	// Parametri:
-	// - richiesta: l'oggetto della singola richiesta cliccata (es. { matricola, data, orario })
-	// - nome: il nome della persona (passato per logging o per azioni che richiedono il nome)
-	// Azione: stampa in console e rimuove la richiesta dallo stato in modo immutabile.
-	const handleAccetta = (richiesta, nome) => {
-		// Log utile durante lo sviluppo per sapere quale richiesta è stata accettata
-		console.log("Accettata:", nome, richiesta);
+// Funzione per accettare una richiesta.
+// Parametri:
+// - richiesta: l'oggetto della singola richiesta cliccata 
+// - nome: il nome della persona 
+// Azione: stampa in console e rimuove la richiesta dallo stato in modo immutabile.
+const handleAccetta = (richiesta, nome) => {
+    // Log utile durante lo sviluppo per sapere quale richiesta è stata accettata
+    console.log("Accettata:", nome, richiesta);
 
-		// Aggiorniamo lo stato permessi rimuovendo l'elemento "richiesta".
-		// Usiamo la forma con funzione (prev => ...) perché è la forma sicura
-		// quando l'aggiornamento dipende dallo stato precedente.
-		// prev è il valore precedente di `permessi`.
-		// filter crea un nuovo array contenente solo gli elementi che non sono === alla richiesta.
-		setPermessi((prev) => prev.filter((r) => r !== richiesta));
-	};
+    /* Aggiorniamo lo stato permessi rimuovendo l'elemento "richiesta".
+    Usiamo la forma con funzione (prev => ...) perché è la forma sicura quando l'aggiornamento dipende 
+    dallo stato precedente: se più aggiornamenti arrivano quasi contemporaneamente, 
+    potrebbe apparire uno stato “vecchio” e perderemmo modifiche.
+    
+    prev è il valore precedente di `permessi`.
+    filter crea un nuovo array contenente solo gli elementi che non sono === alla richiesta,
+    così scompaiono gli oggetti accettati (richieste accettate)
+     */
+    setPermessi(prev => prev.filter(r => r !== richiesta));
+};
 
-	// Funzione per rifiutare una richiesta
-	// Stessa logica di handleAccetta: log + rimozione dalla lista.
-	const handleRifiuta = (richiesta, nome) => {
-		console.log("Rifiutata:", nome, richiesta);
-		setPermessi((prev) => prev.filter((r) => r !== richiesta));
-	};
+// Funzione per rifiutare una richiesta
+// Stessa logica di handleAccetta: log + rimozione dalla lista.
+const handleRifiuta = (richiesta, nome) => {
+    console.log("Rifiutata:", nome, richiesta);
+    setPermessi(prev => prev.filter(r => r !== richiesta));
+};
+
+
+
+ // ----- FERIE DI ESEMPIO ------
+ const richiesteferie = [
+    { matricola: "ADD-0025", inizio: "05.06.2026", fine: "12.06.2026" },
+    { matricola: "ADD-0025", inizio: "28.12.25", fine: "03.01.26" },
+];
+
+/* Stato dinamico dei permessi-
+ React.useState crea uno state locale al componente per aggiorna automaticamente 
+ il rendering del componente ogni volta che chiamiamo setPermessi():
+ - permessi: contiene l'array attuale di richieste mostrato in UI (copia dinamica di richiestaPermessi)
+ - setPermessi: funzione per aggiornare lo stato di "permessi"
+ Inizializziamo lo stato con l'array richiestepermessi. */
+const [ferie, setFerie] = React.useState(richiesteferie);
+
+// Funzione per accettare una richiesta.
+// Parametri:
+// - richiesta: l'oggetto della singola richiesta cliccata 
+// - nome: il nome della persona 
+// Azione: stampa in console e rimuove la richiesta dallo stato in modo immutabile.
+const handleAccettaFerie = (richiestaf, nome) => {
+    // Log utile durante lo sviluppo per sapere quale richiesta è stata accettata
+    console.log("Accettata:", nome, richiestaf);
+
+    /* Aggiorniamo lo stato permessi rimuovendo l'elemento "richiesta".
+    Usiamo la forma con funzione (prev => ...) perché è la forma sicura quando l'aggiornamento dipende 
+    dallo stato precedente: se più aggiornamenti arrivano quasi contemporaneamente, 
+    potrebbe apparire uno stato “vecchio” e perderemmo modifiche.
+    
+    prev è il valore precedente di `permessi`.
+    filter crea un nuovo array contenente solo gli elementi che non sono === alla richiesta,
+    così scompaiono gli oggetti accettati (richieste accettate)
+     */
+    setFerie(prev => prev.filter(rf => rf !== richiestaf));
+};
+
+// Funzione per rifiutare una richiesta
+// Stessa logica di handleAccetta: log + rimozione dalla lista.
+const handleRifiutaFerie = (richiestaf, nome) => {
+    console.log("Rifiutata:", nome, richiestaf);
+    setFerie(prev => prev.filter(rf => rf !== richiestaf));
+};
 
 	return (
 		<>
@@ -161,26 +209,26 @@ const AdminPage = () => {
 						</div>
 
 						<div className="flex flex-col gap-2">
-							{permessi.map((tu, i) => (
+							{ferie.map((fe, i) => (
 								<div
 									key={i}
 									className="flex items-center justify-between bg-white/40 dark:bg-glass-strong rounded-full p-2 shadow-sm"
 								>
 									{/* Dati richiesta */}
 									<span className={`font-semibold ${textColor}`}>
-										{anagrafica.nome} - {tu.data}, {tu.orario}
+										{anagrafica.nome} - { t("employees.dal")} {fe.inizio}, {t("employees.al")} {fe.fine}
 									</span>
 
 									{/* Pulsanti */}
 									<div className="flex gap-2">
 										<button
-											onClick={() => handleAccetta(tu, anagrafica.nome)}
+											onClick={() => handleAccettaFerie(fe, anagrafica.nome)}
 											className="bg-primary text-(--text-dark) text-sm px-3 py-1 rounded-full hover:bg-primary-dark font-semibold transition"
 										>
 											{t("employees.accetta")}
 										</button>
 										<button
-											onClick={() => handleRifiuta(tu, anagrafica.nome)}
+											onClick={() => handleRifiutaFerie(fe, anagrafica.nome)}
 											className="bg-white/30 dark:bg-glass text-primary text-sm px-3 py-1 rounded-full hover:bg-white/50 dark:hover:bg-primary/20 font-semibold transition"
 										>
 											{t("employees.rifiuta")}
