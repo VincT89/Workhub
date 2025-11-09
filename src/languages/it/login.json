@@ -5,5 +5,7 @@
   "bottoneAccedi": "Accedi",
   "dimenticato": "Hai dimenticato la password?",
   "credenzialiDemo": "Credenziali demo: admin/admin123 - supervisor/supervisor123 - user/user123",
-  "accessoInCorso": "Accesso in corso..."
+  "accessoInCorso": "Accesso in corso...",
+  "erroreGenerico": "Si è verificato un errore. Riprova più tardi.",
+  "erroreCredenziali": "Username o password non validi."
 }

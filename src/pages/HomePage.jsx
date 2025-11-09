@@ -2,18 +2,20 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
+
 import bgLight from "../assets/bg/bg.jpg";
 import bgDark from "../assets/bg/bgScuro.png";
 import Logo from "../assets/logo/LogoCompletoSenzaBG.png";
 
 const HomePage = () => {
   const { theme } = useTheme();
-  const backgroundImage = theme === "dark" ? bgDark : bgLight;
-
   const { t } = useLanguage();
 
-  // Colori dinamici corretti
-  const textColor = theme === "dark" ? "text-[var(--text-dark)]" : "text-[var(--color-primary)]";
+  const backgroundImage = theme === "dark" ? bgDark : bgLight;
+  const textColor =
+    theme === "dark"
+      ? "text-[var(--text-dark)]"
+      : "text-[var(--color-primary)]";
 
   return (
     <main className="main-container bg-white dark:bg-black transition-colors duration-500">

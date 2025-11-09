@@ -1,28 +1,37 @@
-import { personale } from "./mock/personaleMock";
+// src/api/authApi.js
+import { personnel } from "../api/mock/personaleMock";
 
+// LOGIN MOCK
 export const fakeLogin = async (username, password) => {
-  await new Promise((res) => setTimeout(res, 400)); // Simula una chiamata API
+  let storedUsers = JSON.parse(localStorage.getItem("users"));
 
-  // Trova l'utente fake
-  const user = personale.find(
+  // Se non esistono utenti, inizializza dal mock
+  if (!storedUsers) {
+    storedUsers = [...personnel];
+    localStorage.setItem("users", JSON.stringify(storedUsers));
+  }
+
+  // Cerca utente
+  const user = storedUsers.find(
     (u) => u.username === username && u.password === password
   );
 
-  if (!user) {
-    throw new Error("Credenziali non valide");
-  }
+  if (!user) throw new Error("Credenziali non valide");
 
-  
-  const role = user.ruolo?.toLowerCase() || "user";
-
-  // Ritorna un oggetto coerente con l'authSlice
   return {
-    token: "FAKE_JWT_" + role.toUpperCase(),
-    user: {
-      id: user.id,
-      nome: user.nome,
-      cognome: user.cognome,
-      ruolo: role, 
-    },
+    token: "fake-jwt-token",
+    user,
   };
+};
+
+// AGGIORNA PASSWORD (mantiene il role)
+export const updateUserPassword = (username, newPassword) => {
+  const users = JSON.parse(localStorage.getItem("users")) || [];
+  const index = users.findIndex((u) => u.username === username);
+
+  if (index === -1) return false;
+
+  users[index].password = newPassword;
+  localStorage.setItem("users", JSON.stringify(users));
+  return true;
 };

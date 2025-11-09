@@ -23,7 +23,7 @@ const TicketPage = () => {
     theme === "dark"
       ? "text-[var(--text-dark)]"
       : "text-[var(--color-primary)]";
-  const subTextColor = theme === "dark" ? "text-white" : "text-gray-600";
+  const subTextColor = theme === "dark" ? "text-white" : "text-primary";
 
   // ---- ARRAY BOX RIASSUNTIVI ----
   const stats = [
@@ -100,7 +100,7 @@ const TicketPage = () => {
                 recentTickets.map((item, i) => (
                   <div
                     key={i}
-                    className="col-span-1 bg-white/60 rounded-xl shadow p-2 mb-3 flex flex-col text-center"
+                    className="col-span-1 bg-white/40 rounded-xl shadow p-2 mb-3 flex flex-col text-center"
                   >
                     {item}
                   </div>
@@ -131,7 +131,7 @@ const TicketPage = () => {
                 staffReplies.map((item, i) => (
                   <div
                     key={i}
-                    className="col-span-1 bg-white/60 rounded-xl shadow p-2 mb-3 flex flex-col text-center"
+                    className="col-span-1 bg-white/40 rounded-xl shadow p-2 mb-3 flex flex-col text-center"
                   >
                     {item}
                   </div>

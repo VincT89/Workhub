@@ -5,5 +5,7 @@
   "bottoneAccedi": "Login",
   "dimenticato": "Forgot your password?",
   "credenzialiDemo": "Demo credentials: admin/admin123 - supervisor/supervisor123 - user/user123",
-  "accessoInCorso": "Logging in..."
+  "accessoInCorso": "Logging in...",
+  "erroreGenerico": "An error occurred. Please try again later.",
+  "erroreCredenziali": "Invalid username or password."
 }

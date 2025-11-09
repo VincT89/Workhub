@@ -1,23 +1,23 @@
-// Dati di esempio per il personale
-export const personale = [
+// src/mocks/personalMock.js
+export const personnel = [
   {
     id: 1,
-    nome: "Mario Rossi",
-    ruolo: "admin",
+    name: "Mario Rossi",
+    role: "admin",
     username: "admin",
     password: "admin123",
   },
   {
     id: 2,
-    nome: "Lucia Bianchi",
-    ruolo: "supervisor",
+    name: "Lucia Bianchi",
+    role: "supervisor",
     username: "supervisor",
     password: "supervisor123",
   },
   {
     id: 3,
-    nome: "Paolo Verdi",
-    ruolo: "user",
+    name: "Paolo Verdi",
+    role: "user",
     username: "user",
     password: "user123",
   },
