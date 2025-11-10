@@ -355,7 +355,7 @@ const Product = () => {
               bg-white/50 dark:bg-glass-strong 
               text-primary dark:text-white 
               font-semibold px-4 py-2 rounded-full shadow-md 
-              hover:bg-white/80 dark:hover:bg-primary 
+              hover:bg-white/80 dark:hover:bg-primary/20 
               transition-all duration-200`}
 					>
 						{/* Icona piccola */}
