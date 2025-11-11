@@ -12,7 +12,7 @@ const AdminEmployeePage = () => {
   const { theme } = useTheme();
   const { t } = useLanguage();
 
-  const textColor = theme === "dark" ? "text-[var(--text-dark)]" : "text-[var(--text-light)]";
+  const textColor = theme === "dark" ? "text-white" : "text-[#134a7b]";
 
   const stats = [
     { label: t("employees.dipendentiAttivi"), value: 20, icon: groupIcon },
@@ -71,13 +71,18 @@ const AdminEmployeePage = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col gap-8 overflow-y-auto custom-scrollbar-invisible">
+    <div className="w-full h-full flex flex-col gap-8 overflow-y-auto scrollbar-thin scrollbar-thumb-[#1C62A0] scrollbar-track-transparent">
       {/* --------- SEZIONE 1: BOX STATISTICHE --------- */}
-      <section className="section-base grid-4">
+      <section className="grid grid-cols-4 gap-6 mb-6 w-full transition-colors duration-500">
         {stats.map((item, index) => (
           <div
             key={index}
-            className={`widget-box glass-card ${textColor} justify-between`}
+            className={`
+              flex items-center justify-between rounded-[25px] px-4 py-3
+              backdrop-blur-sm border border-white/30 shadow-md transition-colors duration-500
+              ${theme === "dark" ? "bg-white/20" : "bg-white/20"}
+              ${textColor}
+            `}
           >
             <div className="flex items-center gap-2">
               <img src={item.icon} alt={item.label} className="w-6 h-6" />
@@ -91,8 +96,16 @@ const AdminEmployeePage = () => {
       </section>
 
       {/* --------- SEZIONE 2: LISTA DIPENDENTI --------- */}
-      <div className="glass-card p-6 shadow-md flex flex-col gap-4 h-full">
-        <h2 className={`text-lg font-bold ${textColor}`}>{t("employees.listaDipendenti")}</h2>
+      <div
+        className={`
+          p-6 flex flex-col gap-4 h-full rounded-[25px] border border-white/30 shadow-md
+          backdrop-blur-sm transition duration-500
+          ${theme === "dark" ? "bg-white/20" : "bg-white/20"}
+        `}
+      >
+        <h2 className={`text-lg font-bold ${textColor}`}>
+          {t("employees.listaDipendenti")}
+        </h2>
 
         {/* intestazione tabella */}
         <div
@@ -103,18 +116,21 @@ const AdminEmployeePage = () => {
           <span>{t("employees.ruolo")}</span>
           <span>{t("employees.email")}</span>
           <span>{t("employees.matricola")}</span>
-
         </div>
 
         {/* corpo tabella */}
-        <div className="h-full pr-2 space-y-2 custom-scrollbar overflow-y-auto">
+        <div className="h-full pr-2 space-y-2 overflow-y-auto scrollbar-thin scrollbar-thumb-[#1C62A0] scrollbar-track-transparent">
           {employee.map((e, i) => (
             <div
               key={i}
               onClick={() => openEmployeeDetails(e)}
-              className="grid grid-cols-5 text-center items-center bg-white/40 dark:bg-glass-strong
-              rounded-full p-2 shadow-sm transition duration-200 
-              hover:bg-white/70 dark:hover:bg-primary/20 cursor-pointer"
+              className={`
+                grid grid-cols-5 text-center items-center p-2 rounded-full shadow-sm
+                transition duration-200 cursor-pointer
+                ${theme === "dark"
+                  ? "bg-white/20 hover:bg-[#1C62A0]/20"
+                  : "bg-white/40 hover:bg-white/70"}
+              `}
             >
               <div className="flex justify-center">
                 <img
@@ -124,7 +140,7 @@ const AdminEmployeePage = () => {
                 />
               </div>
               <span className="truncate whitespace-nowrap overflow-hidden">{e.nome}</span>
-              <span className="truncate whitespce-nowrap overflow-hidden">{e.ruolo}</span>
+              <span className="truncate whitespace-nowrap overflow-hidden">{e.ruolo}</span>
               <span className="truncate whitespace-nowrap overflow-hidden">
                 {e.email}
               </span>

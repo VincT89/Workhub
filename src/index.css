@@ -107,6 +107,7 @@ body {
          border border-white/30 p-4 shadow-md;
 }
 
+
 /* ======================================================
    UTILITIES E GRIGLIE
    ====================================================== */
@@ -153,6 +154,7 @@ body {
   @apply flex items-center justify-between rounded-xl px-4 py-3 shadow;
 }
 
+
 /* ======================================================
    SCROLLBAR PERSONALIZZATA
    ====================================================== */
@@ -184,13 +186,13 @@ body {
   display: none;
   width: 0;
   height: 0;
-  background: transparent;
+  background: none;
 }
 .custom-scrollbar::-webkit-scrollbar-button:single-button {
   display: none;
   width: 0;
   height: 0;
-  background: transparent;
+  background: none;
 }
 
 
@@ -268,3 +270,5 @@ body {
   opacity: 0.8;
   background-color: var(--color-primary);
 }
+
+

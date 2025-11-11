@@ -34,22 +34,26 @@ const LoginPage = () => {
     dispatch(loginAsync({ username, password }));
   };
 
-  const textColor =
-    theme === "dark"
-      ? "text-[var(--text-dark)]"
-      : "text-[var(--color-primary)]";
+  const textColor = theme === "dark" ? "text-white" : "text-[#1C62A0]";
 
   return (
-    <main className="main-container bg-white dark:bg-black transition-colors duration-500">
+    <main
+      className="w-full min-h-screen flex justify-center items-center relative overflow-hidden 
+      bg-white dark:bg-black transition-colors duration-500"
+    >
       {/* Background */}
       <img
-        className="overlay-full z-0 transition-opacity duration-700"
+        className="absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-700"
         alt="Background"
         src={backgroundImage}
       />
 
       {/* Liquid Glass Overlay */}
-      <div className="absolute w-[822px] h-[659px] glass-card" />
+      <div
+        className="absolute w-[822px] h-[659px] 
+        bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm 
+        border border-white/30 dark:border-white/40 rounded-[25px] shadow-md"
+      />
 
       {/* Content */}
       <form
@@ -78,11 +82,18 @@ const LoginPage = () => {
         </div>
 
         {/* Errore */}
-        {error && <p className="error-text">{error}</p>}
+        {error && (
+          <p className="text-[#DC2626] font-bold mt-3 animate-pulse">
+            {error}
+          </p>
+        )}
 
         {/* Username */}
         <div className="m-4 w-full sm:w-[486px]">
-          <label htmlFor="username" className={`label-base ${textColor}`}>
+          <label
+            htmlFor="username"
+            className={`block text-[18px] font-bold font-nunito mb-2 ${textColor}`}
+          >
             {t("login.username")}
           </label>
           <input
@@ -93,13 +104,18 @@ const LoginPage = () => {
             required
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="input-base"
+            className="w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 rounded-2xl px-4 
+            shadow-md outline-none text-[#134a7b] font-semibold focus:ring-2 focus:ring-[#1C62A0]/50 
+            placeholder:text-[#134a7b]/70 transition-all duration-200"
           />
         </div>
 
         {/* Password */}
         <div className="relative m-2 w-full sm:w-[486px]">
-          <label htmlFor="password" className={`label-base ${textColor}`}>
+          <label
+            htmlFor="password"
+            className={`block text-[18px] font-bold font-nunito mb-2 ${textColor}`}
+          >
             {t("login.password")}
           </label>
           <input
@@ -110,7 +126,9 @@ const LoginPage = () => {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="input-base pr-12"
+            className="w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 
+            rounded-2xl px-4 pr-12 shadow-md outline-none text-[#134a7b] font-semibold 
+            focus:ring-2 focus:ring-[#1C62A0]/50 placeholder:text-[#134a7b]/70 transition-all duration-200"
           />
           <button
             type="button"
@@ -129,7 +147,7 @@ const LoginPage = () => {
         <div className="w-[63%] flex justify-end">
           <Link
             to="/settings"
-            className={`text-link transition-colors duration-500 ${textColor}`}
+            className={`text-[14px] font-bold font-nunito hover:text-[#155293] transition ${textColor}`}
           >
             {t("login.dimenticato")}
           </Link>
@@ -139,16 +157,17 @@ const LoginPage = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full sm:w-[225px] h-[50px] mt-8 font-bold font-nunito rounded-2xl shadow-md border border-neutral-50/20 transition-colors duration-300
-          ${loading ? "opacity-60 cursor-not-allowed" : ""}
-          ${
+          className={`w-full sm:w-[225px] h-[50px] mt-8 font-bold font-nunito rounded-2xl shadow-md border border-white/20 
+          transition-colors duration-300 ${
+            loading ? "opacity-60 cursor-not-allowed" : ""
+          } ${
             theme === "dark"
-              ? "bg-(--text-dark) text-primary hover:bg-primary hover:text-(--text-dark)"
-              : "bg-primary text-(--text-dark) hover:bg-primary-dark"
+              ? "bg-white text-[#1C62A0] hover:bg-[#1C62A0] hover:text-white"
+              : "bg-[#1C62A0] text-white hover:bg-[#155293]"
           }`}
         >
           {loading ? (
-            <span className="loading-text text-[18px] font-nunito">
+            <span className="animate-pulse text-white font-bold text-[18px] font-nunito">
               {t("login.accessoInCorso")}
             </span>
           ) : (

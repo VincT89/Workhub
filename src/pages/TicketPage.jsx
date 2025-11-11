@@ -19,11 +19,8 @@ const TicketPage = () => {
   const [highlightedItem, setHighLightedItem] = useState(null);
 
   // ---- COLORI DINAMICI ----
-  const textColor =
-    theme === "dark"
-      ? "text-[var(--text-dark)]"
-      : "text-[var(--color-primary)]";
-  const subTextColor = theme === "dark" ? "text-white" : "text-primary";
+  const textColor = theme === "dark" ? "text-white" : "text-[#1C62A0]";
+  const subTextColor = theme === "dark" ? "text-white" : "text-[#134a7b]";
 
   // ---- ARRAY BOX RIASSUNTIVI ----
   const stats = [
@@ -34,17 +31,40 @@ const TicketPage = () => {
   ];
 
   // ---- DATI FITTIZI ----
-  const recentTickets = ["Prova", "Prova", "Prova", "Prova", "Prova", "Prova", "Prova", "Prova"];
-  const staffReplies = ["Prova", "Prova", "Prova", "Prova", "Prova", "Prova", "Prova", "Prova"];
+  const recentTickets = [
+    "Prova",
+    "Prova",
+    "Prova",
+    "Prova",
+    "Prova",
+    "Prova",
+    "Prova",
+    "Prova",
+  ];
+  const staffReplies = [
+    "Prova",
+    "Prova",
+    "Prova",
+    "Prova",
+    "Prova",
+    "Prova",
+    "Prova",
+    "Prova",
+  ];
 
   return (
-    <div className="w-full  flex flex-col overflow-y-auto custom-scrollbar-invisible">
+    <div
+      className="w-full flex flex-col overflow-y-auto 
+      [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+    >
       {/* --------- SEZIONE 1: BOX RIASSUNTIVI --------- */}
-      <section className="section-base grid-4">
+      <section className="grid grid-cols-4 gap-4 mb-6 w-full transition-colors duration-500">
         {stats.map((box, index) => (
           <div
             key={index}
-            className={`widget-box glass-card ${textColor} justify-between`}
+            className={`flex items-center justify-between rounded-xl px-4 py-3 shadow 
+              bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm 
+              border border-white/30 dark:border-white/40 ${textColor}`}
           >
             <div className="flex items-center gap-2">
               <img src={box.icon} alt={box.label} className="w-6 h-6" />
@@ -58,9 +78,13 @@ const TicketPage = () => {
       </section>
 
       {/* --------- SEZIONE 2: CONTENUTO PRINCIPALE --------- */}
-      <section className="grid-3 w-full section-base h-[480px]">
+      <section className="grid grid-cols-3 gap-6 w-full transition-colors duration-500 h-[480px]">
         {/* Report Ticket */}
-        <div className={`card-base glass-card flex flex-col ${textColor}`}>
+        <div
+          className={`p-4 rounded-xl shadow bg-[#fafafa20] dark:bg-[#fafafa30] 
+          backdrop-blur-sm border border-white/30 dark:border-white/40 
+          flex flex-col ${textColor}`}
+        >
           <h2 className="font-semibold mb-3 flex items-center gap-2">
             <img
               src={reportIcon}
@@ -81,9 +105,12 @@ const TicketPage = () => {
         </div>
 
         {/* Ticket Recenti + Risposte Personale */}
-        <div className="col-span-2 grid grid-rows-2 section-gap">
+        <div className="col-span-2 grid grid-rows-2 gap-4">
           {/* Ticket Recenti */}
-          <div className={`card-base glass-card ${textColor}`}>
+          <div
+            className={`p-4 rounded-xl shadow bg-[#fafafa20] dark:bg-[#fafafa30] 
+            backdrop-blur-sm border border-white/30 dark:border-white/40 ${textColor}`}
+          >
             <h2 className="font-semibold mb-3 flex items-center gap-2">
               <img
                 src={listIcon}
@@ -94,13 +121,16 @@ const TicketPage = () => {
             </h2>
 
             <div
-              className={`flex flex-col h-[172px] overflow-y-auto pr-2 custom-scrollbar ${subTextColor}`}
+              className={`flex flex-col h-[172px] overflow-y-auto pr-2 ${subTextColor}
+              scrollbar-thin scrollbar-thumb-[#1C62A0] scrollbar-track-transparent hover:scrollbar-thumb-[#155293]
+              dark:scrollbar-thumb-white/50 dark:hover:scrollbar-thumb-[#1C62A0]`}
             >
               {recentTickets.length > 0 ? (
                 recentTickets.map((item, i) => (
                   <div
                     key={i}
-                    className="col-span-1 bg-white/40 rounded-xl shadow p-2 mb-3 flex flex-col text-center"
+                    className="col-span-1 bg-white/40 dark:bg-[#fafafa30] 
+                    rounded-xl shadow p-2 mb-3 flex flex-col text-center"
                   >
                     {item}
                   </div>
@@ -114,7 +144,10 @@ const TicketPage = () => {
           </div>
 
           {/* Risposte Personale */}
-          <div className={`card-base glass-card ${textColor}`}>
+          <div
+            className={`p-4 rounded-xl shadow bg-[#fafafa20] dark:bg-[#fafafa30] 
+            backdrop-blur-sm border border-white/30 dark:border-white/40 ${textColor}`}
+          >
             <h2 className="font-semibold mb-3 flex items-center gap-2">
               <img
                 src={personalIcon}
@@ -125,13 +158,16 @@ const TicketPage = () => {
             </h2>
 
             <div
-              className={`flex flex-col h-[172px] overflow-y-auto pr-2 custom-scrollbar ${subTextColor}`}
+              className={`flex flex-col h-[172px] overflow-y-auto pr-2 ${subTextColor}
+              scrollbar-thin scrollbar-thumb-[#1C62A0] scrollbar-track-transparent hover:scrollbar-thumb-[#155293]
+              dark:scrollbar-thumb-white/50 dark:hover:scrollbar-thumb-[#1C62A0]`}
             >
               {staffReplies.length > 0 ? (
                 staffReplies.map((item, i) => (
                   <div
                     key={i}
-                    className="col-span-1 bg-white/40 rounded-xl shadow p-2 mb-3 flex flex-col text-center"
+                    className="col-span-1 bg-white/40 dark:bg-[#fafafa30] 
+                    rounded-xl shadow p-2 mb-3 flex flex-col text-center"
                   >
                     {item}
                   </div>
