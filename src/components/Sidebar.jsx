@@ -31,7 +31,7 @@ const Sidebar = () => {
 					className={({ isActive }) =>
 						`
       relative flex items-center justify-center text-center
-      font-semibold text-[17px] tracking-wide py-3 rounded-full mx-2
+      font-semibold text-[17px] tracking-wide py-3 rounded-xl mx-2
       transition-all duration-300 select-none shadow-sm border
       ${
 				isActive

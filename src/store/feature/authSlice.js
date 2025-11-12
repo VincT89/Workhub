@@ -1,4 +1,3 @@
-// src/store/feature/authSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fakeLogin, updateUserPassword } from "../../api/authApi";
 import { personnel } from "../../api/mock/personaleMock";
@@ -52,26 +51,38 @@ const authSlice = createSlice({
 
 		// --- AGGIORNA CREDENZIALI ---
 		updateCredentials: (state, action) => {
-			const { username, password } = action.payload;
+			const { username, password, name, email, role } = action.payload;
+			users[index] = {
+				...users[index],
+				username,
+				password,
+				name,
+				email,
+				role,
+			};
 
-			const users = JSON.parse(localStorage.getItem("users")) || [];
-			const index = users.findIndex((u) => u.username === username);
+			// Recupera utenti dal localStorage o mock
+			const users = JSON.parse(localStorage.getItem("users")) || [...personnel];
+			const index = users.findIndex((u) => u.username === state.user?.username);
 
 			if (index === -1) {
 				alert("Utente non trovato");
 				return;
 			}
 
-			// Mantiene il ruolo originale
-			const role = users[index].role;
-			users[index].password = password;
-			localStorage.setItem("users", JSON.stringify(users));
+			// Mantiene tutti i campi, incluso id, email, role, name
+			users[index] = {
+				...users[index],
+				username,
+				password,
+			};
 
+			localStorage.setItem("users", JSON.stringify(users));
 			updateUserPassword(username, password);
 
-			// Aggiorna Redux e localStorage
+			// Aggiorna Redux + localStorage
 			state.user = { ...users[index] };
-			state.role = role;
+			state.role = users[index].role;
 
 			const newAuth = {
 				user: state.user,

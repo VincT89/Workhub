@@ -26,7 +26,7 @@ function App() {
 			{/* ROTTE PUBBLICHE */}
 			<Route path="/" element={<HomePage />} />
 			<Route path="/login" element={<LoginPage />} />
-			<Route path="/settings" element={<SettingsPage />} />
+			
 
 			{/* ROTTE PROTETTE */}
 			<Route path="/" element={<PublicLayout />}>
@@ -40,6 +40,7 @@ function App() {
 				<Route path="ticket" element={<TicketPage />} />
 				<Route path="ordini" element={<OrderPage />} />
 				<Route path="resi" element={<ReturnPage />} />
+				<Route path="settings" element={<SettingsPage />} />
 			</Route>
 		</Routes>
 	);

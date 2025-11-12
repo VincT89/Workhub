@@ -25,12 +25,16 @@ const LoginPage = () => {
 
   const backgroundImage = theme === "dark" ? bgDark : bgLight;
 
+  // Se già loggato → vai alla dashboard
   useEffect(() => {
-    if (token && user) navigate("/dashboard");
+    if (token && user) {
+      navigate("/dashboard");
+    }
   }, [token, user, navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!username || !password) return;
     dispatch(loginAsync({ username, password }));
   };
 
@@ -41,29 +45,34 @@ const LoginPage = () => {
       className="w-full min-h-screen flex justify-center items-center relative overflow-hidden 
       bg-white dark:bg-black transition-colors duration-500"
     >
-      {/* Background */}
+      {/* ===== Background ===== */}
       <img
         className="absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-700"
         alt="Background"
         src={backgroundImage}
       />
 
-      {/* Liquid Glass Overlay */}
+      {/* ===== Liquid Glass Overlay ===== */}
       <div
         className="absolute w-[822px] h-[659px] 
         bg-[#fafafa20] dark:bg-[#fafafa20] backdrop-blur-sm 
-        border border-white/30 dark:border-white/90 rounded-[25px] shadow-md"
+        border border-white/30 dark:border-white/90 rounded-[25px] shadow-md
+        transition-all duration-700"
       />
 
-      {/* Content */}
+      {/* ===== Form Content ===== */}
       <form
         onSubmit={handleSubmit}
         className="relative flex flex-col items-center z-20 w-full max-w-[822px] px-6 py-10"
       >
-        {/* Logo + Titolo */}
+        {/* === Logo + Titolo === */}
         <div className="flex items-center justify-center gap-8 mb-8">
           <Link to="/">
-            <img className="w-[120px] h-[114px]" alt="Logo" src={iconLogo} />
+            <img
+              className="w-[120px] h-[114px] drop-shadow-lg transition-transform duration-300 hover:scale-105"
+              alt="Logo"
+              src={iconLogo}
+            />
           </Link>
 
           <div className="text-center">
@@ -81,14 +90,14 @@ const LoginPage = () => {
           </div>
         </div>
 
-        {/* Errore */}
+        {/* === Messaggio di errore === */}
         {error && (
-          <p className="text-[#DC2626] font-bold mt-3 animate-pulse">
+          <p className="text-[#DC2626] font-bold mt-3 mb-2 animate-pulse text-center">
             {error}
           </p>
         )}
 
-        {/* Username */}
+        {/* === Username === */}
         <div className="m-4 w-full sm:w-[486px]">
           <label
             htmlFor="username"
@@ -104,13 +113,13 @@ const LoginPage = () => {
             required
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 rounded-2xl px-4 
-            shadow-md outline-none text-[#134a7b] font-semibold focus:ring-2 focus:ring-[#1C62A0]/50 
-            placeholder:text-[#134a7b]/70 transition-all duration-200"
+            className="w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 
+            rounded-2xl px-4 shadow-md outline-none text-[#134a7b] font-semibold 
+            focus:ring-2 focus:ring-[#1C62A0]/50 placeholder:text-[#134a7b]/70 transition-all duration-200"
           />
         </div>
 
-        {/* Password */}
+        {/* === Password === */}
         <div className="relative m-2 w-full sm:w-[486px]">
           <label
             htmlFor="password"
@@ -143,7 +152,7 @@ const LoginPage = () => {
           </button>
         </div>
 
-        {/* Password dimenticata */}
+        {/* === Password dimenticata === */}
         <div className="w-[63%] flex justify-end">
           <Link
             to="/settings"
@@ -153,12 +162,12 @@ const LoginPage = () => {
           </Link>
         </div>
 
-        {/* Bottone Login */}
+        {/* === Bottone Login === */}
         <button
           type="submit"
           disabled={loading}
           className={`w-full sm:w-[225px] h-[50px] mt-8 font-bold font-nunito rounded-2xl shadow-md border border-white/20 
-          transition-colors duration-300 ${
+          transition-all duration-500 ${
             loading ? "opacity-60 cursor-not-allowed" : ""
           } ${
             theme === "dark"

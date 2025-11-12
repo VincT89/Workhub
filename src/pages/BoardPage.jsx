@@ -22,8 +22,8 @@ const BoardPage = () => {
 			<div className="grid grid-cols-4 gap-4 mb-6 w-full transition-colors duration-500">
 				<div
 					className={`flex items-center justify-between rounded-xl px-4 py-3 shadow 
-					bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm 
-					border border-white/30 dark:border-white/40 ${textColor}`}
+					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
+					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
 						<img
@@ -38,8 +38,8 @@ const BoardPage = () => {
 
 				<div
 					className={`flex items-center justify-between rounded-xl px-4 py-3 shadow 
-					bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm 
-					border border-white/30 dark:border-white/40 ${textColor}`}
+					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
+					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
 						<img
@@ -54,8 +54,8 @@ const BoardPage = () => {
 
 				<div
 					className={`flex items-center justify-between rounded-xl px-4 py-3 shadow 
-					bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm 
-					border border-white/30 dark:border-white/40 ${textColor}`}
+					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
+					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
 						<img
@@ -70,8 +70,8 @@ const BoardPage = () => {
 
 				<div
 					className={`flex items-center justify-between rounded-xl px-4 py-3 shadow 
-					bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm 
-					border border-white/30 dark:border-white/40 ${textColor}`}
+					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
+					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
 						<img
@@ -89,8 +89,8 @@ const BoardPage = () => {
 			<div className="grid grid-cols-3 gap-6 mb-6 w-full transition-colors duration-500">
 				<div
 					className={`flex gap-4 justify-start items-start p-6 
-					bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm 
-					border border-white/30 dark:border-white/40 rounded-[25px] shadow-md 
+					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
+					border border-white/30 dark:border-white/80 rounded-[25px] shadow-md 
 					${textColor} h-[230px]`}
 				>
 					<img
@@ -105,8 +105,8 @@ const BoardPage = () => {
 
 				<div
 					className={`flex gap-4 justify-start items-start p-6 
-					bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm 
-					border border-white/30 dark:border-white/40 rounded-[25px] shadow-md 
+					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
+					border border-white/30 dark:border-white/80 rounded-[25px] shadow-md 
 					${textColor} h-[230px]`}
 				>
 					<img
@@ -121,8 +121,8 @@ const BoardPage = () => {
 
 				<div
 					className={`flex gap-4 justify-start items-start p-6 
-					bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm 
-					border border-white/30 dark:border-white/40 rounded-[25px] shadow-md 
+					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
+					border border-white/30 dark:border-white/80 rounded-[25px] shadow-md 
 					${textColor} h-[230px]`}
 				>
 					<img
@@ -138,7 +138,7 @@ const BoardPage = () => {
 
 			{/* Riga 3: 1 box - Calendario */}
 			<div
-				className="bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm border border-white/30 dark:border-white/40
+				className="bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm border border-white/30 dark:border-white/80
 				rounded-[25px] p-6 shadow-md flex items-start gap-4 mb-2 min-h-[400px]"
 			>
 				<img

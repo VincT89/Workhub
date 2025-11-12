@@ -1,4 +1,3 @@
-// src/api/authApi.js
 import { personnel } from "../api/mock/personaleMock";
 
 // LOGIN MOCK
