@@ -5,7 +5,7 @@ import { loginAsync } from "../store/feature/authSlice";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 
-import bgLight from "../assets/bg/bg.jpg";
+import bgLight from "../assets/bg/bg3.jpg";
 import bgDark from "../assets/bg/bgScuro.png";
 import iconLogo from "../assets/logo/iconaLogo.png";
 import eyes from "../assets/icons/closedEye.png";
@@ -51,8 +51,8 @@ const LoginPage = () => {
       {/* Liquid Glass Overlay */}
       <div
         className="absolute w-[822px] h-[659px] 
-        bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm 
-        border border-white/30 dark:border-white/40 rounded-[25px] shadow-md"
+        bg-[#fafafa20] dark:bg-[#fafafa20] backdrop-blur-sm 
+        border border-white/30 dark:border-white/90 rounded-[25px] shadow-md"
       />
 
       {/* Content */}

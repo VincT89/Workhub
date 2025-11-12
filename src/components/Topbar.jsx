@@ -27,11 +27,11 @@ const TopBar = () => {
   return (
     <header
       className={`
-        absolute top-[6%] left-[10%] w-[80%] h-[75px]
+        absolute top-[2%] left-[15%] w-[90%] h-[75px]
         flex items-center justify-between px-8 py-2
-        rounded-full shadow-md border border-white/40
-        backdrop-blur-sm transition-colors duration-300
-        ${theme === "dark" ? "bg-white/20 text-white" : "bg-white/30 text-[#134a7b]"}
+        rounded-full shadow-lg border border-white/90
+        backdrop-blur-lg transition-colors duration-300 
+        ${theme === "dark" ? "bg-white/20 text-white" : "bg-white/10 text-[#134a7b]"}
       `}
     >
       {/* USER SECTION */}

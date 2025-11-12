@@ -28,9 +28,7 @@ const HomePage = () => {
 
       {/* Liquid Glass Overlay */}
       <div
-        className="absolute top-[5%] left-[10%] w-[80%] max-w-[90%] h-[90%]
-        bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm border border-white/30 dark:border-white/40 
-        rounded-[25px] shadow-md transition-all duration-500"
+        className="absolute top-[5%] left-[10%] w-[80%] max-w-[90%] h-[90%] transition-all duration-500"
       />
 
       {/* Logo */}
@@ -57,6 +55,7 @@ const HomePage = () => {
         className={`absolute top-[68%] left-1/2 transform -translate-x-1/2 
         w-[80%] max-w-[350px] h-14 flex items-center justify-center 
         text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-normal leading-normal 
+        bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm border rounded-full border-white/30 dark:border-white/90 
         cursor-pointer transition-colors duration-300 ${textColor} 
         hover:bg-[#fafafa30] hover:backdrop-blur-md hover:shadow-lg hover:rounded-full`}
       >

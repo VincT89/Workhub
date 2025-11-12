@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 // Importa tutte le traduzioni
-import itBottomNav from "../languages/it/bottomNav.json";
+import itSidebar from "../languages/it/sidebar.json";
 import itTopbar from "../languages/it/topbar.json";
 import itLogin from "../languages/it/login.json";
 import itDashboard from "../languages/it/dashboard.json";
@@ -12,7 +12,7 @@ import itTicketing from "../languages/it/ticketing.json";
 import itSettings from "../languages/it/settings.json";
 import itHome from "../languages/it/home.json";
 
-import enBottomNav from "../languages/en/bottomNav.json";
+import enSidebar from "../languages/en/sidebar.json";
 import enTopbar from "../languages/en/topbar.json"; 
 import enLogin from "../languages/en/login.json";
 import enDashboard from "../languages/en/dashboard.json";
@@ -26,7 +26,7 @@ import enHome from "../languages/en/home.json";
 // Combina le traduzioni per lingua
 const translations = {
   it: {
-    bottomNav: itBottomNav,
+    sidebar: itSidebar,
     topbar: itTopbar,
     login: itLogin,
     dashboard: itDashboard,
@@ -38,7 +38,7 @@ const translations = {
     home: itHome
   },
   en: {
-    bottomNav: enBottomNav,
+    sidebar: enSidebar,
     topbar: enTopbar,
     login: enLogin,
     dashboard: enDashboard,

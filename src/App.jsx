@@ -17,6 +17,8 @@ import AdminEmployeeDetailsPage from "./pages/Employee/admin/AdminEmployeeDetail
 import WarehousePage from "./pages/Warehouse/WarehousePage.jsx";
 import Product from "./pages/Warehouse/Product.jsx";
 import TicketPage from "./pages/TicketPage.jsx";
+import OrderPage from "./pages/OrderPage.jsx";
+import ReturnPage from "./pages/ReturnPage.jsx";
 
 function App() {
 	return (
@@ -36,6 +38,8 @@ function App() {
 				<Route path="magazzino" element={<WarehousePage />} />
 				<Route path="product/:id" element={<Product />} />
 				<Route path="ticket" element={<TicketPage />} />
+				<Route path="ordini" element={<OrderPage />} />
+				<Route path="resi" element={<ReturnPage />} />
 			</Route>
 		</Routes>
 	);
