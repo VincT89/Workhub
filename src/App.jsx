@@ -19,6 +19,7 @@ import Product from "./pages/Warehouse/Product.jsx";
 import TicketPage from "./pages/TicketPage.jsx";
 import OrderPage from "./pages/OrderPage.jsx";
 import ReturnPage from "./pages/ReturnPage.jsx";
+import PasswordRecoveryPage from "./pages/PasswordRecoveryPage.jsx";
 
 function App() {
 	return (
@@ -26,6 +27,7 @@ function App() {
 			{/* ROTTE PUBBLICHE */}
 			<Route path="/" element={<HomePage />} />
 			<Route path="/login" element={<LoginPage />} />
+			<Route path="/forgot-password" element={<PasswordRecoveryPage />} />
 			
 
 			{/* ROTTE PROTETTE */}

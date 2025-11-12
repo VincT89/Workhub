@@ -2,11 +2,13 @@ import userIcon from "../assets/icons/user.png";
 import sunIcon from "../assets/icons/sun.png";
 import moonIcon from "../assets/icons/do not disturb iOS.png";
 import logoutIcon from "../assets/icons/logout.png";
+import settingsIcon from "../assets/icons/Settings.png";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../store/feature/authSlice";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
+import { Link } from "react-router-dom";
 
 const TopBar = () => {
   const user = useSelector((state) => state.auth.user);
@@ -60,11 +62,11 @@ const TopBar = () => {
           onClick={handleThemeToggle}
           title="Cambia tema"
           className={`
-            flex items-center border border-white/40 rounded-full px-4 py-1
+            flex items-center border border-white/90 rounded-full px-2.5 py-2.5
             shadow-sm transition-all duration-300 cursor-pointer
             ${theme === "dark"
-              ? "bg-white/20 hover:bg-[#1C62A0]/20"
-              : "bg-white/50 hover:bg-white/70"}
+              ? "bg-white/30 hover:bg-[#1C62A0]/20"
+              : "bg-white/40 hover:bg-white/70"}
           `}
         >
           <img
@@ -72,14 +74,24 @@ const TopBar = () => {
             alt={theme === "dark" ? "Dark" : "Light"}
             className="w-5 h-5 mr-1"
           />
-          <span
-            className={`font-bold text-sm ${
-              theme === "dark" ? "text-white" : "text-[#1C62A0]"
-            }`}
-          >
-            {theme === "dark" ? "Dark" : "Light"}
-          </span>
         </button>
+
+         <Link
+          to="/settings"
+          className={`
+            flex items-center border border-white/90 rounded-full px-2.5 py-2.5
+            shadow-sm transition-all duration-300 cursor-pointer
+            ${theme === "dark"
+              ? "bg-white/20 hover:bg-[#1C62A0]/20"
+              : "bg-white/40 hover:bg-white/70"}
+          `}
+        >
+          <img
+            src={settingsIcon}
+            alt={theme === "dark" ? "Dark" : "Light"}
+            className="w-5 h-5 mr-1"
+          />
+        </Link>
 
         <button
           onClick={handleLogout}

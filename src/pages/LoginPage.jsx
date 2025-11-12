@@ -6,7 +6,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 
 import bgLight from "../assets/bg/bg3.jpg";
-import bgDark from "../assets/bg/bgScuro.png";
+import bgDark from "../assets/bg/bgScuro3.jpg";
 import iconLogo from "../assets/logo/iconaLogo.png";
 import eyes from "../assets/icons/closedEye.png";
 import eyes2 from "../assets/icons/Eye.png";
@@ -55,7 +55,7 @@ const LoginPage = () => {
       {/* ===== Liquid Glass Overlay ===== */}
       <div
         className="absolute w-[822px] h-[659px] 
-        bg-[#fafafa20] dark:bg-[#fafafa20] backdrop-blur-sm 
+        bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
         border border-white/30 dark:border-white/90 rounded-[25px] shadow-md
         transition-all duration-700"
       />
@@ -155,7 +155,7 @@ const LoginPage = () => {
         {/* === Password dimenticata === */}
         <div className="w-[63%] flex justify-end">
           <Link
-            to="/settings"
+            to="/forgot-password"
             className={`text-[14px] font-bold font-nunito hover:text-[#155293] transition ${textColor}`}
           >
             {t("login.dimenticato")}

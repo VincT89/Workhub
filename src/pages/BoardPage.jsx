@@ -15,8 +15,7 @@ const BoardPage = () => {
 
 	return (
 		<div
-			className="w-full h-full flex flex-col gap-8 overflow-y-auto 
-			[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+			className="w-full h-full flex flex-col gap-8 overflow-y-auto"
 		>
 			{/* Riga 1: i 4 box - con un div che li contiene tutti, e a seguire i singoli box-div */}
 			<div className="grid grid-cols-4 gap-4 mb-6 w-full transition-colors duration-500">
@@ -153,6 +152,7 @@ const BoardPage = () => {
 					{/* aggiunta componente calendario */}
 				</div>
 			</div>
+			
 		</div>
 	);
 };

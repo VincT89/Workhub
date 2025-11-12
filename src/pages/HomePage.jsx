@@ -4,7 +4,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 
 import bgLight from "../assets/bg/bg3.jpg";
-import bgDark from "../assets/bg/bgScuro.png";
+import bgDark from "../assets/bg/bgScuro3.jpg";
 import Logo from "../assets/logo/LogoCompletoSenzaBG.png";
 
 const HomePage = () => {

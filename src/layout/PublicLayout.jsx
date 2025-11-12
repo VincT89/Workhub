@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 
 import bgLight from "../assets/bg/bg3.jpg";
-import bgDark from "../assets/bg/bgScuro.png";
+import bgDark from "../assets/bg/bgScuro4.jpg";
 
 import iconLogo from "../assets/logo/logoVuoto.png";
 import iconLogo2 from "../assets/logo/iconaLogo.png";
@@ -44,7 +44,7 @@ const PublicLayout = () => {
             fixed top-0 left-0 h-full z-40 transition-all duration-1200 ease-in-out
             bg-gradient-to-br from-indigo-950 via-indigo-950/90 to-violet-900 
             backdrop-blur-sm border-r border-white/30 shadow-md flex flex-col
-            w-[250px] py-8 px-4
+            w-[250px] py-2 px-4
           `}
 				>
 					{/* LOGO */}
@@ -55,7 +55,7 @@ const PublicLayout = () => {
 						<img
 							src={iconLogo}
 							alt="Logo"
-							className="w-32 h-auto object-contain drop-shadow-md transition-all duration-1200"
+							className="w-48 h-auto object-contain drop-shadow-md transition-all duration-1200"
 						/>
 					</div>
 
@@ -81,13 +81,11 @@ const PublicLayout = () => {
 				</div>
 			)}
 
-			{/* ===== CONTENUTO CENTRALE ===== */}
+			{/* ===== CONTENUTO CENTRALE con scrollbar attiva ma invisibile ===== */}
 			<section
 				className={`transition-all duration-500 ease-in-out 
         ${sidebarOpen ? "ml-[250px]" : "ml-[75px] w-[93%]"}
         mt-[110px] min-h-screen overflow-y-auto p-8 z-10
-        scrollbar-thin scrollbar-thumb-[#1C62A0]/70 scrollbar-track-transparent
-        hover:scrollbar-thumb-[#1C62A0]/90
         ${theme === "dark" ? "text-white" : "text-[#134a7b]"}
       `}
 			>
