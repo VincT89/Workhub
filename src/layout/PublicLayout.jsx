@@ -6,7 +6,9 @@ import bgLight from "../assets/bg/bg3.jpg";
 import bgDark from "../assets/bg/bgScuro4.jpg";
 
 import iconLogo from "../assets/logo/logoVuoto.png";
-import iconLogo2 from "../assets/logo/iconaLogo.png";
+import iconLogo2 from "../assets/logo/LogoCompletoSenzaBg.png";
+import iconChiusa from "../assets/logo/iconaLogo.png";
+import iconChiusaDark from "../assets/logo/iconaLogoChiara.png";
 import Topbar from "../components/Topbar";
 import Sidebar from "../components/Sidebar";
 
@@ -42,7 +44,7 @@ const PublicLayout = () => {
 				<aside
 					className={`
             fixed top-0 left-0 h-full z-40 transition-all duration-1200 ease-in-out
-            bg-gradient-to-br from-indigo-950 via-indigo-950/90 to-violet-900 
+            ${theme === "dark" ?  "bg-[#D0D8FB]/90" : "bg-gradient-to-br from-indigo-950 via-indigo-950/90 to-violet-900" }
             backdrop-blur-sm border-r border-white/30 shadow-md flex flex-col
             w-[250px] py-2 px-4
           `}
@@ -53,7 +55,7 @@ const PublicLayout = () => {
 						onClick={() => setSidebarOpen(false)}
 					>
 						<img
-							src={iconLogo}
+							src={`${theme === "dark" ? iconLogo2 : iconLogo}`}
 							alt="Logo"
 							className="w-48 h-auto object-contain drop-shadow-md transition-all duration-1200"
 						/>
@@ -74,7 +76,7 @@ const PublicLayout = () => {
 					onClick={() => setSidebarOpen(true)}
 				>
 					<img
-						src={iconLogo2}
+					src={`${theme === "dark" ? iconChiusaDark : iconChiusa}`}
 						alt="Logo"
 						className="w-14 h-auto object-contain drop-shadow-lg"
 					/>

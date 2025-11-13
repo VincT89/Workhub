@@ -2,16 +2,25 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
+import { useSelector } from "react-redux";
 
 const Sidebar = () => {
 
 	const { theme } = useTheme();
 	const { t } = useLanguage();
+	const role = useSelector((state) => state.auth.user?.role);
+	const isUser = role === "user";
 
- const routes = [
+  const routes = [
     { to: "dashboard", label: t("sidebar.overview") },
     { to: "clienti", label: t("sidebar.clienti") },
-    { to: "personale", label: t("sidebar.personale") },
+
+   
+    {
+      to: isUser ? "personale" : "personale",
+      label: isUser ? t("sidebar.profilo") : t("sidebar.personale"),
+    },
+
     { to: "magazzino", label: t("sidebar.magazzino") },
     { to: "ticket", label: t("sidebar.ticket") },
     { to: "ordini", label: t("sidebar.ordini") },
@@ -31,18 +40,18 @@ const Sidebar = () => {
 					className={({ isActive }) =>
 						`
       relative flex items-center justify-center text-center
-      font-semibold text-[17px] tracking-wide py-3 rounded-xl mx-2
+      font-semibold text-[16px] tracking-wide py-3 rounded-xl mx-2
       transition-all duration-300 select-none shadow-sm border
       ${
 				isActive
 					? // === LINK ATTIVO ===
 					  theme === "dark"
-						? "bg-violet-700/80 border-violet-500/60 text-white scale-105 shadow-[0_0_18px_rgba(139,92,246,0.7)]"
+						? "bg-violet-600/80 border-violet-500/60 text-white scale-105 shadow-[0_0_18px_rgba(139,92,246,0.7)]"
 						: "bg-violet-400/80 border-violet-400/60 text-white scale-105 shadow-[0_0_15px_rgba(139,92,246,0.6)]"
 					: // === LINK NON ATTIVO ===
 					theme === "dark"
-					? "bg-white/10 border-white/20 text-white/80 hover:bg-white/20 hover:border-white/30 hover:text-white hover:shadow-[0_0_10px_rgba(255,255,255,0.3)]"
-					: "bg-white/10 border-white/20 text-white/80 hover:bg-white/20 hover:border-white/30 hover:text-white hover:shadow-[0_0_10px_rgba(255,255,255,0.3)]"
+					? "bg-[#8d97c8]/60 border-white/20 text-[#080ebf]/80 hover:bg-white/20 hover:border-white/30"
+					: "bg-white/10 border-white/20 text-white/80 hover:bg-white/20 hover:border-white/30 "
 			}
     `
 					}

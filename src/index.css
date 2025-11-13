@@ -10,9 +10,63 @@
 
 body {
   font-family: var(--font-nunito);
-  color: #080EBF;
+  color: #8d97c8;
 }
 
-body::-webkit-scrollbar {
-  display: none;
+/* === Nasconde tutte le scrollbar in modo cross-browser === */
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
+
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE e Edge */
+}
+
+
+/* === Stili globali per input === */
+@layer base {
+  input {
+    @apply w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 
+           rounded-xl px-4 shadow-md outline-none font-semibold
+           focus:ring-2 transition-all duration-200;
+  }
+
+  /* LIGHT MODE */
+  input:not(.dark) {
+    @apply text-[#080ebf] placeholder:text-[#080ebf]/70 focus:ring-[#080ebf];
+  }
+
+  /* DARK MODE */
+  .dark input {
+    @apply text-white placeholder:text-white focus:ring-white;
+  }
+}
+
+
+/* === Stili globali per i bottoni === */
+@layer components {
+  .btn-login {
+    @apply w-full sm:w-[225px] h-[50px] mt-8
+           rounded-xl shadow-md border border-white/20
+           transition-all duration-500 cursor-pointer
+           font-bold font-nunito text-white bg-[#080ebf];
+  }
+
+  /* Stato Disabled / Loading */
+  .btn-login-disabled {
+    @apply opacity-60 cursor-not-allowed;
+  }
+
+  /* Light Mode */
+  :root .btn-login {
+    @apply border-white/30 hover:border-white/50 hover:shadow-lg hover:scale-105;
+  }
+
+  /* Dark Mode */
+  .dark .btn-login {
+    @apply hover:border-white/50 hover:shadow-lg hover:scale-105;
+  }
+}
+

@@ -6,6 +6,7 @@ import { personnel } from "../api/mock/personaleMock";
 
 import bgLight from "../assets/bg/bg3.jpg";
 import bgDark from "../assets/bg/bgScuro3.jpg";
+import { Sun, Moon } from "@phosphor-icons/react";
 import darkIcon from "../assets/icons/Do not Disturb iOS.png";
 import lightIcon from "../assets/icons/Sun.png";
 
@@ -53,8 +54,8 @@ const PasswordRecoveryPage = () => {
 		}, 1000);
 	};
 
-	const textColor = theme === "dark" ? "text-white" : "text-[#1C62A0]";
-	const labelColor = theme === "dark" ? "text-white" : "text-[#1C62A0]";
+	const textColor = theme === "dark" ? "text-white" : "text-[#080ebf]";
+	const labelColor = theme === "dark" ? "text-white" : "text-[#080ebf]";
 
 	return (
 		<main
@@ -81,21 +82,26 @@ const PasswordRecoveryPage = () => {
 						onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
 						className="p-2 rounded-xl border border-white/30 hover:bg-[#1C62A0]/10 transition-colors duration-300"
 					>
-						<img
-							src={theme === "dark" ? lightIcon : darkIcon}
-							alt="Tema"
-							className="w-6 h-6"
-						/>
+						{theme === "dark" ? (
+							<Moon size={30} color="white" weight="duotone" cursor="pointer" />
+						) : (
+							<Sun
+								size={30}
+								color="#080ebf"
+								weight="duotone"
+								cursor="pointer"
+							/>
+						)}
 					</button>
 				</div>
 
 				{/* Card contenitore */}
 				<section
-					className="w-full p-6 rounded-[25px] shadow-md border border-white/30 
-          bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm transition-all duration-500"
+					className="w-full p-6 rounded-[25px] shadow-md border border-white/90 
+          bg-white/10 dark:bg-white/10 backdrop-blur-sm transition-all duration-500"
 				>
 					<h2
-						className={`${textColor} text-xl font-bold mb-4 border-b border-[#1C62A0] pb-2`}
+						className={`${textColor} text-xl font-bold mb-4 border-b ${theme === "dark" ? "border-white" : "border-[#080ebf]"} pb-2`}
 					>
 						Inserisci i tuoi dati
 					</h2>
@@ -126,9 +132,15 @@ const PasswordRecoveryPage = () => {
 								value={username}
 								onChange={(e) => setUsername(e.target.value)}
 								placeholder="Inserisci il tuo username"
-								className="w-full h-[40px] bg-[rgba(217,217,217,0.3)] border border-white/30 
-                rounded-2xl px-4 shadow-md outline-none text-[#134a7b] font-semibold
-                focus:ring-2 focus:ring-[#1C62A0]/50 placeholder:text-[#134a7b]/60 transition-all duration-200"
+								className={`w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 
+            rounded-2xl px-4 shadow-md outline-none
+            ${
+							theme === "dark"
+								? "text-white placeholder:text-white focus:ring-white"
+								: "text-[#080ebf] focus:ring-[#080ebf] placeholder:text-[#080ebf]/70 "
+						} font-semibold 
+            focus:ring-2  transition-all duration-200
+            }`}
 							/>
 						</div>
 
@@ -144,9 +156,15 @@ const PasswordRecoveryPage = () => {
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
 								placeholder="Inserisci la tua email"
-								className="w-full h-[40px] bg-[rgba(217,217,217,0.3)] border border-white/30 
-                rounded-2xl px-4 shadow-md outline-none text-[#134a7b] font-semibold
-                focus:ring-2 focus:ring-[#1C62A0]/50 placeholder:text-[#134a7b]/60 transition-all duration-200"
+								className={`w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 
+            rounded-2xl px-4 shadow-md outline-none
+            ${
+							theme === "dark"
+								? "text-white placeholder:text-white focus:ring-white"
+								: "text-[#080ebf] focus:ring-[#080ebf] placeholder:text-[#080ebf]/70 "
+						} font-semibold 
+            focus:ring-2  transition-all duration-200
+            }`}
 							/>
 						</div>
 
@@ -154,7 +172,7 @@ const PasswordRecoveryPage = () => {
 						<button
 							type="submit"
 							className="w-full mt-4 py-3 font-bold rounded-2xl shadow-md border border-white/20 
-              bg-[#1C62A0] text-white hover:bg-[#155293] transition-colors duration-300"
+              bg-[#080ebf] text-white cursor-pointer hover:scale-102 hover:border-white/90 hover:shadow-lg transition-colors duration-300"
 						>
 							Invia richiesta
 						</button>
@@ -162,7 +180,7 @@ const PasswordRecoveryPage = () => {
 						{/* Link di ritorno */}
 						<Link
 							to="/login"
-							className="text-center mt-3 text-[#1C62A0] font-semibold hover:underline transition-all duration-200"
+							className={`text-center mt-3 ${theme === "dark" ? "text-white" : "text-[#080ebf]"} font-semibold hover:underline transition-all duration-200`}
 						>
 							Torna al Login
 						</Link>

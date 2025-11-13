@@ -89,7 +89,7 @@ const BoardPage = () => {
 				<div
 					className={`flex gap-4 justify-start items-start p-6 
 					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-					border border-white/30 dark:border-white/80 rounded-[25px] shadow-md 
+					border border-white/30 dark:border-white/80 rounded-xl shadow-md 
 					${textColor} h-[230px]`}
 				>
 					<img
@@ -105,7 +105,7 @@ const BoardPage = () => {
 				<div
 					className={`flex gap-4 justify-start items-start p-6 
 					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-					border border-white/30 dark:border-white/80 rounded-[25px] shadow-md 
+					border border-white/30 dark:border-white/80 rounded-xl shadow-md 
 					${textColor} h-[230px]`}
 				>
 					<img
@@ -121,7 +121,7 @@ const BoardPage = () => {
 				<div
 					className={`flex gap-4 justify-start items-start p-6 
 					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-					border border-white/30 dark:border-white/80 rounded-[25px] shadow-md 
+					border border-white/30 dark:border-white/80 rounded-xl shadow-md 
 					${textColor} h-[230px]`}
 				>
 					<img
@@ -138,7 +138,7 @@ const BoardPage = () => {
 			{/* Riga 3: 1 box - Calendario */}
 			<div
 				className="bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm border border-white/30 dark:border-white/80
-				rounded-[25px] p-6 shadow-md flex items-start gap-4 mb-2 min-h-[400px]"
+				rounded-xl p-6 shadow-md flex items-start gap-4 mb-2 min-h-[400px]"
 			>
 				<img
 					src={calendarIcon}

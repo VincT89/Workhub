@@ -6,13 +6,14 @@ import { useLanguage } from "../context/LanguageContext";
 import bgLight from "../assets/bg/bg3.jpg";
 import bgDark from "../assets/bg/bgScuro3.jpg";
 import Logo from "../assets/logo/LogoCompletoSenzaBG.png";
+import logoDark from "../assets/logo/logoVuoto.png";
 
 const HomePage = () => {
   const { theme } = useTheme();
   const { t } = useLanguage();
 
   const backgroundImage = theme === "dark" ? bgDark : bgLight;
-  const textColor = theme === "dark" ? "text-white" : "text-[#1C62A0]";
+  const textColor = theme === "dark" ? "text-white" : "text-[#080ebf]";
 
   return (
     <main
@@ -36,7 +37,7 @@ const HomePage = () => {
         className="absolute top-[35%] left-1/2 transform -translate-x-1/2 
         w-[60%] max-w-[499px] h-auto aspect-[1.82] object-cover"
         alt="WorkHub logo"
-        src={Logo}
+        src={theme === "dark" ? logoDark : Logo}
       />
 
       {/* Frase */}
@@ -55,9 +56,9 @@ const HomePage = () => {
         className={`absolute top-[68%] left-1/2 transform -translate-x-1/2 
         w-[80%] max-w-[350px] h-14 flex items-center justify-center 
         text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-normal leading-normal 
-        bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm border rounded-full border-white/30 dark:border-white/90 
+        bg-white/20 dark:bg-white/10 backdrop-blur-sm border rounded-xl border-white/30 dark:border-white/90 
         cursor-pointer transition-colors duration-300 ${textColor} 
-        hover:bg-[#fafafa30] hover:backdrop-blur-md hover:shadow-lg hover:rounded-full`}
+        hover:bg-white/30 hover:backdrop-blur-sm hover:shadow-lg`}
       >
         {t("home.benvenuto")}
       </Link>

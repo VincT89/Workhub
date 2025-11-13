@@ -46,7 +46,7 @@ const TopBar = () => {
 					<User
 						size={30}
 						color={theme === "dark" ? "white" : "#080ebf"}
-						weight="duotone"
+						weight="duotone" cursor="pointer"
 					/>
 				</div>
 				<span
@@ -65,9 +65,9 @@ const TopBar = () => {
 					onClick={handleThemeToggle}
 				>
 					{theme === "dark" ? (
-						<Moon size={30} color="white" weight="duotone" />
+						<Moon size={30} color="white" weight="duotone" cursor="pointer" />
 					) : (
-						<Sun size={30} color="#080ebf" weight="duotone" />
+						<Sun size={30} color="#080ebf" weight="duotone" cursor="pointer" />
 					)}
 				</button>
 
@@ -87,7 +87,7 @@ const TopBar = () => {
 					<SignOut
 						size={30}
 						color={theme === "dark" ? "white" : "#080ebf"}
-						weight="duotone"
+						weight="duotone" cursor="pointer"
 					/>
 				</button>
 			</div>
