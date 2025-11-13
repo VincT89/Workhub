@@ -37,7 +37,7 @@ const TopBar = () => {
         ${
 					theme === "dark"
 						? "bg-white/10 text-white"
-						: "bg-white/10 text-[#080ebf]"
+						: "bg-white/10 text-[#090c64]"
 				}
       `}> 
 		
@@ -45,14 +45,14 @@ const TopBar = () => {
 				<div>
 					<User
 						size={30}
-						color={theme === "dark" ? "white" : "#080ebf"}
+						color={theme === "dark" ? "white" : "#090c64"}
 						weight="duotone" cursor="pointer"
 					/>
 				</div>
 				<span
 					className={`
           font-bold text-lg transition-colors duration-300
-          ${theme === "dark" ? "text-white" : "text-[#080ebf]"}
+          ${theme === "dark" ? "text-white" : "text-[#090c64]"}
             `}
 				>
 					{t("topbar.benvenuto")} {user?.role || "Guest"}
@@ -67,7 +67,7 @@ const TopBar = () => {
 					{theme === "dark" ? (
 						<Moon size={30} color="white" weight="duotone" cursor="pointer" />
 					) : (
-						<Sun size={30} color="#080ebf" weight="duotone" cursor="pointer" />
+						<Sun size={30} color="#090c64" weight="duotone" cursor="pointer" />
 					)}
 				</button>
 
@@ -75,7 +75,7 @@ const TopBar = () => {
 					to="/settings">
 					<Gear
 						size={30}
-						color={theme === "dark" ? "white" : "#080ebf"}
+						color={theme === "dark" ? "white" : "#090c64"}
 						weight="duotone"
 					/>
 				</Link>
@@ -86,7 +86,7 @@ const TopBar = () => {
 				>
 					<SignOut
 						size={30}
-						color={theme === "dark" ? "white" : "#080ebf"}
+						color={theme === "dark" ? "white" : "#090c64"}
 						weight="duotone" cursor="pointer"
 					/>
 				</button>

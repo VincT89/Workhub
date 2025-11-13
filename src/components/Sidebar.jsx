@@ -46,12 +46,12 @@ const Sidebar = () => {
 				isActive
 					? // === LINK ATTIVO ===
 					  theme === "dark"
-						? "bg-violet-600/80 border-violet-500/60 text-white scale-105 shadow-[0_0_18px_rgba(139,92,246,0.7)]"
-						: "bg-violet-400/80 border-violet-400/60 text-white scale-105 shadow-[0_0_15px_rgba(139,92,246,0.6)]"
+						? " border-violet-500/60 border-2 text-white scale-105 shadow-[0_0_18px_rgba(139,92,246,0.7)]"
+						: "border-violet-500/60 border-2 text-white scale-105 shadow-[0_0_15px_rgba(139,92,246,0.6)]"
 					: // === LINK NON ATTIVO ===
 					theme === "dark"
-					? "bg-[#8d97c8]/60 border-white/20 text-[#080ebf]/80 hover:bg-white/20 hover:border-white/30"
-					: "bg-white/10 border-white/20 text-white/80 hover:bg-white/20 hover:border-white/30 "
+					? "bg-violet/60 border-white/20 text-[#080ebf]/80 hover:bg-violet/40 hover:border-white/30 "
+					: "text-white/80 border-none"
 			}
     `
 					}
