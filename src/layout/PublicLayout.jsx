@@ -28,10 +28,10 @@ const PublicLayout = () => {
 			{/* ===== TOPBAR ===== */}
 			<div
 				className={`
-    fixed top-4 transition-all duration-[500ms] ease-in-out z-30
+    fixed top-4 transition-all duration-500 ease-in-out z-30
     ${
 			sidebarOpen
-				? "left-[10px] w-[calc(100%-125px)]"
+				? "left-2.5 w-[calc(100%-125px)]"
 				: "left-[-180px] w-[calc(100%-5px)]"
 		}
   `}
@@ -44,7 +44,7 @@ const PublicLayout = () => {
 				<aside
 					className={`
             fixed top-0 left-0 h-full z-40 transition-all duration-1200 ease-in-out
-            ${theme === "dark" ?  "bg-[#D0D8FB]/90" : "bg-gradient-to-br from-indigo-950 via-indigo-950/90 to-violet-900" }
+            ${theme === "dark" ?  "bg-[#D0D8FB]/90" : "bg-linear-to-br from-indigo-950 via-indigo-950/90 to-violet-900" }
             backdrop-blur-sm border-r border-white/30 shadow-md flex flex-col
             w-[250px] py-2 px-4
           `}
