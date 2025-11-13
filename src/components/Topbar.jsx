@@ -32,7 +32,7 @@ const TopBar = () => {
 			className={`
         absolute top-[2%] left-[15%] w-[90%] h-[75px] 
         flex items-center justify-between px-8 py-2
-        rounded-full shadow-white-lg border border-white/90
+        rounded-xl shadow-white-lg border border-white/90
         backdrop-blur-lg  transition-colors duration-300
         ${
 					theme === "dark"
