@@ -4,16 +4,14 @@ import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 import { personnel } from "../api/mock/personaleMock";
 
-import bgLight from "../assets/bg/bg3.jpg";
-import bgDark from "../assets/bg/bgScuro3.jpg";
+import bgLight from "../assets/bg/bg.jpg";
+import bgDark from "../assets/bg/bgScuro.jpg";
 import { Sun, Moon } from "@phosphor-icons/react";
-import darkIcon from "../assets/icons/Do not Disturb iOS.png";
-import lightIcon from "../assets/icons/Sun.png";
 
 const PasswordRecoveryPage = () => {
 	const { theme, setTheme } = useTheme();
 	const { t } = useLanguage();
-	const navigate = useNavigate();
+
 
 	const [email, setEmail] = useState("");
 	const [username, setUsername] = useState("");
@@ -26,7 +24,7 @@ const PasswordRecoveryPage = () => {
 		e.preventDefault();
 
 		if (!email && !username) {
-			setMessage("Inserisci username o email per recuperare la password.");
+			setMessage(t("passwordRecovery.nessunAccount"));
 			setMessageType("error");
 			return;
 		}
@@ -40,7 +38,7 @@ const PasswordRecoveryPage = () => {
 		);
 
 		if (!userFound) {
-			setMessage("Nessun account trovato con i dati forniti.");
+			setMessage(t("passwordRecovery.nessunAccount"));
 			setMessageType("error");
 			return;
 		}
@@ -48,14 +46,14 @@ const PasswordRecoveryPage = () => {
 		// Simula invio email di recupero (fittizio)
 		setTimeout(() => {
 			setMessage(
-				`Email di recupero inviata a ${userFound.email}. Segui le istruzioni per reimpostare la password.`
+				`${t("passwordRecovery.emailInviata")} ${userFound.email}. ${t("passwordRecovery.istruzioniEmail")}`
 			);
 			setMessageType("success");
 		}, 1000);
 	};
 
-	const textColor = theme === "dark" ? "text-white" : "text-[#080ebf]";
-	const labelColor = theme === "dark" ? "text-white" : "text-[#080ebf]";
+	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
+	const labelColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 
 	return (
 		<main
@@ -74,7 +72,7 @@ const PasswordRecoveryPage = () => {
 					<h1
 						className={`text-3xl font-bold uppercase transition-colors duration-500 ${textColor}`}
 					>
-						Recupera Password
+						{t("passwordRecovery.recuperaPassword")}
 					</h1>
 
 					{/* Tema toggle */}
@@ -87,7 +85,7 @@ const PasswordRecoveryPage = () => {
 						) : (
 							<Sun
 								size={30}
-								color="#080ebf"
+								color="#090c64"
 								weight="duotone"
 								cursor="pointer"
 							/>
@@ -101,9 +99,9 @@ const PasswordRecoveryPage = () => {
           bg-white/10 dark:bg-white/10 backdrop-blur-sm transition-all duration-500"
 				>
 					<h2
-						className={`${textColor} text-xl font-bold mb-4 border-b ${theme === "dark" ? "border-white" : "border-[#080ebf]"} pb-2`}
+						className={`${textColor} text-xl font-bold mb-4 border-b ${theme === "dark" ? "border-white" : "border-[#090c64]"} pb-2`}
 					>
-						Inserisci i tuoi dati
+						{t("passwordRecovery.inserisciDati")}
 					</h2>
 
 					{message && (
@@ -118,26 +116,26 @@ const PasswordRecoveryPage = () => {
 
 					<form
 						onSubmit={handleRecovery}
-						className="flex flex-col gap-5 text-[#134a7b]"
+						className="flex flex-col gap-5 text-[#090c64]"
 					>
 						{/* Username */}
 						<div>
 							<label
 								className={`block text-[18px] font-bold font-nunito mb-2 ${labelColor}`}
 							>
-								Username
+								{t("passwordRecovery.username")}
 							</label>
 							<input
 								type="text"
 								value={username}
 								onChange={(e) => setUsername(e.target.value)}
-								placeholder="Inserisci il tuo username"
+								placeholder={t("passwordRecovery.inserisciUsername")}
 								className={`w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 
             rounded-2xl px-4 shadow-md outline-none
             ${
 							theme === "dark"
 								? "text-white placeholder:text-white focus:ring-white"
-								: "text-[#080ebf] focus:ring-[#080ebf] placeholder:text-[#080ebf]/70 "
+								: "text-[#090c64] focus:ring-[#090c64] placeholder:text-[#090c64]/70 "
 						} font-semibold 
             focus:ring-2  transition-all duration-200
             }`}
@@ -149,19 +147,19 @@ const PasswordRecoveryPage = () => {
 							<label
 								className={`block text-[18px] font-bold font-nunito mb-2 ${labelColor}`}
 							>
-								Email
+								{t("passwordRecovery.email")}
 							</label>
 							<input
 								type="email"
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
-								placeholder="Inserisci la tua email"
+								placeholder={t("passwordRecovery.inserisciEmail")}
 								className={`w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 
             rounded-2xl px-4 shadow-md outline-none
             ${
 							theme === "dark"
 								? "text-white placeholder:text-white focus:ring-white"
-								: "text-[#080ebf] focus:ring-[#080ebf] placeholder:text-[#080ebf]/70 "
+								: "text-[#090c64] focus:ring-[#090c64] placeholder:text-[#090c64]/70 "
 						} font-semibold 
             focus:ring-2  transition-all duration-200
             }`}
@@ -172,17 +170,17 @@ const PasswordRecoveryPage = () => {
 						<button
 							type="submit"
 							className="w-full mt-4 py-3 font-bold rounded-2xl shadow-md border border-white/20 
-              bg-[#080ebf] text-white cursor-pointer hover:scale-102 hover:border-white/90 hover:shadow-lg transition-colors duration-300"
+              bg-[#090c64] text-white cursor-pointer hover:scale-102 hover:border-white/90 hover:shadow-lg transition-colors duration-300"
 						>
-							Invia richiesta
+							{t("passwordRecovery.inviaRichiesta")}
 						</button>
 
 						{/* Link di ritorno */}
 						<Link
 							to="/login"
-							className={`text-center mt-3 ${theme === "dark" ? "text-white" : "text-[#080ebf]"} font-semibold hover:underline transition-all duration-200`}
+							className={`text-center mt-3 ${theme === "dark" ? "text-white" : "text-[#090c64]"} font-semibold hover:underline transition-all duration-200`}
 						>
-							Torna al Login
+							{t("passwordRecovery.tornaLogin")}
 						</Link>
 					</form>
 				</section>

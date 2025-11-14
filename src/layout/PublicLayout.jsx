@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 
-import bgLight from "../assets/bg/bg3.jpg";
-import bgDark from "../assets/bg/bgScuro4.jpg";
+import bgLight from "../assets/bg/bg.jpg";
+import bgDark from "../assets/bg/bgScuro.jpg";
 
 import iconLogo from "../assets/logo/logoVuoto.png";
 import iconLogo2 from "../assets/logo/LogoCompletoSenzaBg.png";

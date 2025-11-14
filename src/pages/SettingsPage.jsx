@@ -7,10 +7,7 @@ import { useLanguage } from "../context/LanguageContext";
 
 import italianFlag from "../assets/icons/Italy.png";
 import englishFlag from "../assets/icons/Great Britain.png";
-import darkIcon from "../assets/icons/Do not Disturb iOS.png";
-import lightIcon from "../assets/icons/Sun.png";
-import eyes from "../assets/icons/closedEye.png";
-import eyes2 from "../assets/icons/Eye.png";
+import { Eye, EyeSlash, Sun, Moon } from "@phosphor-icons/react";
 
 const SettingsPage = () => {
 	const { theme, setTheme } = useTheme();
@@ -28,8 +25,8 @@ const SettingsPage = () => {
 	const [messageType, setMessageType] = useState("");
 	const [showNewPassword, setShowNewPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [isEditingAccount, setIsEditingAccount] = useState(false);
+	const [isEditing, setIsEditing] = useState(false);
+	const [isEditingAccount, setIsEditingAccount] = useState(false);
 
 	const handleSave = (e) => {
 		e.preventDefault();
@@ -69,8 +66,8 @@ const SettingsPage = () => {
 		}, 3000);
 	};
 
-	const textColor = theme === "dark" ? "text-white" : "text-[#1C62A0]";
-	const labelColor = theme === "dark" ? "text-white" : "text-[#1C62A0]";
+	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
+	const labelColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 	const inputDisabledStyle =
 		"cursor-not-allowed bg-gray-200/50 dark:bg-gray-600/20";
 
@@ -94,27 +91,27 @@ const SettingsPage = () => {
 					className="w-full p-6 rounded-[25px] shadow-md border border-white/30 
           bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm transition-all duration-500"
 				>
-					<div className="flex justify-between items-center mb-4 border-b border-[#1C62A0] pb-2">
+					<div className="flex justify-between items-center mb-4 border-b border-[#090c64] pb-2">
 						<h2 className={`${textColor} text-xl font-bold`}>
-							Anagrafica Utente
+							{t("settings.anagraficaUtente")}
 						</h2>
 						<button
 							type="button"
 							onClick={() => setIsEditing((prev) => !prev)}
 							className={`px-4 py-1 rounded-xl text-sm font-semibold border transition-colors duration-300 ${
 								isEditing
-									? "border-white text-white bg-[#1C62A0] hover:bg-[#1C62A0]/80"
-									: "border-white text-white bg-[#1C62A0] hover:bg-[#1C62A0]/80"
+									? "border-white text-white bg-[#090c64] hover:bg-[#090c64]/80"
+									: "border-white text-white bg-[#090c64] hover:bg-[#090c64]/80"
 							}`}
 						>
-							{isEditing ? "Annulla" : "Modifica"}
+							{isEditing ? t("settings.annulla") : t("settings.modifica")}
 						</button>
 					</div>
 
 					{message && (
 						<p
 							className={`${
-								messageType === "success" ? "text-[#1C62A0]" : "text-red-500"
+								messageType === "success" ? "text-[#090c64]/80" : "text-red-500"
 							} text-center font-bold mb-4 transition-opacity duration-500`}
 						>
 							{message}
@@ -127,15 +124,15 @@ const SettingsPage = () => {
 							<label
 								className={`block text-[18px] font-bold font-nunito mb-2 ${labelColor}`}
 							>
-								Username
+								{t("settings.username")}
 							</label>
 							<input
 								type="text"
 								value={username}
 								disabled={!isEditing}
 								onChange={(e) => setUsername(e.target.value)}
-								className={`w-full h-[35px] border border-white/30 rounded-2xl px-4 shadow-md outline-none text-[#134a7b] font-semibold 
-									focus:ring-2 focus:ring-[#1C62A0]/50 placeholder:text-[#134a7b]/70 transition-all duration-200 
+								className={`w-full h-[35px] border border-white/30 rounded-2xl px-4 shadow-md outline-none text-[#090c64] font-semibold 
+									focus:ring-2 focus:ring-[#090c64]/50 placeholder:text-[#090c64]/70 transition-all duration-200 
 									bg-[rgba(217,217,217,0.3)] ${!isEditing ? inputDisabledStyle : ""}`}
 							/>
 						</div>
@@ -145,15 +142,15 @@ const SettingsPage = () => {
 							<label
 								className={`block text-[18px] font-bold font-nunito mb-2 ${labelColor}`}
 							>
-								Nome Completo
+								{t("settings.nomeCompleto")}
 							</label>
 							<input
 								type="text"
 								value={name}
 								disabled={!isEditing}
 								onChange={(e) => setName(e.target.value)}
-								className={`w-full h-[35px] border border-white/30 rounded-2xl px-4 shadow-md outline-none text-[#134a7b] font-semibold 
-									focus:ring-2 focus:ring-[#1C62A0]/50 placeholder:text-[#134a7b]/70 transition-all duration-200 
+								className={`w-full h-[35px] border border-white/30 rounded-2xl px-4 shadow-md outline-none text-[#090c64] font-semibold 
+									focus:ring-2 focus:ring-[#090c64]/50 placeholder:text-[#090c64]/70 transition-all duration-200 
 									bg-[rgba(217,217,217,0.3)] ${!isEditing ? inputDisabledStyle : ""}`}
 							/>
 						</div>
@@ -163,15 +160,15 @@ const SettingsPage = () => {
 							<label
 								className={`block text-[18px] font-bold font-nunito mb-2 ${labelColor}`}
 							>
-								Email
+								{t("settings.email")}
 							</label>
 							<input
 								type="email"
 								value={email}
 								disabled={!isEditing}
 								onChange={(e) => setEmail(e.target.value)}
-								className={`w-full h-[35px] border border-white/30 rounded-2xl px-4 shadow-md outline-none text-[#134a7b] font-semibold 
-									focus:ring-2 focus:ring-[#1C62A0]/50 placeholder:text-[#134a7b]/70 transition-all duration-200 
+								className={`w-full h-[35px] border border-white/30 rounded-2xl px-4 shadow-md outline-none text-[#090c64] font-semibold 
+									focus:ring-2 focus:ring-[#090c64]/50 placeholder:text-[#090c64]/70 transition-all duration-200 
 									bg-[rgba(217,217,217,0.3)] ${!isEditing ? inputDisabledStyle : ""}`}
 							/>
 						</div>
@@ -181,15 +178,15 @@ const SettingsPage = () => {
 							<label
 								className={`block text-[18px] font-bold font-nunito mb-2 ${labelColor}`}
 							>
-								Ruolo
+								{t("settings.ruolo")}
 							</label>
 							<input
 								type="text"
 								value={role}
 								disabled={!isEditing}
 								onChange={(e) => setRole(e.target.value)}
-								className={`w-full h-[35px] border border-white/30 rounded-2xl px-4 shadow-md outline-none text-[#134a7b] font-semibold 
-									focus:ring-2 focus:ring-[#1C62A0]/50 placeholder:text-[#134a7b]/70 transition-all duration-200 
+								className={`w-full h-[35px] border border-white/30 rounded-2xl px-4 shadow-md outline-none text-[#090c64] font-semibold 
+									focus:ring-2 focus:ring-[#090c64]/50 placeholder:text-[#090c64]/70 transition-all duration-200 
 									bg-[rgba(217,217,217,0.3)] ${!isEditing ? inputDisabledStyle : ""}`}
 							/>
 						</div>
@@ -202,7 +199,7 @@ const SettingsPage = () => {
   bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm transition-all duration-500"
 				>
 					{/* Header con bottone Modifica */}
-					<div className="flex justify-between items-center mb-4 border-b border-[#1C62A0] pb-2">
+					<div className="flex justify-between items-center mb-4 border-b border-[#090c64] pb-2">
 						<h2 className={`${textColor} text-xl font-bold`}>
 							{t("settings.account")}
 						</h2>
@@ -212,18 +209,18 @@ const SettingsPage = () => {
 							onClick={() => setIsEditingAccount((prev) => !prev)}
 							className={`px-4 py-1 rounded-xl text-sm font-semibold border transition-colors duration-300 ${
 								isEditingAccount
-									? "border-white text-white bg-[#1C62A0] hover:bg-[#1C62A0]/80"
-									: "border-white text-white bg-[#1C62A0] hover:bg-[#1C62A0]/80"
+									? "border-white text-white bg-[#090c64] hover:bg-[#090c64]/80"
+									: "border-white text-white bg-[#090c64] hover:bg-[#090c64]/80"
 							}`}
 						>
-							{isEditingAccount ? "Annulla" : "Modifica"}
+							{isEditingAccount ? t("settings.annulla") : t("settings.modifica")}
 						</button>
 					</div>
 
 					{message && (
 						<p
 							className={`${
-								messageType === "success" ? "text-[#1C62A0]" : "text-red-500"
+								messageType === "success" ? "text-[#090c64]/80" : "text-red-500"
 							} text-center font-bold mb-4 transition-opacity duration-500`}
 						>
 							{message}
@@ -244,13 +241,9 @@ const SettingsPage = () => {
 								disabled={!isEditingAccount}
 								onChange={(e) => setUsername(e.target.value)}
 								className={`w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 
-        rounded-2xl px-4 shadow-md outline-none text-[#134a7b] font-semibold
-        focus:ring-2 focus:ring-[#1C62A0]/50 placeholder:text-[#134a7b]/70 transition-all duration-200
-        ${
-					!isEditingAccount
-						? "opacity-60 cursor-not-allowed bg-gray-200/50 dark:bg-gray-600/30"
-						: ""
-				}`}
+        rounded-2xl px-4 shadow-md outline-none text-[#090c64] font-semibold
+        focus:ring-2 focus:ring-[#090c64]/50 placeholder:text-[#090c64]/70 transition-all duration-200
+       ${!isEditing ? inputDisabledStyle : ""}`}
 							/>
 						</div>
 
@@ -267,27 +260,31 @@ const SettingsPage = () => {
 								disabled={!isEditingAccount}
 								onChange={(e) => setNewPassword(e.target.value)}
 								className={`w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 
-        rounded-2xl px-4 pr-12 shadow-md outline-none text-[#134a7b] font-semibold
-        focus:ring-2 focus:ring-[#1C62A0]/50 placeholder:text-[#134a7b]/70 transition-all duration-200
-        ${
-					!isEditingAccount
-						? "opacity-60 cursor-not-allowed bg-gray-200/50 dark:bg-gray-600/30"
-						: ""
-				}`}
+        rounded-2xl px-4 pr-12 shadow-md outline-none text-[#090c64] font-semibold
+        focus:ring-2 focus:ring-[#090c64]/50 placeholder:text-[#090c64]/70 transition-all duration-200
+       ${!isEditing ? inputDisabledStyle : ""}`}
 							/>
 							<button
 								type="button"
 								onClick={() => setShowNewPassword((s) => !s)}
 								disabled={!isEditingAccount}
-								className={`absolute top-[70%] right-4 transform -translate-y-1/2 w-[30px] h-[30px] cursor-pointer ${
+								className={`absolute top-[75%] right-4 transform -translate-y-1/2 w-[30px] h-[30px] cursor-pointer ${
 									!isEditingAccount ? "opacity-50 cursor-not-allowed" : ""
 								}`}
 							>
-								<img
-									src={showNewPassword ? eyes2 : eyes}
-									alt="Toggle password visibility"
-									className="w-[25px] h-[25px] select-none pointer-events-none mt-1"
-								/>
+								{showNewPassword ? (
+									<Eye
+										size={24}
+										color={theme === "dark" ? "#fff" : "#090c64"}
+										weight="duotone"
+									/>
+								) : (
+									<EyeSlash
+										size={24}
+										color={theme === "dark" ? "#fff" : "#090c64"}
+										weight="duotone"
+									/>
+								)}
 							</button>
 						</div>
 
@@ -304,8 +301,8 @@ const SettingsPage = () => {
 								disabled={!isEditingAccount}
 								onChange={(e) => setConfirmPassword(e.target.value)}
 								className={`w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 
-        rounded-2xl px-4 pr-12 shadow-md outline-none text-[#134a7b] font-semibold
-        focus:ring-2 focus:ring-[#1C62A0]/50 placeholder:text-[#134a7b]/70 transition-all duration-200
+        rounded-2xl px-4 pr-12 shadow-md outline-none text-[#090c64] font-semibold
+        focus:ring-2 focus:ring-[#090c64]/50 placeholder:text-[#090c64]/70 transition-all duration-200
         ${
 					!isEditingAccount
 						? "opacity-60 cursor-not-allowed bg-gray-200/50 dark:bg-gray-600/30"
@@ -320,11 +317,19 @@ const SettingsPage = () => {
 									!isEditingAccount ? "opacity-50 cursor-not-allowed" : ""
 								}`}
 							>
-								<img
-									src={showConfirmPassword ? eyes2 : eyes}
-									alt="Toggle password visibility"
-									className="w-[25px] h-[25px] select-none pointer-events-none"
-								/>
+								{showConfirmPassword ? (
+									<Eye
+										size={24}
+										color={theme === "dark" ? "#fff" : "#090c64"}
+										weight="duotone"
+									/>
+								) : (
+									<EyeSlash
+										size={24}
+										color={theme === "dark" ? "#fff" : "#090c64"}
+										weight="duotone"
+									/>
+								)}
 							</button>
 						</div>
 					</form>
@@ -336,7 +341,7 @@ const SettingsPage = () => {
           bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm transition-all duration-500"
 				>
 					<h2
-						className={`${textColor} text-xl font-bold mb-4 border-b border-[#1C62A0] pb-2`}
+						className={`${textColor} text-xl font-bold mb-4 border-b border-[#090c64] pb-2`}
 					>
 						{t("settings.aspetto")}
 					</h2>
@@ -350,24 +355,24 @@ const SettingsPage = () => {
 								<button
 									type="button"
 									onClick={() => setTheme("light")}
-									className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-colors duration-300 ${
+									className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-colors text-[#090c64] duration-300 ${
 										theme === "light"
-											? "border-[#1C62A0] bg-[rgba(217,217,217,0.3)]"
+											? "border-[#090c64] bg-[rgba(217,217,217,0.3)]"
 											: "border-gray-300 dark:border-white/30"
 									}`}
 								>
-									<img src={lightIcon} alt="Light" className="w-6 h-6" /> Light
+									<Sun size={28} color="#090c64" weight="duotone" /> Light
 								</button>
 								<button
 									type="button"
 									onClick={() => setTheme("dark")}
-									className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-colors duration-300 ${
+									className={`flex items-center gap-2 px-4 py-2 rounded-xl border  text-[#090c64] transition-colors duration-300 ${
 										theme === "dark"
-											? "border-[#1C62A0] bg-[rgba(217,217,217,0.3)]"
+											? "border-[#090c64] bg-[rgba(217,217,217,0.3)]"
 											: "border-gray-300 dark:border-white/30"
 									}`}
 								>
-									<img src={darkIcon} alt="Dark" className="w-6 h-6" /> Dark
+									<Moon size={28} color="#090c64" weight="duotone" /> Dark
 								</button>
 							</div>
 						</div>
@@ -381,9 +386,9 @@ const SettingsPage = () => {
 								<button
 									type="button"
 									onClick={() => toggleLang("it")}
-									className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-colors duration-300 ${
+									className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-[#090c64] transition-colors duration-300 ${
 										lang === "it"
-											? "border-[#1C62A0] bg-[rgba(217,217,217,0.3)]"
+											? "border-[#090c64] bg-[rgba(217,217,217,0.3)]"
 											: "border-gray-300 dark:border-white/30"
 									}`}
 								>
@@ -393,9 +398,9 @@ const SettingsPage = () => {
 								<button
 									type="button"
 									onClick={() => toggleLang("en")}
-									className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-colors duration-300 ${
+									className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-[#090c64] transition-colors duration-300 ${
 										lang === "en"
-											? "border-[#1C62A0] bg-[rgba(217,217,217,0.3)]"
+											? "border-[#090c64] bg-[rgba(217,217,217,0.3)]"
 											: "border-gray-300 dark:border-white/30"
 									}`}
 								>
@@ -413,14 +418,14 @@ const SettingsPage = () => {
 						type="submit"
 						onClick={handleSave}
 						className="w-full sm:w-[200px] py-3 font-bold rounded-2xl shadow-md border border-white/20 
-            bg-[#1C62A0] text-white hover:bg-[#155293] transition-colors duration-300"
+            bg-[#090c64] text-white hover:bg-[#090c64]/80 transition-colors duration-300"
 					>
 						{t("settings.salvaModifiche")}
 					</button>
 					<Link
 						to="/login"
 						className="w-full sm:w-[200px] py-3 text-center font-bold rounded-2xl shadow-md border border-white/20 
-            bg-[#1C62A0] text-white hover:bg-[#155293] transition-colors duration-300"
+            bg-[#090c64] text-white hover:bg-[#090c64]/80 transition-colors duration-300"
 					>
 						{t("settings.esci")}
 					</Link>

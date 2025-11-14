@@ -5,13 +5,12 @@ import { loginAsync } from "../store/feature/authSlice";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 
-import bgLight from "../assets/bg/bg3.jpg";
-import bgDark from "../assets/bg/bgScuro3.jpg";
+import bgLight from "../assets/bg/bg.jpg";
+import bgDark from "../assets/bg/bgScuro.jpg";
 import iconLogo from "../assets/logo/iconaLogo.png";
 import iconLogoDark from "../assets/logo/iconaLogoChiara.png";
 import { Eye, EyeSlash } from "@phosphor-icons/react";
-import eyes from "../assets/icons/closedEye.png";
-import eyes2 from "../assets/icons/Eye.png";
+
 
 const LoginPage = () => {
 	const { theme } = useTheme();

@@ -22,6 +22,8 @@ import enWarehouse from "../languages/en/warehouse.json";
 import enTicketing from "../languages/en/ticketing.json";
 import enSettings from "../languages/en/settings.json";
 import enHome from "../languages/en/home.json";
+import enPasswordRecovery from "../languages/en/passwordRecovery.json";
+import itPasswordRecovery from "../languages/it/passwordRecovery.json";
 
 // Combina le traduzioni per lingua
 const translations = {
@@ -35,7 +37,8 @@ const translations = {
     warehouse: itWarehouse,
     ticketing: itTicketing,
     settings: itSettings,
-    home: itHome
+    home: itHome,
+    passwordRecovery: itPasswordRecovery
   },
   en: {
     sidebar: enSidebar,
@@ -47,7 +50,8 @@ const translations = {
     warehouse: enWarehouse,
     ticketing: enTicketing,
     settings: enSettings,
-    home: enHome
+    home: enHome,
+    passwordRecovery: enPasswordRecovery
   },
 };
 
