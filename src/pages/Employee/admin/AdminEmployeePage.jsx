@@ -7,6 +7,77 @@ import staffIcon from "../../../assets/icons/Staff.png";
 import employeeImg from "../../../assets/Employee.webp";
 import { useNavigate } from "react-router-dom";
 
+export const employee = [
+  {
+    nome: "Jennifer Bianchi",
+    ruolo: "Responsabile reparto",
+    matricola: "ADD-0001",
+    email: "jennifer.bianchi@example.com",
+    turni: [
+      { giorno: "Lunedì", orari: ["09:00-13:00", "14:00-18:00"] },
+      { giorno: "Mercoledì", orari: ["10:00-14:00"] },
+      { giorno: "Venerdì", orari: ["12:00-16:00", "17:00-20:00"] },
+    ],
+    foto: employeeImg,
+  },
+  {
+    nome: "Luca Rossi",
+    ruolo: "Sviluppatore",
+    matricola: "ADD-0002",
+    turni: [
+      { giorno: "Martedì", orari: ["09:00-13:00", "14:00-18:00"] },
+      { giorno: "Giovedì", orari: ["10:00-14:00"] },
+    ],
+    email: "luca.rossi@example.com",
+    foto: employeeImg,
+  },
+  {
+    nome: "Maria Verdi",
+    ruolo: "Designer",
+    matricola: "ADD-0003",
+    turni: [
+      { giorno: "Lunedì", orari: ["11:00-15:00"] },
+      { giorno: "Mercoledì", orari: ["13:00-17:00"] },
+      { giorno: "Venerdì", orari: ["09:00-12:00", "13:00-16:00"] },
+    ],
+    email: "maria.verdi@example.com",
+    foto: employeeImg,
+  },
+  {
+    nome: "Giovanni Neri",
+    ruolo: "Marketing Manager",
+    turni: [
+      { giorno: "Martedì", orari: ["10:00-14:00"] },
+      { giorno: "Giovedì", orari: ["12:00-16:00", "17:00-20:00"] },
+    ],
+    matricola: "ADD-0004",
+    email: "giovanni.neri@example.com",
+    foto: employeeImg,
+  },
+  {
+    nome: "Elena Gialli",
+    ruolo: "HR Specialist",
+    turni: [
+      { giorno: "Lunedì", orari: ["09:00-13:00", "14:00-18:00"] },
+      { giorno: "Venerdì", orari: ["10:00-14:00"] },
+    ],
+    matricola: "ADD-0005",
+    email: "elena.gialli@example.com",
+    foto: employeeImg,
+  },
+  {
+    nome: "Marco Blu",
+    ruolo: "Data Analyst",
+    turni: [
+      { giorno: "Mercoledì", orari: ["11:00-15:00"] },
+      { giorno: "Venerdì", orari: ["12:00-16:00", "17:00-20:00"] },
+    ],
+    matricola: "ADD-0006",
+    email: "marco.blu@example.com",
+    foto: employeeImg,
+  },
+];
+
 const AdminEmployeePage = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
@@ -19,51 +90,6 @@ const AdminEmployeePage = () => {
     { label: t("employees.dipendentiInattivi"), value: 4, icon: deleteUserIcon },
     { label: t("employees.dipendentiSenior"), value: 12, icon: qualityIcon },
     { label: t("employees.totaleDipendenti"), value: 400, icon: staffIcon },
-  ];
-
-  const employee = [
-    {
-      nome: "Jennifer Bianchi",
-      ruolo: "Responsabile reparto",
-      matricola: "ADD-0001",
-      email: "jennifer.bianchi@example.com",
-      foto: employeeImg,
-    },
-    {
-      nome: "Luca Rossi",
-      ruolo: "Sviluppatore",
-      matricola: "ADD-0002",
-      email: "luca.rossi@example.com",
-      foto: employeeImg,
-    },
-    {
-      nome: "Maria Verdi",
-      ruolo: "Designer",
-      matricola: "ADD-0003",
-      email: "maria.verdi@example.com",
-      foto: employeeImg,
-    },
-    {
-      nome: "Giovanni Neri",
-      ruolo: "Marketing Manager",
-      matricola: "ADD-0004",
-      email: "giovanni.neri@example.com",
-      foto: employeeImg,
-    },
-    {
-      nome: "Elena Gialli",
-      ruolo: "HR Specialist",
-      matricola: "ADD-0005",
-      email: "elena.gialli@example.com",
-      foto: employeeImg,
-    },
-    {
-      nome: "Marco Blu",
-      ruolo: "Data Analyst",
-      matricola: "ADD-0006",
-      email: "marco.blu@example.com",
-      foto: employeeImg,
-    },
   ];
 
   const openEmployeeDetails = (employee) => {
@@ -152,5 +178,7 @@ const AdminEmployeePage = () => {
     </div>
   );
 };
+
+export { employee as EmployeeList };
 
 export default AdminEmployeePage;

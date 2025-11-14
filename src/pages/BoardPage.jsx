@@ -6,6 +6,7 @@ import shoppingCartIcon from "../assets/icons/Shopping Cart.png";
 import collaboratorMaleIcon from "../assets/icons/Collaborator Male.png";
 import calendarIcon from "../assets/icons/Calendar.png";
 import notificationsIcon from "../assets/icons/Notifications.png";
+import CalendarBox from "../components/CalendarBox";
 
 const BoardPage = () => {
 	const { theme } = useTheme();
@@ -14,9 +15,7 @@ const BoardPage = () => {
 	const textColor = theme === "dark" ? "text-white" : "text-[#134a7b]";
 
 	return (
-		<div
-			className="w-full h-full flex flex-col gap-8 overflow-y-auto"
-		>
+		<div className="w-full h-full flex flex-col gap-8 overflow-y-auto">
 			{/* Riga 1: i 4 box - con un div che li contiene tutti, e a seguire i singoli box-div */}
 			<div className="grid grid-cols-4 gap-4 mb-6 w-full transition-colors duration-500">
 				<div
@@ -32,7 +31,9 @@ const BoardPage = () => {
 						/>
 						<span className="font-bold">{t("dashboard.clientiAttivi")}</span>
 					</div>
-					<span className="text-sm opacity-70 leading-none font-semibold">20</span>
+					<span className="text-sm opacity-70 leading-none font-semibold">
+						20
+					</span>
 				</div>
 
 				<div
@@ -48,7 +49,9 @@ const BoardPage = () => {
 						/>
 						<span className="font-bold">{t("dashboard.depositi")}</span>
 					</div>
-					<span className="text-sm opacity-70 leading-none font-semibold">5</span>
+					<span className="text-sm opacity-70 leading-none font-semibold">
+						5
+					</span>
 				</div>
 
 				<div
@@ -64,7 +67,9 @@ const BoardPage = () => {
 						/>
 						<span className="font-bold">{t("dashboard.prodotti")}</span>
 					</div>
-					<span className="text-sm opacity-70 leading-none font-semibold">2000</span>
+					<span className="text-sm opacity-70 leading-none font-semibold">
+						2000
+					</span>
 				</div>
 
 				<div
@@ -80,7 +85,9 @@ const BoardPage = () => {
 						/>
 						<span className="font-bold">{t("dashboard.personaleAttivo")}</span>
 					</div>
-					<span className="text-sm opacity-70 leading-none font-semibold">50</span>
+					<span className="text-sm opacity-70 leading-none font-semibold">
+						50
+					</span>
 				</div>
 			</div>
 
@@ -137,22 +144,26 @@ const BoardPage = () => {
 
 			{/* Riga 3: 1 box - Calendario */}
 			<div
-				className="bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm border border-white/30 dark:border-white/80
-				rounded-xl p-6 shadow-md flex items-start gap-4 mb-2 min-h-[400px]"
+				className="bg-[#fafafa20] dark:bg-[#fafafa20] backdrop-blur-sm border border-white/30 dark:border-white/80
+  rounded-xl p-6 shadow-md flex items-start gap-4 mb-2 min-h-[400px]"
 			>
+				{/* Icona */}
 				<img
 					src={calendarIcon}
 					alt="Icona calendario"
 					className="w-6 h-6 object-contain"
 				/>
-				<div>
-					<h3 className={`text-[14px] font-bold font-nunito ${textColor}`}>
+
+				{/* Contenuto */}
+				<div className="flex-1 flex flex-col">
+					{/* Titolo a sinistra */}
+					<h3 className={`text-[14px] font-bold font-nunito ${textColor} mb-4`}>
 						{t("dashboard.calendario")}
 					</h3>
-					{/* aggiunta componente calendario */}
+
+					<CalendarBox />
 				</div>
 			</div>
-			
 		</div>
 	);
 };
