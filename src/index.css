@@ -1,45 +1,34 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 @import "tailwindcss";
 
-
 @theme {
-  /* Font principale */
   --font-nunito: 'Nunito', sans-serif;
-
 }
 
 body {
   font-family: var(--font-nunito);
-  color: #8d97c8;
 }
 
-/* === Nasconde tutte le scrollbar in modo cross-browser === */
-*::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-}
+/* Nasconde scrollbar */
+*::-webkit-scrollbar { width: 0; height: 0; }
+* { scrollbar-width: none; -ms-overflow-style: none; }
 
-* {
-  scrollbar-width: none;
-  /* Firefox */
-  -ms-overflow-style: none;
-  /* IE e Edge */
-}
-
-
-/* === Stili globali === */
+/* Stili globali */
 @layer base {
 
-  /* === Box === */
+  /* Box */
   .custom-box {
-    @apply rounded-xl shadow-white-lg border border-white/90 backdrop-blur-lg transition-colors duration-300 bg-white/10 text-[#090c64]
+    @apply rounded-xl shadow-white border border-white/90 backdrop-blur-lg transition-colors duration-300 bg-white/10 text-[#090c64];
   }
- /* === Input === */
+
+  /* Input */
   .custom-input {
-    @apply border border-white/30 rounded-xl px-4 shadow-md outline-none font-semibold focus: ring-2 transition-all duration-200 text-[#090c64] placeholder:text-[#090c64]/70 focus:ring-[#090c64]
+    @apply border border-white/30 rounded-xl px-4 shadow-md outline-none font-semibold focus:ring-2 transition-all duration-200 text-[#090c64] placeholder:text-[#090c64]/70 focus:ring-[#090c64];
   }
- /* === Button === */
-  .custom-buttom {
-    @apply rounded-xl shadow-md border border-white/20 transition-all duration-500 cursor-pointer font-bold font-nunito text-white bg-[#090c64];
+
+  /* Button */
+  .custom-button {
+    @apply rounded-xl shadow-md border border-white/20 transition-all duration-500 cursor-pointer font-bold text-white bg-[#090c64];
+    font-family: var(--font-nunito);
   }
 }
