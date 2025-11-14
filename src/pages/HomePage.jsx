@@ -15,7 +15,7 @@ const HomePage = () => {
 
       {/* Liquid Glass Overlay */}
       <div
-        className="absolute top-[5%] left-[10%] w-[80%] max-w-[90%] h-[90%] glass-card shadow-lg"
+        className="absolute top-[5%] left-[10%] w-[80%] max-w-[90%] h-[90%] custom-box"
       />
 
       {/* Logo */}
@@ -26,7 +26,7 @@ const HomePage = () => {
       />
 
       {/* Frase */}
-      <h1 className="absolute top-[55%] left-[58%] transform -translate-x-1/2 text-primary text-2xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-normal leading-normal whitespace-nowrap">
+      <h1 className="absolute top-[55%] left-[58%] transform -translate-x-1/2 text-[#090c64] text-2xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-normal leading-normal whitespace-nowrap">
         Simplify your workflow
       </h1>
 
@@ -34,7 +34,7 @@ const HomePage = () => {
       <Link
         to="/login"
         role="button"
-        className="absolute top-[68%] left-1/2 transform -translate-x-1/2 w-[80%] max-w-[350px] h-14 glass-card flex items-center justify-center text-primary text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-normal leading-normal cursor-pointer hover:bg-glass-strong transition-colors duration-300"
+        className="absolute top-[68%] left-1/2 transform -translate-x-1/2 w-[80%] max-w-[350px] h-14 custom-button flex items-center justify-center text-primary text-lg sm:text-xl md:text-2xl lg:text-3xl "
       >
         Benvenuto
       </Link>
