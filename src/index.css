@@ -34,7 +34,7 @@ body {
 
   /* LIGHT MODE */
   input:not(.dark) {
-    @apply text-[#080ebf] placeholder:text-[#080ebf]/70 focus:ring-[#080ebf];
+    @apply text-[#090c64] placeholder:text-[#090c64]/70 focus:ring-[#090c64];
   }
 
   /* DARK MODE */
@@ -50,7 +50,7 @@ body {
     @apply w-full sm:w-[225px] h-[50px] mt-8
            rounded-xl shadow-md border border-white/20
            transition-all duration-500 cursor-pointer
-           font-bold font-nunito text-white bg-[#080ebf];
+           font-bold font-nunito text-white bg-[#090c64];
   }
 
   /* Stato Disabled / Loading */

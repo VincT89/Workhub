@@ -13,7 +13,7 @@ const HomePage = () => {
   const { t } = useLanguage();
 
   const backgroundImage = theme === "dark" ? bgDark : bgLight;
-  const textColor = theme === "dark" ? "text-white" : "text-[#080ebf]";
+  const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 
   return (
     <main

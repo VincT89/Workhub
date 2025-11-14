@@ -40,7 +40,7 @@ const LoginPage = () => {
 		dispatch(loginAsync({ username, password }));
 	};
 
-	const textColor = theme === "dark" ? "text-white" : "text-[#080ebf]";
+	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 
 	return (
 		<main
@@ -134,6 +134,7 @@ const LoginPage = () => {
 						required
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
+						className="input"
 					/>
 					<button
 						type="button"
@@ -143,13 +144,13 @@ const LoginPage = () => {
 						{showPassword ? (
 							<Eye
 								size={24}
-								color={theme === "dark" ? "#fff" : "#080ebf"}
+								color={theme === "dark" ? "#fff" : "#090c64"}
 								weight="duotone"
 							/>
 						) : (
 							<EyeSlash
 								size={24}
-								color={theme === "dark" ? "#fff" : "#080ebf"}
+								color={theme === "dark" ? "#fff" : "#090c64"}
 								weight="duotone"
 							/>
 						)}
