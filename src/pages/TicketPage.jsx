@@ -8,11 +8,8 @@ import { BarChart } from '@mui/x-charts/BarChart';
 //tutte le icone 
 import openIcon from "../assets/icons/Open Envelope Clock.png";
 import checkIcon from "../assets/icons/Instagram Check Mark.png";
-import pendingIcon from "../assets/icons/Data Pending.png";
-import errorIcon from "../assets/icons/Error.png";
 import reportIcon from "../assets/icons/Report File.png";
 import listIcon from "../assets/icons/List.png";
-import personalIcon from "../assets/icons/Test Passed.png";
 import webUsageState from "../store/webUsageState";
 
 
@@ -51,26 +48,10 @@ const TicketPage = () => {
                         </span>
                         <span className="font-bold text-lg text-blue-800">11</span>
                     </div>
-
-                    <div className="flex items-center justify-between bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 shadow">
-                        <span className="flex items-center gap-2 font-semibold text-blue-900">
-                            <img src={pendingIcon} alt="pending icon" className="w-5 h-5 object-contain" />
-                            Ticket in attesa
-                        </span>
-                        <span className="font-bold text-lg text-blue-800">22</span>
-                    </div>
-
-                    <div className="flex items-center justify-between bg-white/60 backdrop-blur-sm rounded-xl px-4 py-3 shadow">
-                        <span className="flex items-center gap-2 font-semibold text-blue-900">
-                            <img src={errorIcon} alt="error icon" className="w-5 h-5 object-contain" />
-                            Ticket urgenti
-                        </span>
-                        <span className="font-bold text-lg text-blue-800">3</span>
-                    </div>
                 </section>
                 <div className="flex flex-col items-center justify-center w-full h-full">
 
-                    {/* CONTENUTO PRINCIPALE: report Ticket(con futuro grafico), ticket recenti, risposte persdonali*/}
+                    {/* CONTENUTO PRINCIPALE: report Ticket con grafico ticket aperti e chiusi*/}
 
                     <section className="grid grid-cols-3 gap-6 h-[70%]">
                         {/* Grafico Report Ticket */}
@@ -95,7 +76,7 @@ const TicketPage = () => {
                         </div>
 
                         {/* Ticket Recenti */}
-                        <div className="col-span-2 grid grid-rows-2 gap-4">
+                        <div className="col-span-2 grid grid-rows-2 gap-4 h-full: height: 100% h-[70%]">
                             <div className="bg-white/60 rounded-xl shadow p-4 h-64 overflow-y-auto overflow-hidden
                             [::-webkit-scrollbar]:w-[30px]
                             scrollbar-thumb-[#134a7b]/60
@@ -107,7 +88,7 @@ const TicketPage = () => {
                                 <h2 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
                                     <img src={listIcon} alt="list icon" className="w-5 h-5 object-contain" />
 
-                                    Ticket Recenti
+                                    Ticket
                                 </h2>
 
                                 {/*     per il momento provo a riempire con piccole sezioni */}
@@ -129,45 +110,7 @@ const TicketPage = () => {
                                      Nessun ticket recente
                                     </div>
                                 */}
-
                             </div>
-
-                            {/* Risposte Personale */}
-                            <div className="bg-white/60 rounded-xl shadow p-4 h-64 overflow-y-auto overflow-hidden
-                            [::-webkit-scrollbar]:w-[30px]
-                            scrollbar-thumb-[#134a7b]/60
-                            scrollbar-thumb-rounded-full
-                            hover:scrollbar-thumb-[#134a7b]/80
-                            transition
-                            space-y-2 pr-2
-                            [scrollbar-color:#134a7b60_transparent]">
-                                <h2 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
-                                    <img src={personalIcon} alt="persona icon" className="w-5 h-5 object-contain" />
-
-                                    Risposte personale
-                                </h2>
-
-                                <div className="col-span-1 bg-white/60 rounded-xl shadow p-4 mb-3 flex flex-col">Prova</div>
-                                <div className="col-span-1 bg-white/60 rounded-xl shadow p-4 mb-3 flex flex-col">Prova</div>
-                                <div className="col-span-1 bg-white/60 rounded-xl shadow p-4 mb-3 flex flex-col">Prova</div>
-                                <div className="col-span-1 bg-white/60 rounded-xl shadow p-4 mb-3 flex flex-col">Prova</div>
-                                <div className="col-span-1 bg-white/60 rounded-xl shadow p-4 mb-3 flex flex-col">Prova</div>
-                                <div className="col-span-1 bg-white/60 rounded-xl shadow p-4 mb-3 flex flex-col">Prova</div>
-                                <div className="col-span-1 bg-white/60 rounded-xl shadow p-4 mb-3 flex flex-col">Prova</div>
-                                <div className="col-span-1 bg-white/60 rounded-xl shadow p-4 mb-3 flex flex-col">Prova</div>
-                                <div className="col-span-1 bg-white/60 rounded-xl shadow p-4 mb-3 flex flex-col">Prova</div>
-
-
-                                {/* se non ho niente nelle rispodte, di default possiamo lasciarlo cosi, con mex: Nessun..... ? 
-
-                                    QUESTO ELEMENTO E CREATO STATICO SOLO PER ME O IN CASO VOGLIO DARE QUESTA RISPOSTA DEFAUL
-                                    
-                                    <div className="h-full flex items-center justify-center text-gray-500">
-                                     Nessun ticket recente
-                                    </div>
-                                */}
-                            </div>
-
                         </div>
                     </section>
                 </div>
