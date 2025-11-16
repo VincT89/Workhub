@@ -73,11 +73,10 @@ const Table = ({ data, columns, onClick }) => {
 								className={`p-3 text-[#134a7b] bg-transparent
 
                                 ${idx === 0 ? "rounded-l-xl" : ""}
-                                ${
-																	idx === columns.length - 1
-																		? "rounded-r-xl"
-																		: ""
-																}`}
+                                ${idx === columns.length - 1
+										? "rounded-r-xl"
+										: ""
+									}`}
 							>
 								{item.charAt(0).toUpperCase() + item.slice(1)}
 							</th>
@@ -91,7 +90,7 @@ const Table = ({ data, columns, onClick }) => {
 						<tr
 							key={i}
 							className="bg-transparent hover:bg-white transition cursor-pointer"
-							onClick={() => navigate(`/product/${row.id}`)} // 👈 apre la pagina prodotto
+							onClick={() => navigate(`/item/${row.id}`, { state: row })} // 👈 apre la pagina prodotto
 						>
 							{columns.map((col, j) => (
 								<td
@@ -99,11 +98,10 @@ const Table = ({ data, columns, onClick }) => {
 									className={`p-3 text-[#134a7b] bg-transparent
 
                                   ${j === 0 ? "rounded-l-xl" : ""}
-                                  ${
-																		j === columns.length - 1
-																			? "rounded-r-xl"
-																			: ""
-																	}`}
+                                  ${j === columns.length - 1
+											? "rounded-r-xl"
+											: ""
+										}`}
 								>
 									{/* condizione inline:
                                 j === 0 → controlla se siamo nella prima colonna (indice 0).

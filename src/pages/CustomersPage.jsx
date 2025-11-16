@@ -1,13 +1,11 @@
-import Table from "./Table";
-
-import { useNavigate } from "react-router-dom";
+import Table from "../components/Table";
 
 const CustomersPage = () => {
 
-    const navigate = useNavigate();
 
     const customers = [
   {
+    id: 1,
     nome: "Mario Mario",
     indirizzo: "Via Roma 12",
     citta: "Roma",
@@ -21,6 +19,7 @@ const CustomersPage = () => {
     punti: 120,
   },
   {
+    id: 2,
     nome: "Luigi Mario",
     indirizzo: "Via Roma 12",
     citta: "Roma",
@@ -34,6 +33,7 @@ const CustomersPage = () => {
     punti: 530,
   },
   {
+    id: 3,
     nome: "Homer Simpson",
     indirizzo: "Evergreen Terrace 123",
     citta: "Springfield",
@@ -47,6 +47,7 @@ const CustomersPage = () => {
     punti: 220,
   },
   {
+    id: 4,
     nome: "Marge Simpson",
     indirizzo: "Evergreen Terrace 123",
     citta: "Springfield",
@@ -60,6 +61,7 @@ const CustomersPage = () => {
     punti: 130,
   },
   {
+    id: 5,
     nome: "Bart Simpson",
     indirizzo: "Evergreen Terrace 123",
     citta: "Springfield",
@@ -73,6 +75,7 @@ const CustomersPage = () => {
     punti: 620,
   },
   {
+    id: 6,
     nome: "Lisa Simpson",
     indirizzo: "Evergreen Terrace 123",
     citta: "Springfield",
@@ -86,6 +89,7 @@ const CustomersPage = () => {
     punti: 900,
   },
   {
+    id: 7,
     nome: "Peter Griffin",
     indirizzo: "Via Milano 30",
     citta: "Milano",
@@ -99,6 +103,7 @@ const CustomersPage = () => {
     punti: 350,
   },
   {
+    id: 8,
     nome: "Lois Griffin",
     indirizzo: "Via Milano 30",
     citta: "Milano",
@@ -115,17 +120,12 @@ const CustomersPage = () => {
 
 
 
-    // funzione da triggherare al click della riga con i dati di un cliente che riporta alla pagina di anagrafica del suddetto cliente
-    const openCustomerDetails = (customer) => {
-        navigate("/customer-registry", { state: customer }); // state serve ad immagazzinare i dati presenti nella riga della tabella e a trasportarli alla pagina CustomerRegistry dove navigate riporta l'utente al click del div 
-    };
-
     return (
         <>
             <>
-                <div className="w-full min-h-screen flex justify-center items-start p-8 bg-cover bg-center bg-[url('/src/assets/bg/bg.jpg')]">
+                <div className="w-full min-h-screen flex justify-center items-start p-8 bg-cover bg-center bg-[url('/src/assets/bg/bg2.jpg')]">
                     <div className="flex flex-col items-center gap-6 p-6 rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm shadow-md border border-white bg-white/30 w-11/12">
-                        <Table data={customers} columns={Object.keys(customers[0])} onClick={openCustomerDetails} />
+                        <Table data={customers} columns={Object.keys(customers[0])} />
                     </div>
                 </div>
             </>

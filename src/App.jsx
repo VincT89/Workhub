@@ -17,7 +17,7 @@ function App() {
       <Route path="login" element={<LoginPage />} />
       <Route path="settings" element={<SettingsPage />} />
       <Route path="customers" element={<CustomersPage />} />
-      <Route path="/customer-registry" element={<CustomersRegistry />} />
+      <Route path="item/:id" element={<CustomersRegistry />} />
       {/* </Route> */}
     </Routes>
   );

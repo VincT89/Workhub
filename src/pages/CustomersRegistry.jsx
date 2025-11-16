@@ -3,10 +3,8 @@ import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import { setActiveTab } from "../store/features/tabSlice";
 
-import deleteUserIcon from "../assets/icons/Delete User Male.png";
-import groupIcon from "../assets/icons/Group.png";
-import qualityIcon from "../assets/icons/Quality.png";
-import staffIcon from "../assets/icons/Staff.png";
+import { UserList, ShoppingBag, ArrowCounterClockwise, IdentificationBadge } from "@phosphor-icons/react";
+
 
 const CustomersRegistry = () => {
     const location = useLocation();
@@ -19,11 +17,11 @@ const CustomersRegistry = () => {
     const [editedCustomer, setEditedCustomer] = useState(customer);
 
     const stats = [
-        { label: "Anagrafica", icon: groupIcon },
-        { label: "Ordini", icon: deleteUserIcon },
-        { label: "Resi", icon: qualityIcon },
-        { label: "Affiliazione", icon: staffIcon },
-    ];
+        { label: "Anagrafica", icon: UserList },
+        { label: "Ordini", icon: ShoppingBag },
+        { label: "Resi", icon: ArrowCounterClockwise },
+        { label: "Affiliazione", icon: IdentificationBadge },
+    ]
 
     // Funzione per aggiornare i campi dell'anagrafica
     const handleChange = (e) => {
@@ -43,7 +41,7 @@ const CustomersRegistry = () => {
     };
 
     return (
-        <div className="w-full min-h-screen flex justify-center items-start p-8 bg-cover bg-center bg-[url('/src/assets/bg/bg.jpg')]">
+        <div className="w-full min-h-screen flex justify-center items-start p-8 bg-cover bg-center bg-[url('/src/assets/bg/bg2.jpg')]">
             <div className="flex flex-col items-center gap-6 p-6 rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm shadow-md border border-white bg-white/30">
 
                 {/* Navbar */}
@@ -57,7 +55,7 @@ const CustomersRegistry = () => {
                                 : "bg-white/40 hover:bg-white/70"
                                 }`}
                         >
-                            <img src={item.icon} alt={item.label} className="w-6 h-6" />
+                            <item.icon size={22} weight={activeTab === item.label ? "fill" : "regular"} />
                             {item.label}
                         </button>
                     ))}
@@ -131,16 +129,31 @@ const CustomersRegistry = () => {
                     {/* ORDINI */}
                     {activeTab === "Ordini" && (
                         <div className="flex flex-col gap-3">
-                            <h3 className="text-[#134a7b] font-semibold mb-2 text-left">Storico Ordini</h3>
+                            <div className="flex justify-between items-center mb-2">
+                                <h3 className="text-[#134a7b] font-semibold text-left">Storico Ordini</h3>
+                                <button
+                                    className="text-sm px-3 py-1 bg-white/70 rounded-full border border-white shadow-sm hover:bg-white transition"
+                                >
+                                    📊 Esporta Excel
+                                </button>
+                            </div>
                             <div className="bg-white/60 p-3 rounded-full shadow-sm">Ordine #1</div>
                             <div className="bg-white/60 p-3 rounded-full shadow-sm">Ordine #2</div>
                         </div>
                     )}
 
+
                     {/* RESI */}
                     {activeTab === "Resi" && (
                         <div className="flex flex-col gap-3">
-                            <h3 className="text-[#134a7b] font-semibold mb-2 text-left">Resi</h3>
+                            <div className="flex justify-between items-center mb-2">
+                                <h3 className="text-[#134a7b] font-semibold text-left">Storico Resi</h3>
+                                <button
+                                    className="text-sm px-3 py-1 bg-white/70 rounded-full border border-white shadow-sm hover:bg-white transition"
+                                >
+                                    📊 Esporta Excel
+                                </button>
+                            </div>
                             <div className="bg-white/60 p-3 rounded-full shadow-sm">Reso #1</div>
                             <div className="bg-white/60 p-3 rounded-full shadow-sm">Reso #2</div>
                         </div>
@@ -149,7 +162,14 @@ const CustomersRegistry = () => {
                     {/* AFFILIAZIONE */}
                     {activeTab === "Affiliazione" && (
                         <div className="flex flex-col gap-3">
-                            <h3 className="text-[#134a7b] font-semibold mb-2 text-left">Affiliazione</h3>
+                            <div className="flex justify-between items-center mb-2">
+                                <h3 className="text-[#134a7b] font-semibold text-left">Affiliazione</h3>
+                                <button
+                                    className="text-sm px-3 py-1 bg-white/70 rounded-full border border-white shadow-sm hover:bg-white transition"
+                                >
+                                    📊 Esporta Excel
+                                </button>
+                            </div>
                             <div className="bg-white/60 p-3 rounded-full shadow-sm">Livello tessera: {customer.livello}</div>
                             <div className="bg-white/60 p-3 rounded-full shadow-sm">Punti: {customer.punti}</div>
                         </div>
