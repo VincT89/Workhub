@@ -23,12 +23,11 @@ const CustomersRegistry = () => {
         { label: "Affiliazione", icon: IdentificationBadge },
     ]
 
-    // 🔹 Storico ordini fittizi (stile IKEA)
     const ordiniFittizi = [
         {
             id: 1,
-            dataOrdine: "2025-01-12",
             prodotto: "LACK Tavolino",
+            dataOrdine: "2025-01-12",
             categoria: "Soggiorno",
             quantita: 1,
             prezzo: 9.99,
@@ -39,8 +38,8 @@ const CustomersRegistry = () => {
         },
         {
             id: 2,
-            dataOrdine: "2025-02-03",
             prodotto: "BILLY Libreria",
+            dataOrdine: "2025-02-03",
             categoria: "Ufficio",
             quantita: 2,
             prezzo: 39.99,
@@ -51,8 +50,8 @@ const CustomersRegistry = () => {
         },
         {
             id: 3,
-            dataOrdine: "2025-02-20",
             prodotto: "MALM Cassettiera",
+            dataOrdine: "2025-02-20",
             categoria: "Camera",
             quantita: 1,
             prezzo: 79.99,
@@ -63,8 +62,8 @@ const CustomersRegistry = () => {
         },
         {
             id: 4,
-            dataOrdine: "2025-03-01",
             prodotto: "POÄNG Poltrona",
+            dataOrdine: "2025-03-01",
             categoria: "Soggiorno",
             quantita: 1,
             prezzo: 69.99,
@@ -75,8 +74,8 @@ const CustomersRegistry = () => {
         },
         {
             id: 5,
-            dataOrdine: "2025-03-15",
             prodotto: "HEMNES Comodino",
+            dataOrdine: "2025-03-15",
             categoria: "Camera",
             quantita: 1,
             prezzo: 49.99,
@@ -87,8 +86,33 @@ const CustomersRegistry = () => {
         }
     ];
 
-    /* const colonneOrdini = Object.keys(ordiniFittizi[0]); */
-
+    const resiFittizi = [
+        {
+            id: 1,
+            prodotto: "MALM Cassettiera",
+            dataReso: "2025-03-02",
+            categoria: "Camera",
+            quantita: 1,
+            motivoReso: "Pezzo mancante nel kit",
+            statoReso: "Accettato",
+            rimborso: 79.99,
+            metodoPagamento: "PayPal",
+            codiceTrackingReso: "IKR001234567"
+            
+        },
+        {
+            id: 2,
+            prodotto: "LACK Tavolino",
+            dataReso: "2025-02-18",
+            categoria: "Soggiorno",
+            quantita: 1,
+            motivoReso: "Colore diverso da quanto atteso",
+            statoReso: "In elaborazione",
+            rimborso: 9.99,
+            metodoPagamento: "Carta di credito",
+            codiceTrackingReso: "IKR000456789"
+        }
+    ];
 
     // Funzione per aggiornare i campi dell'anagrafica
     const handleChange = (e) => {
@@ -225,8 +249,10 @@ const CustomersRegistry = () => {
                                     📊 Esporta Excel
                                 </button>
                             </div>
-                            <div className="bg-white/60 p-3 rounded-full shadow-sm">Reso #1</div>
-                            <div className="bg-white/60 p-3 rounded-full shadow-sm">Reso #2</div>
+                            <Table
+                                data={resiFittizi}
+                                columns={Object.keys(resiFittizi[0])}
+                            />
                         </div>
                     )}
 
