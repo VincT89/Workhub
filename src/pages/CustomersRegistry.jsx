@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import { setActiveTab } from "../store/features/tabSlice";
-
+import Table from "../components/Table";
 import { UserList, ShoppingBag, ArrowCounterClockwise, IdentificationBadge } from "@phosphor-icons/react";
 
 
@@ -22,6 +22,73 @@ const CustomersRegistry = () => {
         { label: "Resi", icon: ArrowCounterClockwise },
         { label: "Affiliazione", icon: IdentificationBadge },
     ]
+
+    // 🔹 Storico ordini fittizi (stile IKEA)
+    const ordiniFittizi = [
+        {
+            id: 1,
+            dataOrdine: "2025-01-12",
+            prodotto: "LACK Tavolino",
+            categoria: "Soggiorno",
+            quantita: 1,
+            prezzo: 9.99,
+            totale: 9.99,
+            stato: "Consegnato",
+            metodoPagamento: "Carta di credito",
+            codiceTracking: "IK000987654"
+        },
+        {
+            id: 2,
+            dataOrdine: "2025-02-03",
+            prodotto: "BILLY Libreria",
+            categoria: "Ufficio",
+            quantita: 2,
+            prezzo: 39.99,
+            totale: 79.98,
+            stato: "In transito",
+            metodoPagamento: "PayPal",
+            codiceTracking: "IK001123789"
+        },
+        {
+            id: 3,
+            dataOrdine: "2025-02-20",
+            prodotto: "MALM Cassettiera",
+            categoria: "Camera",
+            quantita: 1,
+            prezzo: 79.99,
+            totale: 79.99,
+            stato: "Preparazione",
+            metodoPagamento: "Carta di credito",
+            codiceTracking: "IK001998321"
+        },
+        {
+            id: 4,
+            dataOrdine: "2025-03-01",
+            prodotto: "POÄNG Poltrona",
+            categoria: "Soggiorno",
+            quantita: 1,
+            prezzo: 69.99,
+            totale: 69.99,
+            stato: "Consegnato",
+            metodoPagamento: "Bonifico",
+            codiceTracking: "IK002112455"
+        },
+        {
+            id: 5,
+            dataOrdine: "2025-03-15",
+            prodotto: "HEMNES Comodino",
+            categoria: "Camera",
+            quantita: 1,
+            prezzo: 49.99,
+            totale: 49.99,
+            stato: "In transito",
+            metodoPagamento: "Carta di credito",
+            codiceTracking: "IK002778900"
+        }
+    ];
+
+    /* const colonneOrdini = Object.keys(ordiniFittizi[0]); */
+
 
     // Funzione per aggiornare i campi dell'anagrafica
     const handleChange = (e) => {
@@ -129,18 +196,22 @@ const CustomersRegistry = () => {
                     {/* ORDINI */}
                     {activeTab === "Ordini" && (
                         <div className="flex flex-col gap-3">
+
                             <div className="flex justify-between items-center mb-2">
                                 <h3 className="text-[#134a7b] font-semibold text-left">Storico Ordini</h3>
-                                <button
-                                    className="text-sm px-3 py-1 bg-white/70 rounded-full border border-white shadow-sm hover:bg-white transition"
-                                >
+                                <button className="text-sm px-3 py-1 bg-white/70 rounded-full border border-white shadow-sm hover:bg-white transition">
                                     📊 Esporta Excel
                                 </button>
                             </div>
-                            <div className="bg-white/60 p-3 rounded-full shadow-sm">Ordine #1</div>
-                            <div className="bg-white/60 p-3 rounded-full shadow-sm">Ordine #2</div>
+
+                            {/* 🔹 Tabella degli ordini */}
+                            <Table
+                                data={ordiniFittizi}
+                                columns={Object.keys(ordiniFittizi[0])}
+                            />
                         </div>
                     )}
+
 
 
                     {/* RESI */}
