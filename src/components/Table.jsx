@@ -1,8 +1,7 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Table = ({ data, columns, onClick }) => {
-	// PER RIGA TABELLA CLICCABILE CHE PORTA A PAGINA PRODOTTO
+const Table = ({ data, columns, customToolbar }) => {
 	const navigate = useNavigate();
 
 	const [searchTerm, setSearchTerm] = useState("");
@@ -11,7 +10,6 @@ const Table = ({ data, columns, onClick }) => {
 	const filteredData = useMemo(() => {
 		const query = searchTerm.toLowerCase();
 
-		// Filtra i dati
 		let result = data.filter((row) =>
 			columns.some((col) => {
 				const value = row[col];
@@ -19,8 +17,8 @@ const Table = ({ data, columns, onClick }) => {
 
 				const normalizedValue = String(value)
 					.toLowerCase()
-					.replace(/\s+/g, "") // rimuove spazi
-					.replace(/\+/g, ""); // rimuove +
+					.replace(/\s+/g, "")
+					.replace(/\+/g, "");
 
 				const normalizedQuery = query.replace(/\s+/g, "").replace(/\+/g, "");
 
@@ -28,14 +26,11 @@ const Table = ({ data, columns, onClick }) => {
 			})
 		);
 
-		// Ordinamento alfabetico sulla prima colonna
 		if (sortAZ && columns.length > 1) {
 			const sortColumn = columns[1];
-			result = [...result].sort((a, b) => {
-				const aVal = String(a[sortColumn] || "").toLowerCase();
-				const bVal = String(b[sortColumn] || "").toLowerCase();
-				return aVal.localeCompare(bVal);
-			});
+			result = [...result].sort((a, b) =>
+				String(a[sortColumn] || "").localeCompare(String(b[sortColumn] || ""))
+			);
 		}
 
 		return result;
@@ -43,17 +38,23 @@ const Table = ({ data, columns, onClick }) => {
 
 	return (
 		<div className="w-full rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md border border-white bg-white/40 flex flex-col gap-4">
-			{/* Toolbar */}
+
+			{/* TOOLBAR */}
 			<div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-				<div className="flex gap-2">
+				{/* Left side tools */}
+				<div className="flex gap-2 items-center">
 					<button
 						onClick={() => setSortAZ(!sortAZ)}
 						className="px-3 py-2 bg-white/70 border border-white rounded-full shadow-sm text-sm hover:bg-white transition"
 					>
 						{sortAZ ? "Annulla Ordine A-Z" : "Ordina A-Z"}
 					</button>
+
+					{/* Custom tools injected from parent */}
+					{customToolbar && customToolbar()}
 				</div>
 
+				{/* Search */}
 				<input
 					type="text"
 					placeholder="Cerca..."
@@ -63,7 +64,7 @@ const Table = ({ data, columns, onClick }) => {
 				/>
 			</div>
 
-			{/* Tabella */}
+			{/* TABLE */}
 			<table className="w-full border-collapse text-sm text-[#134a7b]">
 				<thead>
 					<tr className="bg-white/60 rounded-full">
@@ -71,12 +72,9 @@ const Table = ({ data, columns, onClick }) => {
 							<th
 								key={idx}
 								className={`p-3 text-[#134a7b] bg-transparent
-
                                 ${idx === 0 ? "rounded-l-xl" : ""}
-                                ${idx === columns.length - 1
-										? "rounded-r-xl"
-										: ""
-									}`}
+                                ${idx === columns.length - 1 ? "rounded-r-xl" : ""}
+                            `}
 							>
 								{item.charAt(0).toUpperCase() + item.slice(1)}
 							</th>
@@ -86,34 +84,20 @@ const Table = ({ data, columns, onClick }) => {
 
 				<tbody>
 					{filteredData.map((row, i) => (
-						// CLICK PER APRIRE PRODOTTO E STILE RIGA
 						<tr
 							key={i}
 							className="bg-transparent hover:bg-white transition cursor-pointer"
-							onClick={() => navigate(`/item/${row.id}`, { state: row })} // 👈 apre la pagina prodotto
+							onClick={() => navigate(`/item/${row.id}`, { state: row })}
 						>
 							{columns.map((col, j) => (
 								<td
 									key={j}
 									className={`p-3 text-[#134a7b] bg-transparent
-
-                                  ${j === 0 ? "rounded-l-xl" : ""}
-                                  ${j === columns.length - 1
-											? "rounded-r-xl"
-											: ""
-										}`}
+                                        ${j === 0 ? "rounded-l-xl" : ""}
+                                        ${j === columns.length - 1 ? "rounded-r-xl" : ""}
+                                    `}
 								>
-									{/* condizione inline:
-                                j === 0 → controlla se siamo nella prima colonna (indice 0).
-                                Se sì → aggiunge la classe rounded-l-xl, che arrotonda gli angoli sinistri della cella (in alto e in basso).
-                                Se no → aggiunge una stringa vuota, cioè nessuna classe.
-
-                                columns.length - 1 restituisce l’indice dell’ultima colonna dell’array.
-                                Se j corrisponde a quell’indice → viene aggiunta la classe rounded-r-xl.
-                                */}
-
-									{String(row[col]).charAt(0).toUpperCase() +
-										String(row[col]).slice(1)}
+									{String(row[col]).charAt(0).toUpperCase() + String(row[col]).slice(1)}
 								</td>
 							))}
 						</tr>
