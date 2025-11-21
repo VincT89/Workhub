@@ -13,88 +13,90 @@ import Topbar from "../components/Topbar";
 import Sidebar from "../components/Sidebar";
 
 const PublicLayout = () => {
-	const { theme } = useTheme();
-	const bgImage = theme === "dark" ? bgDark : bgLight;
-	const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { theme } = useTheme();
+  const bgImage = theme === "dark" ? bgDark : bgLight;
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
-	return (
-		<>
-			{/* ===== BACKGROUND ===== */}
-			<div
-				className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10 transition-opacity duration-700"
-				style={{ backgroundImage: `url(${bgImage})` }}
-			/>
+  return (
+    <>
+      {/* ===== BACKGROUND ===== */}
+      <div
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10 transition-opacity duration-700"
+        style={{ backgroundImage: `url(${bgImage})` }}
+      />
 
-			{/* ===== TOPBAR ===== */}
-			<div
-				className={`
-    fixed top-4 transition-all duration-500 ease-in-out z-30
-    ${
-			sidebarOpen
-				? "left-2.5 w-[calc(100%-125px)]"
-				: "left-[-180px] w-[calc(100%-5px)]"
-		}
-  `}
-			>
-				<Topbar />
-			</div>
-
-			{/* ===== SIDEBAR ===== */}
-			{sidebarOpen && (
-				<aside
-					className={`
-            fixed top-0 left-0 h-full z-40 transition-all duration-1200 ease-in-out
-            ${theme === "dark" ?  "bg-[#D0D8FB]/90" : "bg-linear-to-br from-indigo-950 via-indigo-950/90 to-violet-900" }
-            backdrop-blur-sm border-r border-white/30 shadow-md flex flex-col
-            w-[250px] py-2 px-4
+      {/* ===== SIDEBAR ===== */}
+      {sidebarOpen && (
+        <aside
+          className={`
+            fixed top-0 left-0 h-full z-40
+            transition-all duration-700 ease-in-out
+            ${
+              theme === "dark"
+                ? "bg-[#D0D8FB]/90"
+                : "bg-linear-to-br from-indigo-950 via-indigo-950/90 to-violet-900"
+            }
+            backdrop-blur-sm border-r border-white/30 shadow-md
+            flex flex-col w-[230px] md:w-[250px] py-2 px-4
           `}
-				>
-					{/* LOGO */}
-					<div
-						className="flex flex-col items-center gap-3 cursor-pointer mb-8"
-						onClick={() => setSidebarOpen(false)}
-					>
-						<img
-							src={`${theme === "dark" ? iconLogo2 : iconLogo}`}
-							alt="Logo"
-							className="w-48 h-auto object-contain drop-shadow-md transition-all duration-1200"
-						/>
-					</div>
+        >
+          {/* LOGO */}
+          <div
+            className="flex flex-col items-center gap-3 cursor-pointer mb-8"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <img
+              src={theme === "dark" ? iconLogo2 : iconLogo}
+              alt="Logo"
+              className="w-40 md:w-48 h-auto object-contain drop-shadow-md transition-all duration-700"
+            />
+          </div>
 
-					{/* NAVIGATION */}
-					<div className="flex-1 w-full transition-all duration-1200 opacity-100">
-						<Sidebar />
-					</div>
-				</aside>
-			)}
+          {/* NAVIGATION */}
+          <div className="flex-1 w-full">
+            <Sidebar />
+          </div>
+        </aside>
+      )}
 
-			{/* ===== LOGO  (visibile quando sidebar chiusa) ===== */}
-			{!sidebarOpen && (
-				<div
-					className="fixed top-6 left-6 z-50 cursor-pointer transition-transform duration-900 hover:scale-105 border border-white/90
-        backdrop-blur-sm rounded-full bg-white/10 shadow-md"
-					onClick={() => setSidebarOpen(true)}
-				>
-					<img
-					src={`${theme === "dark" ? iconChiusaDark : iconChiusa}`}
-						alt="Logo"
-						className="w-14 h-auto object-contain drop-shadow-lg"
-					/>
-				</div>
-			)}
+      {/* ===== LOGO QUANDO SIDEBAR CHIUSA ===== */}
+      {!sidebarOpen && (
+        <div
+          className="fixed top-6 left-6 z-50 cursor-pointer transition-transform duration-500 hover:scale-105 
+          border border-white/90 backdrop-blur-sm rounded-full bg-white/10 shadow-md"
+          onClick={() => setSidebarOpen(true)}
+        >
+          <img
+            src={theme === "dark" ? iconChiusaDark : iconChiusa}
+            alt="Logo"
+            className="w-12 md:w-14 h-auto object-contain drop-shadow-lg"
+          />
+        </div>
+      )}
 
-			{/* ===== CONTENUTO CENTRALE con scrollbar attiva ma invisibile ===== */}
-			<section
-				className={`transition-all duration-500 ease-in-out 
-        ${sidebarOpen ? "ml-[250px]" : "ml-[75px] w-[93%]"}
-        mt-[110px] min-h-screen overflow-y-auto p-8 z-10
-        ${theme === "dark" ? "text-white" : "text-[#134a7b]"}
-      `}
-			>
-				<Outlet />
-			</section>
-		</>
-	);
+      {/* ===== CONTENUTO CENTRALE (SCROLLABILE) ===== */}
+      <section
+        className={`
+          transition-all duration-500 ease-in-out 
+          ${sidebarOpen ? "ml-[230px] md:ml-[250px]" : "ml-20 md:ml-[90px]"}
+          mt-6 mb-6
+          min-h-screen
+          overflow-y-auto
+          pr-4 pl-4 md:pr-8 md:pl-8
+          z-10
+          ${theme === "dark" ? "text-white" : "text-[#090c64]"}
+        `}
+      >
+        {/* TOPBAR sopra al contenuto, scorre con la pagina */}
+        <div className="mb-6">
+          <Topbar />
+        </div>
+
+        {/* CONTENUTO DELLE PAGINE */}
+        <Outlet />
+      </section>
+    </>
+  );
 };
 
 export default PublicLayout;

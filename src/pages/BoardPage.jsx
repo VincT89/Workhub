@@ -1,11 +1,5 @@
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
-import groupIcon from "../assets/icons/Group.png";
-import warehouseIcon from "../assets/icons/Warehouse.png";
-import shoppingCartIcon from "../assets/icons/Shopping Cart.png";
-import collaboratorMaleIcon from "../assets/icons/Collaborator Male.png";
-import calendarIcon from "../assets/icons/Calendar.png";
-import notificationsIcon from "../assets/icons/Notifications.png";
 import CalendarBox from "../components/CalendarBox";
 
 const BoardPage = () => {
@@ -24,11 +18,6 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<img
-							src={groupIcon}
-							alt="Icona gruppo"
-							className="w-6 h-6 object-contain"
-						/>
 						<span className="font-bold">{t("dashboard.clientiAttivi")}</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
@@ -42,11 +31,6 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<img
-							src={warehouseIcon}
-							alt="Icona magazzino"
-							className="w-6 h-6 object-contain"
-						/>
 						<span className="font-bold">{t("dashboard.depositi")}</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
@@ -60,11 +44,6 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<img
-							src={shoppingCartIcon}
-							alt="Icona carrello"
-							className="w-6 h-6 object-contain"
-						/>
 						<span className="font-bold">{t("dashboard.prodotti")}</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
@@ -78,11 +57,6 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<img
-							src={collaboratorMaleIcon}
-							alt="Icona persona"
-							className="w-6 h-6 object-contain"
-						/>
 						<span className="font-bold">{t("dashboard.personaleAttivo")}</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
@@ -99,11 +73,6 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 rounded-xl shadow-md 
 					${textColor} h-[230px]`}
 				>
-					<img
-						src={notificationsIcon}
-						alt="Icona notifiche"
-						className="w-6 h-6 object-contain"
-					/>
 					<h3 className="text-[14px] font-bold font-nunito">
 						{t("dashboard.notifiche")}
 					</h3>
@@ -115,11 +84,6 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 rounded-xl shadow-md 
 					${textColor} h-[230px]`}
 				>
-					<img
-						src={warehouseIcon}
-						alt="Icona panoramica depositi"
-						className="w-6 h-6 object-contain"
-					/>
 					<h3 className="text-[14px] font-bold font-nunito">
 						{t("dashboard.panoramicaDepositi")}
 					</h3>
@@ -131,11 +95,6 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 rounded-xl shadow-md 
 					${textColor} h-[230px]`}
 				>
-					<img
-						src={shoppingCartIcon}
-						alt="Icona prodotti in esaurimento"
-						className="w-6 h-6 object-contain"
-					/>
 					<h3 className="text-[14px] font-bold font-nunito">
 						{t("dashboard.prodottiInEsaurimento")}
 					</h3>
@@ -145,15 +104,8 @@ const BoardPage = () => {
 			{/* Riga 3: 1 box - Calendario */}
 			<div
 				className="bg-[#fafafa20] dark:bg-[#fafafa20] backdrop-blur-sm border border-white/30 dark:border-white/80
-  rounded-xl p-6 shadow-md flex items-start gap-4 mb-2 min-h-[400px]"
+  rounded-xl p-6 shadow-md flex items-start gap-4 mb-2 min-h-[700px]"
 			>
-				{/* Icona */}
-				<img
-					src={calendarIcon}
-					alt="Icona calendario"
-					className="w-6 h-6 object-contain"
-				/>
-
 				{/* Contenuto */}
 				<div className="flex-1 flex flex-col">
 					{/* Titolo a sinistra */}
