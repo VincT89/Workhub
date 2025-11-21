@@ -1,15 +1,12 @@
-import React, { useMemo, useState, useEffect, useRef } from "react";
-import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-import { format, parse, startOfWeek, getDay } from "date-fns";
-import { it } from "date-fns/locale";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-
+import { useMemo, useState, useEffect, useRef } from "react";
+import { Calendar, dateFnsLocalizer } from "react-big-calendar"; // Libreria del calendario e localizzatore
+import { format, parse, startOfWeek, getDay } from "date-fns"; // Funzioni per la gestione delle date
+import { it } from "date-fns/locale"; // Localizzazione italiana
+import "react-big-calendar/lib/css/react-big-calendar.css"; // Stili del calendario gia pronti nella libreria , il file non e' presente nel progetto
 import { useTheme } from "../context/ThemeContext";
 import {useSelector } from "react-redux";
 
-/* =======================================
-   LOCALIZZAZIONE
-======================================= */
+/* LOCALIZZAZIONE */
 const locales = { it };
 const localizer = dateFnsLocalizer({
   format,
@@ -19,9 +16,7 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-/* =======================================
-   UTILITIES
-======================================= */
+/* UTILITIES */
 const getInitials = (name) => {
   const p = name.trim().split(" ");
   return p.length > 1
@@ -29,12 +24,18 @@ const getInitials = (name) => {
     : p[0][0].toUpperCase();
 };
 
-const getDepartmentColor = (role) => {
-  let hash = 0;
-  for (let c of role) hash = c.charCodeAt(0) + ((hash << 5) - hash);
-  return `hsl(${Math.abs(hash) % 360}, 70%, 48%)`;
+const departmentColors = {
+  "Responsabile reparto": "#6C8AE4", // Indigo 
+  "Sviluppatore": "#5EC2E0",         // Cyan 
+  "Designer": "#A88EF0",             // Purple
+  "Marketing Manager": "#F5A97F",    // Arancione
+  "HR Specialist": "#8DD0A6",        // Verde menta
+  "Data Analyst": "#7BB8E8",         // Blu chiaro
 };
 
+const getDepartmentColor = (role) => {
+  return departmentColors[role] || "#475569";  // Default: Grigio
+};
 
 const weekOffset = {
   Lunedì: 0,
@@ -46,9 +47,7 @@ const weekOffset = {
   Domenica: 6,
 };
 
-/* =======================================
-   CUSTOM TOOLBAR
-======================================= */
+/* CUSTOM TOOLBAR */
 const CustomToolbar = ({ label, onView, view, onNavigate }) => {
   return (
     <div
@@ -56,8 +55,7 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
         flex items-center justify-between w-full px-6 py-3 my-5
         rounded-xl backdrop-blur-md shadow-md
         bg-white/20 dark:bg-white/10
-        border border-white/30 dark:border-white/10
-      "
+        border border-white/30 dark:border-white/10"
     >
       {/* BACK / NEXT */}
       <div className="flex items-center gap-2">
@@ -69,8 +67,7 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
             text-[#090c64] dark:text-[#090c64]
             border border-white/40 dark:border-white/90 
             font-semibold
-            hover:bg-[#090c64] hover:text-white transition
-          "
+            hover:bg-[#090c64] hover:text-white transition"
         >
           ‹
         </button>
@@ -83,8 +80,7 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
             text-[#090c64] dark:text-[#090c64]
             border border-white/40 dark:border-white/90 
             font-semibold
-            hover:bg-[#090c64] hover:text-white transition
-          "
+            hover:bg-[#090c64] hover:text-white transition"
         >
           ›
         </button>
@@ -97,18 +93,6 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
 
       {/* BUTTONS */}
       <div className="flex items-center gap-2">
-        <button
-          onClick={() => onNavigate("TODAY")}
-          className="
-            px-4 py-2 rounded-full bg-white/70 dark:bg-white/10
-            border border-white/40 dark:border-white/90 
-            text-[#090c64] dark:text-[#090c64] font-semibold
-            hover:bg-[#090c64] hover:text-white transition
-          "
-        >
-          Oggi
-        </button>
-
         <button
           onClick={() => onView("week")}
           className={`
@@ -141,9 +125,7 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
   );
 };
 
-/* =======================================
-   MAIN COMPONENT
-======================================= */
+/* MAIN COMPONENT */
 const CalendarBox = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -165,23 +147,19 @@ const CalendarBox = () => {
     return () => document.removeEventListener("mousedown", handleOutside);
   }, []);
 
-  /* =======================================
-     FILTRO REPARTI
-  ======================================== */
+  /* FILTRO REPARTI */
   const departments = Array.from(new Set(EmployeeList.map((e) => e.ruolo)));
   const [selectedDepartments, setSelectedDepartments] = useState([...departments]);
 
   const toggleDepartment = (dept) => {
     setSelectedDepartments((prev) =>
       prev.includes(dept)
-        ? prev.filter((d) => d !== dept)
+        ? prev.filter((d) => d !== dept) // rimuove il reparto dai selezionati
         : [...prev, dept]
     );
   };
 
-  /* =======================================
-     GENERA EVENTI
-  ======================================== */
+  /* GENERA EVENTI in base ai turni */
   const eventi = useMemo(() => {
     const result = [];
     const today = new Date();
@@ -192,7 +170,7 @@ const CalendarBox = () => {
       const monday = new Date(
         weekMonday.getFullYear(),
         weekMonday.getMonth(),
-        weekMonday.getDate() + w * 7
+        weekMonday.getDate() + w * 7 // calcolo dei lunedi delle settimane cosi da andare avanti e indietro nel tempo
       );
 
       EmployeeList.forEach((dip) => {
@@ -234,9 +212,7 @@ const CalendarBox = () => {
     return result;
   }, [selectedDepartments]);
 
-  /* =======================================
-     EVENT STYLE
-  ======================================== */
+  /* EVENT STYLE */
   const eventStyleGetter = (event) => ({
     style: {
       backgroundColor: event.color,
@@ -271,9 +247,7 @@ const CalendarBox = () => {
     </div>
   );
 
-  /* =======================================
-     RENDER
-  ======================================== */
+  /* RENDER */
   return (
     <div ref={wrapperRef} className="w-full flex flex-col">
 

@@ -112,10 +112,9 @@ const BoardPage = () => {
 					<h3 className={`text-[14px] font-bold font-nunito ${textColor} mb-4`}>
 						{t("dashboard.calendario")}
 					</h3>
-
 					<CalendarBox />
 				</div>
-			</div>
+			</div> 
 		</div>
 	);
 };

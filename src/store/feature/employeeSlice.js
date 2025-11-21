@@ -25,7 +25,6 @@ const initialState = {
       ],
       foto: "/employees/employee.webp",
     },
-    // ...gli altri dipendenti
   ],
 };
 
