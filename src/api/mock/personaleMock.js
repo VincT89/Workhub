@@ -2,26 +2,42 @@
 export const personnel = [
   {
     id: 1,
-    name: "Mario Rossi",
-    email: "mario@email.it",
-    role: "admin",
     username: "admin",
     password: "admin123",
+
+    // DATI AZIENDALI
+    nome: "Jennifer Bianchi",
+    ruolo: "Responsabile reparto",   // reparto aziendale
+    matricola: "ADD-0001",
+    email: "jennifer.bianchi@example.com",
+
+    // RUOLO DI ACCESSO (permessi)
+    role: "admin",
   },
+
   {
     id: 2,
-    name: "Lucia Bianchi",
-    email: "lucia@email.it",
-    role: "supervisor",
-    username: "supervisor",
-    password: "supervisor123",
-  },
-  {
-    id: 3,
-    name: "Paolo Verdi",
-    email: "paolo@email.it",
-    role: "user",
     username: "user",
     password: "user123",
+
+    nome: "Luca Rossi",
+    ruolo: "Sviluppatore",
+    matricola: "ADD-0002",
+    email: "luca.rossi@example.com",
+
+    role: "user",
+  },
+
+  {
+    id: 3,
+    username: "supervisor",
+    password: "supervisor123",
+
+    nome: "Maria Verdi",
+    ruolo: "Designer",
+    matricola: "ADD-0003",
+    email: "maria.verdi@example.com",
+
+    role: "supervisor",
   },
 ];
