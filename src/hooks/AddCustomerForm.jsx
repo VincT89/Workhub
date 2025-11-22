@@ -72,7 +72,7 @@ const AddCustomerForm = ({ onAdd }) => {
 
                         {/* 🔹 ID come PRIMO INPUT */}
                         <div>
-                            <label className="text-sm text-[#134a7b] block mb-1">ID</label>
+                            <label className="text-sm text-[#090c64] block mb-1">ID</label>
                             <input
                                 name="id"
                                 type="number"
@@ -84,61 +84,61 @@ const AddCustomerForm = ({ onAdd }) => {
                         </div>
 
                         <div>
-                            <label className="text-sm text-[#134a7b] block mb-1">Nome</label>
+                            <label className="text-sm text-[#090c64] block mb-1">Nome</label>
                             <input name="nome" value={newCustomer.nome} onChange={handleChange}
                                 className="w-full px-3 py-2 border rounded-lg" />
                         </div>
 
                         <div>
-                            <label className="text-sm text-[#134a7b] block mb-1">Indirizzo</label>
+                            <label className="text-sm text-[#090c64] block mb-1">Indirizzo</label>
                             <input name="indirizzo" value={newCustomer.indirizzo} onChange={handleChange}
                                 className="w-full px-3 py-2 border rounded-lg" />
                         </div>
 
                         <div>
-                            <label className="text-sm text-[#134a7b] block mb-1">Città</label>
+                            <label className="text-sm text-[#090c64] block mb-1">Città</label>
                             <input name="citta" value={newCustomer.citta} onChange={handleChange}
                                 className="w-full px-3 py-2 border rounded-lg" />
                         </div>
 
                         <div>
-                            <label className="text-sm text-[#134a7b] block mb-1">CAP</label>
+                            <label className="text-sm text-[#090c64] block mb-1">CAP</label>
                             <input name="cap" value={newCustomer.cap} onChange={handleChange}
                                 className="w-full px-3 py-2 border rounded-lg" />
                         </div>
 
                         <div>
-                            <label className="text-sm text-[#134a7b] block mb-1">Provincia</label>
+                            <label className="text-sm text-[#090c64] block mb-1">Provincia</label>
                             <input name="provincia" value={newCustomer.provincia} onChange={handleChange}
                                 className="w-full px-3 py-2 border rounded-lg" />
                         </div>
 
                         <div>
-                            <label className="text-sm text-[#134a7b] block mb-1">Email</label>
+                            <label className="text-sm text-[#090c64] block mb-1">Email</label>
                             <input name="email" value={newCustomer.email} onChange={handleChange}
                                 className="w-full px-3 py-2 border rounded-lg" />
                         </div>
 
                         <div>
-                            <label className="text-sm text-[#134a7b] block mb-1">Telefono</label>
+                            <label className="text-sm text-[#090c64] block mb-1">Telefono</label>
                             <input name="telefono" value={newCustomer.telefono} onChange={handleChange}
                                 className="w-full px-3 py-2 border rounded-lg" />
                         </div>
 
                         <div>
-                            <label className="text-sm text-[#134a7b] block mb-1">Data di nascita</label>
+                            <label className="text-sm text-[#090c64] block mb-1">Data di nascita</label>
                             <input name="nascita" type="text" value={newCustomer.nascita} onChange={handleChange}
                                 className="w-full px-3 py-2 border rounded-lg" />
                         </div>
 
                         <div>
-                            <label className="text-sm text-[#134a7b] block mb-1">Codice Fiscale</label>
+                            <label className="text-sm text-[#090c64] block mb-1">Codice Fiscale</label>
                             <input name="CF" value={newCustomer.CF} onChange={handleChange}
                                 className="w-full px-3 py-2 border rounded-lg" />
                         </div>
 
                         <div>
-                            <label className="text-sm text-[#134a7b] block mb-1">Livello</label>
+                            <label className="text-sm text-[#090c64] block mb-1">Livello</label>
                             <select name="livello" value={newCustomer.livello} onChange={handleChange}
                                 className="w-full px-3 py-2 border rounded-lg">
                                 <option value="Standard">Standard</option>
@@ -147,7 +147,7 @@ const AddCustomerForm = ({ onAdd }) => {
                         </div>
 
                         <div>
-                            <label className="text-sm text-[#134a7b] block mb-1">Punti</label>
+                            <label className="text-sm text-[#090c64] block mb-1">Punti</label>
                             <input name="punti" type="number" value={newCustomer.punti} onChange={handleChange}
                                 className="w-full px-3 py-2 border rounded-lg" />
                         </div>

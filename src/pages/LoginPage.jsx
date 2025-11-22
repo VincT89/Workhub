@@ -44,7 +44,7 @@ const LoginPage = () => {
 	return (
 		<main
 			className="w-full min-h-screen flex justify-center items-center relative overflow-hidden 
-      bg-white dark:bg-black transition-colors duration-500"
+      bg-white dark:bg-black transition-colors duration-500 "
 		>
 			{/* ===== Background ===== */}
 			<img
@@ -55,7 +55,7 @@ const LoginPage = () => {
 
 			{/* ===== Liquid Glass Overlay ===== */}
 			<div
-				className="absolute w-[822px] h-[659px] 
+				className="absolute w-[822px] h-[659px] lg:w-[60vw] lg:h-[90vh] md:w-[90vw] md:h-[70vh]  
         bg-white/20 dark:bg-white/10 backdrop-blur-sm
         border border-white/30 dark:border-white/90 rounded-[25px] shadow-md
         transition-all duration-700"

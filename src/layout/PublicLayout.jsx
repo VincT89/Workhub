@@ -37,7 +37,7 @@ const PublicLayout = () => {
                 : "bg-linear-to-br from-indigo-950 via-indigo-950/90 to-violet-900"
             }
             backdrop-blur-sm border-r border-white/30 shadow-md
-            flex flex-col w-[230px] md:w-[250px] py-2 px-4
+            flex flex-col w-[200px] md:w-[220px] py-2 px-4
           `}
         >
           {/* LOGO */}
@@ -78,7 +78,7 @@ const PublicLayout = () => {
       <section
         className={`
           transition-all duration-500 ease-in-out 
-          ${sidebarOpen ? "ml-[230px] md:ml-[250px]" : "ml-20 md:ml-[90px]"}
+          ${sidebarOpen ? "ml-[220px] md:ml-[215px]" : "ml-20 md:ml-[90px]"}
           mt-6 mb-6
           min-h-screen
           overflow-y-auto

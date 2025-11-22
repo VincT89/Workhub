@@ -1,7 +1,7 @@
 import Table from "../../components/Table";
 import { useState } from "react";
 import FilterByCard from "../../hooks/FilterByCard";
-import AddCustomerForm from "../../hooks/AddCustomerForm";
+import AddCustomerForm from "../../hooks/addCustomerForm";
 
 const CustomersPage = () => {
   const initialCustomers = [
@@ -139,7 +139,7 @@ const CustomersPage = () => {
             <FilterByCard onFilter={setCardFilter} />
             <AddCustomerForm onAdd={handleAddCustomer} />
           </>
-        )}
+      )}
       />
   );
 };

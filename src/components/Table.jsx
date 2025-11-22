@@ -67,7 +67,7 @@ const Table = ({ data, columns, customToolbar }) => {
 			{/* TABLE */}
 			<table className="w-full border-collapse text-sm text-[#090c64]">
 				<thead>
-					<tr className="bg-white/60 rounded-full">
+					<tr className="bg-white/60 rounded-full text-[#090c64]">
 						{columns.map((item, idx) => (
 							<th
 								key={idx}
@@ -92,7 +92,7 @@ const Table = ({ data, columns, customToolbar }) => {
 							{columns.map((col, j) => (
 								<td
 									key={j}
-									className={`p-3 text-[#134a7b] bg-transparent
+									className={`p-3 text-[#090c64] bg-transparent
                                         ${j === 0 ? "rounded-l-xl" : ""}
                                         ${j === columns.length - 1 ? "rounded-r-xl" : ""}
                                     `}
