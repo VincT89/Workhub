@@ -37,7 +37,7 @@ const Table = ({ data, columns, customToolbar, onRowClick }) => {
 	}, [searchTerm, data, columns, sortAZ]);
 
 	return (
-		<div className="w-full rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md border border-white bg-white/10 flex flex-col gap-4">
+		<div className="w-full rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md border border-white flex flex-col gap-4">
 			{/* TOOLBAR */}
 			<div className="flex flex-wrap items-center justify-between gap-3 mb-3">
 				{/* Left tools */}

@@ -773,7 +773,7 @@ const OrdersPage = () => {
 			</Drawer>
 
 			{alert && (
-				<div className="fixed top-6 left-1/2 -translate-x-1/2 z-[9999]">
+				<div className="fixed top-6 left-1/2 -translate-x-1/2 z-9999">
 					<div className="px-8 py-4 rounded-2xl bg-white/95 shadow-xl border border-[#d9c9ff] text-base text-[#090c64] font-semibold tracking-wide min-w-[320px] text-center">
 						{alert.text}
 					</div>
