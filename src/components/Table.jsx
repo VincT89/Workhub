@@ -1,7 +1,13 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
+<<<<<<< HEAD
 const Table = ({ data, columns, customToolbar, onRowClick }) => {
+=======
+const Table = ({ data, columns, customToolbar }) => {
+
+	// PER RIGA TABELLA CLICCABILE CHE PORTA A PAGINA PRODOTTO
+>>>>>>> 26891ab2e400bf5f0d09de2bd563e143844ca533
 	const navigate = useNavigate();
 
 	const [searchTerm, setSearchTerm] = useState("");
@@ -37,10 +43,18 @@ const Table = ({ data, columns, customToolbar, onRowClick }) => {
 	}, [searchTerm, data, columns, sortAZ]);
 
 	return (
+<<<<<<< HEAD
 		<div className="w-full rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md border border-white bg-white/10 flex flex-col gap-4">
 			{/* TOOLBAR */}
 			<div className="flex flex-wrap items-center justify-between gap-3 mb-3">
 				{/* Left tools */}
+=======
+		<div className="w-full rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md border border-white bg-white/40 flex flex-col gap-4">
+
+			{/* TOOLBAR */}
+			<div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+				{/* tools che staranno a sinistra */}
+>>>>>>> 26891ab2e400bf5f0d09de2bd563e143844ca533
 				<div className="flex gap-2 items-center">
 					<button
 						onClick={() => setSortAZ(!sortAZ)}
@@ -49,7 +63,11 @@ const Table = ({ data, columns, customToolbar, onRowClick }) => {
 						{sortAZ ? "Annulla Ordine A-Z" : "Ordina A-Z"}
 					</button>
 
+<<<<<<< HEAD
 					{/* Custom toolbar from parent */}
+=======
+					{/* Custom tools da inserire nel proprio componente e da creare come componente */}
+>>>>>>> 26891ab2e400bf5f0d09de2bd563e143844ca533
 					{customToolbar && customToolbar()}
 				</div>
 
