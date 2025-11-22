@@ -34,7 +34,7 @@ function App() {
 			<Route path="/" element={<PublicLayout />}>
 				<Route path="dashboard" element={<BoardPage />} />
 				<Route path="clienti" element={<CustomersPage />} />
-				<Route path="clienti/:id" element={<CustomersRegistry />} />
+				<Route path="item/:id" element={<CustomersRegistry />} />
 				<Route path="personale" element={<EmployeePage />} />
 				<Route path="personale/:id" element={<AdminEmployeeDetailsPage />} />
 				<Route path="magazzino" element={<WarehousePage />} />

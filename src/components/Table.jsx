@@ -2,8 +2,6 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Table = ({ data, columns, customToolbar }) => {
-
-	// PER RIGA TABELLA CLICCABILE CHE PORTA A PAGINA PRODOTTO
 	const navigate = useNavigate();
 
 	const [searchTerm, setSearchTerm] = useState("");
@@ -12,7 +10,6 @@ const Table = ({ data, columns, customToolbar }) => {
 	const filteredData = useMemo(() => {
 		const query = searchTerm.toLowerCase();
 
-		// Filtra i dati
 		let result = data.filter((row) =>
 			columns.some((col) => {
 				const value = row[col];
@@ -20,8 +17,8 @@ const Table = ({ data, columns, customToolbar }) => {
 
 				const normalizedValue = String(value)
 					.toLowerCase()
-					.replace(/\s+/g, "") // rimuove spazi
-					.replace(/\+/g, ""); // rimuove +
+					.replace(/\s+/g, "")
+					.replace(/\+/g, "");
 
 				const normalizedQuery = query.replace(/\s+/g, "").replace(/\+/g, "");
 
@@ -29,7 +26,6 @@ const Table = ({ data, columns, customToolbar }) => {
 			})
 		);
 
-		// Ordinamento alfabetico sulla prima colonna
 		if (sortAZ && columns.length > 1) {
 			const sortColumn = columns[1];
 			result = [...result].sort((a, b) =>
@@ -41,11 +37,11 @@ const Table = ({ data, columns, customToolbar }) => {
 	}, [searchTerm, data, columns, sortAZ]);
 
 	return (
-		<div className="w-full rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md border border-white bg-white/40 flex flex-col gap-4">
+		<div className="w-full overflow-y-auto rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md border border-white bg-white/10 flex flex-col gap-4">
 
 			{/* TOOLBAR */}
 			<div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-				{/* tools che staranno a sinistra */}
+				{/* Left side tools */}
 				<div className="flex gap-2 items-center">
 					<button
 						onClick={() => setSortAZ(!sortAZ)}
@@ -54,7 +50,7 @@ const Table = ({ data, columns, customToolbar }) => {
 						{sortAZ ? "Annulla Ordine A-Z" : "Ordina A-Z"}
 					</button>
 
-					{/* Custom tools da inserire nel proprio componente e da creare come componente */}
+					{/* Custom tools injected from parent */}
 					{customToolbar && customToolbar()}
 				</div>
 
@@ -68,14 +64,14 @@ const Table = ({ data, columns, customToolbar }) => {
 				/>
 			</div>
 
-			{/* TABELLA */}
-			<table className="w-full border-collapse text-sm text-[#134a7b]">
+			{/* TABLE */}
+			<table className="w-full border-collapse text-sm text-[#090c64]">
 				<thead>
 					<tr className="bg-white/60 rounded-full">
 						{columns.map((item, idx) => (
 							<th
 								key={idx}
-								className={`p-3 text-[#134a7b] bg-transparent
+								className={`p-3 text-[#090c64] bg-transparent
                                 ${idx === 0 ? "rounded-l-xl" : ""}
                                 ${idx === columns.length - 1 ? "rounded-r-xl" : ""}
                             `}

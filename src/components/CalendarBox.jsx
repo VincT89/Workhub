@@ -94,6 +94,20 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
 			{/* BUTTONS */}
 			<div className="flex items-center gap-2">
 				<button
+					onClick={() => onView("month")}
+					className={`
+    px-4 py-2 rounded-full font-semibold border transition
+    ${
+			view === "month"
+				? "bg-[#090c64] text-white border-[#090c64]"
+				: "bg-white/70 dark:bg-white/10 text-[#090c64] dark:text-[#090c64] border-white/40 dark:border-white/90 hover:bg-[#090c64] hover:text-white"
+		}
+  `}
+				>
+					Mese
+				</button>
+
+				<button
 					onClick={() => onView("week")}
 					className={`
             px-4 py-2 rounded-full font-semibold border transition
@@ -167,12 +181,29 @@ const CalendarBox = () => {
 	}
 
 	/* STATO DEI REPARTI VISIBILI */
-  const [selectedDepartments, setSelectedDepartments] = useState(departments);
-  
+	const [selectedDepartments, setSelectedDepartments] = useState(departments);
+
 	/* ALLINEA AUTOMATICAMENTE selectedDepartments AL RUOLO UTENTE */
 	useEffect(() => {
 		setSelectedDepartments(departments);
 	}, [loggedUser, EmployeeList]);
+
+	// Rimuove duplicati nella vista mensile (stesso dipendente + stesso giorno)
+	const removeMonthlyDuplicates = (events) => {
+		const map = new Map();
+
+		for (const ev of events) {
+			const dayKey = ev.start.toDateString(); // giorno
+			const employeeKey = ev.fullName; // dipendente
+			const key = `${employeeKey}-${dayKey}`;
+
+			if (!map.has(key)) {
+				map.set(key, ev); // tiene solo il primo
+			}
+		}
+
+		return Array.from(map.values());
+	};
 
 	/* GENERA EVENTI in base ai turni */
 	const eventi = useMemo(() => {
@@ -249,6 +280,11 @@ const CalendarBox = () => {
 			});
 		}
 
+		// Se siamo in vista mensile, rimuovo i duplicati dei turni spezzati
+		if (view === "month") {
+			return removeMonthlyDuplicates(result);
+		}
+
 		return result;
 	}, [EmployeeList, loggedUser, selectedDepartments]);
 
@@ -266,26 +302,69 @@ const CalendarBox = () => {
 		},
 	});
 
-	const EventComponent = ({ event }) => (
-		<div className="flex flex-col gap-1 select-none">
-			<div className="flex items-center gap-2">
-				<div
-					className="w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold"
-					style={{ backgroundColor: "rgba(0,0,0,0.25)" }}
-				>
-					{event.title}
-				</div>
-				<span className="font-semibold truncate">{event.fullName}</span>
-			</div>
+	const EventComponent = ({ event, view }) => {
+		//vista mensile solo iniziali
+		if (view === "month") {
+			const isExpanded = expandedId === event.id;
 
-			{expandedId === event.id && (
-				<div className="text-[11px] opacity-90">
-					<div className="italic">{event.ruolo}</div>
-					<div>{event.orario}</div>
+			return (
+				<div className="flex flex-col items-center select-none">
+					{/* PALLINO CON INIZIALI */}
+					<div
+						onClick={(e) => {
+							e.stopPropagation();
+							setExpandedId(isExpanded ? null : event.id);
+						}}
+						className="flex items-center justify-center cursor-pointer"
+						style={{
+							width: "20px",
+							height: "20px",
+							borderRadius: "50%",
+							backgroundColor: event.color,
+							color: "white",
+							fontSize: "11px",
+							fontWeight: "bold",
+							margin: "0 auto",
+							lineHeight: 1,
+							userSelect: "none",
+						}}
+					>
+            {event.fullName}
+					</div>
+
+					{/* DETTAGLI QUANDO ESPANSO */}
+					{isExpanded && (
+						<div
+							className="mt-1 text-[10px] flex flex-col items-center">
+							<div className="italic">{event.ruolo}</div>
+							<div>{event.orario}</div>
+						</div>
+					)}
 				</div>
-			)}
-		</div>
-	);
+			);
+		}
+
+		return (
+			<div className="flex flex-col gap-1 select-none">
+				<div className="flex items-center gap-2">
+					<div
+						className="w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold"
+						style={{ backgroundColor: "rgba(0,0,0,0.25)" }}
+					>
+						{event.title}
+					</div>
+					<span className="font-semibold truncate">{event.fullName}</span>
+				</div>
+
+				{expandedId === event.id && (
+					<div className="text-[11px] opacity-90">
+						<div className="italic">{event.ruolo}</div>
+						<div>{event.orario}</div>
+					</div>
+				)}
+			</div>
+		);
+	};
 
 	/* RENDER */
 	return (
@@ -372,11 +451,11 @@ const CalendarBox = () => {
 						view={view}
 						onView={(v) => setView(v)}
 						defaultView="week"
-						views={["day", "week"]}
+						views={["month", "day", "week"]}
 						culture="it"
 						eventPropGetter={eventStyleGetter}
 						components={{
-							event: EventComponent,
+							event: (props) => <EventComponent {...props} view={view} />,
 							toolbar: (props) => <CustomToolbar {...props} view={view} />,
 						}}
 						onSelectEvent={(e) =>
