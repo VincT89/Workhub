@@ -10,7 +10,13 @@ import {
 	WarningOctagon,
 	Calendar,
 } from "@phosphor-icons/react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
+import {
+	setLowStockProducts,
+	setBoardPosts,
+} from "../store/feature/boardSlice";
+import Table from "../components/Table";
 
 const BoardPage = () => {
 	const { theme } = useTheme();
@@ -18,6 +24,34 @@ const BoardPage = () => {
 	const { role } = useSelector((state) => state.auth.user);
 
 	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
+
+	const dispatch = useDispatch();
+
+	const lowStockProducts = useSelector((state) => state.board.lowStockProducts);
+	const boardPosts = useSelector((state) => state.board.boardPosts);
+
+	useEffect(() => {
+		dispatch(
+			setLowStockProducts([
+				{ name: "Penna", qty: 3 },
+				{ name: "Quaderno", qty: 1 },
+			])
+		);
+	}, [dispatch]);
+
+	useEffect(() => {
+		dispatch(
+			setBoardPosts([
+				{ title: "Nuova riunione", date: "2025-11-22" },
+				{ title: "Aggiornamento magazzino", date: "2025-11-21" },
+			])
+		);
+	}, [dispatch]);
+
+	const columns =
+		lowStockProducts.length > 0 ? Object.keys(lowStockProducts[0]) : [];
+
+	const boardColumns = boardPosts.length > 0 ? Object.keys(boardPosts[0]) : [];
 
 	return (
 		<div
@@ -101,32 +135,50 @@ const BoardPage = () => {
 			{/* Riga 2: 2 box - con un div che li contiene tutti, e a seguire i singoli box-div  */}
 			<div className="grid grid-cols-2 gap-6 mb-6 w-full transition-colors duration-500">
 				<div
-					className={`flex gap-4 justify-start items-start p-4 
-					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-					border border-white/30 dark:border-white/80 rounded-xl shadow-md 
-					${textColor} h-[230px]`}
+					className={`flex flex-col gap-4 p-4 
+  bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
+  border border-white/30 dark:border-white/80 rounded-xl shadow-md 
+  ${textColor}`}
 				>
-					<ChalkboardSimple size={28} color="#090c64" weight="duotone" />
-					<h3 className="text-[14px] font-bold font-nunito">Bacheca</h3>
+					{/* HEADER BACHECA */}
+					<div className="flex items-start gap-4 w-full">
+						<ChalkboardSimple size={28} color="#090c64" weight="duotone" />
 
-					{/* Bottone visibile SOLO ai supervisor */}
-					{(role === "supervisor" || role === "admin") && (
-						<button className="ml-auto px-4 py-2 bg-[#090c64] text-white shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[14px] font-bold-nunito cursor-pointer">
-							+ Aggiungi
-						</button>
-					)}
+						<h3 className="text-[14px] font-bold font-nunito">Bacheca</h3>
+
+						{/* Bottone visibile SOLO ai supervisor o admin */}
+						{(role === "supervisor" || role === "admin") && (
+							<button className="ml-auto px-4 py-2 bg-[#090c64] text-white shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[14px] font-bold-nunito cursor-pointer">
+								+ Aggiungi
+							</button>
+						)}
+					</div>
+
+					{/* TABELLA */}
+					<div className="w-full h-full overflow-hidden">
+						<Table data={boardPosts} columns={boardColumns} />
+					</div>
 				</div>
 
 				<div
-					className={`flex gap-4 justify-start items-start p-4 
-					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-					border border-white/30 dark:border-white/80 rounded-xl shadow-md 
-					${textColor} h-[230px]`}
+					className={`flex flex-col gap-4 p-4 
+  bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
+  border border-white/30 dark:border-white/80 rounded-xl shadow-md 
+  ${textColor}`}
 				>
-					<ShoppingCartSimple size={28} color="#090c64" weight="duotone" />
-					<h3 className="text-[14px] font-bold font-nunito">
-						Prodotti in esaurimento
-					</h3>
+					{/* HEADER */}
+					<div className="flex items-center gap-4">
+						<ShoppingCartSimple size={28} color="#090c64" weight="duotone" />
+
+						<h3 className="text-[14px] font-bold font-nunito">
+							Prodotti in esaurimento
+						</h3>
+					</div>
+
+					{/* TABELLA */}
+					<div className="w-full overflow-hidden h-full mt-3">
+						<Table data={lowStockProducts} columns={columns} />
+					</div>
 				</div>
 			</div>
 
@@ -138,7 +190,7 @@ const BoardPage = () => {
 				{/* Contenuto */}
 				<div className="flex-1 flex flex-col">
 					<div className="flex gap-4 justify-start items-start">
-						<Calendar size={28} color="#090c64" weight="duotone"/>
+						<Calendar size={28} color="#090c64" weight="duotone" />
 						<h3
 							className={`text-[14px] font-bold font-nunito ${textColor} mb-4`}
 						>
