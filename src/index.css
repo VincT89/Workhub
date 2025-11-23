@@ -1,71 +1,72 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 @import "tailwindcss";
 
-
 @theme {
-  /* Font principale */
   --font-nunito: 'Nunito', sans-serif;
-
 }
 
 body {
   font-family: var(--font-nunito);
+  color: #090c64;
 }
 
-/* === Nasconde tutte le scrollbar in modo cross-browser === */
-*::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-}
-
-* {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE e Edge */
+span {
+  color: #090c64;
 }
 
 
-/* === Stili globali per input === */
 @layer base {
-  input {
-    @apply w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 
-           rounded-xl px-4 shadow-md outline-none font-semibold
-           focus:ring-2 transition-all duration-200;
-  }
-
-  /* LIGHT MODE */
-  input:not(.dark) {
-    @apply text-[#090c64] placeholder:text-[#090c64]/70 focus:ring-[#090c64];
-  }
-
-  /* DARK MODE */
-  .dark input {
-    @apply text-white placeholder:text-white focus:ring-white;
+  body {
+    color: #090c64;
   }
 }
 
 
-/* === Stili globali per i bottoni === */
-@layer components {
-  .btn-login {
-    @apply w-full sm:w-[225px] h-[50px] mt-8
-           rounded-xl shadow-md border border-white/20
-           transition-all duration-500 cursor-pointer
-           font-bold font-nunito text-white bg-[#090c64];
+/* Nasconde scrollbar */
+*::-webkit-scrollbar { width: 0; height: 0; }
+* { scrollbar-width: none; -ms-overflow-style: none; }
+
+/* Stili globali */
+@layer base {
+
+  /* Box */
+  .custom-box {
+    @apply rounded-xl shadow-white border border-white/90 backdrop-blur-lg transition-colors duration-300 bg-white/10 text-[#090c64];
   }
 
-  /* Stato Disabled / Loading */
-  .btn-login-disabled {
-    @apply opacity-60 cursor-not-allowed;
+  /* Input */
+  .custom-input {
+    @apply border border-white/30 rounded-xl px-4 shadow-md outline-none font-semibold focus:ring-2 transition-all duration-200 text-[#090c64] placeholder:text-[#090c64]/70 focus:ring-[#090c64];
   }
 
-  /* Light Mode */
-  :root .btn-login {
-    @apply border-white/30 hover:border-white/50 hover:shadow-lg hover:scale-105;
-  }
-
-  /* Dark Mode */
-  .dark .btn-login {
-    @apply hover:border-white/50 hover:shadow-lg hover:scale-105;
+  /* Button */
+  .custom-button {
+    @apply rounded-xl p-2 shadow-md border border-white/20 transition-all duration-500 cursor-pointer font-bold text-white bg-[#090c64];
+    font-family: var(--font-nunito);
   }
 }
 
+/* DIMENSIONE H2 E H3 */
+h2 {
+  @apply font-bold text-xl gap-3;
+  color: #090c64;
+}
+
+
+h3 {
+  @apply font-bold text-xl ;
+  color: #090c64;
+}
+
+/* BOTTONI WAREHOUSE-TABLE */
+.warehouse-btn {
+  @apply px-3 py-2 rounded-lg shadow-sm text-sm border-0 
+         transition-all duration-200;
+  background-color: #090c64;      /* blu pieno */
+  color: white;                   /* testo bianco */
+}
+
+.warehouse-btn:hover {
+  background-color: rgb(9 12 100 / 0.2);   /* blu al 20% di opacità */
+  color: #090c64;                          /* testo blu */
+}

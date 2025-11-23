@@ -54,7 +54,7 @@ const AddCustomerForm = ({ onAdd }) => {
             {/* Bottone che apre il drawer */}
             <button
                 onClick={() => setIsOpen(true)}
-                className="px-3 py-2 bg-[#f4ecff] border border-white rounded-xl shadow-sm text-sm text-[#090c64] hover:bg-bg-[#f4ecff] transition"
+                className="px-3 py-2 bg-[#090c64] font-bold border border-white rounded-xl shadow-sm text-sm text-white hover:bg-bg-[#f4ecff] transition"
             >
                 ➕ Aggiungi Cliente
             </button>
@@ -157,11 +157,11 @@ const AddCustomerForm = ({ onAdd }) => {
                     {/* Footer bottoni */}
                     <div className="flex justify-end gap-3 mt-4">
                         <button type="button" onClick={() => setIsOpen(false)}
-                            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+                            className="px-4 py-2 bg-gray-200 rounded-xl hover:bg-gray-300">
                             Annulla
                         </button>
                         <button type="submit"
-                            className="px-4 py-2 bg-[#090c64] text-white rounded ">
+                            className="px-4 py-2 bg-[#090c64] text-white rounded-xl ">
                             Salva Cliente
                         </button>
                     </div>

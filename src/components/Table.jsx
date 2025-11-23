@@ -44,7 +44,7 @@ const Table = ({ data, columns, customToolbar, onRowClick }) => {
 				<div className="flex flex-wrap gap-2 items-center">
 					<button
 						onClick={() => setSortAZ(!sortAZ)}
-						className="px-3 py-2 bg-white/70 border border-white rounded-xl shadow-sm text-sm hover:bg-white transition"
+						className="px-3 py-2 bg-[#090c64] text-white font-bold border border-white rounded-xl shadow-sm text-sm transition"
 					>
 						{sortAZ ? "Annulla Ordine A-Z" : "Ordina A-Z"}
 					</button>
@@ -87,7 +87,7 @@ const Table = ({ data, columns, customToolbar, onRowClick }) => {
 						{filteredData.map((row, i) => (
 							<tr
 								key={i}
-								className="hover:bg-white transition cursor-pointer"
+								className="hover:bg-white/40 transition cursor-pointer"
 								onClick={() => {
 									if (onRowClick) onRowClick(row);
 									else navigate(`/item/${row.id}`, { state: row });

@@ -13,7 +13,7 @@ const Sidebar = () => {
 
   const routes = [
     { to: "dashboard", label: t("sidebar.overview") },
-    { to: "clienti", label: t("sidebar.clienti") },
+    { to: "customers", label: t("sidebar.clienti") },
 
    
     {
@@ -21,10 +21,10 @@ const Sidebar = () => {
       label: isUser ? t("sidebar.profilo") : t("sidebar.personale"),
     },
 
-    { to: "magazzino", label: t("sidebar.magazzino") },
+    { to: "warehouse", label: t("sidebar.magazzino") },
     { to: "ticket", label: t("sidebar.ticket") },
-    { to: "ordini", label: t("sidebar.ordini") },
-    { to: "resi", label: t("sidebar.resi") },
+    { to: "orders", label: t("sidebar.ordini") },
+    { to: "return", label: t("sidebar.resi") },
   ];
 
 	return (

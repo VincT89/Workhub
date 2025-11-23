@@ -33,15 +33,15 @@ function App() {
 			{/* ROTTE PROTETTE */}
 			<Route path="/" element={<PublicLayout />}>
 				<Route path="dashboard" element={<BoardPage />} />
-				<Route path="clienti" element={<CustomersPage />} />
+				<Route path="customers" element={<CustomersPage />} />
 				<Route path="item/:id" element={<CustomersRegistry />} />
 				<Route path="personale" element={<EmployeePage />} />
 				<Route path="personale/:id" element={<AdminEmployeeDetailsPage />} />
-				<Route path="magazzino" element={<WarehousePage />} />
+				<Route path="warehouse" element={<WarehousePage />} />
 				<Route path="product/:id" element={<Product />} />
 				<Route path="ticket" element={<TicketPage />} />
-				<Route path="ordini" element={<OrderPage />} />
-				<Route path="resi" element={<ReturnPage />} />
+				<Route path="orders" element={<OrderPage />} />
+				<Route path="return" element={<ReturnPage />} />
 				<Route path="settings" element={<SettingsPage />} />
 			</Route>
 		</Routes>

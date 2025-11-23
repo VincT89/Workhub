@@ -158,7 +158,7 @@ const CustomersRegistry = () => {
 			</div>
 
 			{/* Contenuto dinamico */}
-			<div className="w-[1000px] rounded-xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md border border-white">
+			<div className="min-w-[1320px] rounded-xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md border border-white">
 				<h2 className="text-[#090c64] text-lg font-bold mb-6">
 					Cliente: {customer.nome}
 				</h2>

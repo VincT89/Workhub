@@ -41,7 +41,7 @@ const BoardPage = () => {
 				</div>
 
 				<div
-					className={`flex items-center justify-between rounded-xl px-3 py-2 shadow 
+					className={`flex items-center justify-between rounded-xl px-3 py-2 shadow  mt-2
 					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
@@ -55,7 +55,7 @@ const BoardPage = () => {
 				</div>
 
 				<div
-					className={`flex items-center justify-between rounded-xl px-3 py-2 shadow 
+					className={`flex items-center justify-between rounded-xl px-3 py-2 shadow  mt-2
 					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
@@ -69,7 +69,7 @@ const BoardPage = () => {
 				</div>
 
 				<div
-					className={`flex items-center justify-between rounded-xl px-3 py-2 shadow 
+					className={`flex items-center justify-between rounded-xl px-3 py-2 shadow  mt-2
 					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
@@ -84,7 +84,7 @@ const BoardPage = () => {
 
 				{/* {role === "supervisor" && ( intero <div />} */}
 				<div
-					className={`flex items-center justify-between rounded-xl px-3 py-2 shadow 
+					className={`flex items-center justify-between rounded-xl px-3 py-2 shadow  mt-2
 					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
