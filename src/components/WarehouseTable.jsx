@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import DrawerSede from "../DrawerSede";
+import DrawerSede from "../components/DrawerSede.jsx";
 
 const WarehouseTable = ({ data, columns }) => {
   const navigate = useNavigate();
