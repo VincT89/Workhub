@@ -26,8 +26,8 @@ const getInitials = (name) => {
 
 const departmentColors = {
 	"Responsabile reparto": "#6C8AE4", // Indigo
-	Sviluppatore: "#5EC2E0", // Cyan
-	Designer: "#A88EF0", // Purple
+	"Sviluppatore": "#5EC2E0", // Cyan
+	"Designer": "#A88EF0", // Purple
 	"Marketing Manager": "#F5A97F", // Arancione
 	"HR Specialist": "#8DD0A6", // Verde menta
 	"Data Analyst": "#7BB8E8", // Blu chiaro
@@ -52,22 +52,22 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
 	return (
 		<div
 			className="
-        flex items-center justify-between w-full px-6 py-3 my-5
-        rounded-xl backdrop-blur-md shadow-md
-        bg-white/20 dark:bg-white/10
-        border border-white/30 dark:border-white/10"
+		flex items-center justify-between w-full px-6 py-3 my-5
+		rounded-xl backdrop-blur-md shadow-md
+		bg-white/20 dark:bg-white/10
+		border border-white/30 dark:border-white/10"
 		>
 			{/* BACK / NEXT */}
 			<div className="flex items-center gap-2">
 				<button
 					onClick={() => onNavigate("PREV")}
 					className="
-            px-4 py-2 rounded-xl 
-            bg-white/70 dark:bg-white/10 
-            text-[#090c64] dark:text-[#090c64]
-            border border-white/40 dark:border-white/90 
-            font-semibold
-            hover:bg-[#090c64] hover:text-white transition"
+			px-4 py-2 rounded-xl 
+			bg-white/70 dark:bg-white/10 
+			text-[#090c64] dark:text-[#090c64]
+			border border-white/40 dark:border-white/90 
+			font-semibold
+			hover:bg-[#090c64] hover:text-white transition"
 				>
 					‹
 				</button>
@@ -75,12 +75,12 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
 				<button
 					onClick={() => onNavigate("NEXT")}
 					className="
-            px-4 py-2 rounded-xl 
-            bg-white/70 dark:bg-white/10 
-            text-[#090c64] dark:text-[#090c64]
-            border border-white/40 dark:border-white/90 
-            font-semibold
-            hover:bg-[#090c64] hover:text-white transition"
+			px-4 py-2 rounded-xl 
+			bg-white/70 dark:bg-white/10 
+			text-[#090c64] dark:text-[#090c64]
+			border border-white/40 dark:border-white/90 
+			font-semibold
+			hover:bg-[#090c64] hover:text-white transition"
 				>
 					›
 				</button>
@@ -96,13 +96,13 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
 				<button
 					onClick={() => onView("month")}
 					className={`
-    px-4 py-2 rounded-xl font-semibold border transition
-    ${
+	px-4 py-2 rounded-xl font-semibold border transition
+	${
 			view === "month"
 				? "bg-[#090c64] text-white border-[#090c64]"
 				: "bg-white/70 dark:bg-white/10 text-[#090c64] dark:text-[#090c64] border-white/40 dark:border-white/90 hover:bg-[#090c64] hover:text-white"
 		}
-  `}
+	`}
 				>
 					Mese
 				</button>
@@ -110,13 +110,13 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
 				<button
 					onClick={() => onView("week")}
 					className={`
-            px-4 py-2 rounded-xl font-semibold border transition
-            ${
+			px-4 py-2 rounded-xl font-semibold border transition
+			${
 							view === "week"
 								? "bg-[#090c64] text-white border-[#090c64]"
 								: "bg-white/70 dark:bg-white/10 text-[#090c64] dark:text-[#090c64]  border-white/40 dark:border-white/90 hover:bg-[#090c64] hover:text-white"
 						}
-          `}
+			`}
 				>
 					Settimana
 				</button>
@@ -124,13 +124,13 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
 				<button
 					onClick={() => onView("day")}
 					className={`
-            px-4 py-2 rounded-xl font-semibold border transition
-            ${
+			px-4 py-2 rounded-xl font-semibold border transition
+			${
 							view === "day"
 								? "bg-[#090c64] text-white border-[#090c64]"
 								: "bg-white/70 dark:bg-white/10 text-[#090c64] dark:text-[#090c64]  border-white/40 dark:border-white/90 hover:bg-[#090c64] hover:text-white"
 						}
-          `}
+			`}
 				>
 					Giorno
 				</button>
@@ -163,30 +163,34 @@ const CalendarBox = () => {
 	}, []);
 
 	/* FILTRO REPARTI BASATO SU RUOLO UTENTE */
-	let departments = [];
+	const departments = useMemo(() => {
+		if (!loggedUser || !EmployeeList) return [];
 
-	if (loggedUser?.role === "admin") {
-		// ADMIN → vede tutti i reparti
-		departments = Array.from(new Set(EmployeeList.map((e) => e.ruolo)));
-	}
+		if (loggedUser.role === "admin") {
+			// ADMIN → vede tutti i reparti
+			return Array.from(new Set(EmployeeList.map((e) => e.ruolo)));
+		}
 
-	if (loggedUser?.role === "supervisor") {
-		// SUPERVISOR → vede solo il suo reparto
-		departments = [loggedUser.reparto];
-	}
+		if (loggedUser.role === "supervisor") {
+			// SUPERVISOR → vede solo il suo reparto
+			return [loggedUser.reparto];
+		}
 
-	if (loggedUser?.role === "user") {
-		// USER → solo il suo reparto
-		departments = [loggedUser.reparto];
-	}
+		if (loggedUser.role === "user") {
+			// USER → solo il suo reparto
+			return [loggedUser.reparto];
+		}
+
+		return [];
+	}, [loggedUser, EmployeeList]);
 
 	/* STATO DEI REPARTI VISIBILI */
-	const [selectedDepartments, setSelectedDepartments] = useState(departments);
+	const [selectedDepartments, setSelectedDepartments] = useState([]);
 
 	/* ALLINEA AUTOMATICAMENTE selectedDepartments AL RUOLO UTENTE */
 	useEffect(() => {
 		setSelectedDepartments(departments);
-	}, [loggedUser, EmployeeList]);
+	}, [departments]);
 
 	const toggleDepartment = (dept) => {
 		setSelectedDepartments((prev) =>
@@ -195,24 +199,32 @@ const CalendarBox = () => {
 	};
 
 	// Rimuove duplicati nella vista mensile (stesso dipendente + stesso giorno)
-	const removeMonthlyDuplicates = (events) => {
+	const mergeMonthlyEvents = (events) => {
 		const map = new Map();
 
 		for (const ev of events) {
-			const dayKey = ev.start.toDateString(); // giorno
-			const employeeKey = ev.fullName; // dipendente
+			const dayKey = ev.start.toDateString(); // Giorno
+			const employeeKey = ev.fullName; // Dipendente
 			const key = `${employeeKey}-${dayKey}`;
 
 			if (!map.has(key)) {
-				map.set(key, ev); // tiene solo il primo
+				map.set(key, {
+					...ev,
+					id: key, // ID unico per quel giorno/dipendente
+					orariMultipli: [ev.orario],
+				});
+			} else {
+				map.get(key).orariMultipli.push(ev.orario);
 			}
 		}
 
-		return Array.from(map.values());
+		return [...map.values()];
 	};
 
 	/* GENERA EVENTI in base ai turni */
 	const eventi = useMemo(() => {
+		if (!EmployeeList || !loggedUser) return [];
+
 		const result = [];
 		const today = new Date();
 		const weekMonday = startOfWeek(today, { locale: it });
@@ -227,12 +239,12 @@ const CalendarBox = () => {
 
 			EmployeeList.forEach((dip) => {
 				// USER — vede solo i suoi turni
-				if (loggedUser?.role === "user") {
+				if (loggedUser.role === "user") {
 					if (dip.matricola !== loggedUser.matricola) return;
 				}
 
 				// SUPERVISOR — vede solo chi ha il suo stesso reparto
-				if (loggedUser?.role === "supervisor") {
+				if (loggedUser.role === "supervisor") {
 					if (dip.ruolo !== loggedUser.reparto) return;
 				}
 
@@ -241,7 +253,9 @@ const CalendarBox = () => {
 				// Filtro manuale dei reparti già esistente
 				if (!selectedDepartments.includes(dip.ruolo)) return;
 
-				(dip.turni || []).forEach((turno) => {
+				if (!dip.turni) return;
+
+				dip.turni.forEach((turno) => {
 					const offset = weekOffset[turno.giorno];
 					if (offset === undefined) return;
 
@@ -251,10 +265,16 @@ const CalendarBox = () => {
 						monday.getDate() + offset
 					);
 
-					(turno.orari || []).forEach((range, i) => {
+					if (!turno.orari) return;
+
+					turno.orari.forEach((range, i) => {
 						const [s, e] = range.split("-");
+						if (!s || !e) return;
+
 						const [sh, sm] = s.split(":").map(Number);
 						const [eh, em] = e.split(":").map(Number);
+
+						if (isNaN(sh) || isNaN(sm) || isNaN(eh) || isNaN(em)) return;
 
 						const start = new Date(
 							base.getFullYear(),
@@ -288,11 +308,11 @@ const CalendarBox = () => {
 
 		// Se siamo in vista mensile, rimuovo i duplicati dei turni spezzati
 		if (view === "month") {
-			return removeMonthlyDuplicates(result);
+			return mergeMonthlyEvents(result);
 		}
 
 		return result;
-	}, [EmployeeList, loggedUser, selectedDepartments]);
+	}, [EmployeeList, loggedUser, selectedDepartments, view]);
 
 	/* EVENT STYLE */
 	const eventStyleGetter = (event) => ({
@@ -300,15 +320,16 @@ const CalendarBox = () => {
 			backgroundColor: event.color,
 			color: "white",
 			borderRadius: "12px",
-			padding: expandedId === event.id ? "10px" : "4px 6px",
-			fontSize: expandedId === event.id ? "13px" : "11px",
-			transform: expandedId === event.id ? "scale(1.12)" : "scale(1)",
+			padding: expandedId === event.id ? "8px" : "2px 4px",
+			fontSize: expandedId === event.id ? "15px" : "13px",
+			transform: expandedId === event.id ? "scale(1.02)" : "scale(1)",
 			transition: "all .18s ease",
 			zIndex: expandedId === event.id ? 10 : 1,
+			width: expandedId === event.id ? "auto" : "fit-content",
 		},
 	});
 
-	const EventComponent = ({ event, view }) => {
+	const EventComponent = ({ event }) => {
 		//vista mensile solo iniziali
 		if (view === "month") {
 			const isExpanded = expandedId === event.id;
@@ -323,8 +344,8 @@ const CalendarBox = () => {
 						}}
 						className="flex items-center justify-center cursor-pointer"
 						style={{
-							width: "20px",
-							height: "20px",
+							width: "25px",
+							height: "25px",
 							borderRadius: "50%",
 							backgroundColor: event.color,
 							color: "white",
@@ -335,14 +356,17 @@ const CalendarBox = () => {
 							userSelect: "none",
 						}}
 					>
-						{event.fullName}
+						{event.title}
 					</div>
 
 					{/* DETTAGLI QUANDO ESPANSO */}
 					{isExpanded && (
-						<div className="mt-1 text-[10px] flex flex-col items-center">
+						<div className="text-[10px] flex flex-col items-center">
 							<div className="italic">{event.ruolo}</div>
-							<div>{event.orario}</div>
+							<div className="italic">{event.fullName}</div>
+							{event.orariMultipli?.map((o, i) => (
+								<div key={i}>{o}</div>
+							))}
 						</div>
 					)}
 				</div>
@@ -353,16 +377,16 @@ const CalendarBox = () => {
 			<div className="flex flex-col gap-1 select-none">
 				<div className="flex items-center gap-2">
 					<div
-						className="w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold"
+						className="w-10 h-7 rounded-xl flex items-center justify-center text-[12px] font-bold"
 						style={{ backgroundColor: "rgba(0,0,0,0.25)" }}
 					>
 						{event.title}
 					</div>
-					<span className="font-semibold truncate">{event.fullName}</span>
 				</div>
 
 				{expandedId === event.id && (
-					<div className="text-[11px] opacity-90">
+					<div className="text-[12px] opacity-90">
+						<div className="italic font-bold">{event.fullName}</div>
 						<div className="italic">{event.ruolo}</div>
 						<div>{event.orario}</div>
 					</div>
@@ -385,23 +409,23 @@ const CalendarBox = () => {
 							key={dept}
 							onClick={() => toggleDepartment(dept)}
 							className={`
-                flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer select-none
-                text-sm font-semibold border shadow-sm transition-all
-                ${
+				flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer select-none
+				text-sm font-semibold border shadow-sm transition-all
+				${
 									active
 										? "text-white"
 										: isDark
 										? "text-white border-white/30 bg-white/5"
 										: "text-[#090c64] border-gray-300 bg-white/70"
 								}
-              `}
+				`}
 							style={{ backgroundColor: active ? color : undefined }}
 						>
 							<div
 								className={`
-                  w-4 h-4 rounded flex items-center justify-center text-xs font-bold
-                  ${active ? "bg-white text-black" : "border border-current"}
-                `}
+					w-4 h-4 rounded flex items-center justify-center text-xs font-bold
+					${active ? "bg-white text-black" : "border border-current"}
+				`}
 							>
 								{active ? "✓" : ""}
 							</div>
@@ -418,13 +442,13 @@ const CalendarBox = () => {
 				<button
 					onClick={() => setSelectedDepartments([...departments])}
 					className={`
-            px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm transition
-            ${
+			px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm transition
+			${
 							isDark
 								? "text-white border-white/30 bg-white/10 hover:bg-white/20"
 								: "text-white border-gray-900 bg-[#090c64] hover:bg-[#090c64]/70"
 						}
-          `}
+			`}
 				>
 					Seleziona tutti
 				</button>
@@ -433,13 +457,13 @@ const CalendarBox = () => {
 				<button
 					onClick={() => setSelectedDepartments([])}
 					className={`
-            px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm transition
-            ${
+			px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm transition
+			${
 							isDark
 								? "text-white border-white/30 bg-white/10 hover:bg-white/20"
 								: "text-white border-gray-900 bg-[#090c64] hover:bg-[#090c64]/70"
 						}
-          `}
+			`}
 				>
 					Deseleziona tutti
 				</button>
@@ -460,17 +484,17 @@ const CalendarBox = () => {
 						culture="it"
 						eventPropGetter={eventStyleGetter}
 						components={{
-							event: (props) => <EventComponent {...props} view={view} />,
+							event: EventComponent,
 							toolbar: (props) => <CustomToolbar {...props} view={view} />,
 						}}
 						onSelectEvent={(e) =>
 							setExpandedId((prev) => (prev === e.id ? null : e.id))
 						}
-						style={{ height: 700 }}
-						min={new Date(1970, 0, 1, 6, 0)} // dalle 06:00
-						max={new Date(1970, 0, 1, 22, 0)} // fino alle 22:00 (opzionale)
+						style={{ height: 800 }}
+						min={new Date(1970, 0, 1, 7, 0)} // dalle 07:00
+						max={new Date(1970, 0, 1, 20, 0)} // fino alle 20:00 (opzionale)
 						/* opzionale: dove scrollare di default */
-						scrollToTime={new Date(1970, 0, 1, 6, 0)}
+						scrollToTime={new Date(1970, 0, 1, 7, 0)}
 						className={isDark ? "text-white" : "text-[#090c64]"}
 					/>
 				</div>
