@@ -32,7 +32,7 @@ function App() {
 
 			{/* ROTTE PROTETTE */}
 			<Route path="/" element={<PublicLayout />}>
-				<Route path="dashboard" element={<BoardPage />} />
+				<Route path="board" element={<BoardPage />} />
 				<Route path="customers" element={<CustomersPage />} />
 				<Route path="item/:id" element={<CustomersRegistry />} />
 				<Route path="personale" element={<EmployeePage />} />

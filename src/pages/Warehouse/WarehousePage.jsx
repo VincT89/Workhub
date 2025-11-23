@@ -1,6 +1,6 @@
 import { useState } from "react";
-import WarehouseTable from "../../components/WarehouseTable";
-import DrawerAddNewProduct from "../../components/DrawerAddNewProduct";
+import WarehouseTable from "../../components/Warehouse/WarehouseTable";
+import DrawerAddNewProduct from "../../components/Warehouse/DrawerAddNewProduct";
 import { Warehouse } from "@phosphor-icons/react";
 import { PlusCircle } from "@phosphor-icons/react";
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Drawer from "../components/Drawer"; // punta al path corretto
+import Drawer from "../Drawer"; // punta al path corretto
 
 const AddCustomerForm = ({ onAdd }) => {
     const [isOpen, setIsOpen] = useState(false);

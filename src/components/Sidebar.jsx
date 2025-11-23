@@ -12,7 +12,7 @@ const Sidebar = () => {
 	const isUser = role === "user";
 
   const routes = [
-    { to: "dashboard", label: t("sidebar.overview") },
+    { to: "board", label: t("sidebar.overview") },
     { to: "customers", label: t("sidebar.clienti") },
 
    
