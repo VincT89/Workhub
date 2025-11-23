@@ -25,7 +25,7 @@ const TopBar = () => {
   return (
     <header
       className={`
-        w-full h-[75px]
+        w-full h-[60px]
         flex items-center justify-between
         px-6 md:px-8 py-2
         rounded-xl border border-white/90 shadow-white

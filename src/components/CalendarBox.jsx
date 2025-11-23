@@ -62,7 +62,7 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
 				<button
 					onClick={() => onNavigate("PREV")}
 					className="
-            px-4 py-2 rounded-full 
+            px-4 py-2 rounded-xl 
             bg-white/70 dark:bg-white/10 
             text-[#090c64] dark:text-[#090c64]
             border border-white/40 dark:border-white/90 
@@ -75,7 +75,7 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
 				<button
 					onClick={() => onNavigate("NEXT")}
 					className="
-            px-4 py-2 rounded-full 
+            px-4 py-2 rounded-xl 
             bg-white/70 dark:bg-white/10 
             text-[#090c64] dark:text-[#090c64]
             border border-white/40 dark:border-white/90 
@@ -96,7 +96,7 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
 				<button
 					onClick={() => onView("month")}
 					className={`
-    px-4 py-2 rounded-full font-semibold border transition
+    px-4 py-2 rounded-xl font-semibold border transition
     ${
 			view === "month"
 				? "bg-[#090c64] text-white border-[#090c64]"
@@ -110,7 +110,7 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
 				<button
 					onClick={() => onView("week")}
 					className={`
-            px-4 py-2 rounded-full font-semibold border transition
+            px-4 py-2 rounded-xl font-semibold border transition
             ${
 							view === "week"
 								? "bg-[#090c64] text-white border-[#090c64]"
@@ -124,7 +124,7 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
 				<button
 					onClick={() => onView("day")}
 					className={`
-            px-4 py-2 rounded-full font-semibold border transition
+            px-4 py-2 rounded-xl font-semibold border transition
             ${
 							view === "day"
 								? "bg-[#090c64] text-white border-[#090c64]"
@@ -187,6 +187,12 @@ const CalendarBox = () => {
 	useEffect(() => {
 		setSelectedDepartments(departments);
 	}, [loggedUser, EmployeeList]);
+
+	const toggleDepartment = (dept) => {
+		setSelectedDepartments((prev) =>
+			prev.includes(dept) ? prev.filter((d) => d !== dept) : [...prev, dept]
+		);
+	};
 
 	// Rimuove duplicati nella vista mensile (stesso dipendente + stesso giorno)
 	const removeMonthlyDuplicates = (events) => {
@@ -329,13 +335,12 @@ const CalendarBox = () => {
 							userSelect: "none",
 						}}
 					>
-            {event.fullName}
+						{event.fullName}
 					</div>
 
 					{/* DETTAGLI QUANDO ESPANSO */}
 					{isExpanded && (
-						<div
-							className="mt-1 text-[10px] flex flex-col items-center">
+						<div className="mt-1 text-[10px] flex flex-col items-center">
 							<div className="italic">{event.ruolo}</div>
 							<div>{event.orario}</div>
 						</div>
@@ -380,7 +385,7 @@ const CalendarBox = () => {
 							key={dept}
 							onClick={() => toggleDepartment(dept)}
 							className={`
-                flex items-center gap-3 px-4 py-2 rounded-full cursor-pointer select-none
+                flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer select-none
                 text-sm font-semibold border shadow-sm transition-all
                 ${
 									active
@@ -402,7 +407,7 @@ const CalendarBox = () => {
 							</div>
 							{dept}
 							<div
-								className="w-3 h-3 rounded-full ml-1"
+								className="w-3 h-3 rounded-xl ml-1"
 								style={{ backgroundColor: color }}
 							/>
 						</div>
@@ -413,7 +418,7 @@ const CalendarBox = () => {
 				<button
 					onClick={() => setSelectedDepartments([...departments])}
 					className={`
-            px-4 py-2 rounded-full text-sm font-semibold border shadow-sm transition
+            px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm transition
             ${
 							isDark
 								? "text-white border-white/30 bg-white/10 hover:bg-white/20"
@@ -428,7 +433,7 @@ const CalendarBox = () => {
 				<button
 					onClick={() => setSelectedDepartments([])}
 					className={`
-            px-4 py-2 rounded-full text-sm font-semibold border shadow-sm transition
+            px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm transition
             ${
 							isDark
 								? "text-white border-white/30 bg-white/10 hover:bg-white/20"
@@ -462,6 +467,10 @@ const CalendarBox = () => {
 							setExpandedId((prev) => (prev === e.id ? null : e.id))
 						}
 						style={{ height: 700 }}
+						min={new Date(1970, 0, 1, 6, 0)} // dalle 06:00
+						max={new Date(1970, 0, 1, 22, 0)} // fino alle 22:00 (opzionale)
+						/* opzionale: dove scrollare di default */
+						scrollToTime={new Date(1970, 0, 1, 6, 0)}
 						className={isDark ? "text-white" : "text-[#090c64]"}
 					/>
 				</div>

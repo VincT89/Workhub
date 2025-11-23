@@ -1,37 +1,39 @@
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 import CalendarBox from "../components/CalendarBox";
+import {
+	Warehouse,
+	ShoppingCartSimple,
+	UserCircleCheck,
+	ChalkboardSimple,
+	Package,
+	WarningOctagon,
+	Calendar,
+} from "@phosphor-icons/react";
+import { useSelector } from "react-redux";
 
 const BoardPage = () => {
 	const { theme } = useTheme();
 	const { t } = useLanguage();
+	const { role } = useSelector((state) => state.auth.user);
 
-	const textColor = theme === "dark" ? "text-white" : "text-[#134a7b]";
+	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 
 	return (
-		<div className="w-full h-full flex flex-col gap-8 overflow-y-auto">
-			{/* Riga 1: i 4 box - con un div che li contiene tutti, e a seguire i singoli box-div */}
-			<div className="grid grid-cols-4 gap-4 mb-6 w-full transition-colors duration-500">
+		<div
+			className="Sw-full h-full flex flex-col gap-8 overflow-y-auto 
+			[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+		>
+			{/* Riga 1: i 5 box - con un div che li contiene tutti, e a seguire i singoli box-div */}
+			<div className="grid grid-cols-5 gap-4 mb-6 w-full transition-colors duration-500">
 				<div
 					className={`flex items-center justify-between rounded-xl px-4 py-3 shadow 
 					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<span className="font-bold">{t("dashboard.clientiAttivi")}</span>
-					</div>
-					<span className="text-sm opacity-70 leading-none font-semibold">
-						20
-					</span>
-				</div>
-
-				<div
-					className={`flex items-center justify-between rounded-xl px-4 py-3 shadow 
-					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-					border border-white/30 dark:border-white/80 ${textColor}`}
-				>
-					<div className="flex items-center gap-2">
-						<span className="font-bold">{t("dashboard.depositi")}</span>
+						<Warehouse size={28} color="#090c64" weight="duotone" />
+						<span className="font-bold">Depositi</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
 						5
@@ -44,7 +46,8 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<span className="font-bold">{t("dashboard.prodotti")}</span>
+						<ShoppingCartSimple size={28} color="#090c64" weight="duotone" />
+						<span className="font-bold">Prodotti</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
 						2000
@@ -57,7 +60,37 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<span className="font-bold">{t("dashboard.personaleAttivo")}</span>
+						<Package size={28} color="#090c64" weight="duotone" />
+						<span className="font-bold">Ordini in uscita</span>
+					</div>
+					<span className="text-sm opacity-70 leading-none font-semibold">
+						20
+					</span>
+				</div>
+
+				<div
+					className={`flex items-center justify-between rounded-xl px-4 py-3 shadow 
+					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
+					border border-white/30 dark:border-white/80 ${textColor}`}
+				>
+					<div className="flex items-center gap-2">
+						<WarningOctagon size={28} color="#090c64" weight="duotone" />
+						<span className="font-bold">Articoli sotto soglia</span>
+					</div>
+					<span className="text-sm opacity-70 leading-none font-semibold">
+						10
+					</span>
+				</div>
+
+				{/* {role === "supervisor" && ( intero <div />} */}
+				<div
+					className={`flex items-center justify-between rounded-xl px-4 py-3 shadow 
+					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
+					border border-white/30 dark:border-white/80 ${textColor}`}
+				>
+					<div className="flex items-center gap-2">
+						<UserCircleCheck size={28} color="#090c64" weight="duotone" />
+						<span className="font-bold">Personale attivo</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
 						50
@@ -65,38 +98,34 @@ const BoardPage = () => {
 				</div>
 			</div>
 
-			{/* Riga 2: 3 box - con un div che li contiene tutti, e a seguire i singoli box-div  */}
-			<div className="grid grid-cols-3 gap-6 mb-6 w-full transition-colors duration-500">
+			{/* Riga 2: 2 box - con un div che li contiene tutti, e a seguire i singoli box-div  */}
+			<div className="grid grid-cols-2 gap-6 mb-6 w-full transition-colors duration-500">
 				<div
 					className={`flex gap-4 justify-start items-start p-6 
 					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-					border border-white/30 dark:border-white/80 rounded-xl shadow-md 
+					border border-white/30 dark:border-white/80 rounded-[25px] shadow-md 
 					${textColor} h-[230px]`}
 				>
-					<h3 className="text-[14px] font-bold font-nunito">
-						{t("dashboard.notifiche")}
-					</h3>
+					<ChalkboardSimple size={28} color="#090c64" weight="duotone" />
+					<h3 className="text-[14px] font-bold font-nunito">Bacheca</h3>
+
+					{/* Bottone visibile SOLO ai supervisor */}
+					{(role === "supervisor" || role === "admin") && (
+						<button className="ml-auto px-4 py-2 bg-[#090c64] text-white shadow-md border border-white/20 transition-all duration-500 rounded-lg text-[14px] font-bold-nunito cursor-pointer">
+							+ Aggiungi
+						</button>
+					)}
 				</div>
 
 				<div
 					className={`flex gap-4 justify-start items-start p-6 
 					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-					border border-white/30 dark:border-white/80 rounded-xl shadow-md 
+					border border-white/30 dark:border-white/80 rounded-[25px] shadow-md 
 					${textColor} h-[230px]`}
 				>
+					<ShoppingCartSimple size={28} color="#090c64" weight="duotone" />
 					<h3 className="text-[14px] font-bold font-nunito">
-						{t("dashboard.panoramicaDepositi")}
-					</h3>
-				</div>
-
-				<div
-					className={`flex gap-4 justify-start items-start p-6 
-					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-					border border-white/30 dark:border-white/80 rounded-xl shadow-md 
-					${textColor} h-[230px]`}
-				>
-					<h3 className="text-[14px] font-bold font-nunito">
-						{t("dashboard.prodottiInEsaurimento")}
+						Prodotti in esaurimento
 					</h3>
 				</div>
 			</div>
@@ -108,13 +137,18 @@ const BoardPage = () => {
 			>
 				{/* Contenuto */}
 				<div className="flex-1 flex flex-col">
-					{/* Titolo a sinistra */}
-					<h3 className={`text-[14px] font-bold font-nunito ${textColor} mb-4`}>
-						{t("dashboard.calendario")}
-					</h3>
+					<div className="flex gap-4 justify-start items-start">
+						<Calendar size={28} color="#090c64" weight="duotone"/>
+						<h3
+							className={`text-[14px] font-bold font-nunito ${textColor} mb-4`}
+						>
+							{t("dashboard.calendario")}
+						</h3>
+					</div>
+
 					<CalendarBox />
 				</div>
-			</div> 
+			</div>
 		</div>
 	);
 };
