@@ -54,7 +54,7 @@ const AddCustomerForm = ({ onAdd }) => {
             {/* Bottone che apre il drawer */}
             <button
                 onClick={() => setIsOpen(true)}
-                className="px-3 py-2 bg-[#f4ecff] border border-white rounded-full shadow-sm text-sm text-[#090c64] hover:bg-bg-[#f4ecff] transition"
+                className="px-3 py-2 bg-[#f4ecff] border border-white rounded-xl shadow-sm text-sm text-[#090c64] hover:bg-bg-[#f4ecff] transition"
             >
                 ➕ Aggiungi Cliente
             </button>

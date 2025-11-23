@@ -294,7 +294,7 @@ const OrdersPage = () => {
 	}));
 
 	return (
-		<div className="p-6">
+		<div>
 			<Table
 				title="Ordini"
 				data={ordersWithPoints}

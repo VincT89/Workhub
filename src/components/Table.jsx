@@ -44,7 +44,7 @@ const Table = ({ data, columns, customToolbar, onRowClick }) => {
 				<div className="flex gap-2 items-center">
 					<button
 						onClick={() => setSortAZ(!sortAZ)}
-						className="px-3 py-2 bg-white/70 border border-white rounded-full shadow-sm text-sm hover:bg-white transition"
+						className="px-3 py-2 bg-white/70 border border-white rounded-xl shadow-sm text-sm hover:bg-white transition"
 					>
 						{sortAZ ? "Annulla Ordine A-Z" : "Ordina A-Z"}
 					</button>
@@ -59,13 +59,13 @@ const Table = ({ data, columns, customToolbar, onRowClick }) => {
 					placeholder="Cerca..."
 					value={searchTerm}
 					onChange={(e) => setSearchTerm(e.target.value)}
-					className="px-3 py-2 bg-white/70 border border-white rounded-full shadow-sm text-sm w-60 focus:outline-none placeholder:text-gray-500"
+					className="px-3 py-2 bg-white/70 border border-white rounded-xl shadow-sm text-sm w-60 focus:outline-none placeholder:text-gray-500"
 				/>
 			</div>
 
 			{/* RESPONSIVE SCROLL WRAPPER */}
-			<div className="w-full overflow-x-auto rounded-xl">
-				<table className="w-full min-w-max border-collapse text-sm text-[#090c64]">
+			<div className="w-full overflow-y-auto rounded-xl">
+				<table className="w-full  border-collapse text-sm text-[#090c64]">
 					<thead>
 						<tr className="bg-white/60 text-[#090c64]">
 							{columns.map((item, idx) => (

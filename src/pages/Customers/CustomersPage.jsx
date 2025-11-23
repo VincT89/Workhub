@@ -1,7 +1,7 @@
 import Table from "../../components/Table";
 import { useState } from "react";
 import FilterByCard from "../../hooks/FilterByCard";
-import AddCustomerForm from "../../hooks/addCustomerForm";
+import AddCustomerForm from "../../hooks/AddCustomerForm";
 
 const CustomersPage = () => {
   const initialCustomers = [

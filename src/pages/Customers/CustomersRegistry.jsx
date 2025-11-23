@@ -142,7 +142,7 @@ const CustomersRegistry = () => {
 					<button
 						key={item.label}
 						onClick={() => dispatch(setActiveTab(item.label))}
-						className={`flex items-center gap-2 rounded-2xl p-2 shadow-md border border-white transition duration-200 cursor-pointer ${
+						className={`flex items-center gap-2 rounded-xl p-2 shadow-md border border-white transition duration-200 cursor-pointer ${
 							activeTab === item.label
 								? "bg-white text-[#090c64] font-semibold"
 								: "bg-white/40 hover:bg-white/70"
@@ -158,7 +158,7 @@ const CustomersRegistry = () => {
 			</div>
 
 			{/* Contenuto dinamico */}
-			<div className="w-full rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md border border-white">
+			<div className="w-[1000px] rounded-xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md border border-white">
 				<h2 className="text-[#090c64] text-lg font-bold mb-6">
 					Cliente: {customer.nome}
 				</h2>
@@ -171,7 +171,7 @@ const CustomersRegistry = () => {
 							{!isEditing ? (
 								<button
 									onClick={handleEdit}
-									className="text-sm px-3 py-1 bg-white/70 rounded-full border border-white shadow-sm hover:bg-white transition"
+									className="text-sm px-3 py-1 bg-white/70 rounded-xl border border-white shadow-sm hover:bg-white transition"
 								>
 									✏️ Modifica
 								</button>
@@ -179,13 +179,13 @@ const CustomersRegistry = () => {
 								<div className="flex gap-2">
 									<button
 										onClick={handleSave}
-										className="text-sm px-3 py-1 bg-green-200 rounded-full border border-white shadow-sm hover:bg-green-300 transition"
+										className="text-sm px-3 py-1 bg-green-200 rounded-xl border border-white shadow-sm hover:bg-green-300 transition"
 									>
 										💾 Salva
 									</button>
 									<button
 										onClick={handleCancel}
-										className="text-sm px-3 py-1 bg-red-200 rounded-full border border-white shadow-sm hover:bg-red-300 transition"
+										className="text-sm px-3 py-1 bg-red-200 rounded-xl border border-white shadow-sm hover:bg-red-300 transition"
 									>
 										❌ Annulla
 									</button>
@@ -212,7 +212,7 @@ const CustomersRegistry = () => {
 							return (
 								<div
 									key={key}
-									className="bg-white/60 p-3 rounded-full shadow-sm"
+									className="bg-white/60 p-3 rounded-xl shadow-sm"
 								>
 									{isEditing ? (
 										<input
@@ -238,7 +238,7 @@ const CustomersRegistry = () => {
 							<h3 className="text-[#090c64] font-semibold text-left">
 								Storico Ordini
 							</h3>
-							<button className="text-sm px-3 py-1 bg-white/70 rounded-full border border-white shadow-sm hover:bg-white transition">
+							<button className="text-sm px-3 py-1 bg-white/70 rounded-xl border border-white shadow-sm hover:bg-white transition">
 								📊 Esporta Excel
 							</button>
 						</div>
@@ -258,7 +258,7 @@ const CustomersRegistry = () => {
 							<h3 className="text-[#090c64] font-semibold text-left">
 								Storico Resi
 							</h3>
-							<button className="text-sm px-3 py-1 bg-white/70 rounded-full border border-white shadow-sm hover:bg-white transition">
+							<button className="text-sm px-3 py-1 bg-white/70 rounded-xl border border-white shadow-sm hover:bg-white transition">
 								📊 Esporta Excel
 							</button>
 						</div>
@@ -273,14 +273,14 @@ const CustomersRegistry = () => {
 							<h3 className="text-[#090c64] font-semibold text-left">
 								Affiliazione
 							</h3>
-							<button className="text-sm px-3 py-1 bg-white/70 rounded-full border border-white shadow-sm hover:bg-white transition">
+							<button className="text-sm px-3 py-1 bg-white/70 rounded-xl border border-white shadow-sm hover:bg-white transition">
 								📊 Esporta Excel
 							</button>
 						</div>
-						<div className="bg-white/60 p-3 rounded-full shadow-sm">
+						<div className="bg-white/60 p-3 rounded-xl shadow-sm">
 							Livello tessera: {customer.livello}
 						</div>
-						<div className="bg-white/60 p-3 rounded-full shadow-sm">
+						<div className="bg-white/60 p-3 rounded-xl shadow-sm">
 							Punti: {customer.punti}
 						</div>
 					</div>

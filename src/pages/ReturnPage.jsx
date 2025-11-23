@@ -203,7 +203,7 @@ const ReturnsPage = () => {
   }));
 
   return (
-    <div className="p-6">
+    <div>
       {/* Tabella come Ordini: titolo + A-Z + Cerca + Aggiungi */}
       <Table
         title="Resi"
