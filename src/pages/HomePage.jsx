@@ -34,7 +34,7 @@ const HomePage = () => {
 
       {/* Logo */}
       <img
-        className="absolute top-[32%] sm:top-[34%] md:top-[20%] left-1/2 md:left-[45%] transform -translate-x-1/2 
+        className="absolute top-[32%] sm:top-[34%] md:top-[27%] left-1/2 md:left-[45%] transform -translate-x-1/2 
         w-[70%] sm:w-[60%] md:w-[45%] lg:w-[35%] max-w-[499px] h-auto aspect-[1.82] object-cover"
         alt="WorkHub logo"
         src={theme === "dark" ? logoDark : Logo}

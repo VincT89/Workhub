@@ -24,7 +24,7 @@ const Sidebar = () => {
     { to: "warehouse", label: t("sidebar.magazzino") },
     { to: "ticket", label: t("sidebar.ticket") },
     { to: "orders", label: t("sidebar.ordini") },
-    { to: "return", label: t("sidebar.resi") },
+  
   ];
 
 	return (
