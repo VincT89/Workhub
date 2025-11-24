@@ -163,7 +163,7 @@ const BoardPage = () => {
 				<div
 					className={`flex flex-col gap-4 p-4 
   bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-  border border-white/30 dark:border-white/80 rounded-xl shadow-md 
+   rounded-xl shadow-md 
   ${textColor}`}
 				>
 					{/* HEADER */}
