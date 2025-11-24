@@ -29,7 +29,7 @@ const LoginPage = () => {
 	// Se già loggato → vai alla dashboard
 	useEffect(() => {
 		if (token && user) {
-			navigate("/dashboard");
+			navigate("/board");
 		}
 	}, [token, user, navigate]);
 
@@ -112,6 +112,7 @@ const LoginPage = () => {
 						type="text"
 						autoComplete="username"
 						required
+						className="custom-input w-full"
 						value={username}
 						onChange={(e) => setUsername(e.target.value)}
 					/>
@@ -131,9 +132,10 @@ const LoginPage = () => {
 						type={showPassword ? "text" : "password"}
 						autoComplete="current-password"
 						required
+						className="custom-input w-full"
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
-						className="input"
+
 					/>
 					<button
 						type="button"
@@ -173,7 +175,7 @@ const LoginPage = () => {
 					className={`btn-login ${loading ? "btn-login-disabled" : ""}`}
 				>
 					{loading ? (
-						<span className="animate-pulse text-white font-bold text-[18px] font-nunito">
+						<span className="animate-pulse font-bold text-[18px] font-nunito">
 							{t("login.accessoInCorso")}
 						</span>
 					) : (

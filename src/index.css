@@ -10,9 +10,7 @@ body {
   color: #090c64;
 }
 
-span {
-  color: #090c64;
-}
+
 
 
 @layer base {
@@ -28,12 +26,24 @@ span {
 
 /* Stili globali */
 @layer base {
+  input {
+    @apply w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 rounded-xl px-4 shadow-md outline-none font-semibold focus:ring-2 transition-all duration-200;
+  }
 
   /* Box */
   .custom-box {
     @apply rounded-xl shadow-white border border-white/90 backdrop-blur-lg transition-colors duration-300 bg-white/10 text-[#090c64];
   }
 
+  /* LIGHT MODE */
+  input:not(dark){
+    @apply text-[#090c64] placeholder:text-[#090c64]/70 focus:ring-[#090c64];
+  }
+
+  /* DARK MODE */
+.dark input {
+  @apply text-white placeholder:text-white focus:ring-white;
+}
   /* Input */
   .custom-input {
     @apply border border-white/30 rounded-xl px-4 shadow-md outline-none font-semibold focus:ring-2 transition-all duration-200 text-[#090c64] placeholder:text-[#090c64]/70 focus:ring-[#090c64];
@@ -43,6 +53,26 @@ span {
   .custom-button {
     @apply rounded-xl p-2 shadow-md border border-white/20 transition-all duration-500 cursor-pointer font-bold text-white bg-[#090c64];
     font-family: var(--font-nunito);
+  }
+}
+
+  /* === Stili globali per i bottoni === */
+@layer components {
+  .btn-login {
+    @apply w-full sm:w-[225px] h-[50px] mt-8
+           rounded-xl shadow-md border border-white/20
+           transition-all duration-500 cursor-pointer
+           font-bold font-nunito text-white bg-[#090c64];
+  }
+
+  /* Stato Disabled / Loading */
+  .btn-login-disabled {
+    @apply opacity-60 cursor-not-allowed;
+  }
+
+  /* Light Mode */
+  :root .btn-login {
+    @apply border-white/30 hover:border-white/50 hover:shadow-lg hover:scale-105;
   }
 }
 
