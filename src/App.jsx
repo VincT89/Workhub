@@ -16,7 +16,7 @@ import EmployeePage from "./pages/Employee/EmployeePage.jsx";
 import AdminEmployeeDetailsPage from "./pages/Employee/admin/AdminEmployeeDetailsPage.jsx";
 import WarehousePage from "./pages/Warehouse/WarehousePage.jsx";
 import Product from "./pages/Warehouse/Product.jsx";
-import TicketPage from "./pages/TicketPage.jsx";
+import TicketPage from "./pages/Ticketing/TicketPage.jsx";
 import OrderPage from "./pages/OrderPage.jsx";
 import ReturnPage from "./pages/ReturnPage.jsx";
 import PasswordRecoveryPage from "./pages/PasswordRecoveryPage.jsx";

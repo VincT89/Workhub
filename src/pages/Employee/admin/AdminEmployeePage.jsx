@@ -437,13 +437,13 @@ const AdminEmployeePage = () => {
 					<div className="w-full flex justify-between mt-4">
 						<button
 							onClick={handleDelete}
-							className="w-[48%] py-2 bg-red-500 text-white rounded hover:bg-red-600 transition cursor-pointer"
+							className="w-[48%] py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition cursor-pointer"
 						>
 							Elimina
 						</button>
 						<button
 							onClick={handleSave}
-							className="w-[48%] py-2 bg-[#090c64] text-white rounded cursor-pointer transition"
+							className="w-[48%] py-2 bg-[#090c64] text-white rounded-xl cursor-pointer transition"
 						>
 							Salva
 						</button>
