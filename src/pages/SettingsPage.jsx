@@ -1,201 +1,438 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import bgImage from "../assets/bg/bg.jpg";
-import iconLogo from "../assets/logo/iconaLogo.png";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { updateCredentials } from "../store/feature/authSlice";
+import { useTheme } from "../context/ThemeContext";
+import { useLanguage } from "../context/LanguageContext";
+
 import italianFlag from "../assets/icons/Italy.png";
 import englishFlag from "../assets/icons/Great Britain.png";
-import dark from "../assets/icons/Do not Disturb iOS.png";
-import light from "../assets/icons/Sun.png";
+import { Eye, EyeSlash, Sun, Moon } from "@phosphor-icons/react";
 
 const SettingsPage = () => {
-  const [username, setUsername] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+	const { theme, setTheme } = useTheme();
+	const { lang, toggleLang, t } = useLanguage();
+	const dispatch = useDispatch();
+	const { user } = useSelector((state) => state.auth);
 
-  const navigate = useNavigate();
+	const [username, setUsername] = useState(user?.username || "");
+	const [name, setName] = useState(user?.name || "");
+	const [email, setEmail] = useState(user?.email || "");
+	const [role, setRole] = useState(user?.role || "");
+	const [newPassword, setNewPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
+	const [message, setMessage] = useState("");
+	const [messageType, setMessageType] = useState("");
+	const [showNewPassword, setShowNewPassword] = useState(false);
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+	const [isEditing, setIsEditing] = useState(false);
+	const [isEditingAccount, setIsEditingAccount] = useState(false);
 
-  const handleSave = (e) => {
-    e.preventDefault();
-    // la logica di salvataggio 
-  };
+	const handleSave = (e) => {
+		e.preventDefault();
 
-  const handleExit = () => {
-    navigate("/login");
-  };
+		if (!username) {
+			setMessage(t("settings.inserisciUsername"));
+			setMessageType("error");
+			return;
+		}
 
+		if (newPassword && newPassword !== confirmPassword) {
+			setMessage(t("settings.passwordNonCoincidono"));
+			setMessageType("error");
+			return;
+		}
 
-  return (
-    <main className="bg-white w-full min-h-screen relative overflow-hidden flex justify-center items-center">
-      <img
-        className="absolute top-0 left-0 w-full h-full object-cover z-0"
-        alt="Background"
-        src={bgImage}
-      />
-      <div className="absolute w-[55%] h-[70%] bg-[#fafafa20] backdrop-blur-sm rounded-[40px] border border-neutral-50/30 z-10" />
-      <div className="relative flex flex-col items-center z-20 w-full max-w-[650px] sm:max-w-[50%] px-4 py-8">
-        <div className="flex items-center gap-4 mb-6">
-          <img className="w-[90px] h-[85px]" alt="Logo" src={iconLogo} />
-          <div className="text-center">
-            <span className="text-[#1C62A0] text-2xl font-bold font-nunito">
-              Impostazioni
-            </span>
-          </div>
-        </div>
+		dispatch(
+			updateCredentials({
+				username,
+				password: newPassword || user?.password,
+				name,
+				email,
+				role,
+			})
+		);
 
-        <form onSubmit={handleSave} className="w-full flex flex-col sm:flex-row gap-6">
-          {/* colonna sinistra: Reset Password */}
-          <div className="w-full sm:w-1/2 pb-6 border-b border-[#1C62A0]">
-            <div className="text-[#1C62A0] text-[18px] font-bold font-nunito mb-4">
-              Reset Password
-            </div>
-            <div className="w-full flex flex-col gap-4">
-              <div className="relative w-full">
-                <label
-                  htmlFor="username"
-                  className="block text-[#1C62A0] text-[16px] font-bold font-nunito mb-2"
-                >
-                  Username
-                </label>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  value={username}
-                  className="w-[80%] h-8 bg-[#D9D9D9]/30 shadow-md border border-[#FBFBFB] rounded-2xl px-4 text-[#1C62A0] outline-none"
-                  aria-label="Username"
-                />
-              </div>
-              <div className="relative w-full">
-                <label
-                  htmlFor="new-password"
-                  className="block text-[#1C62A0] text-[16px] font-bold font-nunito mb-2"
-                >
-                  Nuova password
-                </label>
-                <input
-                  id="new-password"
-                  name="new-password"
-                  type="password"
-                  value={newPassword}
-                  className="w-[80%] h-8 bg-[#D9D9D9]/30 shadow-md border border-[#FBFBFB] rounded-2xl px-4 text-[#1C62A0] outline-none"
-                  aria-label="Nuova password"
-                />
-              </div>
-              <div className="relative w-full">
-                <label
-                  htmlFor="confirm-password"
-                  className="block text-[#1C62A0] text-[16px] font-bold font-nunito mb-2"
-                >
-                  Conferma password
-                </label>
-                <input
-                  id="confirm-password"
-                  name="confirm-password"
-                  type="password"
-                  value={confirmPassword}
-                  className="w-[80%] h-8 bg-[#D9D9D9]/30 shadow-md border border-[#FBFBFB] rounded-2xl px-4 text-[#1C62A0] outline-none"
-                  aria-label="Conferma password"
-                />
-              </div>
-            </div>
-          </div>
+		setMessage(t("settings.modificheSalvate"));
+		setMessageType("success");
 
-          {/* colonna destra: Tema and Lingua */}
-          <div className="w-full sm:w-1/2 pb-6 border-b border-[#1C62A0]">
-            <div className="flex flex-col gap-6">
-              {/*Selezione tema */}
-              <div className="flex flex-col gap-4 items-end">
-                <div className="text-[#1C62A0] text-[18px] font-bold font-nunito mb-2">
-                  Tema
-                </div>
-                <button
-                  type="button"
-                  className={`w-[70%] h-9 flex justify-start items-center bg-[#D9D9D9]/30 shadow-md border-2 rounded-2xl p-3 transition-colors`}
-                >
-                  <img
-                    className="w-7 h-7 mx-2"
-                    src={light}
-                    alt="Icona tema chiaro"
-                  />
-                  <span className="text-[#1C62A0] text-[16px] font-bold font-nunito">
-                    Light
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  className={`w-[70%] h-9 flex justify-start items-center bg-[#D9D9D9]/30 shadow-md border-2 rounded-2xl p-3 transition-colors`}
-                >
-                  <img
-                    className="w-7 h-7 mx-2"
-                    src={dark}
-                    alt="Icona tema scuro"
-                  />
-                  <span className="text-[#1C62A0] text-[16px] font-bold font-nunito">
-                    Dark
-                  </span>
-                </button>
-              </div>
+		setNewPassword("");
+		setConfirmPassword("");
+		setIsEditing(false); // <-- disabilita di nuovo i campi
 
-              {/* selezione lingua*/}
-              <div className="flex flex-col gap-4 items-end">
-                <div className="text-[#1C62A0] text-[18px] font-bold font-nunito mb-2">
-                  Lingua
-                </div>
-                <button
-                  type="button"
-                  className={`w-[70%] h-9 flex justify-start items-center bg-[#D9D9D9]/30 shadow-md border-2 rounded-2xl p-3 transition-colors`}
-                >
-                  <img
-                    className="w-7 h-7 mx-2"
-                    src={italianFlag}
-                    alt="Bandiera italiana"
-                  />
-                  <span className="text-[#1C62A0] text-[16px] font-bold font-nunito">
-                    Italiano
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  className={`w-[70%] h-9 flex justify-start items-center bg-[#D9D9D9]/30 shadow-md border-2 rounded-2xl p-3 transition-colors`}
-                >
-                  <img
-                    className="w-7 h-7 mx-2"
-                    src={englishFlag}
-                    alt="Bandiera inglese"
-                  />
-                  <span className="text-[#1C62A0] text-[16px] font-bold font-nunito">
-                    Inglese
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </form>
+		setTimeout(() => {
+			setMessage("");
+			setMessageType("");
+		}, 3000);
+	};
 
-        {/* Bottoni */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-20 mt-10 w-full">
-          <button
-            type="submit"
-            className="w-full sm:w-[200px] py-2 bg-[#1C62A0] shadow-md border border-[#FBFBFB] rounded-2xl flex items-center justify-center hover:bg-[#154d7d] transition-colors"
-          >
-            <span className="text-[#FBFBFB] text-[16px] font-bold font-nunito">
-              Salva modifiche
-            </span>
-          </button>
-          <Link
-            to="/login"
-            type="button"
-            onClick={handleExit}
-            className="w-full sm:w-[200px] py-2 bg-[#FF3B3F] shadow-md border border-[#FBFBFB] rounded-2xl flex items-center justify-center hover:bg-[#d63134] transition-colors"
-          >
-            <span className="text-[#FBFBFB] text-[16px] font-bold font-nunito">
-              Esci
-            </span>
-          </Link>
-        </div>
-      </div>
-    </main>
-  );
+	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
+	const labelColor = theme === "dark" ? "text-white" : "text-[#090c64]";
+	const inputDisabledStyle =
+		"cursor-not-allowed bg-gray-200/50 dark:bg-gray-600/20";
+
+	return (
+		<main
+			className="w-full min-h-screen flex justify-center items-center relative overflow-hidden 
+      transition-colors duration-500"
+		>
+			<div className="relative z-20 w-full flex flex-col items-center px-6 py-8 space-y-10">
+				{/* Header */}
+				<div className="flex items-center gap-2">
+					<h1
+						className={`text-3xl font-bold uppercase transition-colors duration-500 ${textColor}`}
+					>
+						{t("settings.impostazioni")}
+					</h1>
+				</div>
+
+				{/* SEZIONE 1 — INFO UTENTE */}
+				<section
+					className="w-full p-6 rounded-[25px] shadow-md border border-white/30 
+          bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm transition-all duration-500"
+				>
+					<div className="flex justify-between items-center mb-4 border-b border-[#090c64] pb-2">
+						<h2 className={`${textColor} text-xl font-bold`}>
+							{t("settings.anagraficaUtente")}
+						</h2>
+						<button
+							type="button"
+							onClick={() => setIsEditing((prev) => !prev)}
+							className={`px-4 py-1 rounded-xl text-sm font-semibold border transition-colors duration-300 ${
+								isEditing
+									? "border-white text-white bg-[#090c64] hover:bg-[#090c64]/80"
+									: "border-white text-white bg-[#090c64] hover:bg-[#090c64]/80"
+							}`}
+						>
+							{isEditing ? t("settings.annulla") : t("settings.modifica")}
+						</button>
+					</div>
+
+					{message && (
+						<p
+							className={`${
+								messageType === "success" ? "text-[#090c64]/80" : "text-red-500"
+							} text-center font-bold mb-4 transition-opacity duration-500`}
+						>
+							{message}
+						</p>
+					)}
+
+					<form className="flex flex-col gap-4">
+						{/* Username */}
+						<div>
+							<label
+								className={`block text-[18px] font-bold font-nunito mb-2 ${labelColor}`}
+							>
+								{t("settings.username")}
+							</label>
+							<input
+								type="text"
+								value={username}
+								disabled={!isEditing}
+								onChange={(e) => setUsername(e.target.value)}
+								className={`w-full h-[35px] border border-white/30 rounded-2xl px-4 shadow-md outline-none text-[#090c64] font-semibold 
+									focus:ring-2 focus:ring-[#090c64]/50 placeholder:text-[#090c64]/70 transition-all duration-200 
+									bg-[rgba(217,217,217,0.3)] ${!isEditing ? inputDisabledStyle : ""}`}
+							/>
+						</div>
+
+						{/* Nome completo */}
+						<div>
+							<label
+								className={`block text-[18px] font-bold font-nunito mb-2 ${labelColor}`}
+							>
+								{t("settings.nomeCompleto")}
+							</label>
+							<input
+								type="text"
+								value={name}
+								disabled={!isEditing}
+								onChange={(e) => setName(e.target.value)}
+								className={`w-full h-[35px] border border-white/30 rounded-2xl px-4 shadow-md outline-none text-[#090c64] font-semibold 
+									focus:ring-2 focus:ring-[#090c64]/50 placeholder:text-[#090c64]/70 transition-all duration-200 
+									bg-[rgba(217,217,217,0.3)] ${!isEditing ? inputDisabledStyle : ""}`}
+							/>
+						</div>
+
+						{/* Email */}
+						<div>
+							<label
+								className={`block text-[18px] font-bold font-nunito mb-2 ${labelColor}`}
+							>
+								{t("settings.email")}
+							</label>
+							<input
+								type="email"
+								value={email}
+								disabled={!isEditing}
+								onChange={(e) => setEmail(e.target.value)}
+								className={`w-full h-[35px] border border-white/30 rounded-2xl px-4 shadow-md outline-none text-[#090c64] font-semibold 
+									focus:ring-2 focus:ring-[#090c64]/50 placeholder:text-[#090c64]/70 transition-all duration-200 
+									bg-[rgba(217,217,217,0.3)] ${!isEditing ? inputDisabledStyle : ""}`}
+							/>
+						</div>
+
+						{/* Ruolo */}
+						<div>
+							<label
+								className={`block text-[18px] font-bold font-nunito mb-2 ${labelColor}`}
+							>
+								{t("settings.ruolo")}
+							</label>
+							<input
+								type="text"
+								value={role}
+								disabled={!isEditing}
+								onChange={(e) => setRole(e.target.value)}
+								className={`w-full h-[35px] border border-white/30 rounded-2xl px-4 shadow-md outline-none text-[#090c64] font-semibold 
+									focus:ring-2 focus:ring-[#090c64]/50 placeholder:text-[#090c64]/70 transition-all duration-200 
+									bg-[rgba(217,217,217,0.3)] ${!isEditing ? inputDisabledStyle : ""}`}
+							/>
+						</div>
+					</form>
+				</section>
+
+				{/* SEZIONE 2 — CREDENZIALI */}
+				<section
+					className="w-full p-6 rounded-[25px] shadow-md border border-white/30 
+  bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm transition-all duration-500"
+				>
+					{/* Header con bottone Modifica */}
+					<div className="flex justify-between items-center mb-4 border-b border-[#090c64] pb-2">
+						<h2 className={`${textColor} text-xl font-bold`}>
+							{t("settings.account")}
+						</h2>
+
+						<button
+							type="button"
+							onClick={() => setIsEditingAccount((prev) => !prev)}
+							className={`px-4 py-1 rounded-xl text-sm font-semibold border transition-colors duration-300 ${
+								isEditingAccount
+									? "border-white text-white bg-[#090c64] hover:bg-[#090c64]/80"
+									: "border-white text-white bg-[#090c64] hover:bg-[#090c64]/80"
+							}`}
+						>
+							{isEditingAccount ? t("settings.annulla") : t("settings.modifica")}
+						</button>
+					</div>
+
+					{message && (
+						<p
+							className={`${
+								messageType === "success" ? "text-[#090c64]/80" : "text-red-500"
+							} text-center font-bold mb-4 transition-opacity duration-500`}
+						>
+							{message}
+						</p>
+					)}
+
+					<form onSubmit={handleSave} className="flex flex-col gap-4">
+						{/* Username */}
+						<div>
+							<label
+								className={`block text-[18px] font-bold font-nunito mb-2 ${labelColor}`}
+							>
+								{t("settings.username")}
+							</label>
+							<input
+								type="text"
+								value={username}
+								disabled={!isEditingAccount}
+								onChange={(e) => setUsername(e.target.value)}
+								className={`w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 
+        rounded-2xl px-4 shadow-md outline-none text-[#090c64] font-semibold
+        focus:ring-2 focus:ring-[#090c64]/50 placeholder:text-[#090c64]/70 transition-all duration-200
+       ${!isEditing ? inputDisabledStyle : ""}`}
+							/>
+						</div>
+
+						{/* Nuova password */}
+						<div className="relative">
+							<label
+								className={`block text-[18px] font-bold font-nunito mb-2 ${labelColor}`}
+							>
+								{t("settings.nuovaPassword")}
+							</label>
+							<input
+								type={showNewPassword ? "text" : "password"}
+								value={newPassword}
+								disabled={!isEditingAccount}
+								onChange={(e) => setNewPassword(e.target.value)}
+								className={`w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 
+        rounded-2xl px-4 pr-12 shadow-md outline-none text-[#090c64] font-semibold
+        focus:ring-2 focus:ring-[#090c64]/50 placeholder:text-[#090c64]/70 transition-all duration-200
+       ${!isEditing ? inputDisabledStyle : ""}`}
+							/>
+							<button
+								type="button"
+								onClick={() => setShowNewPassword((s) => !s)}
+								disabled={!isEditingAccount}
+								className={`absolute top-[75%] right-4 transform -translate-y-1/2 w-[30px] h-[30px] cursor-pointer ${
+									!isEditingAccount ? "opacity-50 cursor-not-allowed" : ""
+								}`}
+							>
+								{showNewPassword ? (
+									<Eye
+										size={24}
+										color={theme === "dark" ? "#fff" : "#090c64"}
+										weight="duotone"
+									/>
+								) : (
+									<EyeSlash
+										size={24}
+										color={theme === "dark" ? "#fff" : "#090c64"}
+										weight="duotone"
+									/>
+								)}
+							</button>
+						</div>
+
+						{/* Conferma password */}
+						<div className="relative">
+							<label
+								className={`block text-[18px] font-bold font-nunito mb-2 ${labelColor}`}
+							>
+								{t("settings.confermaPassword")}
+							</label>
+							<input
+								type={showConfirmPassword ? "text" : "password"}
+								value={confirmPassword}
+								disabled={!isEditingAccount}
+								onChange={(e) => setConfirmPassword(e.target.value)}
+								className={`w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 
+        rounded-2xl px-4 pr-12 shadow-md outline-none text-[#090c64] font-semibold
+        focus:ring-2 focus:ring-[#090c64]/50 placeholder:text-[#090c64]/70 transition-all duration-200
+        ${
+					!isEditingAccount
+						? "opacity-60 cursor-not-allowed bg-gray-200/50 dark:bg-gray-600/30"
+						: ""
+				}`}
+							/>
+							<button
+								type="button"
+								onClick={() => setShowConfirmPassword((s) => !s)}
+								disabled={!isEditingAccount}
+								className={`absolute top-[70%] right-4 transform -translate-y-1/2 w-[30px] h-[30px] cursor-pointer mt-1 ${
+									!isEditingAccount ? "opacity-50 cursor-not-allowed" : ""
+								}`}
+							>
+								{showConfirmPassword ? (
+									<Eye
+										size={24}
+										color={theme === "dark" ? "#fff" : "#090c64"}
+										weight="duotone"
+									/>
+								) : (
+									<EyeSlash
+										size={24}
+										color={theme === "dark" ? "#fff" : "#090c64"}
+										weight="duotone"
+									/>
+								)}
+							</button>
+						</div>
+					</form>
+				</section>
+
+				{/* SEZIONE 3 — ASPETTO */}
+				<section
+					className="w-full p-6 rounded-[25px] shadow-md border border-white/30 
+          bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm transition-all duration-500"
+				>
+					<h2
+						className={`${textColor} text-xl font-bold mb-4 border-b border-[#090c64] pb-2`}
+					>
+						{t("settings.aspetto")}
+					</h2>
+					<div className="flex flex-col sm:flex-row justify-between gap-4">
+						{/* Tema */}
+						<div className="flex flex-col gap-2 w-full sm:w-1/2">
+							<span className={`${labelColor} font-semibold mb-1`}>
+								{t("settings.tema")}
+							</span>
+							<div className="flex gap-3">
+								<button
+									type="button"
+									onClick={() => setTheme("light")}
+									className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-colors text-[#090c64] duration-300 ${
+										theme === "light"
+											? "border-[#090c64] bg-[rgba(217,217,217,0.3)]"
+											: "border-gray-300 dark:border-white/30"
+									}`}
+								>
+									<Sun size={28} color="#090c64" weight="duotone" /> Light
+								</button>
+								<button
+									type="button"
+									onClick={() => setTheme("dark")}
+									className={`flex items-center gap-2 px-4 py-2 rounded-xl border  text-[#090c64] transition-colors duration-300 ${
+										theme === "dark"
+											? "border-[#090c64] bg-[rgba(217,217,217,0.3)]"
+											: "border-gray-300 dark:border-white/30"
+									}`}
+								>
+									<Moon size={28} color="#090c64" weight="duotone" /> Dark
+								</button>
+							</div>
+						</div>
+
+						{/* Lingua */}
+						<div className="flex flex-col gap-2 w-full sm:w-1/2">
+							<span className={`${labelColor} font-semibold mb-1`}>
+								{t("settings.lingua")}
+							</span>
+							<div className="flex gap-3">
+								<button
+									type="button"
+									onClick={() => toggleLang("it")}
+									className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-[#090c64] transition-colors duration-300 ${
+										lang === "it"
+											? "border-[#090c64] bg-[rgba(217,217,217,0.3)]"
+											: "border-gray-300 dark:border-white/30"
+									}`}
+								>
+									<img src={italianFlag} alt="Italiano" className="w-6 h-6" />
+									{t("settings.italiano")}
+								</button>
+								<button
+									type="button"
+									onClick={() => toggleLang("en")}
+									className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-[#090c64] transition-colors duration-300 ${
+										lang === "en"
+											? "border-[#090c64] bg-[rgba(217,217,217,0.3)]"
+											: "border-gray-300 dark:border-white/30"
+									}`}
+								>
+									<img src={englishFlag} alt="Inglese" className="w-6 h-6" />
+									{t("settings.inglese")}
+								</button>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				{/* SEZIONE 4 — AZIONI */}
+				<section className="w-full flex flex-col sm:flex-row justify-center gap-6 mt-2">
+					<button
+						type="submit"
+						onClick={handleSave}
+						className="w-full sm:w-[200px] py-3 font-bold rounded-2xl shadow-md border border-white/20 
+            bg-[#090c64] text-white hover:bg-[#090c64]/80 transition-colors duration-300"
+					>
+						{t("settings.salvaModifiche")}
+					</button>
+					<Link
+						to="/login"
+						className="w-full sm:w-[200px] py-3 text-center font-bold rounded-2xl shadow-md border border-white/20 
+            bg-[#090c64] text-white hover:bg-[#090c64]/80 transition-colors duration-300"
+					>
+						{t("settings.esci")}
+					</Link>
+				</section>
+			</div>
+		</main>
+	);
 };
 
 export default SettingsPage;

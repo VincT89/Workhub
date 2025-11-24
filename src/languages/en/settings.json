@@ -1,0 +1,23 @@
+{
+  "impostazioni": "Settings",
+  "anagraficaUtente": "User Profile",
+  "nomeCompleto": "Full Name",
+  "email": "Email",
+  "ruolo": "Role",
+  "account": "Account",
+  "username": "Username",
+  "nuovaPassword": "New Password",
+  "confermaPassword": "Confirm Password",
+  "aspetto": "Appearance",
+  "tema": "Theme",
+  "lingua": "Language",
+  "italiano": "Italian",
+  "inglese": "English",
+  "modifica": "Edit",
+  "annulla": "Cancel",
+  "salvaModifiche": "Save Changes",
+  "esci": "Exit",
+  "inserisciUsername": "Enter your username",
+  "passwordNonCoincidono": "Passwords do not match",
+  "modificheSalvate": "Changes saved successfully"
+}
