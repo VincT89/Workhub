@@ -33,7 +33,7 @@ const TicketCreator = ({ onTicketsChange, user }) => {
     setNewTitle("");
   };
 
-  return (
+  return ( 
     <div className="p-4 bg-white rounded-xl shadow-md w-full max-w-md mx-auto">
       <h2 className="font-bold text-xl mb-4">Crea Nuovo Ticket</h2>
 
