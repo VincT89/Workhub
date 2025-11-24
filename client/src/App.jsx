@@ -24,21 +24,6 @@ import ReturnPage from "./pages/ReturnPage.jsx";
 import PasswordRecoveryPage from "./pages/PasswordRecoveryPage.jsx";
 
 function App() {
-<<<<<<< HEAD
-  return (
-    <Routes>
-      {/* <Route path="/" element={<PublicLayout />}> */}
-        <Route path="/" element={<HomePage />} />
-         <Route path="login" element={<LoginPage />} />
-        <Route path="settings" element={<SettingsPage />} />
-        <Route path="ticketing" element={<TicketPageAdmin />} />
-        <Route path="creat-ticket" element={<TicketCreator />} />
-      {/* </Route> */}
-    </Routes>
-  );
-
-  //
-=======
 	return (
 		<Routes>
 			{/* ROTTE PUBBLICHE */}
@@ -63,7 +48,6 @@ function App() {
 			</Route>
 		</Routes>
 	);
->>>>>>> origin/development
 }
 
 export default App;
