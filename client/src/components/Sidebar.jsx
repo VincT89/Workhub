@@ -26,8 +26,8 @@ const Sidebar = () => {
 
 	return (
 		<nav
-			className={`flex flex-col justify-evenly items-stretch w-full h-full 
-        px-3 py-4 transition-all duration-300`}
+			className={`flex flex-col gap-14 items-stretch w-full h-full 
+        px-3 py-4 transition-all duration-300 mt-20`}
 		>
 			{routes.map((item) => (
 				<NavLink
