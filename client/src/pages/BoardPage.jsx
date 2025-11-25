@@ -11,12 +11,13 @@ import {
 	Calendar,
 } from "@phosphor-icons/react";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
 	setLowStockProducts,
 	setBoardPosts,
 } from "../store/feature/boardSlice";
 import Table from "../components/Table";
+import Drawer from "../components/Drawer";
 
 const BoardPage = () => {
 	const { theme } = useTheme();
@@ -52,6 +53,27 @@ const BoardPage = () => {
 		lowStockProducts.length > 0 ? Object.keys(lowStockProducts[0]) : [];
 
 	const boardColumns = boardPosts.length > 0 ? Object.keys(boardPosts[0]) : [];
+
+	// State per il Drawer 
+	const [drawerOpen, setDrawerOpen] = useState(false);  // drawer visibile o no
+	const [newPostTitle, setNewPostTitle] = useState(""); // titolo nuovo evento
+	const [newPostDate, setNewPostDate] = useState("");  // data nuovo evento
+
+	// Funzione che salva il nuovo evento inserito
+	const handleSavePost = (e) => {    
+		e.preventDefault();
+
+		const newPost = {
+			title: newPostTitle,
+			date: newPostDate,
+		};
+
+		dispatch(setBoardPosts([...boardPosts, newPost]));
+
+		setDrawerOpen(false);
+		setNewPostTitle("");
+  		setNewPostDate("");
+	};
 
 	return (
 		<div
@@ -148,7 +170,9 @@ const BoardPage = () => {
 
 						{/* Bottone visibile SOLO ai supervisor o admin */}
 						{(role === "supervisor" || role === "admin") && (
-							<button className="ml-auto px-4 py-2 bg-[#090c64] text-white shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[14px] font-bold-nunito cursor-pointer">
+							<button
+							onClick={() => setDrawerOpen(true)}  // apre il drawer
+							className="ml-auto px-4 py-2 bg-[#090c64] text-white shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[14px] font-bold-nunito cursor-pointer">
 								+ Aggiungi
 							</button>
 						)}
@@ -162,8 +186,8 @@ const BoardPage = () => {
 
 				<div
 					className={`flex flex-col gap-4 p-4 
-  bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm border border-white/30 dark:border-white/80 
-   rounded-xl shadow-md 
+  bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
+  border border-white/30 dark:border-white/80 rounded-xl shadow-md 
   ${textColor}`}
 				>
 					{/* HEADER */}
@@ -201,7 +225,63 @@ const BoardPage = () => {
 					<CalendarBox />
 				</div>
 			</div>
+
+			<Drawer 
+				open={drawerOpen}
+				onClose={() => setDrawerOpen(false)}
+				title="Aggiungi nuovo evento">
+
+				{/* Form di 2 input  e 2 bottoni (Annulla e Salva) */}
+				<form onSubmit={handleSavePost} className="flex flex-col gap-4">
+
+					<div className="flex flex-col">
+						<label htmlFor="title" className={`text-sm font-bold mb-1 ${textColor}`}>Titolo</label>
+						<input 
+						type="text" 
+						value={newPostTitle}
+						onChange={(e) => setNewPostTitle(e.target.value)}
+						placeholder="Inserisci evento..."
+      					required
+						className={`px-3 py-2 rounded-xl bg-[#fafafa20] dark:bg-[#fafafa10] border border-white/30 dark:border-white/80 ${textColor} focus:outline-none focus:ring-2 focus:ring-[#090c64]`}
+						/>
+					</div>
+
+					<div className="flex flex-col">
+						<label htmlFor="date" className={`text-sm font-bold mb-1 ${textColor}`}>Data</label>
+						<input 
+						type="text" 
+						value={newPostDate}
+						onChange={(e) => setNewPostDate(e.target.value)}
+						placeholder="Inserisci data..."
+						required
+						className={`px-3 py-2 rounded-xl bg-[#fafafa20] dark:bg-[#fafafa10] border border-white/30 dark:border-white/80 ${textColor} focus:outline-none focus:ring-2 focus:ring-[#090c64]`}
+						/>
+					</div>	
+
+					<div className="flex justify-end gap-3 mt-4">
+						<button
+						type="button"
+						onClick={() => setDrawerOpen(false)}
+						className="custom-button-light"
+						>
+						Annulla
+						</button>
+
+						<button
+						type="submit"
+						className="custom-button"
+						>
+						Salva
+						</button>
+
+					</div>
+
+				</form>
+			</Drawer>
+
 		</div>
+		
+		
 	);
 };
 
