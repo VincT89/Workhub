@@ -1,29 +1,12 @@
-import mongoose from 'mongoose';
+import express from "express";
+import v1Router from "./v1/index.js";
 
-import UserModel from '../db/models/User';
+const app = express.Router();
 
-// Connect to mongodb instance
+/**
+ * @path /api/v1
+ * @method ALL
+ */
+app.use("/v1", v1Router); 
 
-export const connect = async () => {
-  try {
-    await mongoose.connect(process.env.DB_CONNECTION_URI);
-    console.log("MongoDB Atlas connected");
-    
-  } catch (error) {
-    throw error;
-  }
-};
-
-// Disconnect from current mongodb instance
-
-export const disconnect = async () => {
-  try {
-    await mongoose.disconnect();
-      console.log("MongoDB Atlas disconnected");
-  } catch (error) {
-    throw error;
-  }
-};
-
-// Models Registration
-export const User = UserModel;
+export default app;
