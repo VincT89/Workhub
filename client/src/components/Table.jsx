@@ -1,8 +1,12 @@
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 
-const Table = ({ data, columns, customToolbar, onRowClick }) => {
-	const navigate = useNavigate();
+const Table = ({
+	data,
+	columns,
+	customToolbar,
+	actions,
+	actionLabel = null,
+}) => {
 
 	const [searchTerm, setSearchTerm] = useState("");
 	const [sortAZ, setSortAZ] = useState(false);
@@ -74,12 +78,21 @@ const Table = ({ data, columns, customToolbar, onRowClick }) => {
 									className={`
 										p-3 whitespace-nowrap
 										${idx === 0 ? "rounded-l-xl" : ""}
-										${idx === columns.length - 1 ? "rounded-r-xl" : ""}
+										${!actionLabel && idx === columns.length - 1 ? "rounded-r-xl" : ""}
 									`}
 								>
 									{item.charAt(0).toUpperCase() + item.slice(1)}
 								</th>
 							))}
+							{actionLabel && (
+								<th
+									className={`
+										p-3 whitespace-nowrap rounded-r-xl
+									`}
+								>
+									{actionLabel}
+								</th>
+							)}
 						</tr>
 					</thead>
 
@@ -88,10 +101,7 @@ const Table = ({ data, columns, customToolbar, onRowClick }) => {
 							<tr
 								key={i}
 								className="hover:bg-white/40 transition cursor-pointer"
-								onClick={() => {
-									if (onRowClick) onRowClick(row);
-									else navigate(`/customers/${row.id}`, { state: row });
-								}}
+							
 							>
 								{columns.map((col, j) => (
 									<td
@@ -99,7 +109,14 @@ const Table = ({ data, columns, customToolbar, onRowClick }) => {
 										className={`
 											p-3 whitespace-nowrap md:whitespace-normal
 											${j === 0 ? "rounded-l-xl" : ""}
-											${j === columns.length - 1 ? "rounded-r-xl" : ""}
+											${
+												actions &&
+												Array.isArray(actions) &&
+												actions.length > 0 &&
+												j === columns.length - 1
+													? "rounded-r-xl"
+													: ""
+											}
 										`}
 									>
 										{row[col] !== null && row[col] !== undefined
@@ -108,6 +125,23 @@ const Table = ({ data, columns, customToolbar, onRowClick }) => {
 											: "-"}
 									</td>
 								))}
+								{actions && Array.isArray(actions) && actions.length > 0 && (
+									<td
+										className={`
+											p-3 whitespace-nowrap md:whitespace-normal rounded-r-xl
+										`}
+									>
+										{
+											actions.map(action => (
+												<button key={action.name} className="cursor-pointer" onClick={typeof action.onClick === "function" ? action.onClick(row) : () => {}}>
+													{
+														action.icon
+													}
+												</button>
+											))
+										}
+									</td>
+								)}
 							</tr>
 						))}
 					</tbody>

@@ -9,6 +9,7 @@ import {
 	Package,
 	WarningOctagon,
 	Calendar,
+	NotePencil
 } from "@phosphor-icons/react";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
@@ -87,6 +88,8 @@ const BoardPage = () => {
 
 		setDrawerOpen(false);
 	};
+
+	
 
 	return (
 		<div
@@ -195,7 +198,14 @@ const BoardPage = () => {
 						<Table
 							data={boardPosts}
 							columns={boardColumns}
-							onRowClick={(row) => openDrawerEdit(row)}
+							actionLabel={"Actions"}
+							actions={[
+								{
+									name: "edit",
+									icon: <NotePencil size={28} color="#090c64" weight="duotone" />,
+									onClick: openDrawerEdit
+								}
+							]}
 						/>
 					</div>
 				</div>
