@@ -1,8 +1,10 @@
 import { useTheme } from "../../../context/ThemeContext.jsx";
 import { useLanguage } from "../../../context/LanguageContext.jsx";
 import { UserCircle, NotePencil, UsersThree, UserCircleMinus } from "@phosphor-icons/react";
+
 import { useNavigate } from "react-router-dom";
 import { useMemo, useState } from "react";
+import Drawer from "../../../components/Drawer.jsx";
 
 const AdminEmployeePage = () => {
 	const navigate = useNavigate();
@@ -182,6 +184,14 @@ const AdminEmployeePage = () => {
 		setTimeout(() => setToastMessage(""), 3000);
 		form.reset();
 	};
+	
+		{/*ELIMINAZIONE UTENTE*/}
+		const handleDeleteEmployee = (employee) => {
+  		setEmployees(prev =>
+    	prev.filter((emp) => emp.matricola !== employee.matricola)
+ 	 );
+		};
+
 
 	return (
 		<div className="w-full h-full flex flex-col gap-8 overflow-y-auto scrollbar-thin scrollbar-thumb-[#1C62A0] scrollbar-track-transparent p-4">
@@ -366,15 +376,27 @@ const AdminEmployeePage = () => {
 									<td className="truncate">{e.ruolo}</td>
 									<td className="truncate">{e.email}</td>
 									<td>{e.matricola}</td>
+				<td className="flex items-center justify-center gap-3 py-3">
 
-									<td>
-										<button
-											onClick={() => openEditDrawer(e)}
-											className="flex items-center justify-center mx-auto cursor-pointer"
-										>
-											<NotePencil size={28} color="#090c64" weight="duotone" />
-										</button>
-									</td>
+  					{/* Modifica */}
+ 				 <button
+   				 onClick={() => openEditDrawer(e)}
+    			className="cursor-pointer flex items-center justify-center"
+  				>
+    			<NotePencil size={28} color="#090c64" weight="duotone" />
+ 				</button>
+
+  					{/* Elimina — Omino col meno */}
+ 				<button
+    onClick={() => handleDeleteEmployee(e)}
+    className="cursor-pointer flex items-center justify-center"
+  >
+    <UserCircleMinus size={28} color="#b60000" weight="duotone" />
+  </button>
+
+</td>
+
+
 								</tr>
 							))}
 
@@ -390,66 +412,55 @@ const AdminEmployeePage = () => {
 				</div>
 			</div>
 
-			{/* DRAWER MODIFICA/ELIMINA A DESTRA */}
-			{editDrawerOpen && selectedEmployee && (
-				<div
-					className={`w-80 fixed top-0 right-0 h-full shadow-lg border border-white/30 backdrop-blur-sm flex flex-col justify-between ${
-						theme === "dark" ? "bg-white/20" : "bg-white/20"
-					} p-6`}
-				>
-					{/* Header  */}
-					<div className="w-full flex justify-center items-center relative mb-4">
-						<h3
-							className={`text-lg font-bold text-center w-full mt-30 ${textColor}`}
-						>
-							MODIFICA DIPENDENTE
-						</h3>
-						<button
-							onClick={() => setEditDrawerOpen(false)}
-							className="absolute top-0 right-0 text-white font-bold p-1 text-lg"
-						></button>
-					</div>
+			{/* DRAWER MODIFICA/ANNULLA A DESTRA */}
+<Drawer
+  open={editDrawerOpen}
+  onClose={() => setEditDrawerOpen(false)}
+  title="Modifica Dipendente"
+  width="w-[420px]"
+>
+  {selectedEmployee && (
+    <div className="flex flex-col gap-4">
+      
+      {/* CAMPI EDITABILI */}
+      {[ "nome", "ruolo", "email", "telefono", "sede", "contratto", "dataAssunzione" ].map((field) => (
+        <div key={field} className="flex flex-col gap-1">
+          <label className="font-semibold text-[#090c64]">
+            {field.charAt(0).toUpperCase() + field.slice(1)}
+          </label>
 
-					{/* Contenuto scrollabile */}
-					<div className=" w-full flex flex-col gap-5 overflow-y-auto">
-						{[
-							"nome",
-							"ruolo",
-							"email",
-							"telefono",
-							"sede",
-							"contratto",
-							"dataAssunzione",
-						].map((field) => (
-							<input
-								key={field}
-								name={field}
-								value={selectedEmployee[field]}
-								onChange={handleEditChange}
-								type={field === "dataAssunzione" ? "date" : "text"}
-								placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-								className="w-full p-2 border rounded"
-							/>
-						))}
-					</div>
+          <input
+            name={field}
+            value={selectedEmployee[field]}
+            onChange={handleEditChange}
+            type={field === "dataAssunzione" ? "date" : "text"}
+            className="p-2 border rounded"
+          />
+        </div>
+      ))}
 
-					{/* Bottoni sempre visibili in fondo */}
-					<div className="w-full flex justify-between mt-4">
-						<button
-							onClick={handleDelete}
-							className="w-[48%] py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition cursor-pointer"
-						>
-							Elimina
-						</button>
-						<button
-							onClick={handleSave}
-							className="w-[48%] py-2 bg-[#090c64] text-white rounded-xl cursor-pointer transition"
-						>
-							Salva
-						</button>
-					</div>
-				</div>
-			)}
+      {/* BOTTONI SALVA/ANNULLA */}
+      <div className="flex justify-between mt-4">
+        <button
+          onClick={() => setEditDrawerOpen(false)}
+          className="w-[48%] py-2 bg-white text-[#090c64] rounded-xl cursor-pointer font-semibold hover:bg-gray-300 transition"
+        >
+          Annulla
+        </button>
+
+        <button
+          onClick={handleSave}
+          className="w-[48%] py-2 bg-[#090c64] text-white rounded-xl cursor-pointer font-semibold hover:bg-[#0b0f80] transition"
+        >
+          Salva
+        </button>
+      </div>
+
+    </div>
+  )}
+</Drawer>
+
+
 		</div>
 	);
 };

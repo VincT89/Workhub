@@ -49,30 +49,43 @@ const BoardPage = () => {
 		);
 	}, [dispatch]);
 
-	const columns =
+	const lowStockColumns =
 		lowStockProducts.length > 0 ? Object.keys(lowStockProducts[0]) : [];
 
-	const boardColumns = boardPosts.length > 0 ? Object.keys(boardPosts[0]) : [];
+	const boardColumns =
+		boardPosts.length > 0 ? Object.keys(boardPosts[0]) : [];
 
 	// State per il Drawer 
-	const [drawerOpen, setDrawerOpen] = useState(false);  // drawer visibile o no
-	const [newPostTitle, setNewPostTitle] = useState(""); // titolo nuovo evento
-	const [newPostDate, setNewPostDate] = useState("");  // data nuovo evento
+	const [drawerOpen, setDrawerOpen] = useState(false);
+	const [editData, setEditData] = useState(null);
 
-	// Funzione che salva il nuovo evento inserito
-	const handleSavePost = (e) => {    
+	// Apre drawer in modalità modifica
+	const openDrawerEdit = (row) => {
+		setEditData({ ...row }); 
+		setDrawerOpen(true);
+	};
+
+	// Apre drawer per aggiungere
+	const openDrawerAdd = () => {
+		setEditData({ title: "", date: "" });
+		setDrawerOpen(true);
+	};
+
+	// Salva (sia nuovo che modifica)
+	const handleSavePost = (e) => {
 		e.preventDefault();
 
-		const newPost = {
-			title: newPostTitle,
-			date: newPostDate,
-		};
-
-		dispatch(setBoardPosts([...boardPosts, newPost]));
+		// Se esiste già → lo sostituisce
+		if (boardPosts.some((p) => p.date === editData.date)) {
+			const updated = boardPosts.map((p) =>
+				p.date === editData.date ? editData : p
+			);
+			dispatch(setBoardPosts(updated));
+		} else {
+			dispatch(setBoardPosts([...boardPosts, editData]));
+		}
 
 		setDrawerOpen(false);
-		setNewPostTitle("");
-  		setNewPostDate("");
 	};
 
 	return (
@@ -138,7 +151,6 @@ const BoardPage = () => {
 					</span>
 				</div>
 
-				{/* {role === "supervisor" && ( intero <div />} */}
 				<div
 					className={`flex items-center justify-between rounded-xl px-3 py-2 shadow  mt-2
 					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
@@ -168,11 +180,11 @@ const BoardPage = () => {
 
 						<h3 className="text-[14px] font-bold font-nunito">Bacheca</h3>
 
-						{/* Bottone visibile SOLO ai supervisor o admin */}
 						{(role === "supervisor" || role === "admin") && (
 							<button
-							onClick={() => setDrawerOpen(true)}  // apre il drawer
-							className="ml-auto px-4 py-2 bg-[#090c64] text-white shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[14px] font-bold-nunito cursor-pointer">
+								onClick={openDrawerAdd}
+								className="ml-auto px-4 py-2 bg-[#090c64] text-white shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[14px] font-bold-nunito cursor-pointer"
+							>
 								+ Aggiungi
 							</button>
 						)}
@@ -180,7 +192,11 @@ const BoardPage = () => {
 
 					{/* TABELLA */}
 					<div className="w-full h-full overflow-hidden">
-						<Table data={boardPosts} columns={boardColumns} />
+						<Table
+							data={boardPosts}
+							columns={boardColumns}
+							onRowClick={(row) => openDrawerEdit(row)}
+						/>
 					</div>
 				</div>
 
@@ -201,7 +217,10 @@ const BoardPage = () => {
 
 					{/* TABELLA */}
 					<div className="w-full overflow-hidden h-full mt-3">
-						<Table data={lowStockProducts} columns={columns} />
+						<Table
+							data={lowStockProducts}
+							columns={lowStockColumns}
+						/>
 					</div>
 				</div>
 			</div>
@@ -226,62 +245,59 @@ const BoardPage = () => {
 				</div>
 			</div>
 
-			<Drawer 
+			<Drawer
 				open={drawerOpen}
 				onClose={() => setDrawerOpen(false)}
-				title="Aggiungi nuovo evento">
+				title={editData && editData.title ? "Modifica evento" : "Nuovo evento"}
+			>
+				{editData && (
+					<form onSubmit={handleSavePost} className="flex flex-col gap-4">
 
-				{/* Form di 2 input  e 2 bottoni (Annulla e Salva) */}
-				<form onSubmit={handleSavePost} className="flex flex-col gap-4">
+						<div className="flex flex-col">
+							<label className="text-sm font-bold">Titolo</label>
+							<input
+								type="text"
+								value={editData.title}
+								placeholder="Inserisci un evento..."
+								onChange={(e) =>
+									setEditData({ ...editData, title: e.target.value })
+								}
+								className="px-3 py-2 rounded-xl bg-[#fafafa20] border border-white/30"
+							/>
+						</div>
 
-					<div className="flex flex-col">
-						<label htmlFor="title" className={`text-sm font-bold mb-1 ${textColor}`}>Titolo</label>
-						<input 
-						type="text" 
-						value={newPostTitle}
-						onChange={(e) => setNewPostTitle(e.target.value)}
-						placeholder="Inserisci evento..."
-      					required
-						className={`px-3 py-2 rounded-xl bg-[#fafafa20] dark:bg-[#fafafa10] border border-white/30 dark:border-white/80 ${textColor} focus:outline-none focus:ring-2 focus:ring-[#090c64]`}
-						/>
-					</div>
+						<div className="flex flex-col">
+							<label className="text-sm font-bold">Data</label>
+							<input
+								type="date"
+								value={editData.date}
+								placeholder="dd/mm/yyyy"
+								onChange={(e) =>
+									setEditData({ ...editData, date: e.target.value })
+								}
+								className="px-3 py-2 rounded-xl bg-[#fafafa20] border border-white/30"
+							/>
+						</div>
 
-					<div className="flex flex-col">
-						<label htmlFor="date" className={`text-sm font-bold mb-1 ${textColor}`}>Data</label>
-						<input 
-						type="text" 
-						value={newPostDate}
-						onChange={(e) => setNewPostDate(e.target.value)}
-						placeholder="Inserisci data..."
-						required
-						className={`px-3 py-2 rounded-xl bg-[#fafafa20] dark:bg-[#fafafa10] border border-white/30 dark:border-white/80 ${textColor} focus:outline-none focus:ring-2 focus:ring-[#090c64]`}
-						/>
-					</div>	
+						<div className="flex justify-end gap-3 mt-4">
+							<button
+								type="button"
+								onClick={() => setDrawerOpen(false)}
+								className="custom-button-light"
+							>
+								Annulla
+							</button>
 
-					<div className="flex justify-end gap-3 mt-4">
-						<button
-						type="button"
-						onClick={() => setDrawerOpen(false)}
-						className="custom-button-light"
-						>
-						Annulla
-						</button>
+							<button type="submit" className="custom-button">
+								Salva
+							</button>
+						</div>
 
-						<button
-						type="submit"
-						className="custom-button"
-						>
-						Salva
-						</button>
-
-					</div>
-
-				</form>
+					</form>
+				)}
 			</Drawer>
 
 		</div>
-		
-		
 	);
 };
 

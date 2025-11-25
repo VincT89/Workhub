@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = { 
     lowStockProducts: [], 
     boardPosts: [],
+
 }
 
 const boardSlice = createSlice({

@@ -60,7 +60,7 @@ const DrawerAddNewProduct = ({ open, onClose, onAddProduct }) => {
           </h2>
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-[#090c64] border border-white/50 shadow-sm rounded-lg text-sm text-white hover:bg-[#e8defc]"
+            className="px-4 py-2 bg-[#090c64] border border-white/50 shadow-sm rounded-xl text-sm text-white cursor-pointer"
           >
             Chiudi
           </button>
@@ -77,7 +77,7 @@ const DrawerAddNewProduct = ({ open, onClose, onAddProduct }) => {
               placeholder="Es. A001"
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
+              className="w-full px-3 py-2 border rounded-xl"
             />
           </div>
 
@@ -89,7 +89,7 @@ const DrawerAddNewProduct = ({ open, onClose, onAddProduct }) => {
               placeholder="Es. Lampada da tavolo"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
+              className="w-full px-3 py-2 border rounded-xl"
             />
           </div>
 
@@ -101,14 +101,14 @@ const DrawerAddNewProduct = ({ open, onClose, onAddProduct }) => {
               placeholder="Es. 10"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
+              className="w-full px-3 py-2 border rounded-xl"
             />
           </div>
 
           {/* Bottone Aggiungi */}
           <button
             onClick={handleAdd}
-            className="px-4 py-2 bg-[#090c64] border border-white/70 shadow-sm rounded-lg text-sm text-white hover:bg-[#cfc0ff]"
+            className="px-4 py-2 bg-[#090c64] border border-white/70 shadow-sm rounded-xl text-sm text-white cursor-pointer"
           >
             Aggiungi prodotto
           </button>
