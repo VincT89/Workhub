@@ -43,8 +43,9 @@ const UserSchema = new Schema({
         required: false
     },
     workplace: {
-        type: String,
-        required: true
+        type: Schema.Types.ObjectId,
+        ref: 'PointOfSales',
+        required: true,
     },
     contractType: {
         type: String,
