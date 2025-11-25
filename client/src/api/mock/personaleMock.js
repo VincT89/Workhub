@@ -30,8 +30,8 @@ export const personnel = [
 
   {
     id: 3,
-    username: "supervisor",
-    password: "supervisor123",
+    username: "user",
+    password: "user123",
 
     nome: "Maria Verdi",
     ruolo: "Designer",

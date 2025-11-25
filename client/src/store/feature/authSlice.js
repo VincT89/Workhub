@@ -24,7 +24,7 @@ export const loginAsync = createAsyncThunk(
         user: {
           ...response.user,
 
-          // Permessi (admin/user/supervisor)
+          // Permessi (admin/user)
           role: dipendente.role || "user",
 
           // 👤 Dati reali del dipendente
