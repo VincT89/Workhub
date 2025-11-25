@@ -406,11 +406,11 @@ const Product = () => {
     // ---- SE IL PRODOTTO NON ESISTE MOSTRO UN MESSAGGIO ----
     if (!prodotto) {
         return (
-            <div className="w-full min-h-screen flex flex-col justify-center items-center bg-[#f0f4f8] text-[#134a7b]">
+            <div className="w-full min-h-screen flex flex-col justify-center items-center bg-[#f0f4f8] text-[#090c]">
                 <h2 className="text-2xl font-bold mb-4">Prodotto non trovato</h2>
                 <Link
                     to="/warehouse"
-                    className="bg-[#fafafa]/50 text-[#134a7b] font-semibold px-6 py-3 rounded-full shadow-md 
+                    className="bg-[#fafafa]/50 text-[#090c64] font-semibold px-6 py-3 rounded-full shadow-md 
                     hover:bg-white/80 transition-all duration-200 text-center"
                 >
                     Torna alla lista
@@ -496,7 +496,7 @@ const Product = () => {
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
                                 <div className="flex items-center gap-2">
-                                    <h2 className="text-[#134a7b] text-lg font-bold">{prodotto.nome}</h2>
+                                    <h2 className="text-[#090c64] text-lg font-bold">{prodotto.nome}</h2>
                                 </div>
                             </div>
 
@@ -506,7 +506,7 @@ const Product = () => {
                             {/* ---- BOTTONE TORNA ALLA LISTA ---- */}
 
                             <div className="flex items-center justify-between mt-4">
-                                <span className="text-[#134a7b]/90 font-semibold mr-4">Torna alla lista prodotti</span>
+                                <span className="text-[#090c64]/90 font-semibold mr-4">Torna alla lista prodotti</span>
                                 <Link
                                     to="/warehouse"
                                     className="w-12 h-12 flex items-center justify-center 
@@ -524,7 +524,7 @@ const Product = () => {
                         {/* --- PRODOTTO CON DESCRIZIONE, INFO E FOTO --- */}
                         <div className="grid grid-cols-2 gap-6 items-start">
                             {/* DIV A SINISTRA: INFO PRODOTTO */}
-                            <div className="flex flex-col gap-3 text-[#134a7b]">
+                            <div className="flex flex-col gap-3 text-[#090c64]">
 
                            
                                 <div className="grid grid-cols-2 bg-white/40 rounded-lg p-2 shadow-sm">
@@ -562,7 +562,7 @@ const Product = () => {
                                         className="w-full h-full max-h-80 object-contain rounded-2xl shadow-md bg-white/30"
                                     />
                                 ) : (
-                                    <div className="w-full h-80 rounded-2xl bg-white/30 flex items-center justify-center text-sm text-[#134a7b] shadow-md">
+                                    <div className="w-full h-80 rounded-2xl bg-white/30 flex items-center justify-center text-sm text-[#090c64] shadow-md">
                                         Nessuna immagine
                                     </div>
                                 )}
@@ -579,7 +579,7 @@ const Product = () => {
                         <div className="flex-1 rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md">
                             <div className="flex items-center gap-2 mb-4">
                                 <Warehouse size={32} color="#090c64" weight="duotone" />
-                                <h3 className="text-[#134a7b] text-lg font-bold">Disponibilità</h3>
+                                <h3 className="text-[#090c64] text-lg font-bold">Disponibilità</h3>
                             </div>
 
                             {/*  ----- DISPONIBILITÀ DINAMICA -----
@@ -604,7 +604,7 @@ const Product = () => {
 
                             <button
                                 onClick={handleExportPDF}
-                                className="bg-[#fafafa]/50 text-[#134a7b] font-semibold px-6 py-3 rounded-xl shadow-md 
+                                className="bg-[#fafafa]/50 text-[#090c64] font-semibold px-6 py-3 rounded-xl shadow-md 
                                 hover:bg-white/80 transition-all duration-200 w-3/4 text-center
                                 flex items-center justify-center gap-2"
                             >
@@ -618,10 +618,10 @@ const Product = () => {
                     <div className="rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md">
                         <div className="flex items-center gap-2 mb-4">
                             <Notepad size={32} color="#090c64" weight="duotone" />
-                            <h3 className="text-[#134a7b] text-lg font-bold">Storico movimenti</h3>
+                            <h3 className="text-[#090c64] text-lg font-bold">Storico movimenti</h3>
                         </div>
 
-                        <div className="grid grid-cols-3 font-bold text-[#134a7b] text-sm mb-2">
+                        <div className="grid grid-cols-3 font-bold text-[#090c64] text-sm mb-2">
                             <span>Data</span>
                             <span>Tipo</span>
                             <span>Quantità</span>
@@ -640,12 +640,12 @@ const Product = () => {
                     <div className="rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md">
                         <div className="flex items-center gap-2 mb-4" >
                             <Note size={32} className="self-center align-middle" color="#090c64" weight="duotone"/>
-                            <h3 className="text-[#134a7b] text-lg font-bold m-0 leading-none">Note e allegati</h3>
+                            <h3 className="text-[#090c64] text-lg font-bold m-0 leading-none">Note e allegati</h3>
                         </div>
 
                         <textarea
                             placeholder="Aggiungi una nota..."
-                            className="w-full p-3 rounded-xl bg-white/40 text-[#134a7b] shadow-sm mb-4"
+                            className="w-full p-3 rounded-xl bg-white/40 text-[#090c64] shadow-sm mb-4"
                             rows={4}
                         ></textarea>
 
@@ -709,7 +709,7 @@ Poi collega la funzione al bottone “Esporta PDF”:
 
 <button
   onClick={handleExportPDF}
-  className="bg-[#fafafa]/50 text-[#134a7b] font-semibold px-6 py-3 rounded-full shadow-md 
+  className="bg-[#fafafa]/50 text-[#090c64] font-semibold px-6 py-3 rounded-full shadow-md 
   hover:bg-white/80 transition-all duration-200 w-3/4 text-center"
 >
   Esporta PDF

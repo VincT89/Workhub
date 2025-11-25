@@ -90,7 +90,7 @@ const Table = ({ data, columns, customToolbar, onRowClick }) => {
 								className="hover:bg-white/40 transition cursor-pointer"
 								onClick={() => {
 									if (onRowClick) onRowClick(row);
-									else navigate(`/item/${row.id}`, { state: row });
+									else navigate(`/customers/${row.id}`, { state: row });
 								}}
 							>
 								{columns.map((col, j) => (

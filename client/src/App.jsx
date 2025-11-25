@@ -33,7 +33,7 @@ function App() {
 			<Route path="/" element={<PublicLayout />}>
 				<Route path="board" element={<BoardPage />} />
 				<Route path="customers" element={<CustomersPage />} />
-				<Route path="item/:id" element={<CustomersRegistry />} />
+				<Route path="customers/:id" element={<CustomersRegistry />} />
 				<Route path="personale" element={<EmployeePage />} />
 				<Route path="personale/:id" element={<AdminEmployeeDetailsPage />} />
 				<Route path="warehouse" element={<WarehousePage />} />
