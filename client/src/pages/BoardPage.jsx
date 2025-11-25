@@ -46,6 +46,7 @@ const BoardPage = () => {
 			setBoardPosts([
 				{ title: "Nuova riunione", date: "2025-11-22" },
 				{ title: "Aggiornamento magazzino", date: "2025-11-21" },
+				{ title: "Evento aziendale", date: "2025-11-21" },
 			])
 		);
 	}, [dispatch]);
