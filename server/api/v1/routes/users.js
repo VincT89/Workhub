@@ -1,13 +1,14 @@
 import express from "express";
-import { createUser } from "../controllers/users.js";
+import { listUsers } from "../controllers/users.js";
+import { authUser } from "../middleware/auth.js";
+import { requireAdmin } from "../middleware/roles.js";
 
 const app = express.Router();
 
 /**
- * Create a new user -> `create`
- * @path /api/v1/users
- * @method POST
+ * GET /api/v1/users
+ * Solo admin
  */
-app.post("/", createUser);
+app.get("/", authUser, requireAdmin, listUsers);
 
 export default app;

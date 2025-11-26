@@ -5,9 +5,8 @@ import { authUser } from "../middleware/auth.js";
 const app = express.Router();
 
 /**
- * get current user info -> `getMeInfo`
- * @path /api/v1/me
- * @method GET
+ * GET /api/v1/me
+ * Utente deve essere loggato
  */
 app.get("/", authUser, getMeInfo);
 

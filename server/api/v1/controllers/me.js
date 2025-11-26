@@ -1,18 +1,18 @@
-import { handleRouteErrors } from "../../../utils/error.js";
 import { formatResponse } from "../../../utils/format.js";
+import { handleRouteErrors } from "../../../utils/error.js";
 
 /**
- * Register a new user
- * @param {Request} req 
- * @param {Response} res 
- * @returns 
+ * Info utente loggato
+ * GET /api/v1/me
  */
 export const getMeInfo = async (req, res) => {
-    try {
-        const user = req.user;
-
-        return res.status(200).json(formatResponse({ user }, true, "Current user informations"));
-    } catch (error) {
-        return handleRouteErrors(res, { error });
-    }
-}
+  try {
+    return res
+      .status(200)
+      .json(
+        formatResponse({ user: req.user }, true, "Current user information")
+      );
+  } catch (error) {
+    return handleRouteErrors(res, { error });
+  }
+};

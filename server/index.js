@@ -1,24 +1,37 @@
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import dotenv from 'dotenv';
-import { connect as connectDb } from './db/index.js';
+import express from "express";
+import helmet from "helmet";
+import cors from "cors";
+import dotenv from "dotenv";
+import { connect as connectDb } from "./db/index.js";
+import apiRouter from "./api/index.js";
 
-// Load environment variables from .env file
 dotenv.config();
 
 const app = express();
 
-// Middleware
+// Middleware globali
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// API
+app.use("/api", apiRouter);
 
-app.listen(process.env.SERVER_PORT || 3000, () => {
-  console.log(`Server is running on port ${process.env.SERVER_PORT || 3000}`);
+const PORT = process.env.SERVER_PORT || 3000;
 
-  connectDb();
-});
+const startServer = async () => {
+  try {
+    await connectDb();
+    console.log("Connected to database");
+
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error("Failed to start server:", err);
+    process.exit(1);
+  }
+};
+
+startServer();

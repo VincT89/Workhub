@@ -2,51 +2,45 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 /**
- * Hash input password
- * @param {string} password
- * @returns {Promise<string>}
+ * Hash password
  */
 export const hashPassword = async (password) => {
-	return await bcrypt.hash(password, 8);
+  return bcrypt.hash(password, 10); // 10 è uno standard buono
 };
 
 /**
- * Compare hashed password
- * @param {string} password
- * @param {string} hashPassword
- * @returns {Promise<boolean>}
+ * Confronta password
  */
-
-export const comparePassword = async (password, hashPassword) => {
-	return await bcrypt.compare(password, hashPassword);
+export const comparePassword = async (password, hashed) => {
+  return bcrypt.compare(password, hashed);
 };
-
 
 /**
- * Generate JWT token
- * @param {object} payload 
+ * Genera JWT
  */
-export const generateAccessToken = async (payload) => {
-	return new Promise((resolve, reject) => {
-		try {
-			const token = jwt.sign(payload, process.env.SERVER_PRIVATE_KEY, {
-				issuer: "User",
-				expiresIn: "1d",
-			});
-			return resolve(token);
-		} catch (error) {
-			return reject(error);
-		}
-	});
+export const generateAccessToken = (payload) => {
+  return jwt.sign(payload, process.env.SERVER_PRIVATE_KEY, {
+    issuer: "WorkHub",
+    expiresIn: "1d",
+  });
 };
 
-export const verifyAccessToken = async (token) => {
-  return new Promise((resolve, reject) => {
-    try {
-      const decodedToken = jwt.verify(token, process.env.SERVER_PRIVATE_KEY);
-      return resolve(decodedToken);
-    } catch (error) {
-      return reject(error);
-    }
-  })
-}
+/**
+ * Verifica JWT
+ */
+export const verifyAccessToken = (token) => {
+  return jwt.verify(token, process.env.SERVER_PRIVATE_KEY);
+};
+
+/**
+ * Genera password temporanea
+ */
+export const generateTempPassword = (length = 10) => {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$";
+  let pwd = "";
+  for (let i = 0; i < length; i++) {
+    pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return pwd;
+};
