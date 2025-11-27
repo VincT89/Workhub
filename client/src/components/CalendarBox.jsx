@@ -26,8 +26,8 @@ const getInitials = (name) => {
 
 const departmentColors = {
 	"Responsabile reparto": "#6C8AE4", // Indigo
-	"Sviluppatore": "#5EC2E0", // Cyan
-	"Designer": "#A88EF0", // Purple
+	Sviluppatore: "#5EC2E0", // Cyan
+	Designer: "#A88EF0", // Purple
 	"Marketing Manager": "#F5A97F", // Arancione
 	"HR Specialist": "#8DD0A6", // Verde menta
 	"Data Analyst": "#7BB8E8", // Blu chiaro
@@ -98,10 +98,10 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
 					className={`
 	px-4 py-2 rounded-xl font-semibold border transition
 	${
-			view === "month"
-				? "bg-[#090c64] text-white border-[#090c64]"
-				: "bg-white/70 dark:bg-white/10 text-[#090c64] dark:text-[#090c64] border-white/40 dark:border-white/90 hover:bg-[#090c64] hover:text-white"
-		}
+		view === "month"
+			? "bg-[#090c64] text-white border-[#090c64]"
+			: "bg-white/70 dark:bg-white/10 text-[#090c64] dark:text-[#090c64] border-white/40 dark:border-white/90 hover:bg-[#090c64] hover:text-white"
+	}
 	`}
 				>
 					Mese
@@ -112,10 +112,10 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
 					className={`
 			px-4 py-2 rounded-xl font-semibold border transition
 			${
-							view === "week"
-								? "bg-[#090c64] text-white border-[#090c64]"
-								: "bg-white/70 dark:bg-white/10 text-[#090c64] dark:text-[#090c64]  border-white/40 dark:border-white/90 hover:bg-[#090c64] hover:text-white"
-						}
+				view === "week"
+					? "bg-[#090c64] text-white border-[#090c64]"
+					: "bg-white/70 dark:bg-white/10 text-[#090c64] dark:text-[#090c64]  border-white/40 dark:border-white/90 hover:bg-[#090c64] hover:text-white"
+			}
 			`}
 				>
 					Settimana
@@ -126,10 +126,10 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
 					className={`
 			px-4 py-2 rounded-xl font-semibold border transition
 			${
-							view === "day"
-								? "bg-[#090c64] text-white border-[#090c64]"
-								: "bg-white/70 dark:bg-white/10 text-[#090c64] dark:text-[#090c64]  border-white/40 dark:border-white/90 hover:bg-[#090c64] hover:text-white"
-						}
+				view === "day"
+					? "bg-[#090c64] text-white border-[#090c64]"
+					: "bg-white/70 dark:bg-white/10 text-[#090c64] dark:text-[#090c64]  border-white/40 dark:border-white/90 hover:bg-[#090c64] hover:text-white"
+			}
 			`}
 				>
 					Giorno
@@ -167,20 +167,10 @@ const CalendarBox = () => {
 		if (!loggedUser || !EmployeeList) return [];
 
 		if (loggedUser.role === "admin") {
-			// ADMIN → vede tutti i reparti
 			return Array.from(new Set(EmployeeList.map((e) => e.ruolo)));
 		}
 
-		if (loggedUser.role === "supervisor") {
-			// SUPERVISOR → vede solo il suo reparto
-			return [loggedUser.reparto];
-		}
-
-		if (loggedUser.role === "user") {
-			// USER → solo il suo reparto
-			return [loggedUser.reparto];
-		}
-
+		// USER: nessun reparto → può vedere solo se stesso
 		return [];
 	}, [loggedUser, EmployeeList]);
 
@@ -240,18 +230,16 @@ const CalendarBox = () => {
 			EmployeeList.forEach((dip) => {
 				// USER — vede solo i suoi turni
 				if (loggedUser.role === "user") {
-					if (dip.matricola !== loggedUser.matricola) return;
-				}
-
-				// SUPERVISOR — vede solo chi ha il suo stesso reparto
-				if (loggedUser.role === "supervisor") {
-					if (dip.ruolo !== loggedUser.reparto) return;
+					if (dip.email !== loggedUser.email) return;
 				}
 
 				// ADMIN — vede tutto
 
 				// Filtro manuale dei reparti già esistente
-				if (!selectedDepartments.includes(dip.ruolo)) return;
+				// ADMIN  → filtra per reparto
+				if (loggedUser.role !== "user") {
+					if (!selectedDepartments.includes(dip.ruolo)) return;
+				}
 
 				if (!dip.turni) return;
 
@@ -295,7 +283,7 @@ const CalendarBox = () => {
 							id: `${dip.matricola}-${turno.giorno}-${i}-w${w}`,
 							title: getInitials(dip.nome),
 							fullName: dip.nome,
-							ruolo: dip.ruolo,
+							role: dip.ruolo,
 							orario: range,
 							start,
 							end,
@@ -412,12 +400,12 @@ const CalendarBox = () => {
 				flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer select-none
 				text-sm font-semibold border shadow-sm transition-all
 				${
-									active
-										? "text-white"
-										: isDark
-										? "text-white border-white/30 bg-white/5"
-										: "text-[#090c64] border-gray-300 bg-white/70"
-								}
+					active
+						? "text-white"
+						: isDark
+						? "text-white border-white/30 bg-white/5"
+						: "text-[#090c64] border-gray-300 bg-white/70"
+				}
 				`}
 							style={{ backgroundColor: active ? color : undefined }}
 						>
@@ -444,10 +432,10 @@ const CalendarBox = () => {
 					className={`
 			px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm transition
 			${
-							isDark
-								? "text-white border-white/30 bg-white/10 hover:bg-white/20"
-								: "text-white border-gray-900 bg-[#090c64] hover:bg-[#090c64]/70"
-						}
+				isDark
+					? "text-white border-white/30 bg-white/10 hover:bg-white/20"
+					: "text-white border-gray-900 bg-[#090c64] hover:bg-[#090c64]/70"
+			}
 			`}
 				>
 					Seleziona tutti
@@ -459,10 +447,10 @@ const CalendarBox = () => {
 					className={`
 			px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm transition
 			${
-							isDark
-								? "text-white border-white/30 bg-white/10 hover:bg-white/20"
-								: "text-white border-gray-900 bg-[#090c64] hover:bg-[#090c64]/70"
-						}
+				isDark
+					? "text-white border-white/30 bg-white/10 hover:bg-white/20"
+					: "text-white border-gray-900 bg-[#090c64] hover:bg-[#090c64]/70"
+			}
 			`}
 				>
 					Deseleziona tutti

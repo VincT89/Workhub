@@ -6,7 +6,7 @@ const initialState = {
       nome: "Jennifer Bianchi",
       ruolo: "Responsabile reparto",
       matricola: "ADD-0001",
-      email: "jennifer.bianchi@example.com",
+      email: "admin@workhub.com",
       role: "admin",
       turni: [
         { giorno: "Lunedì", orari: ["09:00-13:00", "14:00-18:00"] },
@@ -18,22 +18,11 @@ const initialState = {
       nome: "Luca Rossi",
       ruolo: "Sviluppatore",
       matricola: "ADD-0002",
-      email: "luca.rossi@example.com",
+      email: "user@workhub.com",
       role: "user",
       turni: [
         { giorno: "Martedì", orari: ["09:00-13:00", "14:00-18:00"] },
         { giorno: "Giovedì", orari: ["10:00-14:00"] },
-      ],
-    },
-    {
-      nome: "Maria Verdi",
-      ruolo: "Designer",
-      matricola: "ADD-0003",
-      email: "maria.verdi@example.com",
-      role: "supervisor",
-      turni: [
-        { giorno: "Lunedì", orari: ["09:00-13:00", "14:00-18:00"] },
-        { giorno: "Mercoledì", orari: ["10:00-14:00"] },
       ],
     },
   ],

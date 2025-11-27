@@ -2,113 +2,273 @@ import Joi from "joi";
 import { handleRouteErrors } from "../../../utils/error.js";
 import { formatResponse } from "../../../utils/format.js";
 import {
-  comparePassword,
-  generateAccessToken,
-  hashPassword,
-  generateTempPassword,
+	comparePassword,
+	generateAccessToken,
+	hashPassword,
+	generateTempPassword,
 } from "../../../utils/auth.js";
-import { User, PointOfSales } from "../../../db/index.js";
+import { User } from "../../../db/index.js";
 
 /**
  * LOGIN dipendente
  * POST /api/v1/auth/login
+ * body: { username, password }
  */
 export const login = async (req, res) => {
-  const schema = Joi.object({
-    username: Joi.string().required(),
-    password: Joi.string().required(),
-  });
+	const schema = Joi.object({
+		username: Joi.string().required(),
+		password: Joi.string().required(),
+	});
 
-  try {
-    const data = await schema.validateAsync(req.body);
+	try {
+		const { value, error } = schema.validate(req.body);
 
-    const user = await User.findOne({ username: data.username }, null, {
-      lean: true,
-    });
+		if (error) {
+			return res
+				.status(400)
+				.json(formatResponse(null, false, error.details[0].message));
+		}
 
-    if (!user || !(await comparePassword(data.password, user.password))) {
-      return res
-        .status(401)
-        .json(formatResponse(null, false, "Not Authorized"));
-    }
+		const { username, password } = value;
 
-    const token = generateAccessToken({ _id: user._id, role: user.role });
+		// Cerca utente per username nel db e recupera hash password
+		const userDoc = await User.findOne({ username });
 
-    const { password, ...userInfo } = user;
+		if (!userDoc) {
+			return res
+				.status(401)
+				.json(formatResponse(null, false, "Invalid credentials"));
+		}
 
-    return res
-      .status(200)
-      .json(formatResponse({ token, user: userInfo }, true, "User logged in"));
-  } catch (error) {
-    return handleRouteErrors(res, { error });
-  }
+		// Controlla se l'utente è attivo 
+		if (typeof userDoc.isActive !== "undefined" && userDoc.isActive === false) {
+			return res
+				.status(403)
+				.json(formatResponse(null, false, "User is disabled"));
+		}
+
+		// DEBUG START
+		console.log("DEBUG LOGIN:");
+		console.log("Body username:", username);
+		console.log("Body password:", password);
+		console.log("User found in DB:", userDoc.username);
+		console.log("Stored hash:", userDoc.password);
+		console.log(
+			"Compare result:",
+			await comparePassword(password, userDoc.password)
+		);
+		// DEBUG END
+
+		const isValid = await comparePassword(password, userDoc.password);
+
+		if (!isValid) {
+			return res
+				.status(401)
+				.json(formatResponse(null, false, "Invalid credentials"));
+		}
+
+		const user = userDoc.toObject();
+		// Tolgo password dall'oggetto
+		delete user.password;
+
+		// Payload minimo nel token: id + ruolo
+		const token = generateAccessToken({
+			_id: userDoc._id.toString(),
+			role: user.role,
+		});
+
+		return res.status(200).json(
+			formatResponse(
+				{
+					token,
+					user,
+				},
+				true,
+				"Login successful"
+			)
+		);
+	} catch (error) {
+		return handleRouteErrors(res, { error });
+	}
 };
 
 /**
- * REGISTER dipendente (solo ADMIN)
+ * REGISTER nuovo utente (solo ADMIN)
  * POST /api/v1/auth/register
  */
 export const register = async (req, res) => {
   const schema = Joi.object({
     email: Joi.string().email().required(),
-    username: Joi.string().required(),
+    username: Joi.string().min(3).required(),
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
+
+    role: Joi.string().valid("admin", "user").default("user"),
+
+    password: Joi.string().min(6).optional(), // se manca → generata automaticamente
+    isGeneratedPassword: Joi.boolean().optional(),
+
     personnelNumber: Joi.number().required(),
     phone: Joi.number().optional(),
-    workplace: Joi.string().required(), // ObjectId PointOfSales
-    contractType: Joi.string()
-      .valid("indeterminato", "determinato", "part-time")
-      .optional(),
-    hireDate: Joi.date().optional(),
-    role: Joi.string().valid("user", "admin").default("user"),
+
+    workplace: Joi.string().required(), // ObjectId del workplace
+    contractType: Joi.string().valid("indeterminato", "determinato", "part-time").optional(),
+    hireDate: Joi.date().optional()
   });
 
   try {
-    const data = await schema.validateAsync(req.body);
+    const { value, error } = schema.validate(req.body);
 
-    // Duplicati username / email
-    const exists = await User.findOne({
-      $or: [{ username: data.username }, { email: data.email }],
-    });
-
-    if (exists) {
+    if (error) {
       return res
         .status(400)
-        .json(formatResponse(null, false, "User already exists"));
+        .json(formatResponse(null, false, error.details[0].message));
     }
 
-    // Verifica workplace valido
-    const pos = await PointOfSales.findById(data.workplace);
-    if (!pos) {
-      return res
-        .status(400)
-        .json(formatResponse(null, false, "Invalid workplace ID"));
-    }
+    const {
+      email,
+      username,
+      firstName,
+      lastName,
+      role,
+      password,
+      isGeneratedPassword,
+      personnelNumber,
+      phone,
+      workplace,
+      contractType,
+      hireDate
+    } = value;
 
-    // Genera password temporanea
-    const tempPassword = generateTempPassword();
-    const hashed = await hashPassword(tempPassword);
-
-    const user = await User.create({
-      ...data,
-      password: hashed,
-      isGeneratedPassword: true,
+    // Controllo duplicati email / username / personnelNumber
+    const existing = await User.findOne({
+      $or: [
+        { email },
+        { username },
+        { personnelNumber }
+      ]
     });
 
-    const { password, ...userInfo } = user.toObject();
+    if (existing) {
+      return res.status(409).json(
+        formatResponse(
+          null,
+          false,
+          "Email, Username o Matricola già esistenti"
+        )
+      );
+    }
+
+    // Validazione workplace come ObjectId
+    if (!workplace.match(/^[0-9a-fA-F]{24}$/)) { // semplice controllo formato ObjectId
+      return res
+        .status(400)
+        .json(formatResponse(null, false, "workplace non valido (ObjectId non valido)"));
+    }
+
+    // Password: se non fornita → generiamo password temporanea
+    const plainPassword = password || generateTempPassword(10);
+
+    const hashedPassword = await hashPassword(plainPassword);
+
+    const newUserDoc = await User.create({
+      email,
+      username,
+      password: hashedPassword,
+      isGeneratedPassword: password ? false : true,
+      firstName,
+      lastName,
+      role,
+      personnelNumber,
+      phone,
+      workplace,
+      contractType,
+      hireDate
+    });
+
+    const newUser = newUserDoc.toObject();
+    delete newUser.password;
 
     return res.status(201).json(
       formatResponse(
         {
-          user: userInfo,
-          tempPassword, // la vedi tu admin, da comunicare al dipendente
+          user: newUser,
+          tempPassword: password ? null : plainPassword
         },
         true,
-        "User created with temporary password"
+        "User created successfully"
       )
     );
   } catch (error) {
     return handleRouteErrors(res, { error });
   }
 };
+
+/**
+ * RECOVER PASSWORD
+ * POST /api/v1/auth/recover
+ * body: { email?, username? }
+ */
+export const recoverPassword = async (req, res) => {
+  const schema = Joi.object({
+    email: Joi.string().email().allow(null, ""),
+    username: Joi.string().allow(null, "")
+  });
+
+  try {
+    const { value, error } = schema.validate(req.body);
+
+    if (error) {
+      return res
+        .status(400)
+        .json(formatResponse(null, false, error.details[0].message));
+    }
+
+    const { email, username } = value;
+
+    if (!email && !username) {
+      return res
+        .status(400)
+        .json(formatResponse(null, false, "Provide email or username"));
+    }
+
+    // Trova l’utente
+    const userDoc = await User.findOne({
+      $or: [{ email }, { username }]
+    });
+
+    if (!userDoc) {
+      return res
+        .status(404)
+        .json(formatResponse(null, false, "User not found"));
+    }
+
+    // Genera password temporanea
+    const tempPassword = generateTempPassword(10);
+    const hashedPassword = await hashPassword(tempPassword);
+
+    // Aggiorna l’utente
+    userDoc.password = hashedPassword;
+    userDoc.isGeneratedPassword = true;
+    await userDoc.save();
+
+    return res.status(200).json(
+      formatResponse(
+        {
+          email: userDoc.email,
+          tempPassword
+        },
+        true,
+        "Temporary password generated"
+      )
+    );
+
+  } catch (error) {
+    return handleRouteErrors(res, { error });
+  }
+};
+
+
+
+
+

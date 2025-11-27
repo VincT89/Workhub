@@ -1,3 +1,4 @@
+// server/index.js
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
@@ -15,10 +16,16 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// API
+// Health-check semplice
+app.get("/", (req, res) => {
+  res.json({ success: true, message: "WorkHub API is running" });
+});
+
+// Tutte le API stanno sotto /api
 app.use("/api", apiRouter);
 
-const PORT = process.env.SERVER_PORT || 3000;
+// Porta dal .env o default
+const PORT = process.env.SERVER_PORT || 3030;
 
 const startServer = async () => {
   try {

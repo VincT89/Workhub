@@ -1,39 +1,50 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+const getPrivateKey = () => process.env.SERVER_PRIVATE_KEY; // Chiave segreta per JWT, da .env
+
 /**
- * Hash password
+ * Hash password  con bcrypt
  */
 export const hashPassword = async (password) => {
-  return bcrypt.hash(password, 10); // 10 è uno standard buono
+  return bcrypt.hash(password, 10);
 };
 
 /**
- * Confronta password
+ * Confronta password con hash bcrypt
  */
 export const comparePassword = async (password, hashed) => {
-  return bcrypt.compare(password, hashed);
+  return bcrypt.compare(password, hashed); // Restituisce true la password corrisponde all'hash, altrimenti false
 };
 
 /**
- * Genera JWT
+ * Genera token JWT
  */
-export const generateAccessToken = (payload) => {
-  return jwt.sign(payload, process.env.SERVER_PRIVATE_KEY, {
-    issuer: "WorkHub",
-    expiresIn: "1d",
-  });
+export const generateAccessToken = (payload, expiresIn = "8h") => { // il token scade in 8 ore di default, si rigenera effettuando di nuovo il login
+  const key = getPrivateKey();
+
+  if (!key) {
+    throw new Error("SERVER_PRIVATE_KEY non definita nelle env");
+  }
+
+  return jwt.sign(payload, key, { expiresIn }); // Genera il token con il payload e la chiave segreta
 };
 
 /**
- * Verifica JWT
+ * Verifica token
  */
 export const verifyAccessToken = (token) => {
-  return jwt.verify(token, process.env.SERVER_PRIVATE_KEY);
+  const key = getPrivateKey();
+
+  if (!key) {
+    throw new Error("SERVER_PRIVATE_KEY non definita nelle env");
+  }
+
+  return jwt.verify(token, key);
 };
 
 /**
- * Genera password temporanea
+ * Password temporanea generata casualmente che include lettere maiuscole, minuscole, numeri e simboli e ha una lunghezza di 10 caratteri di default, poi può essere cambiata dall'utente
  */
 export const generateTempPassword = (length = 10) => {
   const chars =

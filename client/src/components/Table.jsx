@@ -6,6 +6,7 @@ const Table = ({
 	customToolbar,
 	actions,
 	actionLabel = null,
+	onRowClick,
 }) => {
 
 	const [searchTerm, setSearchTerm] = useState("");
@@ -108,6 +109,7 @@ const Table = ({
 							<tr
 								key={i}
 								className="transition cursor-pointer rounded-xl tr-hover tr-last-rounded"
+								onClick={() => onRowClick && onRowClick(row)}
 							
 							>
 								{columns.map((col, j) => (

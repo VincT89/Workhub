@@ -2,6 +2,7 @@ import Table from "../../components/Table";
 import { useState } from "react";
 import FilterByCard from "../../components/Customer/FilterByCard";
 import AddCustomerForm from "../../components/Customer/AddCustomerForm";
+import { useNavigate } from "react-router-dom";
 
 const CustomersPage = () => {
   const initialCustomers = [
@@ -130,6 +131,8 @@ const CustomersPage = () => {
     setCustomers((prev) => [...prev, customer]);
   };
 
+  const navigate = useNavigate();
+
   return (
      <Table
         data={filteredCustomers}
@@ -140,6 +143,7 @@ const CustomersPage = () => {
             <AddCustomerForm onAdd={handleAddCustomer} />
           </>
       )}
+       onRowClick={(cliente) => navigate("/customers/registry", { state: cliente })}
       />
   );
 };

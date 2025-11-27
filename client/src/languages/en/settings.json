@@ -6,6 +6,7 @@
   "ruolo": "Role",
   "account": "Account",
   "username": "Username",
+  "passwordAttuale": "Current Password",
   "nuovaPassword": "New Password",
   "confermaPassword": "Confirm Password",
   "aspetto": "Appearance",
