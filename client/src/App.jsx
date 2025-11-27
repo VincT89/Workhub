@@ -7,8 +7,8 @@ import PublicLayout from "./layout/PublicLayout.jsx";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage.jsx";
 import SettingsPage from "./pages/SettingsPage.jsx";
-import TicketPageAdmin from "./pages/TicketPageAdmin.jsx";
-import TicketCreator from "./pages/TicketCreator.jsx";
+import TicketPageAdmin from "./pages/Ticketing/TicketPageAdmin.jsx";
+import TicketCreator from "./pages/Ticketing/TicketCreator.jsx";
 
 // Pagine protette
 import BoardPage from "./pages/BoardPage.jsx";
