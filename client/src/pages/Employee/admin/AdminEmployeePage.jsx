@@ -381,7 +381,10 @@ const AdminEmployeePage = () => {
 									<td className="flex items-center justify-center gap-3 py-3">
 										{/* Modifica */}
 										<button
-											onClick={() => openEditDrawer(e)}
+											onClick={(ev) => {
+												ev.stopPropagation();
+												openEditDrawer(e);
+											}}
 											className="cursor-pointer flex items-center justify-center"
 										>
 											<NotePencil size={28} color="#090c64" weight="duotone" />
@@ -389,7 +392,10 @@ const AdminEmployeePage = () => {
 
 										{/* Elimina — Omino col meno */}
 										<button
-											onClick={() => handleDeleteEmployee(e)}
+											onClick={(ev) => {
+												ev.stopPropagation();
+												handleDelete(e);
+											}}
 											className="cursor-pointer flex items-center justify-center ml-4"
 										>
 											<UserCircleMinus

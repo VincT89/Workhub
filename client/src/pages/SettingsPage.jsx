@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import {
-	updateUserAsync,
-	changePasswordAsync,
-} from "../store/feature/authSlice";
+import {updateUserAsync} from "../store/feature/userSlice";
+import {changePasswordAsync} from "../store/feature/authSlice";
 
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";

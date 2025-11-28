@@ -1,105 +1,42 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// LOGIN REALE 
-//fetch POST /auth/login con body { username, password }
+const API_URL = "http://localhost:3030/api/v1"; // url base API riutilizzabile nelle chiamate
+
+// LOGIN - prende username e password, restituisce token e dati utente
 export const loginAsync = createAsyncThunk(
   "auth/login",
   async ({ username, password }, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:3030/api/v1/auth/login", {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
       const data = await response.json();
 
-      if (!response.ok) {
-        return rejectWithValue(data.message || "Errore durante il login");
-      }
+      if (!response.ok) return rejectWithValue(data.message);
 
-      // Salvo token + user nel localStorage per persistenza
       const authData = {
         token: data.data.token,
         user: data.data.user,
         role: data.data.user.role,
       };
 
-      localStorage.setItem("auth", JSON.stringify(authData));
-
+      localStorage.setItem("auth", JSON.stringify(authData)); // memorizza i dati di autenticazione nel localStorage
       return authData;
-
-    } catch (error) {
-      return rejectWithValue("Errore di rete. Server non raggiungibile.");
-    }
-  }
-);
-
-// UPDATE USER (PATCH /users/:id) 
-// fetch con body { updates } e token per auth 
-export const updateUserAsync = createAsyncThunk(
-  "auth/updateUser",
-  async ({ id, updates, token }, { rejectWithValue }) => {
-    try {
-      const response = await fetch(`http://localhost:3030/api/v1/users/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updates),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        return rejectWithValue(data.message || "Errore durante l'aggiornamento utente");
-      }
-
-      return data.data; // utente aggiornato
-
-    } catch (error) {
+    } catch {
       return rejectWithValue("Errore di rete.");
     }
   }
 );
 
-// DELETE USER (DELETE /users/:id)
-// fetch con token in modo da autorizzare l'operazione
-export const deleteUserAsync = createAsyncThunk(
-  "auth/deleteUser",
-  async ({ id, token }, { rejectWithValue }) => {
-    try {
-      const response = await fetch(`http://localhost:3030/api/v1/users/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        return rejectWithValue(data.message || "Errore durante l'eliminazione utente");
-      }
-
-      return id;
-
-    } catch (error) {
-      return rejectWithValue("Errore di rete.");
-    }
-  }
-);
-
-// CHANGE PASSWORD BY EMAIL (PATCH /users/password)
-// fetch con body { email, oldPassword, newPassword } e token per auth
+// CAMBIO PASSWORD - prende email, vecchia e nuova password e restituisce successo/fallimento
 export const changePasswordAsync = createAsyncThunk(
   "auth/changePassword",
   async ({ email, oldPassword, newPassword, token }, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:3030/api/v1/users/password", {
+      const response = await fetch(`${API_URL}/users/password`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -109,46 +46,38 @@ export const changePasswordAsync = createAsyncThunk(
       });
 
       const data = await response.json();
-
-      if (!response.ok) {
-        return rejectWithValue(data.message || "Errore nel cambio password");
-      }
+      if (!response.ok) return rejectWithValue(data.message);
 
       return true;
-
-    } catch (error) {
+    } catch {
       return rejectWithValue("Errore di rete.");
     }
   }
 );
 
-// RECUPERO PASSWORD (POST /auth/recover)
-// fetch con body { email, username } e senza token (pubblica) 
+// RECUPERO PASSWORD - prende email o username e restituisce successo/fallimento per ora restituisce una password temporanea in console
 export const recoverPasswordAsync = createAsyncThunk(
   "auth/recoverPassword",
   async ({ email, username }, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:3030/api/v1/auth/recover", {
+      const response = await fetch(`${API_URL}/auth/recover`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, username }),
       });
 
       const data = await response.json();
-
-      if (!response.ok) {
-        return rejectWithValue(data.message || "Errore durante il recupero password");
-      }
-
-      return data.data; // { email, tempPassword }
-    } catch (error) {
-      return rejectWithValue("Errore di rete. Server non raggiungibile.");
+      if (!response.ok) return rejectWithValue(data.message);
+      console.log("RECOVERY PASSWORD RESPONSE:", data);
+      return data.data;
+     
+    } catch {
+      return rejectWithValue("Errore di rete.");
     }
   }
 );
 
-
-// RECUPERA AUTH DAL LOCALSTORAGE
+// STATO INIZIALE
 const storedAuth =
   JSON.parse(localStorage.getItem("auth")) || {
     user: null,
@@ -156,34 +85,30 @@ const storedAuth =
     role: null,
   };
 
-// SLICE AUTH
 const authSlice = createSlice({
   name: "auth",
-
   initialState: {
     user: storedAuth.user,
     token: storedAuth.token,
     role: storedAuth.role,
+    loading: false,
+    error: null,
     recoveryLoading: false,
     recoveryError: null,
     recoveryMessage: null,
-    loading: false,
-    error: null,
   },
 
   reducers: {
-    // LOGOUT
     logout: (state) => {
+      localStorage.removeItem("auth");
       state.user = null;
       state.token = null;
       state.role = null;
-      localStorage.removeItem("auth");
     },
   },
 
   extraReducers: (builder) => {
     builder
-      // LOGIN
       .addCase(loginAsync.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -199,44 +124,17 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // UPDATE USER
-      .addCase(updateUserAsync.fulfilled, (state, action) => {
-        if (state.user && action.payload._id === state.user._id) {
-          state.user = action.payload;
-
-          const updatedAuth = {
-            user: state.user,
-            token: state.token,
-            role: state.user.role,
-          };
-
-          localStorage.setItem("auth", JSON.stringify(updatedAuth));
-        }
-      })
-
-      // DELETE USER
-      .addCase(deleteUserAsync.fulfilled, (state, action) => {
-        if (state.user?._id === action.payload) {
-          state.user = null;
-          state.token = null;
-          state.role = null;
-          localStorage.removeItem("auth");
-        }
-      })
-
-      // CHANGE PASSWORD
+      // PASSWORD
       .addCase(changePasswordAsync.fulfilled, (state) => {
         state.error = null;
       })
       .addCase(changePasswordAsync.rejected, (state, action) => {
         state.error = action.payload;
       })
-    
-    // RECOVERY PASSWORD
+
+      // RECOVERY
       .addCase(recoverPasswordAsync.pending, (state) => {
         state.recoveryLoading = true;
-        state.recoveryError = null;
-        state.recoveryMessage = null;
       })
       .addCase(recoverPasswordAsync.fulfilled, (state, action) => {
         state.recoveryLoading = false;
@@ -245,7 +143,7 @@ const authSlice = createSlice({
       .addCase(recoverPasswordAsync.rejected, (state, action) => {
         state.recoveryLoading = false;
         state.recoveryError = action.payload;
-      })    
+      });
   },
 });
 

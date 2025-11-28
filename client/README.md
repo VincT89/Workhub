@@ -1,16 +1,102 @@
-# React + Vite
+# WorkHub - Gestionale aziendale
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**WorkHub** è una piattaforma web progettata per la gestione aziendale del personale, con funzionalità integrate di autenticazione, gestione dipendenti, gestione turni, recupero password, gestione magazzino e ordini, gestione ticketing aziendale e un'interfaccia moderna basata su React + Tailwind.
 
-Currently, two official plugins are available:
+Il progetto comprende un **backend Node.js/Express** con database **MongoDB** e un **frontend React** completo, organizzato con Redux Toolkit e componenti riutilizzabili.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+# Funzionalità Principali
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Autenticazione & Sicurezza
 
-## Expanding the ESLint configuration
+- Login con **JWT token**
+- Persistenza dell'autenticazione tramite **localStorage**
+- Middleware di protezione rotte (admin/user)
+- Recupero password tramite generazione password temporanea
+- Cambio password da pannello impostazioni
+- Password hash con **bcrypt**
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Ruoli Utente
+
+- **Admin** → gestione completa degli utenti, turni, reparti
+- **User** → accesso ai propri dati, visualizzazione turni personali
+
+## Gestione utenti (account e dipendenti)
+
+- Registrazione utente (solo admin)
+- Update profilo
+- Update password
+- Eliminazione utente
+- Dashboard utenti
+- Validazioni tramite Joi
+- Anagrafica dipendenti con dettagli personali e lavorativi
+- CRUD dipendenti
+- Filtri e ricerche avanzate
+- Visualizzazione differenziata tra admin e user:
+  - Admin → vede tutti i dipendenti
+  - User → vede esclusivamente il proprio profilo
+- Gestione ferie e permessi
+
+## Gestione Turni di Lavoro
+
+- Calendario interattivo con **react-big-calendar**
+- Turni settimanali/mensili
+- Visualizzazione differenziata tra admin e user:
+  - Admin → vede tutti i turni filtrabili per reparto
+  - User → vede esclusivamente i propri turni
+- Espansione eventi, filtro reparti, colori per ruolo/settore
+
+## Gestione Clienti
+- Anagrafica clienti con dettagli di contatto
+- CRUD clienti
+- Filtri e ricerche avanzate
+
+## Gestione Magazzino & Ordini
+
+- CRUD prodotti
+- Gestione stock e livelli di inventario
+- Creazione e monitoraggio ordini
+- Filtri e ricerche avanzate
+
+## Sistema di Ticketing Aziendale
+
+- Creazione ticket per segnalazioni o richieste
+- Assegnazione e monitoraggio stato ticket
+
+## UI/UX
+
+- Tema dinamico (light/dark)
+- Layout responsive
+- Componenti ottimizzati Tailwind
+- Interfaccia moderna e pulita
+- Cambio lingua - italiano/inglese
+
+---
+
+# Stack Tecnologico
+
+## Backend
+
+- Node.js + Express
+- MongoDB + Mongoose
+- JWT Authentication
+- Bcrypt
+- Joi (validazione)
+- Middleware personalizzati
+- Struttura REST API
+
+## Frontend
+
+- React + Vite
+- Redux Toolkit (authSlice, userSlice, employeeSlice)
+- Tailwind CSS
+- React Router
+- React Big Calendar
+- Date-fns
+- Context API (tema)
+- LocalStorage per persistenza stato
+- Phosphor Icons
+- Mui React (componenti UI)
+
+---
