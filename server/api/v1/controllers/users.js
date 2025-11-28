@@ -38,7 +38,7 @@ export const getUserById = async (req, res) => {
     }
 
     // Cerco utente, escludo password
-    const user = await User.findById(id, "-password").lean();
+    const user = await User.findById(id, "-password").lean(); // lean() per ottenere un oggetto semplice
 
     if (!user) {
       return res
@@ -76,7 +76,7 @@ export const updateUser = async (req, res) => {
     }
 
     // Aggiornamento
-    const updated = await User.findByIdAndUpdate(id, req.body, {
+    const updated = await User.findByIdAndUpdate(id, req.body, { // aggiorna con i dati nel body della richiesta con findByIdAndUpdate poi restituisce il documento aggiornato
       new: true,
       runValidators: true,
       select: "-password",
@@ -112,7 +112,7 @@ export const deleteUser = async (req, res) => {
         .json(formatResponse(null, false, "Invalid user ID"));
     }
 
-    const deleted = await User.findByIdAndDelete(id);
+    const deleted = await User.findByIdAndDelete(id); // elimina l'utente per ID
 
     if (!deleted) {
       return res

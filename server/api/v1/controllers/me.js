@@ -7,7 +7,7 @@ import { handleRouteErrors } from "../../../utils/error.js";
  */
 export const getMe = async (req, res) => {
   try {
-    const user = req.user; // Inserito da authUser middleware
+    const user = req.user; // otteniamo i dati dell'utente loggato dal middleware di autenticazione authUser
 
     return res
       .status(200)

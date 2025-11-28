@@ -46,7 +46,7 @@ const HomePage = () => {
          text-xl sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-normal 
         leading-normal whitespace-nowrap transition-colors duration-500 ${textColor}`}
       >
-        {t("home.slogan")}        
+        {t("dashboard.slogan")}        
       </h1>
 
       {/* Bottone di Benvenuto */}
@@ -60,7 +60,7 @@ const HomePage = () => {
         cursor-pointer transition-colors duration-300 ${textColor} 
         hover:bg-white/30 hover:backdrop-blur-sm hover:shadow-lg`}
       >
-        {t("home.benvenuto")}      
+        {t("dashboard.benvenuto")}      
       </Link>
     </main>
   );

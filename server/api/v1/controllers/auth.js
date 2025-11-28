@@ -15,13 +15,13 @@ import { User } from "../../../db/index.js";
  * body: { username, password }
  */
 export const login = async (req, res) => {
-	const schema = Joi.object({
-		username: Joi.string().required(),
-		password: Joi.string().required(),
+	const schema = Joi.object({  // con Joi validiamo lo schema della richiesta, cioe i campi che ci aspettiamo
+		username: Joi.string().required(), // username obbligatorio
+		password: Joi.string().required(), // password obbligatoria
 	});
 
 	try {
-		const { value, error } = schema.validate(req.body);
+		const { value, error } = schema.validate(req.body); // validiamo il body della richiesta cioe i dati inviati dal client
 
 		if (error) {
 			return res
@@ -29,10 +29,10 @@ export const login = async (req, res) => {
 				.json(formatResponse(null, false, error.details[0].message));
 		}
 
-		const { username, password } = value;
+		const { username, password } = value; // estrazione dei valori validati
 
 		// Cerca utente per username nel db e recupera hash password
-		const userDoc = await User.findOne({ username });
+		const userDoc = await User.findOne({ username }); // cerca utente per username nel db e recupera hash password
 
 		if (!userDoc) {
 			return res
@@ -59,7 +59,7 @@ export const login = async (req, res) => {
 		);
 		// DEBUG END
 
-		const isValid = await comparePassword(password, userDoc.password);
+		const isValid = await comparePassword(password, userDoc.password); // confronta la password inviata con l'hash memorizzato nel db
 
 		if (!isValid) {
 			return res
@@ -68,11 +68,11 @@ export const login = async (req, res) => {
 		}
 
 		const user = userDoc.toObject();
-		// Tolgo password dall'oggetto
+		// Tolgo password dall'oggetto utente prima di inviarlo al client in modo da non far vedere l'hash
 		delete user.password;
 
 		// Payload minimo nel token: id + ruolo
-		const token = generateAccessToken({
+		const token = generateAccessToken({ // genera token JWT
 			_id: userDoc._id.toString(),
 			role: user.role,
 		});
@@ -160,7 +160,7 @@ export const register = async (req, res) => {
     }
 
     // Validazione workplace come ObjectId
-    if (!workplace.match(/^[0-9a-fA-F]{24}$/)) { // semplice controllo formato ObjectId
+    if (!workplace.match(/^[0-9a-fA-F]{24}$/)) { // semplice controllo formato ObjectId che e' una stringa esadecimale di 24 caratteri che rappresenta un identificatore univoco in MongoDB
       return res
         .status(400)
         .json(formatResponse(null, false, "workplace non valido (ObjectId non valido)"));
@@ -169,7 +169,7 @@ export const register = async (req, res) => {
     // Password: se non fornita → generiamo password temporanea
     const plainPassword = password || generateTempPassword(10);
 
-    const hashedPassword = await hashPassword(plainPassword);
+    const hashedPassword = await hashPassword(plainPassword); // hash della password (fornita o generata)
 
     const newUserDoc = await User.create({
       email,
@@ -186,8 +186,8 @@ export const register = async (req, res) => {
       hireDate
     });
 
-    const newUser = newUserDoc.toObject();
-    delete newUser.password;
+    const newUser = newUserDoc.toObject(); // convertiamo il documento Mongoose in un oggetto JavaScript semplice cosi da poter manipolare i dati
+    delete newUser.password; // rimuoviamo la password (hash) dall'oggetto utente prima di inviarlo al client
 
     return res.status(201).json(
       formatResponse(
@@ -210,9 +210,9 @@ export const register = async (req, res) => {
  * body: { email?, username? }
  */
 export const recoverPassword = async (req, res) => {
-  const schema = Joi.object({
-    email: Joi.string().email().allow(null, ""),
-    username: Joi.string().allow(null, "")
+  const schema = Joi.object({ // definiamo lo schema di validazione per la richiesta di recupero password 
+    email: Joi.string().email().allow(null, ""), // email opzionale tramite allow(null, "")
+    username: Joi.string().allow(null, "") // username opzionale tramite allow(null, "")
   });
 
   try {

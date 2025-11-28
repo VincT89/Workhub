@@ -7,7 +7,7 @@ export const it = {
     panoramicaDepositi: "Panoramica Depositi",
     prodottiInEsaurimento: "Prodotti in Esaurimento",
     benvenuto: "Benvenuto",
-    slogan: "Semplifica il tuo lavoro",
+    slogan: "Simplify your workflow",
     calendario:"Calendario"
   },
 
@@ -108,7 +108,7 @@ export const it = {
     recover: {
       recuperaPassword: "Recupera Password",
       inserisciDati: "Inserisci i tuoi dati",
-      username: "Nome Utente",
+      username: "Username",
       inserisciUsername: "Inserisci il tuo username",
       email: "Email",
       inserisciEmail: "Inserisci la tua email",
