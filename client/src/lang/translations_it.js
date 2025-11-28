@@ -96,7 +96,7 @@ export const it = {
   auth: {
     login: {
       titolo: "Accedi al Gestionale",
-      username: "Nome Utente",
+      username: "Username",
       password: "Password",
       bottoneAccedi: "Accedi",
       dimenticato: "Hai dimenticato la password?",

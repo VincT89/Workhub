@@ -80,13 +80,13 @@ const LoginPage = () => {
 						<span
 							className={`text-4xl font-bold font-nunito uppercase transition-colors duration-500 ${textColor}`}
 						>
-							{t("login.titolo")}
+							{t("auth.login.titolo")}
 						</span>
 						<br />
 						<span
 							className={`font-bold font-nunito text-sm transition-colors duration-500 ${textColor}`}
 						>
-							{t("login.credenzialiDemo")}
+							{t("auth.login.credenzialiDemo")}
 						</span>
 					</div>
 				</div>
@@ -104,7 +104,7 @@ const LoginPage = () => {
 						htmlFor="username"
 						className={`block text-[18px] font-bold font-nunito mb-2 ${textColor}`}
 					>
-						{t("login.username")}
+						{t("auth.login.username")}
 					</label>
 					<input
 						id="username"
@@ -124,7 +124,7 @@ const LoginPage = () => {
 						htmlFor="password"
 						className={`block text-[18px] font-bold font-nunito mb-2 ${textColor}`}
 					>
-						{t("login.password")}
+						{t("auth.login.password")}
 					</label>
 					<input
 						id="password"
@@ -164,7 +164,7 @@ const LoginPage = () => {
 						to="/forgot-password"
 						className={`text-[14px] font-bold font-nunito transition ${textColor}`}
 					>
-						{t("login.dimenticato")}
+						{t("auth.login.dimenticato")}
 					</Link>
 				</div>
 
@@ -176,11 +176,11 @@ const LoginPage = () => {
 				>
 					{loading ? (
 						<span className="animate-pulse font-bold text-[18px] font-nunito">
-							{t("login.accessoInCorso")}
+							{t("auth.login.accessoInCorso")}
 						</span>
 					) : (
 						<span className="text-[20px] font-bold font-nunito">
-							{t("login.bottoneAccedi")}
+							{t("auth.login.bottoneAccedi")}
 						</span>
 					)}
 				</button>
