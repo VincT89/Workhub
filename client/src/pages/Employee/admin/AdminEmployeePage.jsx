@@ -1,6 +1,11 @@
 import { useTheme } from "../../../context/ThemeContext.jsx";
 import { useLanguage } from "../../../context/LanguageContext.jsx";
-import { UserCircle, NotePencil, UsersThree, UserCircleMinus } from "@phosphor-icons/react";
+import {
+	UserCircle,
+	NotePencil,
+	UsersThree,
+	UserCircleMinus,
+} from "@phosphor-icons/react";
 
 import { useNavigate } from "react-router-dom";
 import { useMemo, useState } from "react";
@@ -108,13 +113,13 @@ const AdminEmployeePage = () => {
 	const stats = [
 		{
 			label: t("employees.dipendentiAttivi"),
-      value: employees.length,
-      icon: <UsersThree size={28} color="#090c64" weight="duotone" />
+			value: employees.length,
+			icon: <UsersThree size={28} color="#090c64" weight="duotone" />,
 		},
 		{
 			label: t("employees.dipendentiInattivi"),
-      value: 4,
-      icon: <UserCircleMinus size={28} color="#090c64" weight="duotone" />
+			value: 4,
+			icon: <UserCircleMinus size={28} color="#090c64" weight="duotone" />,
 		},
 	];
 
@@ -184,14 +189,15 @@ const AdminEmployeePage = () => {
 		setTimeout(() => setToastMessage(""), 3000);
 		form.reset();
 	};
-	
-		{/*ELIMINAZIONE UTENTE*/}
-		const handleDeleteEmployee = (employee) => {
-  		setEmployees(prev =>
-    	prev.filter((emp) => emp.matricola !== employee.matricola)
- 	 );
-		};
 
+	{
+		/*ELIMINAZIONE UTENTE*/
+	}
+	const handleDeleteEmployee = (employee) => {
+		setEmployees((prev) =>
+			prev.filter((emp) => emp.matricola !== employee.matricola)
+		);
+	};
 
 	return (
 		<div className="w-full h-full flex flex-col gap-8 overflow-y-auto scrollbar-thin scrollbar-thumb-[#1C62A0] scrollbar-track-transparent p-4">
@@ -360,43 +366,39 @@ const AdminEmployeePage = () => {
 									className={`${
 										theme === "dark"
 											? "bg-white/20 hover:bg-[#1C62A0]/20"
-											: "bg-white/40 hover:bg-white/70"
-									} transition rounded-xl`}
+											: "bg-white/30 hover:bg-white/70"
+									} transition cursor-pointer`}
+									onClick={() => openEmployeeDetails(e)}
 								>
 									<td className="py-2 items-center justify-center flex">
 										<UserCircle size={34} color="#090c64" weight="duotone" />
 									</td>
 
-									<td
-										className="truncate cursor-pointer"
-										onClick={() => openEmployeeDetails(e)}
-									>
-										{e.nome}
-									</td>
+									<td className="truncate">{e.nome}</td>
 									<td className="truncate">{e.ruolo}</td>
 									<td className="truncate">{e.email}</td>
 									<td>{e.matricola}</td>
-				<td className="flex items-center justify-center gap-3 py-3">
+									<td className="flex items-center justify-center gap-3 py-3">
+										{/* Modifica */}
+										<button
+											onClick={() => openEditDrawer(e)}
+											className="cursor-pointer flex items-center justify-center"
+										>
+											<NotePencil size={28} color="#090c64" weight="duotone" />
+										</button>
 
-  					{/* Modifica */}
- 				 <button
-   				 onClick={() => openEditDrawer(e)}
-    			className="cursor-pointer flex items-center justify-center"
-  				>
-    			<NotePencil size={28} color="#090c64" weight="duotone" />
- 				</button>
-
-  					{/* Elimina — Omino col meno */}
- 				<button
-    onClick={() => handleDeleteEmployee(e)}
-    className="cursor-pointer flex items-center justify-center"
-  >
-    <UserCircleMinus size={28} color="#b60000" weight="duotone" />
-  </button>
-
-</td>
-
-
+										{/* Elimina — Omino col meno */}
+										<button
+											onClick={() => handleDeleteEmployee(e)}
+											className="cursor-pointer flex items-center justify-center ml-4"
+										>
+											<UserCircleMinus
+												size={28}
+												color="#b60000"
+												weight="duotone"
+											/>
+										</button>
+									</td>
 								</tr>
 							))}
 
@@ -413,54 +415,58 @@ const AdminEmployeePage = () => {
 			</div>
 
 			{/* DRAWER MODIFICA/ANNULLA A DESTRA */}
-<Drawer
-  open={editDrawerOpen}
-  onClose={() => setEditDrawerOpen(false)}
-  title="Modifica Dipendente"
-  width="w-[420px]"
->
-  {selectedEmployee && (
-    <div className="flex flex-col gap-4">
-      
-      {/* CAMPI EDITABILI */}
-      {[ "nome", "ruolo", "email", "telefono", "sede", "contratto", "dataAssunzione" ].map((field) => (
-        <div key={field} className="flex flex-col gap-1">
-          <label className="font-semibold text-[#090c64]">
-            {field.charAt(0).toUpperCase() + field.slice(1)}
-          </label>
+			<Drawer
+				open={editDrawerOpen}
+				onClose={() => setEditDrawerOpen(false)}
+				title="Modifica Dipendente"
+				width="w-[420px]"
+			>
+				{selectedEmployee && (
+					<div className="flex flex-col gap-4">
+						{/* CAMPI EDITABILI */}
+						{[
+							"nome",
+							"ruolo",
+							"email",
+							"telefono",
+							"sede",
+							"contratto",
+							"dataAssunzione",
+						].map((field) => (
+							<div key={field} className="flex flex-col gap-1">
+								<label className="font-semibold text-[#090c64]">
+									{field.charAt(0).toUpperCase() + field.slice(1)}
+								</label>
 
-          <input
-            name={field}
-            value={selectedEmployee[field]}
-            onChange={handleEditChange}
-            type={field === "dataAssunzione" ? "date" : "text"}
-            className="p-2 border rounded"
-          />
-        </div>
-      ))}
+								<input
+									name={field}
+									value={selectedEmployee[field]}
+									onChange={handleEditChange}
+									type={field === "dataAssunzione" ? "date" : "text"}
+									className="p-2 border rounded"
+								/>
+							</div>
+						))}
 
-      {/* BOTTONI SALVA/ANNULLA */}
-      <div className="flex justify-between mt-4">
-        <button
-          onClick={() => setEditDrawerOpen(false)}
-          className="w-[48%] py-2 bg-white text-[#090c64] rounded-xl cursor-pointer font-semibold hover:bg-gray-300 transition"
-        >
-          Annulla
-        </button>
+						{/* BOTTONI SALVA/ANNULLA */}
+						<div className="flex justify-between mt-4">
+							<button
+								onClick={() => setEditDrawerOpen(false)}
+								className="w-[48%] py-2 bg-white text-[#090c64] rounded-xl cursor-pointer font-semibold hover:bg-gray-300 transition"
+							>
+								Annulla
+							</button>
 
-        <button
-          onClick={handleSave}
-          className="w-[48%] py-2 bg-[#090c64] text-white rounded-xl cursor-pointer font-semibold hover:bg-[#0b0f80] transition"
-        >
-          Salva
-        </button>
-      </div>
-
-    </div>
-  )}
-</Drawer>
-
-
+							<button
+								onClick={handleSave}
+								className="w-[48%] py-2 bg-[#090c64] text-white rounded-xl cursor-pointer font-semibold hover:bg-[#0b0f80] transition"
+							>
+								Salva
+							</button>
+						</div>
+					</div>
+				)}
+			</Drawer>
 		</div>
 	);
 };

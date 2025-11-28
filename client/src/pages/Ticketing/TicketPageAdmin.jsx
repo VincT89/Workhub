@@ -107,7 +107,7 @@ const TicketPageAdmin = () => {
   ];
 
   return (
-    <div className="min-h-screen p-6 bg-[#fafafa20] rounded-xl">
+    <div className="min-h-screen">
       
       {/* TOOLBAR FILTRI */}
       <div className="bg-white/20 backdrop-blur-md border border-white/90 rounded-xl p-4 mb-6 flex flex-col lg:flex-row gap-4">
@@ -119,7 +119,7 @@ const TicketPageAdmin = () => {
             Da
           </label>
           <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}
-            className="mt-1 p-2 h-auto border border-white/90 rounded-xl bg-white/40 text-gray-800 shadow-sm" />
+            className="mt-1 p-2 h-auto border border-white/90 rounded-xl bg-white/40 text-gray-800 shadow-sm hover:border-[#090c64]" />
 
         </div>
         {/* Data A */}
@@ -129,7 +129,7 @@ const TicketPageAdmin = () => {
             A
           </label>
           <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)}
-            className="mt-1 p-2 h-auto border border-white/90 rounded-xl bg-white/40 text-gray-800 shadow-sm" />
+            className="mt-1 p-2 h-auto border border-white/90 rounded-xl bg-white/40 text-gray-800 shadow-sm hover:border-[#090c64]" />
         </div>
 
         {/* Utente */}
@@ -139,7 +139,7 @@ const TicketPageAdmin = () => {
             Utente
           </label>
           <select value={selectedUser} onChange={(e) => setSelectedUser(e.target.value)}
-            className="mt-1 p-2 border border-white/90 rounded-xl bg-white/40 text-gray-800 shadow-sm">
+            className="mt-1 p-2 border border-white/90 rounded-xl bg-white/40 text-gray-800 shadow-sm hover:border-[#090c64]">
             <option value="">Tutti</option>
             {fakeUsers.map(user => (
               <option key={user.id} value={user.id}>{user.nome} {user.cognome}</option>
@@ -154,7 +154,7 @@ const TicketPageAdmin = () => {
             Stato
           </label>
           <select value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}
-            className="mt-1 p-2 border border-white/90 rounded-xl bg-white/40 text-gray-800 shadow-sm">
+            className="mt-1 p-2 border border-white/90 rounded-xl bg-white/40 text-gray-800 shadow-sm hover:border-[#090c64] ">
             <option value="">Tutti</option>
             <option value="aperto">Aperti</option>
             <option value="risolto">Risolti</option>
