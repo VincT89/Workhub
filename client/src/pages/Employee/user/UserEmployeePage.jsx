@@ -7,6 +7,7 @@ import {
 	CalendarBlank,
 } from "@phosphor-icons/react";
 import { useState } from "react";
+import Drawer from "../../../components/Drawer"
 
 const UserEmployeePage = () => {
 	const { theme } = useTheme();
@@ -281,131 +282,93 @@ const UserEmployeePage = () => {
 				</div>
 			</div>
 			{/* --------- DRAWER FERIE--------- */}
-			{/* --------- DRAWER FERIE --------- */}
-			{openFerieDrawer && (
-				<div
-					className={`fixed top-0 right-0 h-full w-full sm:w-96 py-6 px-4 sm:py-8 sm:px-6
-      flex flex-col justify-between border-l border-white/30 
-      shadow-md backdrop-blur-sm transition-all duration-300
-      ${
-				theme === "dark"
-					? "bg-white/20 text-white"
-					: "bg-white/20 text-[#090c64]"
-			}`}
-				>
-					{/* Header */}
-					<div className="flex justify-between items-center mb-60">
-						<button
-							onClick={() => setOpenFerieDrawer(false)}
-							className="text-xl font-bold"
-						></button>
-					</div>
+						
+				<Drawer
+  open={openFerieDrawer}
+  onClose={() => setOpenFerieDrawer(false)}
+  title={t("employees.richiestaFerie")}
+  width="w-[420px]"
+>
+  <div className="flex flex-col gap-6">
+    <div className="flex flex-col">
+      <label className="font-semibold">{t("employees.dal")}</label>
+      <input
+        type="date"
+        value={dal}
+        onChange={(e) => setDal(e.target.value)}
+        className="border rounded p-2 w-full"
+      />
+    </div>
 
-					{/* Inputs */}
-					<div className="flex-1 flex flex-col gap-6">
-						<div className="flex flex-col">
-							<label className="font-semibold">{t("employees.dal")}</label>
-							<input
-								type="date"
-								value={dal}
-								onChange={(e) => setDal(e.target.value)}
-								className="border rounded p-2 w-full"
-							/>
-						</div>
+    <div className="flex flex-col">
+      <label className="font-semibold">{t("employees.al")}</label>
+      <input
+        type="date"
+        value={al}
+        onChange={(e) => setAl(e.target.value)}
+        className="border rounded p-2 w-full"
+      />
+    </div>
 
-						<div className="flex flex-col">
-							<label className="font-semibold">{t("employees.al")}</label>
-							<input
-								type="date"
-								value={al}
-								onChange={(e) => setAl(e.target.value)}
-								className="border rounded p-2 w-full"
-							/>
-						</div>
-					</div>
+    <button
+      className={`${buttonClass} w-full py-3`}
+      onClick={handleInviaFerie}
+    >
+      {t("Invia Richiesta Ferie")}
+    </button>
+  </div>
+</Drawer>
 
-					{/* Pulsante invio */}
-					<button
-						className={`${buttonClass} w-full py-3`}
-						onClick={handleInviaFerie}
-					>
-						{t("Invia Richiesta Ferie")}
-					</button>
-				</div>
-			)}
 
 			{/* --------- DRAWER PERMESSI--------- */}
-			{openPermessiDrawer && (
-				<div
-					className={`fixed top-0 right-0 h-full w-full sm:w-96 max-w-sm py-6 px-4 sm:py-8 sm:px-6 
-      flex flex-col justify-between border border-white/30 rounded-none sm:rounded-[25px]
-      shadow-md backdrop-blur-sm transition-all duration-300
-      ${
-				theme === "dark"
-					? "bg-white/20 text-white"
-					: "bg-white/20 text-[#090c64]"
-			}`}
-				>
-					{/* Header */}
-					<div className="flex justify-between items-center mb-6 sm:mb-50">
-						<h3 className="text-lg sm:text-xl font-bold">
-							{t("Richiesta Permessi")}
-						</h3>
-						<button
-							onClick={() => setOpenPermessiDrawer(false)}
-							className="text-xl font-bold"
-						></button>
-					</div>
+			<Drawer
+  open={openPermessiDrawer}
+  onClose={() => setOpenPermessiDrawer(false)}
+  title={t("employees.richiestaPermessi")}
+  width="w-[420px]"
+>
+  <div className="flex flex-col gap-6">
+    <div className="flex flex-col">
+      <label className="font-semibold">{t("employees.data")}</label>
+      <input
+        type="date"
+        value={permessoData}
+        onChange={(e) => setPermessoData(e.target.value)}
+        className="border rounded p-2 w-full"
+      />
+    </div>
 
-					{/* Inputs */}
-					<div className="flex-1 flex flex-col gap-4 sm:gap-6">
-						{/* Data */}
-						<div className="flex flex-col">
-							<input
-								type="date"
-								value={permessoData}
-								onChange={(e) => setPermessoData(e.target.value)}
-								className="border rounded p-2 w-full text-sm sm:text-base"
-							/>
-						</div>
+    <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+      <div className="flex-1 flex flex-col">
+        <label className="font-semibold">{t("Ora Inizio")}</label>
+        <input
+          type="time"
+          value={oraInizio}
+          onChange={(e) => setOraInizio(e.target.value)}
+          className="border rounded p-2 w-full"
+        />
+      </div>
 
-						{/* Orari */}
-						<div className="flex flex-col sm:flex-row gap-4">
-							<div className="flex-1 flex flex-col">
-								<label className="font-semibold text-sm sm:text-base">
-									{t("Ora Inizio")}
-								</label>
-								<input
-									type="time"
-									value={oraInizio}
-									onChange={(e) => setOraInizio(e.target.value)}
-									className="border rounded p-2 w-full text-sm sm:text-base"
-								/>
-							</div>
+      <div className="flex-1 flex flex-col">
+        <label className="font-semibold">{t("Ora Fine")}</label>
+        <input
+          type="time"
+          value={oraFine}
+          onChange={(e) => setOraFine(e.target.value)}
+          className="border rounded p-2 w-full"
+        />
+      </div>
+    </div>
 
-							<div className="flex-1 flex flex-col">
-								<label className="font-semibold text-sm sm:text-base">
-									{t("Ora Fine")}
-								</label>
-								<input
-									type="time"
-									value={oraFine}
-									onChange={(e) => setOraFine(e.target.value)}
-									className="border rounded p-2 w-full text-sm sm:text-base"
-								/>
-							</div>
-						</div>
-					</div>
+    <button
+      className={`${buttonClass} w-full py-3`}
+      onClick={handleInviaPermesso}
+    >
+      {t("Invia Richiesta Permessi")}
+    </button>
+  </div>
+</Drawer>
 
-					{/* Pulsante invio */}
-					<button
-						className={`${buttonClass} w-full py-3 text-sm sm:text-base mt-4`}
-						onClick={handleInviaPermesso}
-					>
-						{t("Invia Richiesta Permessi")}
-					</button>
-				</div>
-			)}
 		</div>
 	);
 };
