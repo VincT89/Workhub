@@ -394,7 +394,7 @@ const AdminEmployeePage = () => {
 										<button
 											onClick={(ev) => {
 												ev.stopPropagation();
-												handleDelete(e);
+												handleDeleteEmployee(e);
 											}}
 											className="cursor-pointer flex items-center justify-center ml-4"
 										>
