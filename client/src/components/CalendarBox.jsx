@@ -140,9 +140,13 @@ const CustomToolbar = ({ label, onView, view, onNavigate }) => {
 };
 
 /* MAIN COMPONENT */
+
 const CalendarBox = () => {
 	const { theme } = useTheme();
 	const isDark = theme === "dark";
+
+	// stato per switchare tra "turni" e "eventi"
+	const [mode, setMode] = useState("turni"); // turni | eventi
 
 	const [view, setView] = useState("week");
 	const [expandedId, setExpandedId] = useState(null);
@@ -150,6 +154,9 @@ const CalendarBox = () => {
 
 	const EmployeeList = useSelector((state) => state.employees.employees);
 	const loggedUser = useSelector((state) => state.auth.user);
+
+	// eventi dal Redux store
+	const eventsData = useSelector((state) => state.events.events);
 
 	/* CLICK OUTSIDE */
 	useEffect(() => {
@@ -200,7 +207,7 @@ const CalendarBox = () => {
 			if (!map.has(key)) {
 				map.set(key, {
 					...ev,
-					id: key, // ID unico per quel giorno/dipendente
+					id: key,
 					orariMultipli: [ev.orario],
 				});
 			} else {
@@ -211,8 +218,9 @@ const CalendarBox = () => {
 		return [...map.values()];
 	};
 
-	/* GENERA EVENTI in base ai turni */
-	const eventi = useMemo(() => {
+	/* GENERA EVENTI TURNI */
+	const eventiTurni = useMemo(() => {
+		
 		if (!EmployeeList || !loggedUser) return [];
 
 		const result = [];
@@ -224,19 +232,14 @@ const CalendarBox = () => {
 			const monday = new Date(
 				weekMonday.getFullYear(),
 				weekMonday.getMonth(),
-				weekMonday.getDate() + w * 7 // calcolo dei lunedi delle settimane cosi da andare avanti e indietro nel tempo
+				weekMonday.getDate() + w * 7
 			);
 
 			EmployeeList.forEach((dip) => {
-				// USER — vede solo i suoi turni
 				if (loggedUser.role === "user") {
 					if (dip.email !== loggedUser.email) return;
 				}
 
-				// ADMIN — vede tutto
-
-				// Filtro manuale dei reparti già esistente
-				// ADMIN  → filtra per reparto
 				if (loggedUser.role !== "user") {
 					if (!selectedDepartments.includes(dip.ruolo)) return;
 				}
@@ -283,7 +286,7 @@ const CalendarBox = () => {
 							id: `${dip.matricola}-${turno.giorno}-${i}-w${w}`,
 							title: getInitials(dip.nome),
 							fullName: dip.nome,
-							role: dip.ruolo,
+							ruolo: dip.ruolo,
 							orario: range,
 							start,
 							end,
@@ -294,13 +297,31 @@ const CalendarBox = () => {
 			});
 		}
 
-		// Se siamo in vista mensile, rimuovo i duplicati dei turni spezzati
 		if (view === "month") {
 			return mergeMonthlyEvents(result);
 		}
 
 		return result;
 	}, [EmployeeList, loggedUser, selectedDepartments, view]);
+
+	/* GENERA EVENTI BACHECA */
+	const eventiAziendali = useMemo(() => {
+		if (!eventsData) return [];
+
+		return eventsData.map((ev) => ({
+			id: ev._id,
+			title: ev.title,
+			fullName: "Evento aziendale",
+			ruolo: "Evento",
+			orario: "",
+			start: new Date(ev.startDate),
+			end: new Date(ev.endDate),
+			color: "#F59E0B", // arancione
+		}));
+	}, [eventsData]);
+
+	/* QUALI EVENTI MOSTRARE? */
+	const eventi = mode === "turni" ? eventiTurni : eventiAziendali;
 
 	/* EVENT STYLE */
 	const eventStyleGetter = (event) => ({
@@ -317,14 +338,13 @@ const CalendarBox = () => {
 		},
 	});
 
+	/* EVENT COMPONENT (ORIGINALE) */
 	const EventComponent = ({ event }) => {
-		//vista mensile solo iniziali
 		if (view === "month") {
 			const isExpanded = expandedId === event.id;
 
 			return (
 				<div className="flex flex-col items-center select-none">
-					{/* PALLINO CON INIZIALI */}
 					<div
 						onClick={(e) => {
 							e.stopPropagation();
@@ -347,7 +367,6 @@ const CalendarBox = () => {
 						{event.title}
 					</div>
 
-					{/* DETTAGLI QUANDO ESPANSO */}
 					{isExpanded && (
 						<div className="text-[10px] flex flex-col items-center">
 							<div className="italic">{event.ruolo}</div>
@@ -376,7 +395,7 @@ const CalendarBox = () => {
 					<div className="text-[12px] opacity-90">
 						<div className="italic font-bold">{event.fullName}</div>
 						<div className="italic">{event.ruolo}</div>
-						<div>{event.orario}</div>
+						{event.orario && <div>{event.orario}</div>}
 					</div>
 				)}
 			</div>
@@ -386,76 +405,100 @@ const CalendarBox = () => {
 	/* RENDER */
 	return (
 		<div ref={wrapperRef} className="w-full flex flex-col">
-			{/* FILTRI */}
-			<div className="flex flex-wrap items-center gap-3 px-6 mt-4">
-				{departments.map((dept) => {
-					const active = selectedDepartments.includes(dept);
-					const color = getDepartmentColor(dept);
 
-					return (
-						<div
-							key={dept}
-							onClick={() => toggleDepartment(dept)}
-							className={`
-				flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer select-none
-				text-sm font-semibold border shadow-sm transition-all
-				${
-					active
-						? "text-white"
-						: isDark
-						? "text-white border-white/30 bg-white/5"
-						: "text-[#090c64] border-gray-300 bg-white/70"
-				}
-				`}
-							style={{ backgroundColor: active ? color : undefined }}
-						>
-							<div
-								className={`
-					w-4 h-4 rounded flex items-center justify-center text-xs font-bold
-					${active ? "bg-white text-black" : "border border-current"}
-				`}
-							>
-								{active ? "✓" : ""}
-							</div>
-							{dept}
-							<div
-								className="w-3 h-3 rounded-xl ml-1"
-								style={{ backgroundColor: color }}
-							/>
-						</div>
-					);
-				})}
+<div className="flex flex-wrap items-center gap-3 px-6 mt-4">
 
-				{/* SELECT ALL */}
-				<button
-					onClick={() => setSelectedDepartments([...departments])}
-					className={`
-			px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm transition
-			${
-				isDark
-					? "text-white border-white/30 bg-white/10 hover:bg-white/20"
-					: "text-white border-gray-900 bg-[#090c64] hover:bg-[#090c64]/70"
-			}
-			`}
-				>
-					Seleziona tutti
-				</button>
+    {/* SOLO IN MODALITÀ TURNI — FILTRI REPARTI */}
+    {mode === "turni" && departments.map((dept) => {
+        const active = selectedDepartments.includes(dept);
+        const color = getDepartmentColor(dept);
 
-				{/* DESELECT ALL */}
-				<button
-					onClick={() => setSelectedDepartments([])}
-					className={`
-			px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm transition
-			${
-				isDark
-					? "text-white border-white/30 bg-white/10 hover:bg-white/20"
-					: "text-white border-gray-900 bg-[#090c64] hover:bg-[#090c64]/70"
-			}
-			`}
-				>
-					Deseleziona tutti
-				</button>
-			</div>
+        return (
+            <div
+                key={dept}
+                onClick={() => toggleDepartment(dept)}
+                className={`
+                    flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer select-none
+                    text-sm font-semibold border shadow-sm transition-all
+                    ${
+                        active
+                            ? "text-white"
+                            : isDark
+                            ? "text-blue border-white/30 bg-white/5"
+                            : "text-[#090c64] border-gray-300 bg-white/70"
+                    }
+                `}
+                style={{ backgroundColor: active ? color : undefined }}
+            >
+                <div
+                    className={`
+                        w-4 h-4 rounded flex items-center justify-center text-xs font-bold
+                        ${active ? "bg-white text-black" : "border border-current"}
+                    `}
+                >
+                    {active ? "✓" : ""}
+                </div>
+                {dept}
+                <div
+                    className="w-3 h-3 rounded-xl ml-1"
+                    style={{ backgroundColor: color }}
+                />
+            </div>
+        );
+    })}
+
+    {/* SOLO IN MODALITÀ TURNI — SELECT ALL / DESELECT ALL */}
+    {mode === "turni" && (
+        <>
+            <button
+                onClick={() => setSelectedDepartments([...departments])}
+                className={`
+                    px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm transition
+                    ${
+                        isDark
+                            ? "text-white border-white/30 bg-white/10 hover:bg-white/20"
+                            : "text-white border-gray-900 bg-[#090c64] hover:bg-[#090c64]/70"
+                    }
+                `}
+            >
+                Seleziona tutti
+            </button>
+
+            <button
+                onClick={() => setSelectedDepartments([])}
+                className={`
+                    px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm transition
+                    ${
+                        isDark
+                            ? "text-white border-white/30 bg-white/10 hover:bg-white/20"
+                            : "text-white border-gray-900 bg-[#090c64] hover:bg-[#090c64]/70"
+                    }
+                `}
+            >
+                Deseleziona tutti
+            </button>
+        </>
+    )}
+
+    {/* SELECT MODALITÀ — SEMPRE A DESTRA */}
+    <select
+        value={mode}
+        onChange={(e) => setMode(e.target.value)}
+        className={`
+						ml-auto px-6 py-2 rounded-xl text-sm font-semibold border shadow-sm transition
+						${
+							isDark
+								? "text-white border-white/30 bg-white/10"
+								: "text-white border-gray-900 bg-[#090c64]"
+						}
+					`}
+    >
+        <option value="turni">Turni</option>
+        <option value="eventi">Eventi</option>
+    </select>
+
+</div>
+
 
 			{/* CALENDARIO */}
 			<div className="w-full min-h-[700px] flex justify-center">
@@ -479,9 +522,8 @@ const CalendarBox = () => {
 							setExpandedId((prev) => (prev === e.id ? null : e.id))
 						}
 						style={{ height: 800 }}
-						min={new Date(1970, 0, 1, 7, 0)} // dalle 07:00
-						max={new Date(1970, 0, 1, 20, 0)} // fino alle 20:00 (opzionale)
-						/* opzionale: dove scrollare di default */
+						min={new Date(1970, 0, 1, 7, 0)}
+						max={new Date(1970, 0, 1, 20, 0)}
 						scrollToTime={new Date(1970, 0, 1, 7, 0)}
 						className={isDark ? "text-white" : "text-[#090c64]"}
 					/>
@@ -490,5 +532,4 @@ const CalendarBox = () => {
 		</div>
 	);
 };
-
 export default CalendarBox;

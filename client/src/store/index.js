@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import authReducer from "./feature/authSlice";
 import employeeReducer from "./feature/employeeSlice";
 import tabReducer from "./feature/tabSlice";
-import boardReducer from "./feature/boardSlice";
+import eventReducer from "./feature/eventsSlice";
 
 
 const store = configureStore({
@@ -10,7 +10,7 @@ const store = configureStore({
     auth: authReducer,
     employees: employeeReducer,
     tab: tabReducer,
-    board: boardReducer,
+    events: eventReducer,
   },
 });
 

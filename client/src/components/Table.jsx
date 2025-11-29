@@ -11,6 +11,7 @@ const Table = ({
 
 	const [searchTerm, setSearchTerm] = useState("");
 	const [sortAZ, setSortAZ] = useState(false);
+	
 
 	const filteredData = useMemo(() => {
 		const query = searchTerm.toLowerCase();
