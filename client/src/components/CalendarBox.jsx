@@ -152,8 +152,8 @@ const CalendarBox = () => {
 	const [expandedId, setExpandedId] = useState(null);
 	const wrapperRef = useRef();
 
-	const EmployeeList = useSelector((state) => state.employees.employees);
-	const loggedUser = useSelector((state) => state.auth.user);
+	const EmployeeList = useSelector((state) => state.employees.employees); // lista dipendenti
+	const loggedUser = useSelector((state) => state.auth.user); // utente loggato
 
 	// eventi dal Redux store
 	const eventsData = useSelector((state) => state.events.events);
@@ -220,7 +220,6 @@ const CalendarBox = () => {
 
 	/* GENERA EVENTI TURNI */
 	const eventiTurni = useMemo(() => {
-		
 		if (!EmployeeList || !loggedUser) return [];
 
 		const result = [];
@@ -290,6 +289,7 @@ const CalendarBox = () => {
 							orario: range,
 							start,
 							end,
+							type: "shift",
 							color: getDepartmentColor(dip.ruolo),
 						});
 					});
@@ -316,29 +316,49 @@ const CalendarBox = () => {
 			orario: "",
 			start: new Date(ev.startDate),
 			end: new Date(ev.endDate),
+			type: "event",
 			color: "#F59E0B", // arancione
 		}));
 	}, [eventsData]);
 
-	/* QUALI EVENTI MOSTRARE? */
+	/* QUALI EVENTI MOSTRARE */
 	const eventi = mode === "turni" ? eventiTurni : eventiAziendali;
 
-	/* EVENT STYLE */
-	const eventStyleGetter = (event) => ({
-		style: {
-			backgroundColor: event.color,
-			color: "white",
-			borderRadius: "12px",
-			padding: expandedId === event.id ? "8px" : "2px 4px",
-			fontSize: expandedId === event.id ? "15px" : "13px",
-			transform: expandedId === event.id ? "scale(1.02)" : "scale(1)",
-			transition: "all .18s ease",
-			zIndex: expandedId === event.id ? 10 : 1,
-			width: expandedId === event.id ? "auto" : "fit-content",
-		},
-	});
+	/* STYLE */
+	const eventStyleGetter = (event) => {
+		// STILE EVENTI AZIENDALI
+		if (event.type === "event") {
+			return {
+				style: {
+					backgroundColor: "#F59E0B", // arancione fisso
+					color: "white",
+					borderRadius: "8px",
+					padding: "6px 10px",
+					fontSize: "13px",
+					fontWeight: "bold",
+					border: "2px solid",
+					boxShadow: "0 3px 6px rgba(0,0,0,0.3)",
+				},
+			};
+		}
 
-	/* EVENT COMPONENT (ORIGINALE) */
+		// STILE TURNI
+		return {
+			style: {
+				backgroundColor: event.color,
+				color: "white",
+				borderRadius: "12px",
+				padding: expandedId === event.id ? "8px" : "2px 4px",
+				fontSize: expandedId === event.id ? "15px" : "13px",
+				transform: expandedId === event.id ? "scale(1.02)" : "scale(1)",
+				transition: "all .18s ease",
+				zIndex: expandedId === event.id ? 10 : 1,
+				width: expandedId === event.id ? "auto" : "fit-content",
+			},
+		};
+	};
+
+	/* EVENT COMPONENT */
 	const EventComponent = ({ event }) => {
 		if (view === "month") {
 			const isExpanded = expandedId === event.id;
@@ -380,6 +400,19 @@ const CalendarBox = () => {
 			);
 		}
 
+		// VISTA GIORNO/SETTIMANA - EVENTI AZIENDALI
+		if (event.type === "event") {
+			return (
+				<div className="flex flex-col select-none px-1 py-0.5">
+					<div className="font-bold text-sm truncate">{event.title}</div>
+					{expandedId === event.id && (
+						<div className="text-[11px] opacity-90 mt-1">{event.fullName}</div>
+					)}
+				</div>
+			);
+		}
+
+		// TURNI - VISTA GIORNO/SETTIMANA
 		return (
 			<div className="flex flex-col gap-1 select-none">
 				<div className="flex items-center gap-2">
@@ -405,86 +438,89 @@ const CalendarBox = () => {
 	/* RENDER */
 	return (
 		<div ref={wrapperRef} className="w-full flex flex-col">
+			<div className="flex flex-wrap items-center gap-3 px-6 mt-4">
+				{/* SOLO IN MODALITÀ TURNI — FILTRI REPARTI */}
+				{mode === "turni" &&
+					departments.map((dept) => {
+						const active = selectedDepartments.includes(dept);
+						const color = getDepartmentColor(dept);
 
-<div className="flex flex-wrap items-center gap-3 px-6 mt-4">
-
-    {/* SOLO IN MODALITÀ TURNI — FILTRI REPARTI */}
-    {mode === "turni" && departments.map((dept) => {
-        const active = selectedDepartments.includes(dept);
-        const color = getDepartmentColor(dept);
-
-        return (
-            <div
-                key={dept}
-                onClick={() => toggleDepartment(dept)}
-                className={`
+						return (
+							<div
+								key={dept}
+								onClick={() => toggleDepartment(dept)}
+								className={`
                     flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer select-none
                     text-sm font-semibold border shadow-sm transition-all
                     ${
-                        active
-                            ? "text-white"
-                            : isDark
-                            ? "text-blue border-white/30 bg-white/5"
-                            : "text-[#090c64] border-gray-300 bg-white/70"
-                    }
+											active
+												? "text-white"
+												: isDark
+												? "text-blue border-white/30 bg-white/5"
+												: "text-[#090c64] border-gray-300 bg-white/70"
+										}
                 `}
-                style={{ backgroundColor: active ? color : undefined }}
-            >
-                <div
-                    className={`
+								style={{ backgroundColor: active ? color : undefined }}
+							>
+								<div
+									className={`
                         w-4 h-4 rounded flex items-center justify-center text-xs font-bold
-                        ${active ? "bg-white text-black" : "border border-current"}
+                        ${
+													active
+														? "bg-white text-black"
+														: "border border-current"
+												}
                     `}
-                >
-                    {active ? "✓" : ""}
-                </div>
-                {dept}
-                <div
-                    className="w-3 h-3 rounded-xl ml-1"
-                    style={{ backgroundColor: color }}
-                />
-            </div>
-        );
-    })}
+								>
+									{active ? "✓" : ""}
+								</div>
+								{dept}
+								<div
+									className="w-3 h-3 rounded-xl ml-1"
+									style={{ backgroundColor: color }}
+								/>
+							</div>
+						);
+					})}
 
-    {/* SOLO IN MODALITÀ TURNI — SELECT ALL / DESELECT ALL */}
-    {mode === "turni" && (
-        <>
-            <button
-                onClick={() => setSelectedDepartments([...departments])}
-                className={`
+				{/* SOLO IN MODALITÀ TURNI — SELECT ALL / DESELECT ALL */}
+				{mode === "turni" && (
+					<>
+						<button
+							onClick={() => setSelectedDepartments([...departments])}
+							className={`
                     px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm transition
                     ${
-                        isDark
-                            ? "text-white border-white/30 bg-white/10 hover:bg-white/20"
-                            : "text-white border-gray-900 bg-[#090c64] hover:bg-[#090c64]/70"
-                    }
+											isDark
+												? "text-white border-white/30 bg-white/10 hover:bg-white/20"
+												: "text-white border-gray-900 bg-[#090c64] hover:bg-[#090c64]/70"
+										}
                 `}
-            >
-                Seleziona tutti
-            </button>
+						>
+							Seleziona tutti
+						</button>
 
-            <button
-                onClick={() => setSelectedDepartments([])}
-                className={`
+						<button
+							onClick={() => setSelectedDepartments([])}
+							className={`
                     px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm transition
                     ${
-                        isDark
-                            ? "text-white border-white/30 bg-white/10 hover:bg-white/20"
-                            : "text-white border-gray-900 bg-[#090c64] hover:bg-[#090c64]/70"
-                    }
+											isDark
+												? "text-white border-white/30 bg-white/10 hover:bg-white/20"
+												: "text-white border-gray-900 bg-[#090c64] hover:bg-[#090c64]/70"
+										}
                 `}
-            >
-                Deseleziona tutti
-            </button>
-        </>
-    )}
+						>
+							Deseleziona tutti
+						</button>
+					</>
+				)}
 
-    {/* SELECT MODALITÀ — SEMPRE A DESTRA */}
-    <select
-        value={mode}
-        onChange={(e) => setMode(e.target.value)}
-        className={`
+				{/* SELECT MODALITÀ — SEMPRE A DESTRA */}
+				<select
+					value={mode}
+					onChange={(e) => setMode(e.target.value)}
+					className={`
 						ml-auto px-6 py-2 rounded-xl text-sm font-semibold border shadow-sm transition
 						${
 							isDark
@@ -492,13 +528,11 @@ const CalendarBox = () => {
 								: "text-white border-gray-900 bg-[#090c64]"
 						}
 					`}
-    >
-        <option value="turni">Turni</option>
-        <option value="eventi">Eventi</option>
-    </select>
-
-</div>
-
+				>
+					<option value="turni">Turni</option>
+					<option value="eventi">Eventi</option>
+				</select>
+			</div>
 
 			{/* CALENDARIO */}
 			<div className="w-full min-h-[700px] flex justify-center">
