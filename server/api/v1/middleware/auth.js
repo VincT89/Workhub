@@ -1,4 +1,3 @@
-// server/api/v1/middleware/auth.js
 import { User } from "../../../db/index.js";
 import { verifyAccessToken } from "../../../utils/auth.js";
 import { handleRouteErrors } from "../../../utils/error.js";
