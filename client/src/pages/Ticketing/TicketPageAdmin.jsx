@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { ListMagnifyingGlass, Pencil, CalendarDots, UserList, Circle } from "@phosphor-icons/react";
 import { LineChart } from "@mui/x-charts/LineChart";
-import { Button } from "@mui/material";
 
 
 const TicketPageAdmin = () => {
@@ -139,7 +138,18 @@ const TicketPageAdmin = () => {
     );
   };
 
-
+  // Totali per la leggenda
+  const totals = useMemo(() => {
+    return lineChartData.reduce(
+      (acc, item) => {
+        acc.aperti += item.aperti;
+        acc.risolti += item.risolti;
+        acc.totale += item.totale;
+        return acc;
+      },
+      { aperti: 0, risolti: 0, totale: 0 }
+    );
+  }, [lineChartData]);
 
   /* COLORI DELLE CARD IN LISTA */
   const getColor = (status) => {
@@ -227,19 +237,14 @@ const TicketPageAdmin = () => {
               <span
                 key={key}
                 onClick={() => toggleLine(key)}
-                className={`
-                cursor-pointer px-3 py-1 rounded-full text-sm border transition
-                ${hiddenLines.includes(key) ? "opacity-40" : "opacity-100"}
-              `}
+                className={`cursor-pointer px-3 py-1 rounded-full text-sm border transition ${hiddenLines.includes(key) ? "opacity-40" : "opacity-100"}`}
               >
-                ● {key}
+              {key} ({totals[key]})
               </span>
             ))}
           </div>
 
-
-
-          {/* CONFIGURAZIONE DEL GRAFICO */}
+          {/* GRAFICO */}
           <LineChart
             dataset={lineChartData}
             xAxis={[{ dataKey: "date", scaleType: "band" }]}
@@ -248,7 +253,7 @@ const TicketPageAdmin = () => {
               { dataKey: "aperti", label: "Aperti", color: "#3B82F6" },
               { dataKey: "risolti", label: "Risolti", color: "#F59E0B" },
               { dataKey: "totale", label: "Totale", color: "#111" }
-            ].filter(s => !hiddenLines.includes(s.dataKey))} // Nasconde le linee selezionate
+            ].filter(s => !hiddenLines.includes(s.dataKey))}
             height={500}
           />
         </div>
