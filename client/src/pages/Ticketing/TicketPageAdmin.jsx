@@ -9,6 +9,7 @@ const TicketPageAdmin = () => {
 
   const [tickets, setTickets] = useState([]);      // Lista ticket caricati dal server
   const [users, setUsers] = useState([]);          // Lista utenti caricati
+  
 
   // Filtri lato UI
   const [startDate, setStartDate] = useState("");
@@ -227,7 +228,9 @@ const TicketPageAdmin = () => {
       <div className="flex flex-col lg:flex-row gap-6">
 
         {/* GRAFICO ANDAMENTO TICKET*/}
-        <div className="w-full lg:w-1/2 bg-white rounded-xl shadow p-6 sticky top-6 h-fit">
+        <div className="w-full lg:w-1/2 bg-white rounded-xl shadow p-6 sticky top-6 h-fit"
+        style={{ minHeight: '733px' }} 
+        >
           <h2 className="font-bold text-2xl mb-4 text-[#090c64]">
             Andamento Ticket
           </h2>
@@ -239,7 +242,7 @@ const TicketPageAdmin = () => {
                 onClick={() => toggleLine(key)}
                 className={`cursor-pointer px-3 py-1 rounded-full text-sm border transition ${hiddenLines.includes(key) ? "opacity-40" : "opacity-100"}`}
               >
-              {key} ({totals[key]})
+                {key} ({totals[key]})
               </span>
             ))}
           </div>
@@ -255,6 +258,21 @@ const TicketPageAdmin = () => {
               { dataKey: "totale", label: "Totale", color: "#111" }
             ].filter(s => !hiddenLines.includes(s.dataKey))}
             height={500}
+
+            // ----> Qui gestiamo il click sul punto
+            onPointClick={(point) => {
+              // 'point' contiene la serie e la data
+              const clickedDate = point.x; // assume corrisponde a lineChartData.date
+              // Filtra i ticket del giorno cliccato
+              const ticketsOnDate = filteredTickets.filter(t => t.date.split("T")[0] === clickedDate);
+              console.log("Tickets del giorno selezionato:", ticketsOnDate);
+
+              if (ticketsOnDate.length > 0) {
+                // Seleziona il primo ticket come esempio
+                setSelectedTicket(ticketsOnDate[0]);
+                setDrawerOpen(true);
+              }
+            }}
           />
         </div>
 
