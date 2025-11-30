@@ -7,22 +7,22 @@ const TicketPageAdmin = () => {
 
   /* STATI PRINCIPALI */
 
-  const [tickets, setTickets] = useState([]);      // Lista ticket caricati dal server
-  const [users, setUsers] = useState([]);          // Lista utenti caricati
-  
-
+  // Lista ticket caricati dal server
+  const [tickets, setTickets] = useState([]);  
+  // Lista utenti caricati    
+  const [users, setUsers] = useState([]);          
   // Filtri lato UI
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedUser, setSelectedUser] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
-
   // Drawer laterale
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
-
   // Stato dei ticket ("aperto" / "risolto")
   const [ticketStatus, setTicketStatus] = useState({});
+   // Vista grafico: daily | weekly | monthly
+  const [hiddenLines, setHiddenLines] = useState([]);
 
 
   /* CARICAMENTO DATI REALI (FAKE API)
@@ -84,23 +84,15 @@ const TicketPageAdmin = () => {
     });
 
 
-  /* FILTRAGGIO TICKET (memoized)*/
+  /* FILTRAGGIO TICKET */
   const filteredTickets = useMemo(() => {
     return tickets.filter(ticket => {
       const ticketDate = new Date(ticket.date);
       const start = startDate ? new Date(startDate) : null;
       const end = endDate ? new Date(endDate) : null;
-
-      const matchDate =
-        (!start || ticketDate >= start) &&
-        (!end || ticketDate <= end);
-
-      const matchUser =
-        !selectedUser || ticket.user.id === selectedUser;
-
-      const matchStatus =
-        !selectedStatus || ticketStatus[ticket.id] === selectedStatus;
-
+      const matchDate = (!start || ticketDate >= start) && (!end || ticketDate <= end);
+      const matchUser = !selectedUser || ticket.user.id === selectedUser;
+      const matchStatus = !selectedStatus || ticketStatus[ticket.id] === selectedStatus;
       return matchDate && matchUser && matchStatus;
     });
   }, [tickets, startDate, endDate, selectedUser, selectedStatus, ticketStatus]);
@@ -129,9 +121,18 @@ const TicketPageAdmin = () => {
 
     return Object.values(grouped);
   }, [filteredTickets, ticketStatus]);
-  /////////////////////
 
-  const [hiddenLines, setHiddenLines] = useState([]);
+
+  /* TOTALI PER LEGENDA */
+  const totals = useMemo(() => {
+    const t = { aperti:0, risolti:0, totale:0 };
+    lineChartData.forEach(d => {
+      t.aperti += d.aperti;
+      t.risolti += d.risolti;
+      t.totale += d.totale;
+    });
+    return t;
+  }, [lineChartData]);
 
   const toggleLine = (key) => {
     setHiddenLines(prev =>
@@ -139,31 +140,14 @@ const TicketPageAdmin = () => {
     );
   };
 
-  // Totali per la leggenda
-  const totals = useMemo(() => {
-    return lineChartData.reduce(
-      (acc, item) => {
-        acc.aperti += item.aperti;
-        acc.risolti += item.risolti;
-        acc.totale += item.totale;
-        return acc;
-      },
-      { aperti: 0, risolti: 0, totale: 0 }
-    );
-  }, [lineChartData]);
-
-  /* COLORI DELLE CARD IN LISTA */
   const getColor = (status) => {
-    switch (status) {
-      case "risolto":
-        return "bg-[#FFD580] hover:bg-[#FFE8A0]";
-      default:
-        return "bg-[#A3B8E0] hover:bg-[#C3D2F0]";
+    switch(status){
+      case "risolto": return "bg-[#FFD580] hover:bg-[#FFE8A0]";
+      default: return "bg-[#A3B8E0] hover:bg-[#C3D2F0]";
     }
   };
 
-
-  /* RENDER PRINCIPALE*/
+  /* RENDER PRINCIPALE */
   return (
     <div className="min-h-screen p-6 bg-[#fafafa20] rounded-xl">
 
@@ -231,9 +215,7 @@ const TicketPageAdmin = () => {
         <div className="w-full lg:w-1/2 bg-white rounded-xl shadow p-6 sticky top-6 h-fit"
         style={{ minHeight: '733px' }} 
         >
-          <h2 className="font-bold text-2xl mb-4 text-[#090c64]">
-            Andamento Ticket
-          </h2>
+          <h2 className="font-bold text-2xl mb-4 text-[#090c64]"> Andamento Ticket</h2>
           {/* LEGENDA CLICCABILE */}
           <div className="flex gap-4 mb-4">
             {["aperti", "risolti", "totale"].map(key => (
