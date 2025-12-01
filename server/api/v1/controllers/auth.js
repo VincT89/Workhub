@@ -104,6 +104,7 @@ export const register = async (req, res) => {
     lastName: Joi.string().required(),
 
     role: Joi.string().valid("admin", "user").default("user"),
+    department: Joi.string().optional(),
 
     password: Joi.string().min(6).optional(), // se manca → generata automaticamente
     isGeneratedPassword: Joi.boolean().optional(),
@@ -131,6 +132,7 @@ export const register = async (req, res) => {
       firstName,
       lastName,
       role,
+      department,
       password,
       isGeneratedPassword,
       personnelNumber,
@@ -179,6 +181,7 @@ export const register = async (req, res) => {
       firstName,
       lastName,
       role,
+      department,
       personnelNumber,
       phone,
       workplace,
