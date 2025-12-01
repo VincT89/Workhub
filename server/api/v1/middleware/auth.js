@@ -40,6 +40,10 @@ export const authUser = async (req, res, next) => {
 
     // Metto l'utente sulla request per i controller successivi
     req.user = user;
+    req.token = {
+      accessToken: token,
+      decoded,
+    }
     next();
   } catch (error) {
     return handleRouteErrors(res, { error });
