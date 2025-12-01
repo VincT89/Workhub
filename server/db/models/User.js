@@ -35,6 +35,10 @@ const UserSchema = new Schema(
 			enum: ["user", "admin"],
 			default: "user",
 		},
+		department: {
+			type: String,
+			required: false,
+		},
 		isActive: {
 			type: Boolean,
 			default: true,
