@@ -67,6 +67,11 @@ export const login = async (req, res) => {
 				.json(formatResponse(null, false, "Invalid credentials"));
 		}
 
+    await userDoc.populate({
+      path: "workplace", // popola il campo workplace con i dati del workplace associato
+      select: "name location" // seleziona solo i campi name, location del workplace
+    }); 
+
 		const user = userDoc.toObject();
 		// Tolgo password dall'oggetto utente prima di inviarlo al client in modo da non far vedere l'hash
 		delete user.password;

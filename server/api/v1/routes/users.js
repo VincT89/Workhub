@@ -33,7 +33,7 @@ app.get("/:id", authUser, requireAdmin, getUserById); // solo admin dopo il path
  * PATCH /api/v1/users/:id
  * Solo admin (per ora)
  */
-app.patch("/:id", authUser, requireAdmin, updateUser); // solo admin dopo il path ci sono i middleware authUser e requireAdmin e poi il controller updateUser
+app.patch("/:id", authUser, updateUser); // solo admin dopo il path ci sono i middleware authUser e requireAdmin e poi il controller updateUser
 
 /**
  * DELETE /api/v1/users/:id

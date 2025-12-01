@@ -1,4 +1,3 @@
-// server/index.js
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
@@ -30,8 +29,7 @@ const PORT = process.env.SERVER_PORT || 3030;
 const startServer = async () => {
   try {
     await connectDb();
-    console.log("Connected to database");
-
+ 
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });

@@ -25,7 +25,7 @@ const UserEmployeePage = () => {
 
   useEffect(() => {
     if (!token) return;
-    dispatch(fetchPointsOfSalesAsync(token));
+    dispatch(fetchPointsOfSalesAsync({ token }));
   }, [token, dispatch]);
 
   useEffect(() => {
@@ -34,8 +34,18 @@ const UserEmployeePage = () => {
       return;
     }
     const found = pointsOfSale.find((p) => p._id === authUser.workplace);
-    setWorkplaceName(found ? found.name : "");
+    if (found) {
+      setWorkplaceName(`${found.name} – ${found.location?.city || ""}`);
+    } else if (typeof authUser.workplace === "object") {
+      setWorkplaceName(
+        `${authUser.workplace.name} – ${
+          authUser.workplace.location?.city || ""
+        }`
+      );
+    }
   }, [authUser, pointsOfSale]);
+
+  const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 
   const topButtons = [
     {
@@ -57,12 +67,14 @@ const UserEmployeePage = () => {
 
   const anagrafica = authUser
     ? {
-        nome: `${authUser.firstName || ""} ${authUser.lastName || ""}`.trim(),
+        nome: `${authUser.firstName || ""} ${
+          authUser.lastName || ""
+        }`.trim(),
         ruolo: authUser.department || "",
         matricola: authUser.personnelNumber ?? "",
         email: authUser.email || "",
         telefono: authUser.phone || "",
-        sede: workplaceName || authUser.workplace || "",
+        sede: workplaceName || "",
         contratto: authUser.contractType || "",
         dataAssunzione: authUser.hireDate
           ? new Date(authUser.hireDate).toLocaleDateString("it-IT")
@@ -103,7 +115,6 @@ const UserEmployeePage = () => {
   const [oraInizio, setOraInizio] = useState("08:00");
   const [oraFine, setOraFine] = useState("18:00");
 
-  const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
   const buttonClass = `
     mt-4 bg-[#090c64] text-white font-semibold px-6 py-3
     rounded-xl shadow-md cursor-pointer transition-all duration-200
@@ -147,11 +158,8 @@ const UserEmployeePage = () => {
         {topButtons.map((btn, i) => (
           <div
             key={i}
-            className={`
-              flex items-center justify-between rounded-xl px-4 py-3
-              backdrop-blur-sm border border-white/30 shadow-md
-              ${theme === "dark" ? "bg-white/20" : "bg-white/20"} ${textColor}
-            `}
+            className={`flex items-center justify-between rounded-xl px-4 py-3
+              backdrop-blur-sm border border-white/30 shadow-md ${textColor} bg-white/20`}
           >
             <div className="flex items-center gap-4">
               {btn.icon}
@@ -169,66 +177,40 @@ const UserEmployeePage = () => {
       {/* SEZIONE 2: ANAGRAFICA + TURNI */}
       <div className="flex gap-6">
         {/* ANAGRAFICA */}
-        <div
-          className={`flex-1 p-6 rounded-xl border border-white/30 shadow-md backdrop-blur-sm ${
-            theme === "dark" ? "bg-white/20" : "bg-white/20"
-          }`}
-        >
+        <div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
           <div className="flex items-center gap-3 mb-4">
             <UserCircle size={32} color="#090c64" weight="duotone" />
-            <h2 className={`text-lg font-bold leading-none ${textColor}`}>
+            <h2 className={`text-lg font-bold ${textColor}`}>
               {t("employees.anagrafica")}
             </h2>
           </div>
+
           <div className={`flex flex-col gap-2 ${textColor}`}>
-            <div>
-              <strong>{t("employees.nome")}:</strong> {anagrafica.nome}
-            </div>
-            <div>
-              <strong>{t("employees.ruolo")}:</strong> {anagrafica.ruolo}
-            </div>
-            <div>
-              <strong>{t("employees.matricola")}:</strong>{" "}
-              {anagrafica.matricola}
-            </div>
-            <div>
-              <strong>{t("employees.email")}:</strong> {anagrafica.email}
-            </div>
-            <div>
-              <strong>{t("employees.telefono")}:</strong>{" "}
-              {anagrafica.telefono}
-            </div>
-            <div>
-              <strong>{t("employees.sede")}:</strong> {anagrafica.sede}
-            </div>
-            <div>
-              <strong>{t("employees.contratto")}:</strong>{" "}
-              {anagrafica.contratto}
-            </div>
-            <div>
-              <strong>{t("employees.dataAssunzione")}:</strong>{" "}
-              {anagrafica.dataAssunzione}
-            </div>
+            <div><strong>{t("employees.nome")}:</strong> {anagrafica.nome}</div>
+            <div><strong>{t("employees.ruolo")}:</strong> {anagrafica.ruolo}</div>
+            <div><strong>{t("employees.matricola")}:</strong> {anagrafica.matricola}</div>
+            <div><strong>{t("employees.email")}:</strong> {anagrafica.email}</div>
+            <div><strong>{t("employees.telefono")}:</strong> {anagrafica.telefono}</div>
+            <div><strong>{t("employees.sede")}:</strong> {anagrafica.sede}</div>
+            <div><strong>{t("employees.contratto")}:</strong> {anagrafica.contratto}</div>
+            <div><strong>{t("employees.dataAssunzione")}:</strong> {anagrafica.dataAssunzione}</div>
           </div>
         </div>
 
         {/* TURNI */}
-        <div
-          className={`flex-1 p-6 rounded-xl border border-white/30 shadow-md backdrop-blur-sm ${
-            theme === "dark" ? "bg-white/20" : "bg-white/20"
-          }`}
-        >
+        <div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
           <div className="flex items-center gap-3 mb-4">
             <CalendarCheck size={32} color="#090c64" weight="duotone" />
-            <h2 className={`text-lg font-bold leading-none ${textColor}`}>
+            <h2 className={`text-lg font-bold ${textColor}`}>
               {t("employees.turniSettimanali")}
             </h2>
           </div>
+
           <div className={`flex flex-col gap-2 ${textColor}`}>
             {turni.map((tu, i) => (
               <div
                 key={i}
-                className="grid grid-cols-2 bg-white/40 dark:bg-white/20 rounded-xl p-2 shadow-sm"
+                className="grid grid-cols-2 bg-white/40 rounded-xl p-2 shadow-sm"
               >
                 <span className="font-semibold">{tu.giorno}</span>
                 <span>{tu.orario}</span>
@@ -241,15 +223,11 @@ const UserEmployeePage = () => {
       {/* SEZIONE 3: FERIE + PERMESSI */}
       <div className="flex gap-6 mb-6">
         {/* FERIE */}
-        <div
-          className={`flex-1 p-6 rounded-xl border border-white/30 shadow-md backdrop-blur-sm ${
-            theme === "dark" ? "bg-white/20" : "bg-white/20"
-          }`}
-        >
+        <div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <Bag size={32} color="#090c64" weight="duotone" />
-              <h2 className={`text-lg font-bold leading-none ${textColor}`}>
+              <h2 className={`text-lg font-bold ${textColor}`}>
                 {t("employees.ferie")}
               </h2>
             </div>
@@ -260,11 +238,12 @@ const UserEmployeePage = () => {
               {t("employees.richiestaFerie")}
             </button>
           </div>
+
           <div className={`flex flex-col gap-2 ${textColor}`}>
             {ferieList.map((f, i) => (
               <div
                 key={i}
-                className="grid grid-cols-2 bg-white/40 dark:bg-white/20 rounded-xl p-2 shadow-sm mt-1"
+                className="grid grid-cols-2 bg-white/40 rounded-xl p-2 shadow-sm mt-1"
               >
                 <span className="font-semibold">{formatDate(f.dal)}</span>
                 <span>{formatDate(f.al)}</span>
@@ -274,15 +253,11 @@ const UserEmployeePage = () => {
         </div>
 
         {/* PERMESSI */}
-        <div
-          className={`flex-1 p-6 rounded-xl border border-white/30 shadow-md backdrop-blur-sm ${
-            theme === "dark" ? "bg-white/20" : "bg-white/20"
-          }`}
-        >
+        <div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <CalendarCheck size={32} color="#090c64" weight="duotone" />
-              <h2 className={`text-lg font-bold leading-none ${textColor}`}>
+              <h2 className={`text-lg font-bold ${textColor}`}>
                 {t("employees.permessi")}
               </h2>
             </div>
@@ -293,11 +268,12 @@ const UserEmployeePage = () => {
               {t("employees.richiestaPermessi")}
             </button>
           </div>
+
           <div className={`flex flex-col gap-2 ${textColor}`}>
             {permessiList.map((p, i) => (
               <div
                 key={i}
-                className="grid grid-cols-2 bg-white/40 dark:bg-white/20 rounded-xl p-2 shadow-sm"
+                className="grid grid-cols-2 bg-white/40 rounded-xl p-2 shadow-sm"
               >
                 <span className="font-semibold">{formatDate(p.data)}</span>
                 <span>{p.orario}</span>
@@ -307,7 +283,7 @@ const UserEmployeePage = () => {
         </div>
       </div>
 
-      {/* DRAWER FERIE (tuo componente, design suo) */}
+      {/* DRAWER FERIE */}
       <Drawer
         open={openFerieDrawer}
         onClose={() => setOpenFerieDrawer(false)}
@@ -344,7 +320,7 @@ const UserEmployeePage = () => {
         </div>
       </Drawer>
 
-      {/* DRAWER PERMESSI (tuo componente) */}
+      {/* DRAWER PERMESSI */}
       <Drawer
         open={openPermessiDrawer}
         onClose={() => setOpenPermessiDrawer(false)}

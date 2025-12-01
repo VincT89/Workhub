@@ -5,7 +5,7 @@ const API_URL = "http://localhost:3030/api/v1";
 // === FETCH ALL POS ===
 export const fetchPointsOfSalesAsync = createAsyncThunk(
   "points/fetchAll",
-  async (token, { rejectWithValue }) => {
+  async ({ token }, { rejectWithValue }) => {
     try {
       const res = await fetch(`${API_URL}/pointsofsales`, {
         headers: {
