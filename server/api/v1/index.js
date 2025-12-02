@@ -4,6 +4,7 @@ import authRouter from "./routes/auth.js";
 import meRouter from "./routes/me.js";
 import eventsRouter from "./routes/events.js"; 
 import pointOfSalesRouter from "./routes/pointOfSales.js";
+import userShiftRouter from "./routes/userShift.js";
 
 const app = express.Router();
 
@@ -30,5 +31,9 @@ app.use("/events", eventsRouter);
 /** /api/v1/pointsofsales
  */
 app.use("/pointsofsales", pointOfSalesRouter);
+
+/** /api/v1/userShift
+ */
+app.use("/shift", userShiftRouter);
 
 export default app;
