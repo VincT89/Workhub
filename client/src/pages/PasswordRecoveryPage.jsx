@@ -8,7 +8,7 @@ import { recoverPasswordAsync } from "../store/feature/authSlice";
 
 import bgLight from "../assets/bg/bg.jpg";
 import bgDark from "../assets/bg/bgScuro.jpg";
-import { Sun, Moon } from "@phosphor-icons/react";
+import { SunIcon, MoonIcon } from "@phosphor-icons/react";
 
 const PasswordRecoveryPage = () => {
   const { theme, setTheme } = useTheme();
@@ -56,9 +56,9 @@ const PasswordRecoveryPage = () => {
             className="p-2 rounded-xl border border-white/30 hover:bg-[#1C62A0]/10"
           >
             {theme === "dark" ? (
-              <Moon size={30} color="white" weight="duotone" />
+              <MoonIcon size={30} color="white" weight="duotone" />
             ) : (
-              <Sun size={30} color="#090c64" weight="duotone" />
+              <SunIcon size={30} color="#090c64" weight="duotone" />
             )}
           </button>
         </div>

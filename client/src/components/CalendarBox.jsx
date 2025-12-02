@@ -18,7 +18,7 @@ const localizer = dateFnsLocalizer({
 	locales: { it },
 });
 
-/* UTILS per ottenere le iniziali */
+/* UTILS */
 const getInitials = (firstName, lastName) => {
 	if (!firstName && !lastName) return "?";
 	const f = firstName?.[0] ?? "";
