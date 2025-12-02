@@ -392,7 +392,7 @@ const CalendarBox = () => {
 		<div ref={wrapperRef} className="w-full flex flex-col">
 			{/* REPARTI */}
 			<div className="flex flex-wrap items-center gap-3 px-6 mt-4">
-				{/* FILTRI REPARTI — SOLO ADMIN & SUPERVISOR */}
+				{/* FILTRI REPARTI — SOLO ADMIN  */}
 				{mode === "turni" &&
 					loggedUser.role !== "user" &&
 					departments.map((dept) => {
@@ -439,7 +439,7 @@ const CalendarBox = () => {
 						);
 					})}
 
-				{/* SELEZIONA / DESELEZIONA — SOLO ADMIN & SUPERVISOR */}
+				{/* SELEZIONA / DESELEZIONA — SOLO ADMIN */}
 				{mode === "turni" && loggedUser.role !== "user" && (
 					<>
 						<button
