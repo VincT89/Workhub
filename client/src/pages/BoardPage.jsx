@@ -1,14 +1,28 @@
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 import CalendarBox from "../components/CalendarBox";
-import { Warehouse, ShoppingCartSimple, UserCircleCheck, ChalkboardSimple, Package, WarningOctagon, Calendar, NotePencil, Trash } from "@phosphor-icons/react";
+import {
+	Warehouse,
+	ShoppingCartSimple,
+	UserCircleCheck,
+	ChalkboardSimple,
+	Package,
+	WarningOctagon,
+	Calendar,
+	NotePencil,
+	Trash,
+} from "@phosphor-icons/react";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect, use } from "react";
-import { fetchEventsAsync, createEventAsync, updateEventAsync, deleteEventAsync } from "../store/feature/eventsSlice";
+import {
+	fetchEventsAsync,
+	createEventAsync,
+	updateEventAsync,
+	deleteEventAsync,
+} from "../store/feature/eventsSlice";
 import { fetchPointsOfSalesAsync } from "../store/feature/pointOfSalesSlice";
 import Table from "../components/Table";
 import Drawer from "../components/Drawer";
-
 
 const BoardPage = () => {
 	const { theme } = useTheme();
@@ -17,7 +31,6 @@ const BoardPage = () => {
 	const token = useSelector((state) => state.auth.token);
 	const users = useSelector((state) => state.users); // per richiamare i dati del personale (nelle box in alto)
 	const pointOfSales = useSelector((state) => state.pos); // per richiamare i dati dei depositi (nelle box in alto)
-
 
 	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 
@@ -35,13 +48,12 @@ const BoardPage = () => {
 		_id: event._id,
 		title: event.title,
 		date: event.startDate ? event.startDate.slice(0, 10) : "",
-		description: event.description || ""
+		description: event.description || "",
 	}));
 
-const boardColumns = ["Titolo", "Data", "Descrizione"];
+	const boardColumns = ["Titolo", "Data", "Descrizione"];
 
-
-	// State per il Drawer 
+	// State per il Drawer
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [editData, setEditData] = useState(null);
 
@@ -58,7 +70,7 @@ const boardColumns = ["Titolo", "Data", "Descrizione"];
 
 	// Apre drawer per aggiungere
 	const openDrawerAdd = () => {
-		setEditData({  _id: null, title: "", date: "", description: "" });
+		setEditData({ _id: null, title: "", date: "", description: "" });
 		setDrawerOpen(true);
 	};
 
@@ -70,7 +82,7 @@ const boardColumns = ["Titolo", "Data", "Descrizione"];
 			title: editData.title,
 			startDate: editData.date,
 			endDate: editData.date,
-			description: editData.description
+			description: editData.description,
 		};
 
 		if (editData._id) {
@@ -84,12 +96,12 @@ const boardColumns = ["Titolo", "Data", "Descrizione"];
 	};
 
 	const handleDelete = (row) => {
-		if(window.confirm(`Sei sicuro di voler eliminare l'evento "${row.title}"?`)) {
+		if (
+			window.confirm(`Sei sicuro di voler eliminare l'evento "${row.title}"?`)
+		) {
 			dispatch(deleteEventAsync(row._id));
 		}
 	};
-
-	
 
 	return (
 		<div
@@ -200,20 +212,30 @@ const boardColumns = ["Titolo", "Data", "Descrizione"];
 							columns={boardColumns}
 							actionLabel={"Actions"}
 							actions={
-								role === "admin" ?
-								[
-								{
-									name: "edit",
-									icon: <NotePencil size={28} color="#090c64" weight="duotone" className="mr-4" />,
-									onClick: openDrawerEdit
-								},
-								{
-									name: "delete",
-									icon: <Trash size={28} color="#ff0000" weight="duotone"  />,
-									onClick: handleDelete
-								}
-							]
-							: []}
+								role === "admin"
+									? [
+											{
+												name: "edit",
+												icon: (
+													<NotePencil
+														size={28}
+														color="#090c64"
+														weight="duotone"
+														className="mr-4"
+													/>
+												),
+												onClick: openDrawerEdit,
+											},
+											{
+												name: "delete",
+												icon: (
+													<Trash size={28} color="#ff0000" weight="duotone" />
+												),
+												onClick: handleDelete,
+											},
+									  ]
+									: []
+							}
 						/>
 					</div>
 				</div>
@@ -274,7 +296,6 @@ const boardColumns = ["Titolo", "Data", "Descrizione"];
 			>
 				{editData && (
 					<form onSubmit={handleSavePost} className="flex flex-col gap-4">
-
 						<div className="flex flex-col">
 							<label className="text-sm font-bold">Titolo</label>
 							<input
@@ -314,11 +335,9 @@ const boardColumns = ["Titolo", "Data", "Descrizione"];
 								Salva
 							</button>
 						</div>
-
 					</form>
 				)}
 			</Drawer>
-
 		</div>
 	);
 };

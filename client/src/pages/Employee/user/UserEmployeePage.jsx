@@ -121,34 +121,32 @@ const UserEmployeePage = () => {
     { key: "saturday", label: dayMap.saturday },
   ];
 
-  // Turni esistenti derivati dal documento userShifts
+  // UNIONE TURNI MATTINA + POMERIGGIO IN UNA SOLA RIGA
   const existingShifts = useMemo(() => {
     if (!userShifts?.shifts) return [];
 
-    const result = [];
-    weekDays.forEach((day) => {
-      const dayData = userShifts.shifts[day.key] || {};
-      if (dayData.morning) {
-        result.push({
+    return weekDays
+      .map((day) => {
+        const d = userShifts.shifts[day.key] || {};
+
+        const morning = d.morning ? "08:00 - 13:00" : "";
+        const afternoon = d.afternoon ? "14:00 - 18:00" : "";
+
+        if (!morning && !afternoon) return null;
+
+        return {
           dayKey: day.key,
           labelDay: day.label,
-          start: "08:00",
-          end: "13:00",
-        });
-      }
-      if (dayData.afternoon) {
-        result.push({
-          dayKey: day.key,
-          labelDay: day.label,
-          start: "14:00",
-          end: "18:00",
-        });
-      }
-    });
-    return result;
+          hours:
+            morning && afternoon
+              ? `${morning} / ${afternoon}`
+              : morning || afternoon,
+        };
+      })
+      .filter(Boolean);
   }, [userShifts, weekDays]);
 
-  // MOCK ferie/permessi personali
+  // MOCK ferie/permessi
   const [ferieList, setFerieList] = useState([
     { dal: "2025-12-30", al: "2026-01-07" },
   ]);
@@ -206,7 +204,7 @@ const UserEmployeePage = () => {
 
   return (
     <div className="relative w-full h-full flex flex-col gap-8 overflow-y-auto p-2">
-      {/* SEZIONE 1: BOX RIASSUNTIVI */}
+      {/* SEZIONE 1 */}
       <section className="grid grid-cols-3 gap-6 mb-6 w-full transition-colors duration-500">
         {topButtons.map((btn, i) => (
           <div
@@ -227,7 +225,7 @@ const UserEmployeePage = () => {
         ))}
       </section>
 
-      {/* SEZIONE 2: ANAGRAFICA + TURNI */}
+      {/* SEZIONE 2 */}
       <div className="flex gap-6">
         {/* ANAGRAFICA */}
         <div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
@@ -270,7 +268,7 @@ const UserEmployeePage = () => {
           </div>
         </div>
 
-        {/* TURNI (solo visualizzazione per USER) */}
+        {/* TURNI */}
         <div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
           <div className="flex items-center gap-3 mb-4">
             <CalendarCheck size={32} color="#090c64" weight="duotone" />
@@ -294,20 +292,18 @@ const UserEmployeePage = () => {
 
             {existingShifts.map((shift, i) => (
               <div
-                key={`${shift.dayKey}_${shift.start}_${i}`}
+                key={`${shift.dayKey}_${i}`}
                 className="grid grid-cols-2 bg-white/40 rounded-xl p-2 shadow-sm mt-3"
               >
                 <span className="font-semibold">{shift.labelDay}</span>
-                <span className="text-right">
-                  {shift.start} - {shift.end}
-                </span>
+                <span className="text-right">{shift.hours}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* SEZIONE 3: FERIE + PERMESSI (mock) */}
+      {/* SEZIONE 3 */}
       <div className="flex gap-6 mb-6">
         {/* FERIE */}
         <div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
