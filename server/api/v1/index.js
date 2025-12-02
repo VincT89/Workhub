@@ -2,7 +2,6 @@ import express from "express";
 import userRouter from "./routes/users.js";
 import authRouter from "./routes/auth.js";
 import meRouter from "./routes/me.js";
-import eventsRouter from "./routes/events.js"; 
 import pointOfSalesRouter from "./routes/pointOfSales.js";
 import userShiftRouter from "./routes/userShift.js";
 
@@ -22,11 +21,6 @@ app.use("/auth", authRouter);
  * /api/v1/me
  */
 app.use("/me", meRouter);
-
-/**
- * /api/v1/events
- */
-app.use("/events", eventsRouter);
 
 /** /api/v1/pointsofsales
  */

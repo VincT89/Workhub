@@ -32,12 +32,12 @@ const SHIFT_HOURS = {
 };
 
 const weekOffset = {
-	"Lunedì": 0,
-	"Martedì": 1,
-	"Mercoledì": 2,
-	"Giovedì": 3,
-	"Venerdì": 4,
-	"Sabato": 5,
+	Lunedì: 0,
+	Martedì: 1,
+	Mercoledì: 2,
+	Giovedì: 3,
+	Venerdì: 4,
+	Sabato: 5,
 };
 
 /* TOOLBAR */
@@ -86,7 +86,6 @@ const CustomToolbar = ({ label, view, onView, onNavigate }) => (
 
 /* MAIN COMPONENT */
 const CalendarBox = () => {
-
 	const { theme } = useTheme();
 	const isDark = theme === "dark";
 
@@ -153,7 +152,8 @@ const CalendarBox = () => {
 
 		// turni reali
 		shifts.forEach((shiftDoc) => {
-			const empId = typeof shiftDoc.user === "string" ? shiftDoc.user : shiftDoc.user?._id;
+			const empId =
+				typeof shiftDoc.user === "string" ? shiftDoc.user : shiftDoc.user?._id;
 			const emp = employees.get(empId);
 			if (!emp) return;
 
@@ -183,9 +183,16 @@ const CalendarBox = () => {
 	/* COLORI REPARTO */
 	const roleColorMap = useMemo(() => {
 		const palette = [
-			"#6C8AE4", "#5EC2E0", "#A88EF0", "#F5A97F",
-			"#8DD0A6", "#7BB8E8", "#F97373", "#FACC15",
-			"#2DD4BF", "#4ADE80"
+			"#6C8AE4",
+			"#5EC2E0",
+			"#A88EF0",
+			"#F5A97F",
+			"#8DD0A6",
+			"#7BB8E8",
+			"#F97373",
+			"#FACC15",
+			"#2DD4BF",
+			"#4ADE80",
 		];
 
 		const map = {};
@@ -231,7 +238,11 @@ const CalendarBox = () => {
 
 			EmployeeList.forEach((e) => {
 				if (loggedUser.role === "user" && loggedUser.email !== e.email) return;
-				if (loggedUser.role !== "user" && !selectedDepartments.includes(e.department)) return;
+				if (
+					loggedUser.role !== "user" &&
+					!selectedDepartments.includes(e.department)
+				)
+					return;
 
 				e.turni.forEach((t) => {
 					const offset = weekOffset[t.giorno];
@@ -244,8 +255,20 @@ const CalendarBox = () => {
 						const [sh, sm] = range.split("-")[0].split(":").map(Number);
 						const [eh, em] = range.split("-")[1].split(":").map(Number);
 
-						const start = new Date(currentDay.getFullYear(), currentDay.getMonth(), currentDay.getDate(), sh, sm);
-						const end = new Date(currentDay.getFullYear(), currentDay.getMonth(), currentDay.getDate(), eh, em);
+						const start = new Date(
+							currentDay.getFullYear(),
+							currentDay.getMonth(),
+							currentDay.getDate(),
+							sh,
+							sm
+						);
+						const end = new Date(
+							currentDay.getFullYear(),
+							currentDay.getMonth(),
+							currentDay.getDate(),
+							eh,
+							em
+						);
 
 						result.push({
 							id: `${e.id}-${t.giorno}-${idx}-${w}`,
@@ -266,19 +289,28 @@ const CalendarBox = () => {
 		return view === "month" ? mergeMonthly(result) : result;
 	}, [EmployeeList, loggedUser, selectedDepartments, view]);
 
-	/* EVENTI AZIENDALI */
+	/* EVENTI AZIENDALI CON ORARIO 08:00 - 13:00 */
 	const eventiAziendali = useMemo(() => {
-		return (eventsData || []).map((ev) => ({
-			id: ev._id,
-			title: ev.title,
-			fullName: "Evento aziendale",
-			department: "Eventi",
-			orario: "",
-			start: new Date(ev.startDate),
-			end: new Date(ev.endDate),
-			type: "event",
-			color: "#F59E0B",
-		}));
+		return (eventsData || []).map((ev) => {
+			//  orari fissi
+			const start = new Date(ev.startDate);
+			start.setHours(8, 0, 0, 0); // 08:00
+
+			const end = new Date(ev.endDate);
+			end.setHours(13, 0, 0, 0); // 13:00
+
+			return {
+				id: ev._id,
+				title: ev.title,
+				fullName: "Evento aziendale",
+				department: "Eventi",
+				orario: "08:00-13:00",
+				start,
+				end,
+				type: "event",
+				color: "#F59E0B",
+			};
+		});
 	}, [eventsData]);
 
 	const eventi = mode === "turni" ? eventiTurni : eventiAziendali;
@@ -289,7 +321,7 @@ const CalendarBox = () => {
 			backgroundColor: event.color,
 			color: "white",
 			borderRadius: "10px",
-			padding: expandedId === event.id ? "7px" : "3px 5px",
+			padding: expandedId === event.id ? "10px" : "6px 10px",
 			fontSize: expandedId === event.id ? "15px" : "13px",
 			transform: expandedId === event.id ? "scale(1.05)" : "scale(1)",
 			transition: "all .18s ease",
@@ -339,9 +371,7 @@ const CalendarBox = () => {
 		return (
 			<div className="flex flex-col gap-1 select-none">
 				<div className="flex items-center gap-2">
-					<div
-						className="w-10 h-7 rounded-xl flex items-center justify-center text-[12px] font-bold bg-black/20"
-					>
+					<div className="w-10 h-7 rounded-xl flex items-center justify-center text-[12px] font-bold bg-black/20">
 						{event.title}
 					</div>
 				</div>
@@ -362,7 +392,9 @@ const CalendarBox = () => {
 		<div ref={wrapperRef} className="w-full flex flex-col">
 			{/* REPARTI */}
 			<div className="flex flex-wrap items-center gap-3 px-6 mt-4">
+				{/* FILTRI REPARTI — SOLO ADMIN & SUPERVISOR */}
 				{mode === "turni" &&
+					loggedUser.role !== "user" &&
 					departments.map((dept) => {
 						const active = selectedDepartments.includes(dept);
 						const color = getDepartmentColor(dept);
@@ -378,17 +410,21 @@ const CalendarBox = () => {
 									)
 								}
 								className={`
-									flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer select-none
-									text-sm font-semibold border shadow-sm transition-all
-									${active ? "text-white" : "text-[#090c64] bg-white/70"}
-								`}
+                        flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer select-none
+                        text-sm font-semibold border shadow-sm transition-all
+                        ${active ? "text-white" : "text-[#090c64] bg-white/70"}
+                    `}
 								style={{ backgroundColor: active ? color : undefined }}
 							>
 								<div
 									className={`
-										w-4 h-4 rounded flex items-center justify-center text-xs font-bold
-										${active ? "bg-white text-black" : "border border-current"}
-									`}
+                            w-4 h-4 rounded flex items-center justify-center text-xs font-bold
+                            ${
+															active
+																? "bg-white text-black"
+																: "border border-current"
+														}
+                        `}
 								>
 									{active ? "✓" : ""}
 								</div>
@@ -403,7 +439,8 @@ const CalendarBox = () => {
 						);
 					})}
 
-				{mode === "turni" && (
+				{/* SELEZIONA / DESELEZIONA — SOLO ADMIN & SUPERVISOR */}
+				{mode === "turni" && loggedUser.role !== "user" && (
 					<>
 						<button
 							onClick={() => setSelectedDepartments([...departments])}
@@ -421,6 +458,7 @@ const CalendarBox = () => {
 					</>
 				)}
 
+				{/* SELECT MODE — SEMPRE VISIBILE */}
 				<select
 					value={mode}
 					onChange={(e) => setMode(e.target.value)}

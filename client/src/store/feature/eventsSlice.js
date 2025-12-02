@@ -1,169 +1,131 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-const API_URL = "http://localhost:3030/api/v1/events";
+/**
+ * EVENTI FINTI INIZIALI
+ */
+const initialFakeEvents = [
+  {
+    _id: "1",
+    title: "Riunione generale",
+    startDate: "2025-02-10",
+    endDate: "2025-02-10",
+    description: "Briefing aziendale",
+  },
+  {
+    _id: "2",
+    title: "Controllo inventario",
+    startDate: "2025-02-15",
+    endDate: "2025-02-15",
+    description: "Inventario magazzino",
+  },
+];
 
-// GET tutti gli eventi
+/**
+ * FETCH  
+ */
 export const fetchEventsAsync = createAsyncThunk(
-    "events/fetchEvents",
-    async (_, { getState, rejectWithValue }) => { // metodo getState per accedere allo stato corrente e rejectWithValue per gestire gli errori, invece si mette _ quando non ci sono argomenti da passare
-        try {
-            const token = getState().auth.token;
-            if (!token) {
-                return rejectWithValue("Token mancante. Effettua il login.");
-            }
-
-            const res = await fetch(API_URL, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            const data = await res.json();
-            if (!res.ok) {
-                return rejectWithValue(data.message || "Errore nel recupero eventi.");
-            }
-            return data.data;
-        } catch (error) {
-            return rejectWithValue(error.message || "Errore nel recupero eventi.");
-        }
-    }
+  "events/fetchEvents",
+  async () => {
+    // simuliamo una risposta immediata del "server"
+    return initialFakeEvents;
+  }
 );
 
-// CREATE evento - solo admin
+/**
+ * CREATE 
+ */
 export const createEventAsync = createAsyncThunk(
-    "events/createEvent",
-    async (eventData, { getState, rejectWithValue }) => {
-        try {
-            const token = getState().auth.token;
-            if (!token) {
-                return rejectWithValue("Token mancante. Effettua il login.");
-            }
-
-            const res = await fetch(API_URL, {
-                method: "POST",
-                headers: { 
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(eventData),
-            });
-            const data = await res.json();
-            if (!res.ok) {
-                return rejectWithValue(data.message || "Errore nella creazione dell'evento.");
-            }
-            return data.data;
-        } catch (error) {
-            return rejectWithValue(error.message || "Errore nella creazione dell'evento.");
-        }
-    }
+  "events/createEvent",
+  async (eventData) => {
+    const newEvent = {
+      _id: Date.now().toString(),
+      ...eventData,
+    };
+    return newEvent;
+  }
 );
 
-// UPDATE evento - solo admin
+/**
+ * UPDATE 
+ *  BoardPage chiama: updateEventAsync({ id, data })
+ */
 export const updateEventAsync = createAsyncThunk(
-    "events/updateEvent",
-    async ({ id, updates }, { getState, rejectWithValue }) => {
-        try {
-            const token = getState().auth.token;
-            if (!token) {
-                return rejectWithValue("Token mancante. Effettua il login.");
-            }
-
-            const res = await fetch(`${API_URL}/${id}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(updates),
-            });
-            const data = await res.json();
-            if (!res.ok) {
-                return rejectWithValue(data.message || "Errore nell'aggiornamento dell'evento.");
-            }
-            return data.data;
-        } catch (error) {
-            return rejectWithValue(error.message || "Errore nell'aggiornamento dell'evento.");
-        }
-    }
+  "events/updateEvent",
+  async ({ id, data }) => {
+    // restituiamo l'evento aggiornato con lo stesso _id
+    return {
+      _id: id,
+      ...data,
+    };
+  }
 );
 
-// DELETE evento - solo admin
+/**
+ * DELETE 
+ */
 export const deleteEventAsync = createAsyncThunk(
-    "events/deleteEvent",
-    async (id, { getState, rejectWithValue }) => {
-        try {
-            const token = getState().auth.token;
-            if (!token) {
-                return rejectWithValue("Token mancante. Effettua il login.");
-            }
-
-            const res = await fetch(`${API_URL}/${id}`, {
-                method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            const data = await res.json();
-            if (!res.ok) {
-                return rejectWithValue(data.message || "Errore nella cancellazione dell'evento.");
-            }
-            return id;
-        } catch (error) {
-            return rejectWithValue(error.message || "Errore nella cancellazione dell'evento.");
-        }
-    }
+  "events/deleteEvent",
+  async (id) => {
+    return id;
+  }
 );
 
-// Slice eventi
+/**
+ * SLICE
+ */
 const eventsSlice = createSlice({
-    name: "events",
-    initialState: {
-        events: [],
-        loading: false,
-        error: null,
-    },
-    reducers: {},
-    extraReducers: (builder) => {
-        builder
-            // FETCH
-            .addCase(fetchEventsAsync.pending, (state, action) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchEventsAsync.fulfilled, (state, action) => {
-                state.loading = false;
-                state.events = action.payload || [];
-            })
-            .addCase(fetchEventsAsync.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-            })
-            // CREATE
-            .addCase(createEventAsync.fulfilled, (state, action) => {
-                state.events.push(action.payload);
-            })
-            .addCase(createEventAsync.rejected, (state, action) => {
-                state.error = action.payload;
-            })
-            // UPDATE
-            .addCase(updateEventAsync.fulfilled, (state, action) => {
-                const index = state.events.findIndex(event => event._id === action.payload._id);
-                if (index !== -1) {
-                    state.events[index] = action.payload;
-                }
-            })
-            .addCase(updateEventAsync.rejected, (state, action) => {
-                state.error = action.payload;
-            })
-            // DELETE
-            .addCase(deleteEventAsync.fulfilled, (state, action) => {
-                state.events = state.events.filter(event => event._id !== action.payload);
-            })
-            .addCase(deleteEventAsync.rejected, (state, action) => {
-                state.error = action.payload;
-            });
-    }
+  name: "events",
+  initialState: {
+    events: initialFakeEvents,
+    loading: false,
+    error: null,
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      // FETCH
+      .addCase(fetchEventsAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchEventsAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.events = action.payload || [];
+      })
+      .addCase(fetchEventsAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Errore fetch eventi (mock).";
+      })
+
+      // CREATE
+      .addCase(createEventAsync.fulfilled, (state, action) => {
+        state.events.push(action.payload);
+      })
+      .addCase(createEventAsync.rejected, (state, action) => {
+        state.error = action.payload || "Errore create eventi (mock).";
+      })
+
+      // UPDATE
+      .addCase(updateEventAsync.fulfilled, (state, action) => {
+        const updated = action.payload;
+        const index = state.events.findIndex((ev) => ev._id === updated._id);
+        if (index !== -1) {
+          state.events[index] = updated;
+        }
+      })
+      .addCase(updateEventAsync.rejected, (state, action) => {
+        state.error = action.payload || "Errore update eventi (mock).";
+      })
+
+      // DELETE
+      .addCase(deleteEventAsync.fulfilled, (state, action) => {
+        const id = action.payload;
+        state.events = state.events.filter((ev) => ev._id !== id);
+      })
+      .addCase(deleteEventAsync.rejected, (state, action) => {
+        state.error = action.payload || "Errore delete eventi (mock).";
+      });
+  },
 });
 
 export default eventsSlice.reducer;

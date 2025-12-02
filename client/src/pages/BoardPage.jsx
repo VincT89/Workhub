@@ -13,7 +13,7 @@ import {
 	Trash,
 } from "@phosphor-icons/react";
 import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import {
 	fetchEventsAsync,
 	createEventAsync,
@@ -39,9 +39,10 @@ const BoardPage = () => {
 	const events = useSelector((state) => state.events.events);
 
 	useEffect(() => {
-		if (!token) return;
-		dispatch(fetchEventsAsync(token));
-		dispatch(fetchPointsOfSalesAsync({ token }));
+		dispatch(fetchEventsAsync());
+		if (token) {
+			dispatch(fetchPointsOfSalesAsync({ token }));
+		}
 	}, [dispatch, token]);
 
 	const boardPosts = events.map((event) => ({
@@ -51,7 +52,7 @@ const BoardPage = () => {
 		description: event.description || "",
 	}));
 
-	const boardColumns = ["Titolo", "Data", "Descrizione"];
+	const boardColumns = ["title", "date", "description"];
 
 	// State per il Drawer
 	const [drawerOpen, setDrawerOpen] = useState(false);
