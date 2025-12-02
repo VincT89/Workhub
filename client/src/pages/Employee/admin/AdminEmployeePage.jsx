@@ -29,14 +29,12 @@ const AdminEmployeePage = () => {
 
   const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 
-  // ===== REDUX STATE =====
   const { list: employees = [], loading, error } =
     useSelector((state) => state.users || {}) || {};
   const { list: pointsOfSale = [] } =
     useSelector((state) => state.pos || {}) || {};
   const { token } = useSelector((state) => state.auth || {});
 
-  // ===== UI STATE =====
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [generatedPassword, setGeneratedPassword] = useState("");
   const [toastMessage, setToastMessage] = useState("");
@@ -47,14 +45,12 @@ const AdminEmployeePage = () => {
   const [editDrawerOpen, setEditDrawerOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
-  // ===== FETCH iniziali =====
   useEffect(() => {
     if (!token) return;
     dispatch(fetchUsersAsync(token));
     dispatch(fetchPointsOfSalesAsync({ token }));
   }, [dispatch, token]);
 
-  // ===== STATISTICHE =====
   const stats = [
     {
       label: t("employees.dipendentiAttivi"),
@@ -68,7 +64,6 @@ const AdminEmployeePage = () => {
     },
   ];
 
-  // ===== FILTRO + SORT =====
   const filteredEmployees = useMemo(() => {
     const s = search.toLowerCase();
     return employees
@@ -89,19 +84,16 @@ const AdminEmployeePage = () => {
       });
   }, [employees, search, sortAsc]);
 
-  // ===== Navigazione su AdminPage (solo click sul NOME) =====
   const openEmployeeDetails = (employee) => {
     navigate(`/personale/${employee._id}`);
   };
 
-  // ===== CREAZIONE DIPENDENTE =====
   const handleAddEmployee = async (e) => {
     e.preventDefault();
     if (!token) return;
 
     const form = e.target;
 
-    // Nome completo → firstName + lastName
     const fullName = form.nome.value.trim();
     const [firstName, ...rest] = fullName.split(" ");
     const lastName = rest.join(" ");
@@ -140,7 +132,6 @@ const AdminEmployeePage = () => {
     }
   };
 
-  // ===== APERTURA DRAWER MODIFICA =====
   const openEditDrawer = (employee) => {
     setSelectedEmployee({
       ...employee,
@@ -194,7 +185,6 @@ const AdminEmployeePage = () => {
     }
   };
 
-  // ===== ELIMINAZIONE =====
   const handleDeleteUser = async (employee) => {
     if (!token) return;
 
@@ -214,7 +204,7 @@ const AdminEmployeePage = () => {
 
   return (
     <div className="w-full h-full flex flex-col gap-8 overflow-y-auto p-4">
-      {/* ===== STATISTICHE + AGGIUNGI DIPENDENTE ===== */}
+      {/* STATISTICHE + AGGIUNGI DIPENDENTE */}
       <section className="grid grid-cols-3 gap-6 mb-2 w-full items-center">
         {stats.map((stat, i) => (
           <div
@@ -228,7 +218,6 @@ const AdminEmployeePage = () => {
           </div>
         ))}
 
-        {/* Bottone aggiungi */}
         <div
           onClick={() => setDrawerOpen(!drawerOpen)}
           className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 backdrop-blur-sm border border-white/30 shadow-md cursor-pointer font-bold"
@@ -238,7 +227,7 @@ const AdminEmployeePage = () => {
         </div>
       </section>
 
-      {/* ===== FORM CREAZIONE DIPENDENTE ===== */}
+      {/* FORM CREAZIONE DIPENDENTE */}
       {drawerOpen && (
         <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/30 shadow-md backdrop-blur-sm">
           <h3 className={`text-lg font-bold ${textColor}`}>
@@ -353,7 +342,7 @@ const AdminEmployeePage = () => {
         </div>
       )}
 
-      {/* ===== BARRA DI RICERCA ===== */}
+      {/* BARRA DI RICERCA */}
       <div className="flex items-center gap-2 mb-4">
         <input
           type="text"
@@ -370,7 +359,7 @@ const AdminEmployeePage = () => {
         </button>
       </div>
 
-      {/* ===== LISTA DIPENDENTI ===== */}
+      {/* LISTA DIPENDENTI */}
       <div className="p-6 flex flex-col gap-4 h-full rounded-xl border border-white/30 shadow-md backdrop-blur-sm">
         <h2 className={`text-lg font-bold ${textColor}`}>
           {t("employees.listaDipendenti")}
@@ -389,11 +378,11 @@ const AdminEmployeePage = () => {
               </tr>
             </thead>
 
-            <tbody>
+            <tbody >
               {filteredEmployees.map((e) => (
                 <tr
                   key={e._id}
-                  className="bg-white/40 hover:bg-white/70 transition"
+                  className="bg-white/30 hover:bg-white/70 transition rounded-xl"
                 >
                   <td className="py-2 flex justify-center">
                     <UserCircle size={34} color="#090c64" weight="duotone" />
@@ -433,10 +422,16 @@ const AdminEmployeePage = () => {
               )}
             </tbody>
           </table>
+
+          {error && (
+            <p className="mt-2 text-sm text-red-500 text-center">
+              {error}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* ===== DRAWER MODIFICA ===== */}
+      {/* DRAWER MODIFICA */}
       <Drawer
         open={editDrawerOpen}
         onClose={handleEditCancel}

@@ -2,7 +2,6 @@ import express from "express";
 import {
   getAllShifts,
   getShiftsByUser,
-  createShift,
   updateShift,
   deleteShift,
 } from "../controllers/userShift.js";
@@ -14,28 +13,27 @@ const router = express.Router();
 
 /**
  * GET /api/v1/userShift
- * Ritorna tutti i turni degli utenti.
+ * Ritorna tutti i turni degli utenti → SOLO ADMIN.
  */
 router.get("/", authUser, requireAdmin, getAllShifts);
 
 /**
  * GET /api/v1/userShift/:userId
- * Ritorna i turni di uno specifico utente.
+ * Ritorna i turni di uno specifico utente → USER o ADMIN.
+ * - USER vede solo i propri turni 
+ * - ADMIN può vedere qualsiasi utente 
  */
-router.get("/:userId", authUser, requireAdmin, getShiftsByUser);
+router.get("/:userId", authUser, getShiftsByUser);
 
-/** POST /api/v1/userShift
- * Crea un nuovo turno per un utente.
- */
-router.post("/", authUser, requireAdmin, createShift);
-
-/** PATCH /api/v1/userShift/:id
- * Aggiorna un turno esistente.
+/**
+ * PATCH /api/v1/userShift/:id
+ * Aggiorna un turno esistente → SOLO ADMIN.
  */
 router.patch("/:id", authUser, requireAdmin, updateShift);
 
-/** DELETE /api/v1/userShift/:id
- * Elimina un turno esistente.
+/**
+ * DELETE /api/v1/userShift/:id
+ * Elimina un turno esistente → SOLO ADMIN.
  */
 router.delete("/:id", authUser, requireAdmin, deleteShift);
 

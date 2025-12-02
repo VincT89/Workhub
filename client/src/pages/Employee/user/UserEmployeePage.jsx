@@ -6,10 +6,11 @@ import {
   Bag,
   CalendarBlank,
 } from "@phosphor-icons/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Drawer from "../../../components/Drawer";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchPointsOfSalesAsync } from "../../../store/feature/pointOfSalesSlice.js";
+import { fetchUserShiftsAsync } from "../../../store/feature/shiftsSlice.js";
 
 const UserEmployeePage = () => {
   const { theme } = useTheme();
@@ -21,12 +22,21 @@ const UserEmployeePage = () => {
   const { list: pointsOfSale = [] } =
     useSelector((state) => state.pos || {}) || {};
 
+  const {
+    current: userShifts,
+    loading: shiftsLoading,
+    error: shiftsError,
+  } = useSelector((state) => state.shifts || {}) || {};
+
   const [workplaceName, setWorkplaceName] = useState("");
 
   useEffect(() => {
     if (!token) return;
     dispatch(fetchPointsOfSalesAsync({ token }));
-  }, [token, dispatch]);
+    if (authUser?._id) {
+      dispatch(fetchUserShiftsAsync({ userId: authUser._id, token }));
+    }
+  }, [token, dispatch, authUser?._id]);
 
   useEffect(() => {
     if (!authUser?.workplace) {
@@ -65,22 +75,9 @@ const UserEmployeePage = () => {
     },
   ];
 
-  const anagrafica = authUser
-    ? {
-        nome: `${authUser.firstName || ""} ${
-          authUser.lastName || ""
-        }`.trim(),
-        ruolo: authUser.department || "",
-        matricola: authUser.personnelNumber ?? "",
-        email: authUser.email || "",
-        telefono: authUser.phone || "",
-        sede: workplaceName || "",
-        contratto: authUser.contractType || "",
-        dataAssunzione: authUser.hireDate
-          ? new Date(authUser.hireDate).toLocaleDateString("it-IT")
-          : "",
-      }
-    : {
+  const anagrafica = useMemo(() => {
+    if (!authUser) {
+      return {
         nome: "",
         ruolo: "",
         matricola: "",
@@ -90,14 +87,68 @@ const UserEmployeePage = () => {
         contratto: "",
         dataAssunzione: "",
       };
+    }
 
-  const turni = [
-    { giorno: t("employees.lunedi"), orario: "8:00 - 12:00" },
-    { giorno: t("employees.martedi"), orario: "10:00 - 12:00 / 15:00 - 18:30" },
-    { giorno: t("employees.mercoledi"), orario: "8:00 - 9:00" },
-    { giorno: t("employees.giovedi"), orario: "15:30 - 16:30" },
+    return {
+      nome: `${authUser.firstName || ""} ${authUser.lastName || ""}`.trim(),
+      ruolo: authUser.department || "",
+      matricola: authUser.personnelNumber ?? "",
+      email: authUser.email || "",
+      telefono: authUser.phone || "",
+      sede: workplaceName || "",
+      contratto: authUser.contractType || "",
+      dataAssunzione: authUser.hireDate
+        ? new Date(authUser.hireDate).toLocaleDateString("it-IT")
+        : "",
+    };
+  }, [authUser, workplaceName]);
+
+  const dayMap = {
+    monday: t("employees.lunedi") || "Lunedì",
+    tuesday: t("employees.martedi") || "Martedì",
+    wednesday: t("employees.mercoledi") || "Mercoledì",
+    thursday: t("employees.giovedi") || "Giovedì",
+    friday: t("employees.venerdi") || "Venerdì",
+    saturday: t("employees.sabato") || "Sabato",
+  };
+
+  const weekDays = [
+    { key: "monday", label: dayMap.monday },
+    { key: "tuesday", label: dayMap.tuesday },
+    { key: "wednesday", label: dayMap.wednesday },
+    { key: "thursday", label: dayMap.thursday },
+    { key: "friday", label: dayMap.friday },
+    { key: "saturday", label: dayMap.saturday },
   ];
 
+  // Turni esistenti derivati dal documento userShifts
+  const existingShifts = useMemo(() => {
+    if (!userShifts?.shifts) return [];
+
+    const result = [];
+    weekDays.forEach((day) => {
+      const dayData = userShifts.shifts[day.key] || {};
+      if (dayData.morning) {
+        result.push({
+          dayKey: day.key,
+          labelDay: day.label,
+          start: "08:00",
+          end: "13:00",
+        });
+      }
+      if (dayData.afternoon) {
+        result.push({
+          dayKey: day.key,
+          labelDay: day.label,
+          start: "14:00",
+          end: "18:00",
+        });
+      }
+    });
+    return result;
+  }, [userShifts, weekDays]);
+
+  // MOCK ferie/permessi personali
   const [ferieList, setFerieList] = useState([
     { dal: "2025-12-30", al: "2026-01-07" },
   ]);
@@ -151,6 +202,8 @@ const UserEmployeePage = () => {
     }
   };
 
+  if (!token || !authUser) return null;
+
   return (
     <div className="relative w-full h-full flex flex-col gap-8 overflow-y-auto p-2">
       {/* SEZIONE 1: BOX RIASSUNTIVI */}
@@ -186,18 +239,38 @@ const UserEmployeePage = () => {
           </div>
 
           <div className={`flex flex-col gap-2 ${textColor}`}>
-            <div><strong>{t("employees.nome")}:</strong> {anagrafica.nome}</div>
-            <div><strong>{t("employees.ruolo")}:</strong> {anagrafica.ruolo}</div>
-            <div><strong>{t("employees.matricola")}:</strong> {anagrafica.matricola}</div>
-            <div><strong>{t("employees.email")}:</strong> {anagrafica.email}</div>
-            <div><strong>{t("employees.telefono")}:</strong> {anagrafica.telefono}</div>
-            <div><strong>{t("employees.sede")}:</strong> {anagrafica.sede}</div>
-            <div><strong>{t("employees.contratto")}:</strong> {anagrafica.contratto}</div>
-            <div><strong>{t("employees.dataAssunzione")}:</strong> {anagrafica.dataAssunzione}</div>
+            <div>
+              <strong>{t("employees.nome")}:</strong> {anagrafica.nome}
+            </div>
+            <div>
+              <strong>{t("employees.ruolo")}:</strong> {anagrafica.ruolo}
+            </div>
+            <div>
+              <strong>{t("employees.matricola")}:</strong>{" "}
+              {anagrafica.matricola}
+            </div>
+            <div>
+              <strong>{t("employees.email")}:</strong> {anagrafica.email}
+            </div>
+            <div>
+              <strong>{t("employees.telefono")}:</strong>{" "}
+              {anagrafica.telefono}
+            </div>
+            <div>
+              <strong>{t("employees.sede")}:</strong> {anagrafica.sede}
+            </div>
+            <div>
+              <strong>{t("employees.contratto")}:</strong>{" "}
+              {anagrafica.contratto}
+            </div>
+            <div>
+              <strong>{t("employees.dataAssunzione")}:</strong>{" "}
+              {anagrafica.dataAssunzione}
+            </div>
           </div>
         </div>
 
-        {/* TURNI */}
+        {/* TURNI (solo visualizzazione per USER) */}
         <div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
           <div className="flex items-center gap-3 mb-4">
             <CalendarCheck size={32} color="#090c64" weight="duotone" />
@@ -206,21 +279,35 @@ const UserEmployeePage = () => {
             </h2>
           </div>
 
-          <div className={`flex flex-col gap-2 ${textColor}`}>
-            {turni.map((tu, i) => (
+          <div className={`flex flex-col ${textColor}`}>
+            {shiftsLoading && (
+              <p className="text-sm opacity-70">Caricamento turni...</p>
+            )}
+
+            {!shiftsLoading && existingShifts.length === 0 && (
+              <p className="text-sm opacity-70">Nessun turno assegnato.</p>
+            )}
+
+            {shiftsError && (
+              <p className="text-sm text-red-500">{shiftsError}</p>
+            )}
+
+            {existingShifts.map((shift, i) => (
               <div
-                key={i}
-                className="grid grid-cols-2 bg-white/40 rounded-xl p-2 shadow-sm"
+                key={`${shift.dayKey}_${shift.start}_${i}`}
+                className="grid grid-cols-2 bg-white/40 rounded-xl p-2 shadow-sm mt-3"
               >
-                <span className="font-semibold">{tu.giorno}</span>
-                <span>{tu.orario}</span>
+                <span className="font-semibold">{shift.labelDay}</span>
+                <span className="text-right">
+                  {shift.start} - {shift.end}
+                </span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* SEZIONE 3: FERIE + PERMESSI */}
+      {/* SEZIONE 3: FERIE + PERMESSI (mock) */}
       <div className="flex gap-6 mb-6">
         {/* FERIE */}
         <div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">

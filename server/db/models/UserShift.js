@@ -1,31 +1,33 @@
 import { Schema, model } from "mongoose";
 
+const DayShiftSchema = new Schema(
+  {
+    morning: { type: Boolean, default: false },
+    afternoon: { type: Boolean, default: false },
+  },
+  { _id: false }
+);
+
 const UserShiftSchema = new Schema(
   {
     user: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      index: true,
+      unique: true, // un solo documento turni per utente
     },
 
-    shiftDays: {
-      type: [String], // array di giorni della settimana
-      required: true,
-      default: [],
-    },
-
-    shiftHours: {
-      type: {
-        start: { type: String, required: true }, // "08:00" ora di inizio
-        end: { type: String, required: true },   // "18:00" ora di fine
-      },
-      required: true,
+    shifts: {
+      monday:    { type: DayShiftSchema, default: () => ({}) },
+      tuesday:   { type: DayShiftSchema, default: () => ({}) },
+      wednesday: { type: DayShiftSchema, default: () => ({}) },
+      thursday:  { type: DayShiftSchema, default: () => ({}) },
+      friday:    { type: DayShiftSchema, default: () => ({}) },
+      saturday:  { type: DayShiftSchema, default: () => ({}) },
     },
   },
   { strict: true, timestamps: true, versionKey: false }
 );
 
-const UserShift = model("UserShift", UserShiftSchema);
-
-export default UserShift;
+const UserShiftModel = model("UserShift", UserShiftSchema);
+export default UserShiftModel;

@@ -34,6 +34,6 @@ app.use("/pointsofsales", pointOfSalesRouter);
 
 /** /api/v1/userShift
  */
-app.use("/shift", userShiftRouter);
+app.use("/shifts", userShiftRouter);
 
 export default app;
