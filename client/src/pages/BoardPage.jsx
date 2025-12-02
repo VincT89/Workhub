@@ -5,14 +5,19 @@ import { Warehouse, ShoppingCartSimple, UserCircleCheck, ChalkboardSimple, Packa
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect, use } from "react";
 import { fetchEventsAsync, createEventAsync, updateEventAsync, deleteEventAsync } from "../store/feature/eventsSlice";
+import { fetchPointsOfSalesAsync } from "../store/feature/pointOfSalesSlice";
 import Table from "../components/Table";
 import Drawer from "../components/Drawer";
-import { de } from "date-fns/locale";
+
 
 const BoardPage = () => {
 	const { theme } = useTheme();
 	const { t } = useLanguage();
 	const { role } = useSelector((state) => state.auth.user);
+	const token = useSelector((state) => state.auth.token);
+	const users = useSelector((state) => state.users); // per richiamare i dati del personale (nelle box in alto)
+	const pointOfSales = useSelector((state) => state.pos); // per richiamare i dati dei depositi (nelle box in alto)
+
 
 	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 
@@ -21,8 +26,10 @@ const BoardPage = () => {
 	const events = useSelector((state) => state.events.events);
 
 	useEffect(() => {
-		dispatch(fetchEventsAsync());
-	}, [dispatch]);
+		if (!token) return;
+		dispatch(fetchEventsAsync(token));
+		dispatch(fetchPointsOfSalesAsync({ token }));
+	}, [dispatch, token]);
 
 	const boardPosts = events.map((event) => ({
 		_id: event._id,
@@ -31,7 +38,7 @@ const BoardPage = () => {
 		description: event.description || ""
 	}));
 
-const boardColumns = ["title", "date", "description"];
+const boardColumns = ["Titolo", "Data", "Descrizione"];
 
 
 	// State per il Drawer 
@@ -101,7 +108,7 @@ const boardColumns = ["title", "date", "description"];
 						<span className="font-bold text-[14px]">Depositi</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
-						5
+						{pointOfSales?.list?.length ?? 0}
 					</span>
 				</div>
 
@@ -157,7 +164,7 @@ const boardColumns = ["title", "date", "description"];
 						<span className="font-bold text-[14px] ">Personale attivo</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
-						50
+						{users?.list?.length ?? 0}
 					</span>
 				</div>
 			</div>

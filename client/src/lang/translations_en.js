@@ -80,6 +80,7 @@ export const en = {
     mercoledi: "Wednesday",
     giovedi: "Thursday",
     venerdi: "Friday",
+    sabato: "Saturday",
     richiestaFerie: "Leave Request",
     richiestaPermessi: "Permission Request",
     accetta: "Accept",
