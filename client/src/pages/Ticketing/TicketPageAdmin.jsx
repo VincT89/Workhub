@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import {
   ListMagnifyingGlass,
   Pencil,
@@ -20,9 +20,9 @@ const TicketPageAdmin = () => {
   const [tickets, setTickets] = useState([]);
   const [users, setUsers] = useState([]);
 
-  // const startDate e endDate lasiali ancora qui in un secondo momento possono essere tolti (commenta per capire perche)
-  const [startDate] = useState("");
-  const [endDate] = useState("");
+  // highlightDate: data selezionata tramite grafico o lista
+  const [highlightDate, setHighlightDate] = useState("");
+  const itemRefs = useRef({});
   const [selectedUser, setSelectedUser] = useState("");
   const [userSearch, setUserSearch] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
@@ -35,8 +35,9 @@ const TicketPageAdmin = () => {
 
   const [state, setState] = useState([
     {
-      startDate: new Date(),
-      endDate: addDays(new Date(), 7),
+      // default range: ultimi 30 giorni fino ad oggi (inclusi)
+      startDate: addDays(new Date(), -30),
+      endDate: new Date(),
       key: "selection"
     }
   ]);
@@ -92,37 +93,25 @@ const TicketPageAdmin = () => {
   const formatDateVisible = (date) =>
     new Date(date).toLocaleDateString("it-IT", {
       day: "numeric",
-      month: "short",
-      year: "numeric"
+      month: "short"
     });
 
   const filteredTickets = useMemo(() => {
+    const start = state?.[0]?.startDate ? new Date(state[0].startDate) : null;
+    const end = state?.[0]?.endDate ? new Date(state[0].endDate) : null;
+
     return tickets.filter((ticket) => {
       const ticketDate = new Date(ticket.date);
-      const start = startDate ? new Date(startDate) : null;
-      const end = endDate ? new Date(endDate) : null;
 
-      const matchDate =
-        (!start || ticketDate >= start) &&
-        (!end || ticketDate <= end);
+      const matchDate = (!start || ticketDate >= start) && (!end || ticketDate <= end);
 
-      const matchUser =
-        !selectedUser || ticket.user.id === selectedUser;
+      const matchUser = !selectedUser || ticket.user.id === selectedUser;
 
-      const matchStatus =
-        !selectedStatus ||
-        ticketStatus[ticket.id] === selectedStatus;
+      const matchStatus = !selectedStatus || ticketStatus[ticket.id] === selectedStatus;
 
       return matchDate && matchUser && matchStatus;
     });
-  }, [
-    tickets,
-    startDate,
-    endDate,
-    selectedUser,
-    selectedStatus,
-    ticketStatus
-  ]);
+  }, [tickets, state, selectedUser, selectedStatus, ticketStatus]);
 
   /* DATA PER GRAFICO*/
   const lineChartData = useMemo(() => {
@@ -184,71 +173,83 @@ const TicketPageAdmin = () => {
         <div className="w-full lg:w-1/2 flex flex-col gap-6 sticky top-6 h-fit">
 
           {/*  Date */}
-          <div className="bg-white rounded-xl shadow p-4">
-            <h2 className="font-bold text-xl mb-2 text-[#090c64] flex items-center gap-2">
-              <CalendarDots size={32} weight="duotone" />
-              Seleziona intervallo date
-            </h2>
+                <div className="bg-white rounded-xl shadow p-4">
+                <h2 className="font-bold text-xl mb-2 text-[#090c64] flex items-center gap-2">
+                  <CalendarDots size={32} weight="duotone" />
+                  Seleziona intervallo date
+                </h2>
 
-            <div className="border rounded-xl overflow-hidden">
-              <DateRangePicker
-                onChange={(item) => setState([item.selection])}
-                showSelectionPreview={true}
-                moveRangeOnFirstSelection={false}
-                months={1}
-                ranges={state}
-                direction="horizontal"
-              />
-            </div>
-          </div>
+                <div className="border rounded-xl overflow-hidden">
+                  <DateRangePicker
+                  onChange={(item) => {
+                    setState([item.selection]);
+                    setHighlightDate("");
+                  }}
+                  showSelectionPreview={true}
+                  moveRangeOnFirstSelection={false}
+                  months={1}
+                  ranges={state}
+                  direction="horizontal"
+                  />
+                </div>
+                </div>
 
-          {/* Grafico */}
-          <div className="bg-white rounded-xl shadow p-6">
-            <h2 className="font-bold text-2xl mb-4 text-[#090c64]">
-              Andamento Ticket
-            </h2>
+                {/* Grafico */}
+                <div className="bg-white rounded-xl shadow p-6">
+                <h2 className="font-bold text-2xl mb-4 text-[#090c64]">
+                  Andamento Ticket
+                </h2>
 
-            {/* Legenda */}
-            <div className="flex flex-wrap gap-3 mb-6">
-              {["aperti", "risolti", "totale"].map(key => (
-                <button
-                  key={key}
-                  onClick={() => toggleLine(key)}
-                  className={`px-4 py-1.5 rounded-full text-sm border shadow-sm transition ${hiddenLines.includes(key)
+                {/* Legenda */}
+                <div className="flex flex-wrap gap-3 mb-6">
+                  {["aperti", "risolti", "totale"].map(key => (
+                  <button
+                    key={key}
+                    onClick={() => toggleLine(key)}
+                    className={`px-4 py-1.5 rounded-full text-sm border shadow-sm transition ${hiddenLines.includes(key)
                     ? "opacity-40 bg-gray-100"
                     : "opacity-100 bg-white"
                     }`}
-                >
-                  {key.charAt(0).toUpperCase() + key.slice(1)} ({totals[key]})
-                </button>
-              ))}
-            </div>
+                  >
+                    {key.charAt(0).toUpperCase() + key.slice(1)} ({totals[key]})
+                  </button>
+                  ))}
+                </div>
 
-
-            <LineChart
-              dataset={lineChartData}
-              xAxis={[{ dataKey: "date", scaleType: "band" }]}
-              yAxis={[{ valueFormatter: (v) => v.toString() }]}
-              series={[
-                { dataKey: "aperti", label: "Aperti", color: "#3B82F6" },
-                { dataKey: "risolti", label: "Risolti", color: "#F59E0B" },
-                { dataKey: "totale", label: "Totale", color: "#111" }
-              ].filter(s => !hiddenLines.includes(s.dataKey))}
-              height={500}
-              curve="monotoneX"
-              grid={{ vertical: false }}
-              tooltip={{
-                trigger: "item",
-                formatter: (item) => `${item.seriesLabel}: ${item.value}`,
-              }}
-              onPointClick={(point) => {
+                <LineChart
+                  dataset={lineChartData}
+                  xAxis={[{ dataKey: "date", scaleType: "band" }]}
+                  yAxis={[{ valueFormatter: (v) => v.toString() }]}
+                  series={[
+                  { dataKey: "aperti", label: "Aperti", color: "#3B82F6" },
+                  { dataKey: "risolti", label: "Risolti", color: "#F59E0B" },
+                  { dataKey: "totale", label: "Totale", color: "#111" }
+                  ].filter(s => !hiddenLines.includes(s.dataKey))}
+                  height={500}
+                  curve="monotoneX"
+                  grid={{ vertical: false }}
+                  tooltip={{
+                  trigger: "item",
+                  formatter: (item) => `${item.seriesLabel}: ${item.value}`,
+                  }}
+                  onPointClick={(point) => {
                 const clickedDate = point.x;
+                setHighlightDate(clickedDate);
+
                 const ticketsOnDate = filteredTickets.filter(
                   (t) => t.date.split("T")[0] === clickedDate
                 );
+
                 if (ticketsOnDate.length > 0) {
+                  // apri drawer sul primo ticket di quel giorno
                   setSelectedTicket(ticketsOnDate[0]);
                   setDrawerOpen(true);
+
+                  // scroll alla card corrispondente nella lista
+                  const el = itemRefs.current[ticketsOnDate[0].id];
+                  if (el && el.scrollIntoView) {
+                    el.scrollIntoView({ behavior: "smooth", block: "center" });
+                  }
                 }
               }}
             />
@@ -294,7 +295,7 @@ const TicketPageAdmin = () => {
                       setUserSearch("");
                       setSelectedUser("");
                     }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800 hover:text-gray-600"
                   >
                     ✕
                   </button>
@@ -373,11 +374,13 @@ const TicketPageAdmin = () => {
             {filteredTickets.map((ticket) => (
               <div
                 key={ticket.id}
+                ref={(el) => (itemRefs.current[ticket.id] = el)}
                 className={`rounded-xl shadow p-4 flex flex-col cursor-pointer transition ${getColor(
                   ticketStatus[ticket.id]
-                )}`}
+                )} ${ticket.date.split("T")[0] === highlightDate ? 'ring-2 ring-blue-300' : ''}`}
                 onClick={() => {
                   setSelectedTicket(ticket);
+                  setHighlightDate(ticket.date.split("T")[0]);
                   setDrawerOpen(true);
                 }}
               >

@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { connect as connectDb } from './db/index.js';
+import ticketsRouter from './api/v1/tickets.js';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
+app.use('/api/v1/tickets', ticketsRouter);
 
 app.listen(process.env.SERVER_PORT || 3000, () => {
   console.log(`Server is running on port ${process.env.SERVER_PORT || 3000}`);
