@@ -12,7 +12,7 @@ import { requireAdmin } from "../middleware/roles.js";
 const app = express.Router();
 
 /* LIST */
-app.get("/", authUser, requireAdmin, listPointsOfSales);
+app.get("/", authUser, listPointsOfSales);
 
 /* GET ONE */
 app.get("/:id", authUser, requireAdmin, getPointOfSaleById);

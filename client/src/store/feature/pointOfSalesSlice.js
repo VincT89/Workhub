@@ -12,11 +12,11 @@ export const fetchPointsOfSalesAsync = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       });
-      
+
       const data = await res.json();
       if (!res.ok) return rejectWithValue(data.message);
-      
       return data.data; // array POS
+      
     } catch {
       return rejectWithValue("Errore di rete.");
     }

@@ -10,7 +10,7 @@ export const fetchLeaveAsync = createAsyncThunk(
 			const res = await fetch(`${API_URL}/leaves`, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-
+			
 			const data = await res.json();
 			if (!res.ok) return rejectWithValue(data.message);
 
@@ -54,12 +54,13 @@ export const createLeaveRequestAsync = createAsyncThunk(
 				body: JSON.stringify(payload),
 			});
 
+			console.log("token", token);
 			const data = await res.json();
 			if (!res.ok) return rejectWithValue(data.message);
 
 			return data.data;
-		} catch {
-			return rejectWithValue("Errore di rete.");
+		} catch (error) {
+			return rejectWithValue("Errore di rete.", error);
 		}
 	}
 );
