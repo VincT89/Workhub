@@ -14,9 +14,6 @@ const envPath = path.resolve(__dirname, "../../../.env");
 // Carica il file .env
 dotenv.config({ path: envPath });
 
-console.log("Loaded .env from:", envPath);
-console.log("DB_CONNECTION_URI:", process.env.DB_CONNECTION_URI);
-
 const URI = process.env.DB_CONNECTION_URI;
 
 const categories = [

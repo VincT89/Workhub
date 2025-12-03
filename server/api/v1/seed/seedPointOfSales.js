@@ -14,9 +14,6 @@ const envPath = path.resolve(__dirname, "../../../.env");
 // Carichiamo il .env
 dotenv.config({ path: envPath });
 
-console.log("Using .env from:", envPath);
-console.log("DB_CONNECTION_URI:", process.env.DB_CONNECTION_URI);
-
 const URI = process.env.DB_CONNECTION_URI;
 
 const posData = [
