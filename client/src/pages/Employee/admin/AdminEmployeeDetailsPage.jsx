@@ -12,6 +12,28 @@ import {
 	updateShiftAsync,
 } from "../../../store/feature/shiftsSlice.js";
 
+/* leave slice */
+import {
+	fetchLeaveByUserIdAsync,
+	updateLeaveStatusAsync,
+} from "../../../store/feature/userLeave.js";
+
+const StatusDot = ({ status }) => {
+	const colors = {
+		approved: "bg-green-500",
+		pending: "bg-yellow-500",
+		denied: "bg-red-500",
+	};
+
+	return (
+		<span
+			className={`inline-block w-3 h-3 rounded-full ${
+				colors[status] || "bg-gray-400"
+			}`}
+		></span>
+	);
+};
+
 const AdminEmployeeDetailsPage = () => {
 	const { theme } = useTheme();
 	const { t } = useLanguage();
@@ -34,6 +56,10 @@ const AdminEmployeeDetailsPage = () => {
 		error: shiftsError,
 	} = useSelector((state) => state.shifts) || {};
 
+	const leave = useSelector((state) => state.leave.record);
+	const leaveLoading = useSelector((state) => state.leave.loading);
+	const leaveError = useSelector((state) => state.leave.error);
+
 	const token = useSelector((state) => state.auth?.token);
 
 	const [workplaceName, setWorkplaceName] = useState("");
@@ -49,12 +75,13 @@ const AdminEmployeeDetailsPage = () => {
 		{ key: "saturday", label: "Sabato" },
 	];
 
-	// FETCH USER + POS + SHIFTS
+	// FETCH USER + POS + SHIFTS + LEAVE
 	useEffect(() => {
 		if (!id || !token) return;
 		dispatch(fetchUserByIdAsync({ id, token }));
 		dispatch(fetchPointsOfSalesAsync({ token }));
 		dispatch(fetchUserShiftsAsync({ userId: id, token }));
+		dispatch(fetchLeaveByUserIdAsync({ userId: id, token }));
 	}, [id, token, dispatch]);
 
 	// Imposta nome sede lavorativa
@@ -167,7 +194,7 @@ const AdminEmployeeDetailsPage = () => {
 			await dispatch(
 				updateShiftAsync({
 					id: userShifts._id,
-					day: dayKey, 
+					day: dayKey,
 					period,
 					value: false,
 					token,
@@ -180,38 +207,107 @@ const AdminEmployeeDetailsPage = () => {
 		}
 	};
 
-	// ---- DATI DI ESEMPIO PER PERMESSI / FERIE (per ora) ----
-	const richiestepermessi = [
-		{ matricola: "ADD-0025", data: "05.06.2026", orario: "8:00 - 18:00" },
-		{ matricola: "ADD-0025", data: "28.12.25", orario: "10:00 - 12:00" },
+	// RICHIESTE REALI DAL BACKEND
+	const ferie =
+		leave?.requestedHours?.filter((r) => r.mode === "vacation") || [];
+	const permessi =
+		leave?.requestedHours?.filter((r) => r.mode === "leave") || [];
+
+	const formatDate = (date) => {
+		if (!date) return "";
+		const d = new Date(date);
+		return `${String(d.getDate()).padStart(2, "0")}/${String(
+			d.getMonth() + 1
+		).padStart(2, "0")}/${d.getFullYear()}`;
+	};
+
+	// APPROVA / RIFIUTA FERIE
+	const handleAccettaFerie = async (richiesta) => {
+		if (!token || !richiesta?._id) return;
+		try {
+			await dispatch(
+				updateLeaveStatusAsync({
+					requestId: richiesta._id,
+					status: "approved",
+					token,
+				})
+			).unwrap();
+		} catch (err) {
+			console.error("Errore approvazione ferie:", err);
+		}
+	};
+
+	const handleRifiutaFerie = async (richiesta) => {
+		if (!token || !richiesta?._id) return;
+		try {
+			await dispatch(
+				updateLeaveStatusAsync({
+					requestId: richiesta._id,
+					status: "denied",
+					token,
+				})
+			).unwrap();
+		} catch (err) {
+			console.error("Errore rifiuto ferie:", err);
+		}
+	};
+
+	// APPROVA / RIFIUTA PERMESSI
+	const handleAccettaPermesso = async (richiesta) => {
+		if (!token || !richiesta?._id) return;
+		try {
+			await dispatch(
+				updateLeaveStatusAsync({
+					requestId: richiesta._id,
+					status: "approved",
+					token,
+				})
+			).unwrap();
+		} catch (err) {
+			console.error("Errore approvazione permesso:", err);
+		}
+	};
+
+	const handleRifiutaPermesso = async (richiesta) => {
+		if (!token || !richiesta?._id) return;
+		try {
+			await dispatch(
+				updateLeaveStatusAsync({
+					requestId: richiesta._id,
+					status: "denied",
+					token,
+				})
+			).unwrap();
+		} catch (err) {
+			console.error("Errore rifiuto permesso:", err);
+		}
+	};
+
+	// TOP BOX
+	// Calcolo giorni lavorati dalla configurazione turni
+	const giorniLavorati = useMemo(() => {
+		if (!userShifts?.shifts) return 0;
+
+		let count = 0;
+
+		weekDays.forEach((day) => {
+			const d = userShifts.shifts[day.key] || {};
+			if (d.morning || d.afternoon) count += 1;
+		});
+
+		return count;
+	}, [userShifts, weekDays]);
+
+	// Totale attività = numero totale richieste (ferie + permessi)
+	const totalActivities = leave?.requestedHours?.length || 0;
+
+	// TOP BOX
+	const topButtons = [
+		{ label: "Giorni lavorati", number: giorniLavorati },
+		{ label: "Ferie residue", number: leave?.vacationHours ?? 0 },
+		{ label: "Permessi residui", number: leave?.leaveHours ?? 0 },
+		{ label: "Richieste", number: totalActivities },
 	];
-	const [permessi, setPermessi] = useState(richiestepermessi);
-
-	const handleAccetta = (richiesta, nome) => {
-		console.log("Accettata:", nome, richiesta);
-		setPermessi((prev) => prev.filter((r) => r !== richiesta));
-	};
-
-	const handleRifiuta = (richiesta, nome) => {
-		console.log("Rifiutata:", nome, richiesta);
-		setPermessi((prev) => prev.filter((r) => r !== richiesta));
-	};
-
-	const richiesteferie = [
-		{ matricola: "ADD-0025", inizio: "05.06.2026", fine: "12.06.2026" },
-		{ matricola: "ADD-0025", inizio: "28.12.25", fine: "03.01.26" },
-	];
-	const [ferie, setFerie] = useState(richiesteferie);
-
-	const handleAccettaFerie = (richiestaf, nome) => {
-		console.log("Accettata:", nome, richiestaf);
-		setFerie((prev) => prev.filter((rf) => rf !== richiestaf));
-	};
-
-	const handleRifiutaFerie = (richiestaf, nome) => {
-		console.log("Rifiutata:", nome, richiestaf);
-		setFerie((prev) => prev.filter((rf) => rf !== richiestaf));
-	};
 
 	if (!token) return null;
 
@@ -226,14 +322,6 @@ const AdminEmployeeDetailsPage = () => {
 		);
 
 	if (!anagrafica) return <p className="p-4">Nessun dipendente trovato.</p>;
-
-	// TOP BOX
-	const topButtons = [
-		{ label: "Giorni lavorati", number: 215 },
-		{ label: "Ferie residue", number: 12 },
-		{ label: "Permessi", number: 2 },
-		{ label: "Attività", number: 47 },
-	];
 
 	return (
 		<div className="w-full h-full flex flex-col gap-8 overflow-y-auto p-4">
@@ -383,7 +471,7 @@ const AdminEmployeeDetailsPage = () => {
 				</div>
 			</div>
 
-			{/* --------- SEZIONE 3: FERIE E PERMESSI (mock) --------- */}
+			{/* --------- SEZIONE 3: FERIE E PERMESSI (reali) --------- */}
 			<div className="flex gap-6">
 				{/* FERIE */}
 				<div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md backdrop-blur-sm bg-white/20">
@@ -394,25 +482,27 @@ const AdminEmployeeDetailsPage = () => {
 					</div>
 
 					<div className="flex flex-col gap-2">
-						{ferie.map((fe, i) => (
+						{ferie.map((fe) => (
 							<div
-								key={i}
+								key={fe._id}
 								className="flex items-center justify-between bg-white/40 dark:bg-white/20 rounded-xl p-2 shadow-sm"
 							>
 								<span className={`font-semibold ${textColor}`}>
-									{anagrafica.nome} - {t("employees.dal")} {fe.inizio},{" "}
-									{t("employees.al")} {fe.fine}
+									{anagrafica.nome} - {t("employees.dal")} {formatDate(fe.from)}
+									, {t("employees.al")} {formatDate(fe.to)} ({fe.hours}h)
 								</span>
 
-								<div className="flex gap-2">
+								<div className="flex items-center gap-5">
+									<StatusDot status={fe.status} />
+
 									<button
-										onClick={() => handleAccettaFerie(fe, anagrafica.nome)}
+										onClick={() => handleAccettaFerie(fe)}
 										className="bg-[#090c64] text-white text-sm px-3 py-1 rounded-xl cursor-pointer font-semibold transition"
 									>
 										{t("employees.accetta")}
 									</button>
 									<button
-										onClick={() => handleRifiutaFerie(fe, anagrafica.nome)}
+										onClick={() => handleRifiutaFerie(fe)}
 										className="bg-white/30 dark:bg-white/10 text-[#090c64] text-sm px-3 py-1 rounded-xl cursor-pointer font-semibold transition"
 									>
 										{t("employees.rifiuta")}
@@ -420,6 +510,9 @@ const AdminEmployeeDetailsPage = () => {
 								</div>
 							</div>
 						))}
+						{ferie.length === 0 && (
+							<p className="text-sm opacity-70">Nessuna richiesta ferie.</p>
+						)}
 					</div>
 				</div>
 
@@ -432,24 +525,27 @@ const AdminEmployeeDetailsPage = () => {
 					</div>
 
 					<div className="flex flex-col gap-2">
-						{permessi.map((tu, i) => (
+						{permessi.map((tu) => (
 							<div
-								key={i}
+								key={tu._id}
 								className="flex items-center justify-between bg-white/40 dark:bg-white/20 rounded-xl p-2 shadow-sm"
 							>
 								<span className={`font-semibold ${textColor}`}>
-									{anagrafica.nome} - {tu.data}, {tu.orario}
+									{anagrafica.nome} - {formatDate(tu.from)} - {tu.timeFrom} -{" "}
+									{tu.timeTo} ({tu.hours}h)
 								</span>
 
-								<div className="flex gap-2">
+								<div className="flex items-center gap-5">
+									<StatusDot status={tu.status} />
+
 									<button
-										onClick={() => handleAccetta(tu, anagrafica.nome)}
+										onClick={() => handleAccettaPermesso(tu)}
 										className="bg-[#090c64] text-white text-sm px-3 py-1 rounded-xl cursor-pointer font-semibold transition"
 									>
 										{t("employees.accetta")}
 									</button>
 									<button
-										onClick={() => handleRifiuta(tu, anagrafica.nome)}
+										onClick={() => handleRifiutaPermesso(tu)}
 										className="bg-white/30 dark:bg-white/10 text-[#090c64] text-sm px-3 py-1 rounded-xl cursor-pointer font-semibold transition"
 									>
 										{t("employees.rifiuta")}
@@ -457,6 +553,9 @@ const AdminEmployeeDetailsPage = () => {
 								</div>
 							</div>
 						))}
+						{permessi.length === 0 && (
+							<p className="text-sm opacity-70">Nessuna richiesta permessi.</p>
+						)}
 					</div>
 				</div>
 			</div>

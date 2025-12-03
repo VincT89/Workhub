@@ -12,7 +12,7 @@ const UserLeaveSchema = new Schema(
 			required: true,
 		},
 		leaveHours: {
-			type: String,
+			type: Number,
 			required: true,
 		},
 		requestedHours: {
@@ -20,6 +20,10 @@ const UserLeaveSchema = new Schema(
 				{
 					year: Number,
 					hours: Number,
+					from: Date,
+					to: Date,
+					timeFrom: String,
+					timeTo: String,
 					mode: {
 						type: String,
 						enum: ["vacation", "leave"],

@@ -5,6 +5,7 @@ import eventReducer from "./feature/eventsSlice";
 import userReducer from "./feature/userSlice";
 import pointOfSalesReducer from "./feature/pointOfSalesSlice";
 import shiftsReducer from "./feature/shiftsSlice";
+import leaveReducer from "./feature/userLeave";
 
 
 const store = configureStore({
@@ -15,6 +16,7 @@ const store = configureStore({
     pos: pointOfSalesReducer,
     events: eventReducer,
     shifts: shiftsReducer,
+    leave: leaveReducer,
   },
 });
 

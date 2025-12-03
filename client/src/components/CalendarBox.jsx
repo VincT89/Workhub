@@ -323,7 +323,7 @@ const CalendarBox = () => {
 			borderRadius: "10px",
 			padding: expandedId === event.id ? "10px" : "6px 10px",
 			fontSize: expandedId === event.id ? "15px" : "13px",
-			transform: expandedId === event.id ? "scale(1.05)" : "scale(1)",
+			transform: expandedId === event.id ? "scale(1.02)" : "scale(1)",
 			transition: "all .18s ease",
 			zIndex: expandedId === event.id ? 10 : 1,
 		},

@@ -1,16 +1,29 @@
 import { useTheme } from "../../../context/ThemeContext";
 import { useLanguage } from "../../../context/LanguageContext";
-import {
-  UserCircle,
-  CalendarCheck,
-  Bag,
-  CalendarBlank,
-} from "@phosphor-icons/react";
+import { UserCircleIcon, CalendarCheckIcon, BagIcon, CalendarBlankIcon, } from "@phosphor-icons/react";
 import { useState, useEffect, useMemo } from "react";
 import Drawer from "../../../components/Drawer";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchPointsOfSalesAsync } from "../../../store/feature/pointOfSalesSlice.js";
 import { fetchUserShiftsAsync } from "../../../store/feature/shiftsSlice.js";
+
+import { fetchLeaveAsync, createLeaveRequestAsync, } from "../../../store/feature/userLeave.js";
+
+const StatusDot = ({ status }) => { // piccolo cerchio colorato in base allo status (riutilizzabile)
+  const colors = {
+    approved: "bg-green-500",
+    pending: "bg-yellow-500",
+    denied: "bg-red-500",
+  };
+
+  return (
+    <span
+      className={`inline-block w-3 h-3 rounded-full ${
+        colors[status] || "bg-gray-400"
+      }`}
+    ></span>
+  );
+};
 
 const UserEmployeePage = () => {
   const { theme } = useTheme();
@@ -28,6 +41,10 @@ const UserEmployeePage = () => {
     error: shiftsError,
   } = useSelector((state) => state.shifts || {}) || {};
 
+  const leave = useSelector((state) => state.leave.record);
+  const leaveLoading = useSelector((state) => state.leave.loading);
+  const leaveError = useSelector((state) => state.leave.error);
+
   const [workplaceName, setWorkplaceName] = useState("");
 
   useEffect(() => {
@@ -36,6 +53,8 @@ const UserEmployeePage = () => {
     if (authUser?._id) {
       dispatch(fetchUserShiftsAsync({ userId: authUser._id, token }));
     }
+    // carica ferie/permessi dell'utente
+    dispatch(fetchLeaveAsync(token));
   }, [token, dispatch, authUser?._id]);
 
   useEffect(() => {
@@ -61,17 +80,17 @@ const UserEmployeePage = () => {
     {
       label: t("employees.giorniLavorati"),
       number: 215,
-      icon: <CalendarCheck size={28} color="#090c64" weight="duotone" />,
+      icon: <CalendarCheckIcon size={28} color="#090c64" weight="duotone" />,
     },
     {
       label: t("employees.ferieResidue"),
-      number: 12,
-      icon: <Bag size={28} color="#090c64" weight="duotone" />,
+      number: leave?.vacationHours ?? 0,
+      icon: <BagIcon size={28} color="#090c64" weight="duotone" />,
     },
     {
       label: t("employees.permessi"),
-      number: 2,
-      icon: <CalendarBlank size={28} color="#090c64" weight="duotone" />,
+      number: leave?.leaveHours ?? 0,
+      icon: <CalendarBlankIcon size={28} color="#090c64" weight="duotone" />,
     },
   ];
 
@@ -146,14 +165,11 @@ const UserEmployeePage = () => {
       .filter(Boolean);
   }, [userShifts, weekDays]);
 
-  // MOCK ferie/permessi
-  const [ferieList, setFerieList] = useState([
-    { dal: "2025-12-30", al: "2026-01-07" },
-  ]);
-  const [permessiList, setPermessiList] = useState([
-    { data: "2026-06-05", orario: "8:00 - 18:00" },
-    { data: "2025-12-28", orario: "10:00 - 12:00" },
-  ]);
+  // ferie/permessi da backend
+  const ferieList =
+    leave?.requestedHours?.filter((r) => r.mode === "vacation") || [];
+  const permessiList =
+    leave?.requestedHours?.filter((r) => r.mode === "leave") || [];
 
   const [openFerieDrawer, setOpenFerieDrawer] = useState(false);
   const [dal, setDal] = useState("");
@@ -179,25 +195,68 @@ const UserEmployeePage = () => {
   };
 
   const handleInviaFerie = () => {
-    if (dal && al) {
-      setFerieList([...ferieList, { dal, al }]);
+    if (!dal || !al || !token) return;
+
+    const fromDate = new Date(dal);
+    const toDate = new Date(al);
+
+    if (toDate < fromDate) return;
+
+    const diffMs = toDate.getTime() - fromDate.getTime();
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+
+    const hours = days * 8;
+    const year = fromDate.getFullYear();
+
+    dispatch(
+      createLeaveRequestAsync({
+        payload: {
+          year,
+          hours,
+          mode: "vacation",
+          from: dal,
+          to: al,
+        },
+        token,
+      })
+    ).then(() => {
       setDal("");
       setAl("");
       setOpenFerieDrawer(false);
-    }
+    });
   };
 
   const handleInviaPermesso = () => {
-    if (permessoData && oraInizio && oraFine) {
-      setPermessiList([
-        ...permessiList,
-        { data: permessoData, orario: `${oraInizio} - ${oraFine}` },
-      ]);
+    if (!permessoData || !oraInizio || !oraFine || !token) return;
+
+    const start = new Date(`2020-01-01T${oraInizio}`);
+    const end = new Date(`2020-01-01T${oraFine}`);
+    if (end <= start) return;
+
+    const diffMs = end.getTime() - start.getTime();
+    const hours = diffMs / (1000 * 60 * 60);
+
+    const year = new Date(permessoData).getFullYear();
+
+    dispatch(
+      createLeaveRequestAsync({
+        payload: {
+          year,
+          hours,
+          mode: "leave",
+          from: permessoData,
+          to: permessoData,
+          timeFrom: oraInizio,
+          timeTo: oraFine,
+        },
+        token,
+      })
+    ).then(() => {
       setPermessoData("");
       setOraInizio("08:00");
       setOraFine("18:00");
       setOpenPermessiDrawer(false);
-    }
+    });
   };
 
   if (!token || !authUser) return null;
@@ -230,7 +289,7 @@ const UserEmployeePage = () => {
         {/* ANAGRAFICA */}
         <div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
           <div className="flex items-center gap-3 mb-4">
-            <UserCircle size={32} color="#090c64" weight="duotone" />
+            <UserCircleIcon size={32} color="#090c64" weight="duotone" />
             <h2 className={`text-lg font-bold ${textColor}`}>
               {t("employees.anagrafica")}
             </h2>
@@ -271,7 +330,7 @@ const UserEmployeePage = () => {
         {/* TURNI */}
         <div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
           <div className="flex items-center gap-3 mb-4">
-            <CalendarCheck size={32} color="#090c64" weight="duotone" />
+            <CalendarCheckIcon size={32} color="#090c64" weight="duotone" />
             <h2 className={`text-lg font-bold ${textColor}`}>
               {t("employees.turniSettimanali")}
             </h2>
@@ -309,7 +368,7 @@ const UserEmployeePage = () => {
         <div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <Bag size={32} color="#090c64" weight="duotone" />
+              <BagIcon size={32} color="#090c64" weight="duotone" />
               <h2 className={`text-lg font-bold ${textColor}`}>
                 {t("employees.ferie")}
               </h2>
@@ -328,8 +387,13 @@ const UserEmployeePage = () => {
                 key={i}
                 className="grid grid-cols-2 bg-white/40 rounded-xl p-2 shadow-sm mt-1"
               >
-                <span className="font-semibold">{formatDate(f.dal)}</span>
-                <span>{formatDate(f.al)}</span>
+                <span className="font-semibold">
+                  {formatDate(f.from)} - {formatDate(f.to)}
+                </span>
+                <div className="flex items-center gap-5 justify-end">
+                  <span>{f.hours}h</span>
+                  <StatusDot status={f.status} />
+                </div>
               </div>
             ))}
           </div>
@@ -339,7 +403,7 @@ const UserEmployeePage = () => {
         <div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <CalendarCheck size={32} color="#090c64" weight="duotone" />
+              <CalendarCheckIcon size={32} color="#090c64" weight="duotone" />
               <h2 className={`text-lg font-bold ${textColor}`}>
                 {t("employees.permessi")}
               </h2>
@@ -358,8 +422,15 @@ const UserEmployeePage = () => {
                 key={i}
                 className="grid grid-cols-2 bg-white/40 rounded-xl p-2 shadow-sm"
               >
-                <span className="font-semibold">{formatDate(p.data)}</span>
-                <span>{p.orario}</span>
+                <span className="font-semibold">{formatDate(p.from)}</span>
+                <div className="flex items-center gap-5 justify-end">
+                  <span>
+                    {p.timeFrom} - {p.timeTo} 
+                  </span>
+                  <span>{p.hours}h</span>
+                  <StatusDot status={p.status} />
+                  
+                </div>
               </div>
             ))}
           </div>
