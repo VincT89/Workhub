@@ -10,12 +10,12 @@ const UserLeaveSchema = new Schema(
     vacationHours: {
       type: Number,
       required: true,
-      default: 120,
+      default: 160,
     },
     leaveHours: {
       type: Number,
       required: true,
-      default: 40,
+      default: 20,
     },
     requestedHours: [
       {

@@ -16,8 +16,8 @@ export const getUserLeaves = async (req, res) => {
     if (!record) {
       record = await Leave.create({
         user: userId,
-        vacationHours: 120,
-        leaveHours: 40,
+        vacationHours: 160,
+        leaveHours: 20,
         requestedHours: [],
       });
 
@@ -79,8 +79,8 @@ export const createLeaveRequest = async (req, res) => {
     if (!record) {
       record = await Leave.create({
         user: userId,
-        vacationHours: 120,
-        leaveHours: 40,
+        vacationHours: 160,
+        leaveHours: 20,
         requestedHours: [],
       });
     }
