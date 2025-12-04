@@ -67,6 +67,11 @@ export const login = async (req, res) => {
 				.json(formatResponse(null, false, "Invalid credentials"));
 		}
 
+    await userDoc.populate({
+      path: "workplace", // popola il campo workplace con i dati del workplace associato
+      select: "name location" // seleziona solo i campi name, location del workplace
+    }); 
+
 		const user = userDoc.toObject();
 		// Tolgo password dall'oggetto utente prima di inviarlo al client in modo da non far vedere l'hash
 		delete user.password;
@@ -104,6 +109,7 @@ export const register = async (req, res) => {
     lastName: Joi.string().required(),
 
     role: Joi.string().valid("admin", "user").default("user"),
+    department: Joi.string().optional(),
 
     password: Joi.string().min(6).optional(), // se manca → generata automaticamente
     isGeneratedPassword: Joi.boolean().optional(),
@@ -131,6 +137,7 @@ export const register = async (req, res) => {
       firstName,
       lastName,
       role,
+      department,
       password,
       isGeneratedPassword,
       personnelNumber,
@@ -179,6 +186,7 @@ export const register = async (req, res) => {
       firstName,
       lastName,
       role,
+      department,
       personnelNumber,
       phone,
       workplace,

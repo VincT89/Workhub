@@ -11,7 +11,7 @@ import { useLanguage } from "../context/LanguageContext";
 import italianFlag from "../assets/icons/Italy.png";
 import englishFlag from "../assets/icons/Great Britain.png";
 
-import { Eye, EyeSlash, Sun, Moon } from "@phosphor-icons/react";
+import { EyeIcon, EyeSlashIcon, SunIcon, MoonIcon } from "@phosphor-icons/react";
 
 const SettingsPage = () => {
 	const { theme, setTheme } = useTheme();
@@ -289,12 +289,12 @@ const SettingsPage = () => {
 								className="absolute top-[70%] right-4 transform -translate-y-1/2"
 							>
 								{showOldPassword ? (
-									<Eye
+									<EyeIcon
 										size={24}
 										color={theme === "dark" ? "#fff" : "#090c64"}
 									/>
 								) : (
-									<EyeSlash
+									<EyeSlashIcon
 										size={24}
 										color={theme === "dark" ? "#fff" : "#090c64"}
 									/>
@@ -325,12 +325,12 @@ const SettingsPage = () => {
 								className="absolute top-[70%] right-4 transform -translate-y-1/2"
 							>
 								{showNewPassword ? (
-									<Eye
+									<EyeIcon
 										size={24}
 										color={theme === "dark" ? "#fff" : "#090c64"}
 									/>
 								) : (
-									<EyeSlash
+									<EyeSlashIcon
 										size={24}
 										color={theme === "dark" ? "#fff" : "#090c64"}
 									/>
@@ -361,12 +361,12 @@ const SettingsPage = () => {
 								className="absolute top-[70%] right-4 transform -translate-y-1/2"
 							>
 								{showConfirmPassword ? (
-									<Eye
+									<EyeIcon
 										size={24}
 										color={theme === "dark" ? "#fff" : "#090c64"}
 									/>
 								) : (
-									<EyeSlash
+									<EyeSlashIcon
 										size={24}
 										color={theme === "dark" ? "#fff" : "#090c64"}
 									/>
@@ -401,7 +401,7 @@ const SettingsPage = () => {
 											: "border-gray-300 dark:border-white/30"
 									}`}
 								>
-									<Sun size={28} color="#090c64" weight="duotone" /> Light
+									<SunIcon size={28} color="#090c64" weight="duotone" /> Light
 								</button>
 
 								<button
@@ -413,7 +413,7 @@ const SettingsPage = () => {
 											: "border-gray-300 dark:border-white/30"
 									}`}
 								>
-									<Moon size={28} color="#090c64" weight="duotone" /> Dark
+									<MoonIcon size={28} color="#090c64" weight="duotone" /> Dark
 								</button>
 							</div>
 						</div>

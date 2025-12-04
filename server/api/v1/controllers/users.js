@@ -1,4 +1,3 @@
-// server/api/v1/controllers/users.js
 import { handleRouteErrors } from "../../../utils/error.js";
 import { formatResponse } from "../../../utils/format.js";
 import { User } from "../../../db/index.js";
@@ -11,7 +10,11 @@ import { comparePassword, hashPassword } from "../../../utils/auth.js";
  */
 export const listUsers = async (req, res) => {
   try {
-    const users = await User.find({}, "-password", { lean: true });
+    const users = await User.find({}, "-password", { lean: true })
+      .populate({
+        path: "workplace",
+        select: "name location"
+      });
 
     return res
       .status(200)
@@ -38,7 +41,10 @@ export const getUserById = async (req, res) => {
     }
 
     // Cerco utente, escludo password
-    const user = await User.findById(id, "-password").lean(); // lean() per ottenere un oggetto semplice
+    const user = await User.findById(id, "-password").populate({
+      path: "workplace",
+      select: "name location"
+    }).lean(); // lean() per ottenere un oggetto semplice
 
     if (!user) {
       return res
@@ -80,6 +86,9 @@ export const updateUser = async (req, res) => {
       new: true,
       runValidators: true,
       select: "-password",
+    }).populate({
+      path: "workplace",
+      select: "name location"
     });
 
     if (!updated) {

@@ -11,6 +11,8 @@ import OrderModel from './models/Order.js';
 import TicketModel from './models/Ticket.js';
 import EventModel from './models/Event.js';
 import UserLeaveModel from './models/UserLeave.js';
+import UserShiftModel from './models/UserShift.js';
+
 
 
 
@@ -52,5 +54,4 @@ export const Order = OrderModel;
 export const Ticket = TicketModel;
 export const Event = EventModel;
 export const Leave = UserLeaveModel;
-
-
+export const Shift = UserShiftModel;

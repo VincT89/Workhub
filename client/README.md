@@ -1,102 +1,220 @@
-# WorkHub - Gestionale aziendale
+#  WorkHub - Gestionale aziendale
 
-**WorkHub** è una piattaforma web progettata per la gestione aziendale del personale, con funzionalità integrate di autenticazione, gestione dipendenti, gestione turni, recupero password, gestione magazzino e ordini, gestione ticketing aziendale e un'interfaccia moderna basata su React + Tailwind.
-
-Il progetto comprende un **backend Node.js/Express** con database **MongoDB** e un **frontend React** completo, organizzato con Redux Toolkit e componenti riutilizzabili.
+**WorkHub** è una piattaforma web avanzata per la gestione aziendale del personale, progettata per centralizzare turni, dipendenti, magazzino, ticketing, clienti ed eventi aziendali.  
+Include un backend moderno in **Node.js/Express** e un frontend scalabile in **React + Redux Toolkit**, con UI professionale basata su **TailwindCSS**.
 
 ---
 
-# Funzionalità Principali
+#  Funzionalità Principali
 
-## Autenticazione & Sicurezza
+##  Autenticazione & Sicurezza
 
-- Login con **JWT token**
-- Persistenza dell'autenticazione tramite **localStorage**
-- Middleware di protezione rotte (admin/user)
-- Recupero password tramite generazione password temporanea
-- Cambio password da pannello impostazioni
-- Password hash con **bcrypt**
+- Login tramite **JWT token**
+- Persistenza sessione con **localStorage**
+- Middleware di protezione per ruoli (`user`, `admin`)
+- Recupero password tramite generazione password temporanea casuale
+- Cambio password dalla pagina impostazioni
+- Hashing sicuro con **bcrypt**
+- Validazioni backend tramite **Joi**
 
-## Ruoli Utente
+---
 
-- **Admin** → gestione completa degli utenti, turni, reparti
-- **User** → accesso ai propri dati, visualizzazione turni personali
+##  Ruoli Utente
 
-## Gestione utenti (account e dipendenti)
+- **Admin**  
+  + Controllo totale: utenti, turni, eventi, reparti, magazzino, clienti, ordini, ticket
+- **User**  
+  + Accesso limitato ai propri dati e ai propri turni  
+  + Lettura eventi aziendali
 
-- Registrazione utente (solo admin)
-- Update profilo
+---
+
+##  Gestione Utenti (Account e Dipendenti)
+
+- Registrazione nuovi utenti (solo admin)
+- Update profilo lavoratore
 - Update password
-- Eliminazione utente
-- Dashboard utenti
-- Validazioni tramite Joi
-- Anagrafica dipendenti con dettagli personali e lavorativi
-- CRUD dipendenti
-- Filtri e ricerche avanzate
-- Visualizzazione differenziata tra admin e user:
-  - Admin → vede tutti i dipendenti
-  - User → vede esclusivamente il proprio profilo
-- Gestione ferie e permessi
-
-## Gestione Turni di Lavoro
-
-- Calendario interattivo con **react-big-calendar**
-- Turni settimanali/mensili
-- Visualizzazione differenziata tra admin e user:
-  - Admin → vede tutti i turni filtrabili per reparto
-  - User → vede esclusivamente i propri turni
-- Espansione eventi, filtro reparti, colori per ruolo/settore
-
-## Gestione Clienti
-- Anagrafica clienti con dettagli di contatto
-- CRUD clienti
-- Filtri e ricerche avanzate
-
-## Gestione Magazzino & Ordini
-
-- CRUD prodotti
-- Gestione stock e livelli di inventario
-- Creazione e monitoraggio ordini
-- Filtri e ricerche avanzate
-
-## Sistema di Ticketing Aziendale
-
-- Creazione ticket per segnalazioni o richieste
-- Assegnazione e monitoraggio stato ticket
-
-## UI/UX
-
-- Tema dinamico (light/dark)
-- Layout responsive
-- Componenti ottimizzati Tailwind
-- Interfaccia moderna e pulita
-- Cambio lingua - italiano/inglese
+- Eliminazione utenti
+- Dashboard avanzata dipendenti
+- Filtri e ricerca rapida
+- **Admin** → vista globale dei dipendenti  
+- **User** → vede solo il proprio profilo
+- Gestione ferie, permessi e informazioni lavorative
 
 ---
 
-# Stack Tecnologico
+##  Gestione Turni di Lavoro (Calendario)
 
-## Backend
+Calendario professionale basato su **react-big-calendar**, con:
 
-- Node.js + Express
+###  Modalità dinamiche
+- **Turni** (visualizzazione orari dei dipendenti)
+- **Eventi aziendali** (comunicazioni interne)
+
+Switch tramite select direttamente nel calendario.
+
+###  Funzionalità
+- Vista **giorno**, **settimana**, **mese**
+- Eventi dei turni generati in modo intelligente per 52 settimane avanti e indietro
+- Espansione evento con click
+- Filtri reparti (solo admin)
+- Colori dinamici basati sul ruolo/settore
+- Unione eventi duplicati in vista mensile (turni spezzati)
+
+---
+
+##  Bacheca Eventi Aziendali
+
+Sistema completo per comunicazioni interne aziendali.
+
+### **Admin**
+- Crea eventi
+- Modifica eventi
+- Elimina eventi
+
+### **User**
+- Può solo visualizzarli
+
+Gli eventi includono:
+- Titolo  
+- Data inizio/fine  
+- Descrizione  
+- Ordinamento automatico  
+- Visualizzazione nella **Bacheca** e nel **Calendario** tramite switch “Eventi”
+
+UI dedicata con Drawer per aggiunta/modifica.
+
+---
+
+##  Gestione Clienti
+
+- Anagrafica completa clienti
+- CRUD clienti
+- Filtri
+- Ricerca avanzata
+- Vista dettagliata cliente
+
+---
+
+##  Gestione Magazzino & Ordini
+
+- CRUD prodotti  
+- Gestione stock e soglie  
+- Tabella prodotti in esaurimento (con dati mock)  
+- Dashboard magazzino  
+- CRUD ordini  
+- Avvisi prodotti sotto soglia  
+
+---
+
+##  Ticketing Aziendale
+
+- Creazione ticket per segnalazioni interne
+- Assegnazione ticket
+- Cambiamento stato (aperto / in lavorazione / risolto)
+- Storico richieste
+
+---
+
+##  UI/UX Moderno
+
+- Tema light/dark  
+- Layout responsive  
+- Componenti ottimizzati con TailwindCSS  
+- Icone Phosphor Icons  
+- Cambio lingua (ITA/ENG) tramite Context  
+- Design pulito e professionale  
+- Tabelle con ricerca, ordinamento e azioni inline  
+
+---
+
+#  Backend
+
+## Tecnologie
+- Node.js
+- Express
 - MongoDB + Mongoose
-- JWT Authentication
+- JWT Auth
+- Joi (Validazione)
 - Bcrypt
-- Joi (validazione)
 - Middleware personalizzati
-- Struttura REST API
+- Architettura REST scalabile
 
-## Frontend
+## API principali
 
+###  Auth
+- `POST /auth/login`
+- `POST /auth/recover`
+- `PATCH /auth/password`
+
+###  Users
+- `GET /users`
+- `POST /users`
+- `PATCH /users/:id`
+- `DELETE /users/:id`
+
+###  Eventi
+- `GET /events`
+- `POST /events` *(solo admin/supervisor)*
+- `PATCH /events/:id`
+- `DELETE /events/:id`
+
+###  Dipendenti
+- CRUD completo  
+- Turni, reparti, dettagli lavorativi  
+
+###  Magazzino
+- `GET /products`
+- `POST /products`
+- `PATCH /products/:id`
+- `DELETE /products/:id`
+
+###  Ordini
+- CRUD ordini
+
+###  Ticket
+- CRUD ticket
+
+---
+
+# Frontend
+
+## Tecnologie
 - React + Vite
-- Redux Toolkit (authSlice, userSlice, employeeSlice)
-- Tailwind CSS
+- Redux Toolkit
 - React Router
+- TailwindCSS
 - React Big Calendar
 - Date-fns
-- Context API (tema)
-- LocalStorage per persistenza stato
+- Context API
 - Phosphor Icons
-- Mui React (componenti UI)
+- Persistenza stato
+
+## Features Frontend
+
+✔ Layout responsive  
+✔ Redux per stato globale di:
+- auth
+- employees
+- events
+- products
+- orders  
+✔ Calendario completo  
+✔ Bacheca eventi  
+✔ Drawer, modali, tabelle personalizzate  
+✔ Ricerca + sorting  
+✔ Temi dinamici  
+✔ Multilingua  
 
 ---
+
+### Aggiornamenti
+1. SISTEMAZIONE DARK MODE E MULTILINGUA - `IN ATTESA MODIFICHE PAGINE`
+2. Login e autenticazione JWT - `COMPLETATO`
+3. Gestione utenti e dipendenti - `COMPLETATO`
+4. Calendario turni ed eventi con react-big-calendar - `COMPLETATO`
+5. Bacheca eventi aziendali - `IN PROGRESS` 
+6. Gestione magazzino - `IN PROGRESS`
+7. Gestione clienti - `IN PROGRESS`
+8. Gestione ticketing - `IN PROGRESS`
+9. Gestione ordini - `IN PROGRESS`

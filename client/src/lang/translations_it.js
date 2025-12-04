@@ -80,6 +80,7 @@ export const it = {
     mercoledi: "Mercoledì",
     giovedi: "Giovedì",
     venerdi: "Venerdì",
+    sabato: "Sabato",
     richiestaFerie: "Richiesta Ferie",
     richiestaPermessi: "Richiesta Permessi",
     accetta: "Accetta",

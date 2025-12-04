@@ -9,14 +9,18 @@ import {
 	Package,
 	WarningOctagon,
 	Calendar,
-	NotePencil
+	NotePencil,
+	Trash,
 } from "@phosphor-icons/react";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import {
-	setLowStockProducts,
-	setBoardPosts,
-} from "../store/feature/boardSlice";
+	fetchEventsAsync,
+	createEventAsync,
+	updateEventAsync,
+	deleteEventAsync,
+} from "../store/feature/eventsSlice";
+import { fetchPointsOfSalesAsync } from "../store/feature/pointOfSalesSlice";
 import Table from "../components/Table";
 import Drawer from "../components/Drawer";
 
@@ -24,52 +28,50 @@ const BoardPage = () => {
 	const { theme } = useTheme();
 	const { t } = useLanguage();
 	const { role } = useSelector((state) => state.auth.user);
+	const token = useSelector((state) => state.auth.token);
+	const users = useSelector((state) => state.users); // per richiamare i dati del personale (nelle box in alto)
+	const pointOfSales = useSelector((state) => state.pos); // per richiamare i dati dei depositi (nelle box in alto)
 
 	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 
 	const dispatch = useDispatch();
 
-	const lowStockProducts = useSelector((state) => state.board.lowStockProducts);
-	const boardPosts = useSelector((state) => state.board.boardPosts);
+	const events = useSelector((state) => state.events.events);
 
 	useEffect(() => {
-		dispatch(
-			setLowStockProducts([
-				{ name: "Penna", qty: 3 },
-				{ name: "Quaderno", qty: 1 },
-			])
-		);
-	}, [dispatch]);
+		dispatch(fetchEventsAsync());
+		if (token) {
+			dispatch(fetchPointsOfSalesAsync({ token }));
+		}
+	}, [dispatch, token]);
 
-	useEffect(() => {
-		dispatch(
-			setBoardPosts([
-				{ title: "Nuova riunione", date: "2025-11-22" },
-				{ title: "Aggiornamento magazzino", date: "2025-11-21" },
-				{ title: "Evento aziendale", date: "2025-11-21" },
-			])
-		);
-	}, [dispatch]);
+	const boardPosts = events.map((event) => ({
+		_id: event._id,
+		title: event.title,
+		date: event.startDate ? event.startDate.slice(0, 10) : "",
+		description: event.description || "",
+	}));
 
-	const lowStockColumns =
-		lowStockProducts.length > 0 ? Object.keys(lowStockProducts[0]) : [];
+	const boardColumns = ["title", "date", "description"];
 
-	const boardColumns =
-		boardPosts.length > 0 ? Object.keys(boardPosts[0]) : [];
-
-	// State per il Drawer 
+	// State per il Drawer
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [editData, setEditData] = useState(null);
 
 	// Apre drawer in modalità modifica
 	const openDrawerEdit = (row) => {
-		setEditData({ ...row }); 
+		setEditData({
+			_id: row._id,
+			title: row.title,
+			date: row.date,
+			description: row.description || "",
+		});
 		setDrawerOpen(true);
 	};
 
 	// Apre drawer per aggiungere
 	const openDrawerAdd = () => {
-		setEditData({ title: "", date: "" });
+		setEditData({ _id: null, title: "", date: "", description: "" });
 		setDrawerOpen(true);
 	};
 
@@ -77,20 +79,30 @@ const BoardPage = () => {
 	const handleSavePost = (e) => {
 		e.preventDefault();
 
-		// Se esiste già → lo sostituisce
-		if (boardPosts.some((p) => p.date === editData.date)) {
-			const updated = boardPosts.map((p) =>
-				p.date === editData.date ? editData : p
-			);
-			dispatch(setBoardPosts(updated));
+		const payload = {
+			title: editData.title,
+			startDate: editData.date,
+			endDate: editData.date,
+			description: editData.description,
+		};
+
+		if (editData._id) {
+			dispatch(updateEventAsync({ id: editData._id, data: payload }));
 		} else {
-			dispatch(setBoardPosts([...boardPosts, editData]));
+			dispatch(createEventAsync(payload));
 		}
 
 		setDrawerOpen(false);
+		setEditData(null);
 	};
 
-	
+	const handleDelete = (row) => {
+		if (
+			window.confirm(`Sei sicuro di voler eliminare l'evento "${row.title}"?`)
+		) {
+			dispatch(deleteEventAsync(row._id));
+		}
+	};
 
 	return (
 		<div
@@ -109,7 +121,7 @@ const BoardPage = () => {
 						<span className="font-bold text-[14px]">Depositi</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
-						5
+						{pointOfSales?.list?.length ?? 0}
 					</span>
 				</div>
 
@@ -165,7 +177,7 @@ const BoardPage = () => {
 						<span className="font-bold text-[14px] ">Personale attivo</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
-						50
+						{users?.list?.length ?? 0}
 					</span>
 				</div>
 			</div>
@@ -200,13 +212,31 @@ const BoardPage = () => {
 							data={boardPosts}
 							columns={boardColumns}
 							actionLabel={"Actions"}
-							actions={[
-								{
-									name: "edit",
-									icon: <NotePencil size={28} color="#090c64" weight="duotone" />,
-									onClick: openDrawerEdit
-								}
-							]}
+							actions={
+								role === "admin"
+									? [
+											{
+												name: "edit",
+												icon: (
+													<NotePencil
+														size={28}
+														color="#090c64"
+														weight="duotone"
+														className="mr-4"
+													/>
+												),
+												onClick: openDrawerEdit,
+											},
+											{
+												name: "delete",
+												icon: (
+													<Trash size={28} color="#ff0000" weight="duotone" />
+												),
+												onClick: handleDelete,
+											},
+									  ]
+									: []
+							}
 						/>
 					</div>
 				</div>
@@ -229,8 +259,12 @@ const BoardPage = () => {
 					{/* TABELLA */}
 					<div className="w-full overflow-hidden h-full mt-3">
 						<Table
-							data={lowStockProducts}
-							columns={lowStockColumns}
+							data={[
+								{ name: "Prodotto A", stock: "8" },
+								{ name: "Prodotto B", stock: "5" },
+								{ name: "Prodotto C", stock: "2" },
+							]}
+							columns={["name", "stock"]}
 						/>
 					</div>
 				</div>
@@ -263,7 +297,6 @@ const BoardPage = () => {
 			>
 				{editData && (
 					<form onSubmit={handleSavePost} className="flex flex-col gap-4">
-
 						<div className="flex flex-col">
 							<label className="text-sm font-bold">Titolo</label>
 							<input
@@ -303,11 +336,9 @@ const BoardPage = () => {
 								Salva
 							</button>
 						</div>
-
 					</form>
 				)}
 			</Drawer>
-
 		</div>
 	);
 };
