@@ -16,18 +16,17 @@ const formatEuro = (value) => {
 };
 
 const OrderPage = () => {
-  // Carico gli ordini salvati (se esistono)
+
+  // localStorage
   const [selectedProducts, setSelectedProducts] = useState(() => {
     const salvati = localStorage.getItem("ordini");
     return salvati ? JSON.parse(salvati) : [];
   });
 
-  // Ogni volta che selectedProducts cambia → salvo
   useEffect(() => {
     localStorage.setItem("ordini", JSON.stringify(selectedProducts));
   }, [selectedProducts]);
 
-  // NOMI COLONNE
   const orderColumns = [
     "prodotto",
     "quantità totale",
@@ -37,20 +36,20 @@ const OrderPage = () => {
     "totale",
   ];
 
+  // -------------------------
   // AGGIUNGI PRODOTTO
+  // -------------------------
   const handleAddProduct = (productId) => {
     const product = productsMock.find((p) => String(p.id) === String(productId));
     if (!product) return;
 
     setSelectedProducts((prev) => {
-      // se esiste già una riga per quel prodotto → non la duplico
       if (prev.some((p) => String(p.id) === String(product.id))) return prev;
 
-      const numClienti = 3;
-      const clientiSelezionatiBase = customersMock.slice(0, numClienti);
+      const clientiBase = customersMock.slice(0, 3);
 
-      const clientiConOrdine = clientiSelezionatiBase.map((cliente) => {
-        const qty = Math.floor(Math.random() * 3) + 1; // 1-3 pezzi
+      const clientiConOrdine = clientiBase.map((cliente) => {
+        const qty = Math.floor(Math.random() * 3) + 1;
         const totale = qty * product.prezzo;
 
         return {
@@ -60,64 +59,49 @@ const OrderPage = () => {
         };
       });
 
-      const qtyTotale = clientiConOrdine.reduce(
-        (sum, c) => sum + (c.qty || 0),
-        0
-      );
-      const totaleOrdine = clientiConOrdine.reduce(
-        (sum, c) => sum + (c.totale || 0),
-        0
-      );
+      const qtyTot = clientiConOrdine.reduce((s, c) => s + c.qty, 0);
+      const totOrdine = clientiConOrdine.reduce((s, c) => s + c.totale, 0);
 
       const today = new Date().toLocaleDateString("it-IT");
 
-      const newOrderRow = {
+      const newOrder = {
         id: product.id,
         prodotto: product.nome,
-        "quantità totale": qtyTotale,
+        "quantità totale": qtyTot,
         data: today,
         stato: "",
         corriere: "",
-        totale: Number(totaleOrdine.toFixed(2)),
-        prodottoDettaglio: product, // contiene anche stock + img
+        totale: Number(totOrdine.toFixed(2)),
+        prodottoDettaglio: product,
         clienti: clientiConOrdine,
       };
 
-      return [...prev, newOrderRow];
+      return [...prev, newOrder];
     });
   };
 
-  // ELIMINA TUTTA LA RIGA
   const handleDeleteOrder = (orderId) => {
-    setSelectedProducts((prev) => prev.filter((order) => order.id !== orderId));
+    setSelectedProducts((prev) => prev.filter((o) => o.id !== orderId));
   };
 
-  // aggiorna stato
   const handleUpdateStatus = (orderId, newStatus) => {
     setSelectedProducts((prev) =>
-      prev.map((order) =>
-        order.id === orderId ? { ...order, stato: newStatus } : order
-      )
+      prev.map((o) => (o.id === orderId ? { ...o, stato: newStatus } : o))
     );
   };
 
-  // aggiorna corriere
   const handleUpdateCarrier = (orderId, newCarrier) => {
     setSelectedProducts((prev) =>
-      prev.map((order) =>
-        order.id === orderId ? { ...order, corriere: newCarrier } : order
-      )
+      prev.map((o) => (o.id === orderId ? { ...o, corriere: newCarrier } : o))
     );
   };
 
-  // ricalcola qty totale e totale ordine a partire dai clienti
   const recomputeOrderTotals = (clienti) => {
-    const qtyTotale = clienti.reduce((sum, c) => sum + (c.qty || 0), 0);
-    const totaleOrdine = clienti.reduce((sum, c) => sum + (c.totale || 0), 0);
-    return { qtyTotale, totaleOrdine };
+    const qtyTot = clienti.reduce((s, c) => s + c.qty, 0);
+    const totOrdine = clienti.reduce((s, c) => s + c.totale, 0);
+    return { qtyTot, totOrdine };
   };
 
-  // modifica cliente (qty)
   const handleUpdateClient = (orderId, clientId, updatedFields) => {
     setSelectedProducts((prev) =>
       prev.map((order) => {
@@ -125,88 +109,102 @@ const OrderPage = () => {
 
         const prezzo = order.prodottoDettaglio?.prezzo || 0;
 
-        const updatedClients = order.clienti.map((cliente) => {
-          if (cliente.id !== clientId) return cliente;
+        const upd = order.clienti.map((c) => {
+          if (c.id !== clientId) return c;
 
-          const nuovoCliente = {
-            ...cliente,
-            ...updatedFields,
-          };
+          const nuovo = { ...c, ...updatedFields };
 
           if (updatedFields.qty !== undefined) {
-            const qtyNumber = Number(updatedFields.qty) || 0;
-            nuovoCliente.qty = qtyNumber;
-            nuovoCliente.totale = qtyNumber * prezzo;
+            const qtyN = Number(updatedFields.qty) || 0;
+            nuovo.qty = qtyN;
+            nuovo.totale = qtyN * prezzo;
           }
 
-          return nuovoCliente;
+          return nuovo;
         });
 
-        const { qtyTotale, totaleOrdine } = recomputeOrderTotals(updatedClients);
+        const { qtyTot, totOrdine } = recomputeOrderTotals(upd);
 
         return {
           ...order,
-          clienti: updatedClients,
-          "quantità totale": qtyTotale,
-          totale: Number(totaleOrdine.toFixed(2)),
+          clienti: upd,
+          "quantità totale": qtyTot,
+          totale: Number(totOrdine.toFixed(2)),
         };
       })
     );
   };
 
-  // elimina cliente
   const handleDeleteClient = (orderId, clientId) => {
     setSelectedProducts((prev) =>
       prev.map((order) => {
         if (order.id !== orderId) return order;
 
-        const updatedClients = order.clienti.filter(
-          (cliente) => cliente.id !== clientId
-        );
-
-        const { qtyTotale, totaleOrdine } = recomputeOrderTotals(updatedClients);
+        const upd = order.clienti.filter((c) => c.id !== clientId);
+        const { qtyTot, totOrdine } = recomputeOrderTotals(upd);
 
         return {
           ...order,
-          clienti: updatedClients,
-          "quantità totale": qtyTotale,
-          totale: Number(totaleOrdine.toFixed(2)),
+          clienti: upd,
+          "quantità totale": qtyTot,
+          totale: Number(totOrdine.toFixed(2)),
         };
       })
     );
   };
 
-  //  aggiungi cliente scegliendolo da customersMock
   const handleAddClient = (orderId, customerId) => {
     setSelectedProducts((prev) =>
       prev.map((order) => {
         if (order.id !== orderId) return order;
-
         const prezzo = order.prodottoDettaglio?.prezzo || 0;
+
         const customer = customersMock.find((c) => c.id === customerId);
         if (!customer) return order;
 
-        const newClient = {
+        const nuovo = {
           ...customer,
           qty: 1,
           totale: prezzo,
         };
 
-        const updatedClients = [...order.clienti, newClient];
-
-        const { qtyTotale, totaleOrdine } = recomputeOrderTotals(updatedClients);
+        const upd = [...order.clienti, nuovo];
+        const { qtyTot, totOrdine } = recomputeOrderTotals(upd);
 
         return {
           ...order,
-          clienti: updatedClients,
-          "quantità totale": qtyTotale,
-          totale: Number(totaleOrdine.toFixed(2)),
+          clienti: upd,
+          "quantità totale": qtyTot,
+          totale: Number(totOrdine.toFixed(2)),
         };
       })
     );
   };
 
-  // colonna actions
+  // --------------------------------------------------------
+  // FUNZIONE RIORDINO → stock + quantità totale
+  // --------------------------------------------------------
+  const handleReorderStock = (orderId, qty) => {
+    const aggiunta = Number(qty) || 0;
+
+    setSelectedProducts((prev) =>
+      prev.map((order) => {
+        if (order.id !== orderId) return order;
+
+        const oldStock = order.prodottoDettaglio?.stock || 0;
+
+        return {
+          ...order,
+          "quantità totale": order["quantità totale"] + aggiunta,
+          prodottoDettaglio: {
+            ...order.prodottoDettaglio,
+            stock: oldStock + aggiunta,
+          },
+        };
+      })
+    );
+  };
+
   const rowActions = [
     {
       name: "delete",
@@ -226,12 +224,13 @@ const OrderPage = () => {
         columns={orderColumns}
         productsOptions={productsMock}
         customersOptions={customersMock}
-        onAddProduct={handleAddProduct}  
+        onAddProduct={handleAddProduct}
         onUpdateStatus={handleUpdateStatus}
         onUpdateCarrier={handleUpdateCarrier}
         onUpdateClient={handleUpdateClient}
         onDeleteClient={handleDeleteClient}
         onAddClient={handleAddClient}
+        onReorderStock={handleReorderStock} 
         statusOptions={STATUS_OPTIONS}
         courierOptions={COURIER_OPTIONS}
         actions={rowActions}
