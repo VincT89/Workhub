@@ -9,9 +9,15 @@ dotenv.config();
 
 const app = express();
 
+// CORS
+app.use(cors({
+  origin: process.env.CLIENT_URL || "http://localhost:5173", // Aggiunto CLIENT_URL nel .env - usa localhost:5173 come default
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"], // Metodi permessi
+  credentials: true, // Permetti credenziali (cookie, header di autorizzazione, ecc.)
+}));
+
 // Middleware globali
 app.use(helmet());
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
