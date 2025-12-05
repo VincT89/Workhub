@@ -2,6 +2,7 @@ import OrdersTable from "../components/Orders/OrdersTable";
 import { useState, useEffect } from "react";
 import { productsMock } from "../api/mock/productsMock";
 import { customersMock } from "../api/mock/customersMock";
+import { TrashIcon } from "@phosphor-icons/react";
 
 const STATUS_OPTIONS = ["In preparazione", "Spedito", "In consegna", "Consegnato"];
 const COURIER_OPTIONS = ["Da assegnare", "BRT", "SDA", "DHL", "UPS", "GLS", "FedEx"];
@@ -210,7 +211,7 @@ const OrderPage = () => {
       name: "delete",
       icon: (
         <span className="text-lg" role="img" aria-label="Elimina">
-          🗑
+          <TrashIcon size={28} color="#ff0000" weight="duotone" />
         </span>
       ),
       onClick: (row) => handleDeleteOrder(row.id),
