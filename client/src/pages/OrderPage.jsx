@@ -40,46 +40,31 @@ const OrderPage = () => {
   // -------------------------
   // AGGIUNGI PRODOTTO
   // -------------------------
-  const handleAddProduct = (productId) => {
-    const product = productsMock.find((p) => String(p.id) === String(productId));
-    if (!product) return;
+const handleAddProduct = (productId) => {
+  const product = productsMock.find((p) => p.id == productId);
+  if (!product) return;
 
-    setSelectedProducts((prev) => {
-      if (prev.some((p) => String(p.id) === String(product.id))) return prev;
+  setSelectedProducts((prev) => {
+    // Evita duplicati
+    if (prev.some((p) => p.id == product.id)) return prev;
 
-      const clientiBase = customersMock.slice(0, 3);
+    const today = new Date().toLocaleDateString("it-IT");
 
-      const clientiConOrdine = clientiBase.map((cliente) => {
-        const qty = Math.floor(Math.random() * 3) + 1;
-        const totale = qty * product.prezzo;
+    const newOrder = {
+      id: product.id,
+      prodotto: product.nome,
+      "quantità totale": 0,   // Nessuna quantità predefinita
+      data: today,
+      stato: "",
+      corriere: "",
+      totale: 0,              // Nessun totale calcolato
+      prodottoDettaglio: product,
+      clienti: [],            // Nessun cliente
+    };
 
-        return {
-          ...cliente,
-          qty,
-          totale,
-        };
-      });
-
-      const qtyTot = clientiConOrdine.reduce((s, c) => s + c.qty, 0);
-      const totOrdine = clientiConOrdine.reduce((s, c) => s + c.totale, 0);
-
-      const today = new Date().toLocaleDateString("it-IT");
-
-      const newOrder = {
-        id: product.id,
-        prodotto: product.nome,
-        "quantità totale": qtyTot,
-        data: today,
-        stato: "",
-        corriere: "",
-        totale: Number(totOrdine.toFixed(2)),
-        prodottoDettaglio: product,
-        clienti: clientiConOrdine,
-      };
-
-      return [...prev, newOrder];
-    });
-  };
+    return [...prev, newOrder];
+  });
+};
 
   const handleDeleteOrder = (orderId) => {
     setSelectedProducts((prev) => prev.filter((o) => o.id !== orderId));
@@ -98,10 +83,13 @@ const OrderPage = () => {
   };
 
   const recomputeOrderTotals = (clienti) => {
-    const qtyTot = clienti.reduce((s, c) => s + c.qty, 0);
-    const totOrdine = clienti.reduce((s, c) => s + c.totale, 0);
-    return { qtyTot, totOrdine };
-  };
+  const qtyTot = clienti.reduce((s, c) => s + c.qty, 0);
+  const totOrdine = clienti.reduce((s, c) => s + c.totale, 0);
+  return { qtyTot, totOrdine };
+};
+
+
+
 
   const handleUpdateClient = (orderId, clientId, updatedFields) => {
     setSelectedProducts((prev) =>
@@ -185,26 +173,36 @@ const OrderPage = () => {
   // --------------------------------------------------------
   // FUNZIONE RIORDINO → stock + quantità totale
   // --------------------------------------------------------
-  const handleReorderStock = (orderId, qty) => {
-    const aggiunta = Number(qty) || 0;
+const handleReorderStock = (orderId, qty) => {
+  const aggiunta = Number(qty) || 0;
 
-    setSelectedProducts((prev) =>
-      prev.map((order) => {
-        if (order.id !== orderId) return order;
+  setSelectedProducts((prev) =>
+    prev.map((order) => {
+      if (order.id !== orderId) return order;
 
-        const oldStock = order.prodottoDettaglio?.stock || 0;
+      const oldQty = order["quantità totale"] || 0;
+      const prezzo = order.prodottoDettaglio?.prezzo || 0;
+      const oldStock = order.prodottoDettaglio?.stock || 0;
 
-        return {
-          ...order,
-          "quantità totale": order["quantità totale"] + aggiunta,
-          prodottoDettaglio: {
-            ...order.prodottoDettaglio,
-            stock: oldStock + aggiunta,
-          },
-        };
-      })
-    );
-  };
+      // nuova quantità totale
+      const nuovaQtaTot = oldQty + aggiunta;
+
+      // nuovo totale
+      const nuovoTotale = Number((nuovaQtaTot * prezzo).toFixed(2));
+
+      return {
+        ...order,
+        "quantità totale": nuovaQtaTot,
+        totale: nuovoTotale,
+        prodottoDettaglio: {
+          ...order.prodottoDettaglio,
+          stock: oldStock + aggiunta,
+        },
+      };
+    })
+  );
+};
+
 
   const rowActions = [
     {
