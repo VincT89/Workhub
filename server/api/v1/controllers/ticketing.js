@@ -11,8 +11,21 @@ export const createTickets = async (req, res) => {
     const newTicket = new TicketModel(req.body);  // Crea un ticket coi dati passati nel corpo della richiesta (req.body)
     const savedTicket = await newTicket.save();  // Salva il nuovo ticket nel database
 
+    // Popola il riferimento `user` prima di rispondere
+    await savedTicket.populate('user', 'firstName lastName email');
+
     res.status(201).json(savedTicket); // Risponde con status 201 (creato) e il ticket salvato in formato JSON
   } catch (error) {
+    // Validation errors -> 400
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ error: 'Validation error', details: error.errors });
+    }
+
+    // Duplicate key (unique) -> 409 Conflict
+    if (error.code && error.code === 11000) {
+      return res.status(409).json({ error: 'Duplicate key', details: error.keyValue });
+    }
+
     return handleRouteErrors(res, { error });
   }
 };
@@ -35,7 +48,9 @@ Alcuni codici hanno anche un “reason phrase” (una descrizione testuale stand
 //@ Controller per ottenere tutti gli ticket
 export const getAllTickets = async (req, res) => {
   try {
-    const tickets = await TicketModel.find(); // Trova tutti i ticket nel database
+    const tickets = await TicketModel.find()
+      .populate('user', 'firstName lastName email'); // Popola user per la lista
+
     res.status(200).json(tickets); // Risponde con status 200 (OK) e i ticket in formato JSON
   }
     catch (error) { 
@@ -49,7 +64,7 @@ export const getItemById = async (req, res) => {
     const { id } = req.params;
     const ticket = await TicketModel.findById(id)
       .populate('user', 'firstName lastName email avatar') // campi user che vuoi
-      .populate('category', 'name'); // campi category che vuoi
+      /* .populate('category', 'name'); // campi category che vuoi */
     if (!ticket) return res.status(404).json({ message: 'Ticket not found' });
     res.status(200).json(ticket);
   } catch (error) {
