@@ -20,7 +20,6 @@ import WarehousePage from "./pages/Warehouse/WarehousePage.jsx";
 import Product from "./pages/Warehouse/Product.jsx";
 import TicketPage from "./pages/Ticketing/TicketPage.jsx";
 import OrderPage from "./pages/OrderPage.jsx";
-import ReturnPage from "./pages/ReturnPage.jsx";
 import PasswordRecoveryPage from "./pages/PasswordRecoveryPage.jsx";
 
 function App() {
@@ -36,14 +35,13 @@ function App() {
 			<Route path="/" element={<PublicLayout />}>
 				<Route path="board" element={<BoardPage />} />
 				<Route path="customers" element={<CustomersPage />} />
-				<Route path="item/:id" element={<CustomersRegistry />} />
+				<Route path="customer/:id" element={<CustomersRegistry />} />
 				<Route path="personale" element={<EmployeePage />} />
 				<Route path="personale/:id" element={<AdminEmployeeDetailsPage />} />
 				<Route path="warehouse" element={<WarehousePage />} />
 				<Route path="product/:id" element={<Product />} />
 				<Route path="ticket" element={<TicketPage />} />
 				<Route path="orders" element={<OrderPage />} />
-				<Route path="return" element={<ReturnPage />} />
 				<Route path="settings" element={<SettingsPage />} />
 			</Route>
 		</Routes>

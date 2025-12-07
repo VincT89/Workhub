@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 
+import bgLight from "../assets/bg/bg.jpg";
+
 // open (boolean) → true = mostra la drawer
 // onClose (function) → per chiudere la drawer
 // title (string) → testo dell’intestazione
@@ -29,15 +31,18 @@ const Drawer = ({ open, onClose, title, children, width = "w-[420px]" }) => {
       <aside
         className={`
           absolute right-0 top-0 h-full ${width}
-          bg-[#f4ecff] border-l border-white/40 shadow-2xl
+          border-l border-white/40 shadow-2xl
           transform transition-transform duration-300 translate-x-0
-          overflow-auto
+          overflow-auto bg-cover bg-center
         `}
+        style={{
+          backgroundImage: `url(${bgLight})`
+        }}
         role="dialog"
         aria-modal="true"
       >
         {/* Header lilla chiaro */}
-        <header className="sticky top-0 z-10 bg-[#f4ecff]/95 border-b border-white/60 px-6 py-4 flex items-center justify-between">
+        <header className="sticky top-0 z-10 border-b border-white/60 px-6 py-4 flex items-center justify-between">
           <h2 className="text-base font-semibold text-[#090c64]">
             {title}
           </h2>

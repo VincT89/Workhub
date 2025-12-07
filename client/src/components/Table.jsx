@@ -1,11 +1,17 @@
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 
-const Table = ({ data, columns, customToolbar, onRowClick }) => {
-	const navigate = useNavigate();
+const Table = ({
+	data,
+	columns,
+	customToolbar,
+	actions,
+	actionLabel = null,
+	onRowClick,
+}) => {
 
 	const [searchTerm, setSearchTerm] = useState("");
 	const [sortAZ, setSortAZ] = useState(false);
+	
 
 	const filteredData = useMemo(() => {
 		const query = searchTerm.toLowerCase();
@@ -65,7 +71,7 @@ const Table = ({ data, columns, customToolbar, onRowClick }) => {
 
 			{/* RESPONSIVE SCROLL WRAPPER */}
 			<div className="w-full overflow-x-auto rounded-xl">
-				<table className="w-full border-collapse text-xs sm:text-sm text-[#090c64]">
+				<table className="w-full text-xs sm:text-sm text-[#090c64] border-auto">
 					<thead>
 						<tr className="bg-white/60 text-[#090c64]">
 							{columns.map((item, idx) => (
@@ -74,32 +80,46 @@ const Table = ({ data, columns, customToolbar, onRowClick }) => {
 									className={`
 										p-3 whitespace-nowrap
 										${idx === 0 ? "rounded-l-xl" : ""}
-										${idx === columns.length - 1 ? "rounded-r-xl" : ""}
+										${!actionLabel && idx === columns.length - 1 ? "rounded-r-xl" : ""}
 									`}
 								>
 									{item.charAt(0).toUpperCase() + item.slice(1)}
 								</th>
 							))}
+							{actionLabel && (
+								<th
+									className={`
+										p-3 whitespace-nowrap rounded-r-xl
+									`}
+								>
+									{actionLabel}
+								</th>
+							)}
 						</tr>
 					</thead>
 
 					<tbody>
+						{/* <tr
+							className="hover:bg-white/40 transition cursor-pointer rounded-xl"
+						>
+							<td className="rounded-l-xl whitespace-nowrap p-3">Test</td>
+							<td className="p-3">Test</td>
+							<td className="rounded-r-xl whitespace-nowrap p-3">Test</td>
+						</tr> */}
 						{filteredData.map((row, i) => (
 							<tr
 								key={i}
-								className="hover:bg-white/40 transition cursor-pointer"
-								onClick={() => {
-									if (onRowClick) onRowClick(row);
-									else navigate(`/item/${row.id}`, { state: row });
-								}}
+								className="transition cursor-pointer rounded-xl tr-hover tr-last-rounded"
+								onClick={() => onRowClick && onRowClick(row)}
+							
 							>
 								{columns.map((col, j) => (
 									<td
 										key={j}
 										className={`
-											p-3 whitespace-nowrap md:whitespace-normal
+											p-3
 											${j === 0 ? "rounded-l-xl" : ""}
-											${j === columns.length - 1 ? "rounded-r-xl" : ""}
+											${!actions && j === columns.length - 1 ? "rounded-r-xl" : ""}
 										`}
 									>
 										{row[col] !== null && row[col] !== undefined
@@ -108,6 +128,24 @@ const Table = ({ data, columns, customToolbar, onRowClick }) => {
 											: "-"}
 									</td>
 								))}
+								{actions && Array.isArray(actions) && actions.length > 0 && (
+									<td
+										key={`action-cell-${i}`}
+										className={`
+											p-3 flex gap-1 items-center justify-center
+										`}
+									>
+										{
+											actions.map(action => (
+												<button key={action.name} className="cursor-pointer" onClick={typeof action.onClick === "function" ? () => action.onClick(row) : () => {}}>
+													{
+														action.icon
+													}
+												</button>
+											))
+										}
+									</td>
+								)}
 							</tr>
 						))}
 					</tbody>

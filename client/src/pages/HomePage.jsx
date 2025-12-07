@@ -34,8 +34,8 @@ const HomePage = () => {
 
       {/* Logo */}
       <img
-        className="absolute top-[32%] sm:top-[34%] md:top-[20%] left-1/2 md:left-[45%] transform -translate-x-1/2 
-        w-[70%] sm:w-[60%] md:w-[45%] lg:w-[35%] max-w-[499px] h-auto aspect-[1.82] object-cover"
+        className="absolute top-[32%] sm:top-[34%] md:top-[27%] left-1/2 md:left-[45%] transform -translate-x-1/2 
+        w-[70%] sm:w-[60%] md:w-[45%] lg:w-[35%] max-w-[599px] h-auto aspect-[1.82] object-cover"
         alt="WorkHub logo"
         src={theme === "dark" ? logoDark : Logo}
       />
@@ -43,10 +43,10 @@ const HomePage = () => {
       {/* Frase */}
       <h1
         className={`absolute top-[54%] sm:top-[58%] left-1/2 transform -translate-x-1/2 text-center
-         text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-normal 
+         text-xl sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-normal 
         leading-normal whitespace-nowrap transition-colors duration-500 ${textColor}`}
       >
-        {t("home.slogan")}        
+        {t("dashboard.slogan")}        
       </h1>
 
       {/* Bottone di Benvenuto */}
@@ -60,7 +60,7 @@ const HomePage = () => {
         cursor-pointer transition-colors duration-300 ${textColor} 
         hover:bg-white/30 hover:backdrop-blur-sm hover:shadow-lg`}
       >
-        {t("home.benvenuto")}      
+        {t("dashboard.benvenuto")}      
       </Link>
     </main>
   );

@@ -17,6 +17,7 @@ const PointOfSalesSchema = new Schema({
         },
         required: true
     },
+    
 }, { strict: true, timestamps: true, versionKey: false });
 
 const PointOfSalesModel = model('PointOfSales', PointOfSalesSchema);

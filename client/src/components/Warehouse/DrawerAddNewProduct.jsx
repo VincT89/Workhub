@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import bgLight from "../../assets/bg/bg.jpg";
 
 const DrawerAddNewProduct = ({ open, onClose, onAddProduct }) => {
   const [code, setCode] = useState("");
@@ -44,19 +45,22 @@ const DrawerAddNewProduct = ({ open, onClose, onAddProduct }) => {
       {/* Drawer */}
       <aside
         className="absolute right-0 top-0 w-[420px] h-full
-                   bg-[#f4ecff] border-l border-white/40 shadow-2xl
-                   overflow-auto"
+                   border-l border-white/40 shadow-2xl
+                   overflow-auto bg-cover bg-center"
         role="dialog"
         aria-modal="true"
+         style={{
+                  backgroundImage: `url(${bgLight})`
+                }}
       >
         {/* Header */}
-        <header className="sticky top-0 bg-[#f4ecff]/90 border-b border-white/60 px-6 py-4 flex items-center justify-between">
+        <header className="sticky top-0  border-b border-white/60 px-6 py-4 flex items-center justify-between">
           <h2 className="text-base font-semibold text-[#090c64]">
             Carica giacenza prodotto
           </h2>
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-white/70 border border-white/50 shadow-sm rounded-lg text-sm text-[#090c64] hover:bg-[#e8defc]"
+            className="px-4 py-2 bg-[#090c64] border border-white/50 shadow-sm rounded-xl text-sm text-white cursor-pointer"
           >
             Chiudi
           </button>
@@ -73,7 +77,7 @@ const DrawerAddNewProduct = ({ open, onClose, onAddProduct }) => {
               placeholder="Es. A001"
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
+              className="w-full px-3 py-2 border rounded-xl"
             />
           </div>
 
@@ -85,7 +89,7 @@ const DrawerAddNewProduct = ({ open, onClose, onAddProduct }) => {
               placeholder="Es. Lampada da tavolo"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
+              className="w-full px-3 py-2 border rounded-xl"
             />
           </div>
 
@@ -97,14 +101,14 @@ const DrawerAddNewProduct = ({ open, onClose, onAddProduct }) => {
               placeholder="Es. 10"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
+              className="w-full px-3 py-2 border rounded-xl"
             />
           </div>
 
           {/* Bottone Aggiungi */}
           <button
             onClick={handleAdd}
-            className="px-4 py-2 bg-[#d5c7ff]/70 border border-white/70 shadow-sm rounded-lg text-sm text-[#090c64] hover:bg-[#cfc0ff]"
+            className="px-4 py-2 bg-[#090c64] border border-white/70 shadow-sm rounded-xl text-sm text-white cursor-pointer"
           >
             Aggiungi prodotto
           </button>

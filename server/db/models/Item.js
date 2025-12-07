@@ -3,7 +3,7 @@ import { Schema, model } from 'mongoose';
 const ItemSchema = new Schema({
     product: {
         type: Schema.Types.ObjectId,
-        ref: 'Product',
+        ref: 'Products',
         required: true,
     },
     pointOfSales: {

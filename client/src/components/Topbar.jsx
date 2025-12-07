@@ -1,4 +1,4 @@
-import { User, Sun, Moon, Gear, SignOut } from "@phosphor-icons/react";
+import { UserIcon, SunIcon, MoonIcon, GearIcon, SignOutIcon } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../store/feature/authSlice";
@@ -35,7 +35,7 @@ const TopBar = () => {
     >
       {/* LATO SINISTRO: icona utente + testo */}
       <div className="flex items-center gap-3">
-        <User
+        <UserIcon
           size={28}
           color={theme === "dark" ? "white" : "#090c64"}
           weight="duotone"
@@ -47,7 +47,7 @@ const TopBar = () => {
             ${theme === "dark" ? "text-white" : "text-[#090c64]"}
           `}
         >
-          {t("topbar.benvenuto")} {user?.role || "Guest"}
+          {t("dashboard.benvenuto")} {user?.firstName || "Guest"}
         </span>
       </div>
 
@@ -55,14 +55,14 @@ const TopBar = () => {
       <div className="flex items-center gap-6 md:gap-9">
         <button onClick={handleThemeToggle}>
           {theme === "dark" ? (
-            <Moon size={26} color="white" weight="duotone" cursor="pointer" />
+            <MoonIcon size={26} color="white" weight="duotone" cursor="pointer" />
           ) : (
-            <Sun size={26} color="#090c64" weight="duotone" cursor="pointer" />
+            <SunIcon size={26} color="#090c64" weight="duotone" cursor="pointer" />
           )}
         </button>
 
         <Link to="/settings">
-          <Gear
+          <GearIcon
             size={26}
             color={theme === "dark" ? "white" : "#090c64"}
             weight="duotone"
@@ -70,7 +70,7 @@ const TopBar = () => {
         </Link>
 
         <button onClick={handleLogout} title="Logout">
-          <SignOut
+          <SignOutIcon
             size={26}
             color={theme === "dark" ? "white" : "#090c64"}
             weight="duotone"

@@ -10,15 +10,11 @@ body {
   color: #090c64;
 }
 
-
-
-
 @layer base {
   body {
     color: #090c64;
   }
 }
-
 
 /* Nasconde scrollbar */
 *::-webkit-scrollbar { width: 0; height: 0; }
@@ -54,6 +50,12 @@ body {
     @apply rounded-xl p-2 shadow-md border border-white/20 transition-all duration-500 cursor-pointer font-bold text-white bg-[#090c64];
     font-family: var(--font-nunito);
   }
+
+    /* Button light */
+  .custom-button-light {
+    @apply rounded-xl p-2 shadow-md border border-white/20 transition-all duration-500 cursor-pointer font-bold bg-white text-[#090c64];
+    font-family: var(--font-nunito);
+  }
 }
 
   /* === Stili globali per i bottoni === */
@@ -82,7 +84,6 @@ h2 {
   color: #090c64;
 }
 
-
 h3 {
   @apply font-bold text-xl ;
   color: #090c64;
@@ -99,4 +100,18 @@ h3 {
 .warehouse-btn:hover {
   background-color: rgb(9 12 100 / 0.2);   /* blu al 20% di opacità */
   color: #090c64;                          /* testo blu */
+}
+
+table tbody tr:hover td {
+  @apply bg-white/40;
+}
+
+table tbody tr td:first-child {
+  border-top-left-radius: 0.75rem; /* rounded-l-xl */
+  border-bottom-left-radius: 0.75rem; /* rounded-l-xl */
+}
+
+table tbody tr td:last-child {
+  border-top-right-radius: 0.75rem; /* rounded-r-xl */
+  border-bottom-right-radius: 0.75rem; /* rounded-r-xl */
 }

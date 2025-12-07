@@ -9,49 +9,100 @@ import {
 	Package,
 	WarningOctagon,
 	Calendar,
+	NotePencil,
+	Trash,
 } from "@phosphor-icons/react";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
-	setLowStockProducts,
-	setBoardPosts,
-} from "../store/feature/boardSlice";
+	fetchEventsAsync,
+	createEventAsync,
+	updateEventAsync,
+	deleteEventAsync,
+} from "../store/feature/eventsSlice";
+import { fetchPointsOfSalesAsync } from "../store/feature/pointOfSalesSlice";
 import Table from "../components/Table";
+import Drawer from "../components/Drawer";
 
 const BoardPage = () => {
 	const { theme } = useTheme();
 	const { t } = useLanguage();
 	const { role } = useSelector((state) => state.auth.user);
+	const token = useSelector((state) => state.auth.token);
+	const users = useSelector((state) => state.users); // per richiamare i dati del personale (nelle box in alto)
+	const pointOfSales = useSelector((state) => state.pos); // per richiamare i dati dei depositi (nelle box in alto)
 
 	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 
 	const dispatch = useDispatch();
 
-	const lowStockProducts = useSelector((state) => state.board.lowStockProducts);
-	const boardPosts = useSelector((state) => state.board.boardPosts);
+	const events = useSelector((state) => state.events.events);
 
 	useEffect(() => {
-		dispatch(
-			setLowStockProducts([
-				{ name: "Penna", qty: 3 },
-				{ name: "Quaderno", qty: 1 },
-			])
-		);
-	}, [dispatch]);
+		dispatch(fetchEventsAsync());
+		if (token) {
+			dispatch(fetchPointsOfSalesAsync({ token }));
+		}
+	}, [dispatch, token]);
 
-	useEffect(() => {
-		dispatch(
-			setBoardPosts([
-				{ title: "Nuova riunione", date: "2025-11-22" },
-				{ title: "Aggiornamento magazzino", date: "2025-11-21" },
-			])
-		);
-	}, [dispatch]);
+	const boardPosts = events.map((event) => ({
+		_id: event._id,
+		title: event.title,
+		date: event.startDate ? event.startDate.slice(0, 10) : "",
+		description: event.description || "",
+	}));
 
-	const columns =
-		lowStockProducts.length > 0 ? Object.keys(lowStockProducts[0]) : [];
+	const boardColumns = ["title", "date", "description"];
 
-	const boardColumns = boardPosts.length > 0 ? Object.keys(boardPosts[0]) : [];
+	// State per il Drawer
+	const [drawerOpen, setDrawerOpen] = useState(false);
+	const [editData, setEditData] = useState(null);
+
+	// Apre drawer in modalità modifica
+	const openDrawerEdit = (row) => {
+		setEditData({
+			_id: row._id,
+			title: row.title,
+			date: row.date,
+			description: row.description || "",
+		});
+		setDrawerOpen(true);
+	};
+
+	// Apre drawer per aggiungere
+	const openDrawerAdd = () => {
+		setEditData({ _id: null, title: "", date: "", description: "" });
+		setDrawerOpen(true);
+	};
+
+	// Salva (sia nuovo che modifica)
+	const handleSavePost = (e) => {
+		e.preventDefault();
+
+		const payload = {
+			title: editData.title,
+			startDate: editData.date,
+			endDate: editData.date,
+			description: editData.description,
+		};
+
+		if (editData._id) {
+			dispatch(updateEventAsync({ id: editData._id, data: payload }));
+		} else {
+			dispatch(createEventAsync(payload));
+		}
+
+		setDrawerOpen(false);
+		setEditData(null);
+	};
+
+	const handleDelete = (row) => {
+		if (
+			window.confirm(`Sei sicuro di voler eliminare l'evento "${row.title}"?`)
+		) {
+			dispatch(deleteEventAsync(row._id));
+		}
+	};
 
 	return (
 		<div
@@ -70,7 +121,7 @@ const BoardPage = () => {
 						<span className="font-bold text-[14px]">Depositi</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
-						5
+						{pointOfSales?.list?.length ?? 0}
 					</span>
 				</div>
 
@@ -116,7 +167,6 @@ const BoardPage = () => {
 					</span>
 				</div>
 
-				{/* {role === "supervisor" && ( intero <div />} */}
 				<div
 					className={`flex items-center justify-between rounded-xl px-3 py-2 shadow  mt-2
 					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
@@ -127,7 +177,7 @@ const BoardPage = () => {
 						<span className="font-bold text-[14px] ">Personale attivo</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
-						50
+						{users?.list?.length ?? 0}
 					</span>
 				</div>
 			</div>
@@ -146,9 +196,11 @@ const BoardPage = () => {
 
 						<h3 className="text-[14px] font-bold font-nunito">Bacheca</h3>
 
-						{/* Bottone visibile SOLO ai supervisor o admin */}
 						{(role === "supervisor" || role === "admin") && (
-							<button className="ml-auto px-4 py-2 bg-[#090c64] text-white shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[14px] font-bold-nunito cursor-pointer">
+							<button
+								onClick={openDrawerAdd}
+								className="ml-auto px-4 py-2 bg-[#090c64] text-white shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[14px] font-bold-nunito cursor-pointer"
+							>
 								+ Aggiungi
 							</button>
 						)}
@@ -156,7 +208,36 @@ const BoardPage = () => {
 
 					{/* TABELLA */}
 					<div className="w-full h-full overflow-hidden">
-						<Table data={boardPosts} columns={boardColumns} />
+						<Table
+							data={boardPosts}
+							columns={boardColumns}
+							actionLabel={"Actions"}
+							actions={
+								role === "admin"
+									? [
+											{
+												name: "edit",
+												icon: (
+													<NotePencil
+														size={28}
+														color="#090c64"
+														weight="duotone"
+														className="mr-4"
+													/>
+												),
+												onClick: openDrawerEdit,
+											},
+											{
+												name: "delete",
+												icon: (
+													<Trash size={28} color="#ff0000" weight="duotone" />
+												),
+												onClick: handleDelete,
+											},
+									  ]
+									: []
+							}
+						/>
 					</div>
 				</div>
 
@@ -177,7 +258,14 @@ const BoardPage = () => {
 
 					{/* TABELLA */}
 					<div className="w-full overflow-hidden h-full mt-3">
-						<Table data={lowStockProducts} columns={columns} />
+						<Table
+							data={[
+								{ name: "Prodotto A", stock: "8" },
+								{ name: "Prodotto B", stock: "5" },
+								{ name: "Prodotto C", stock: "2" },
+							]}
+							columns={["name", "stock"]}
+						/>
 					</div>
 				</div>
 			</div>
@@ -201,6 +289,56 @@ const BoardPage = () => {
 					<CalendarBox />
 				</div>
 			</div>
+
+			<Drawer
+				open={drawerOpen}
+				onClose={() => setDrawerOpen(false)}
+				title={editData && editData.title ? "Modifica evento" : "Nuovo evento"}
+			>
+				{editData && (
+					<form onSubmit={handleSavePost} className="flex flex-col gap-4">
+						<div className="flex flex-col">
+							<label className="text-sm font-bold">Titolo</label>
+							<input
+								type="text"
+								value={editData.title}
+								placeholder="Inserisci un evento..."
+								onChange={(e) =>
+									setEditData({ ...editData, title: e.target.value })
+								}
+								className="px-3 py-2 rounded-xl bg-[#fafafa20] border border-white/30"
+							/>
+						</div>
+
+						<div className="flex flex-col">
+							<label className="text-sm font-bold">Data</label>
+							<input
+								type="date"
+								value={editData.date}
+								placeholder="dd/mm/yyyy"
+								onChange={(e) =>
+									setEditData({ ...editData, date: e.target.value })
+								}
+								className="px-3 py-2 rounded-xl bg-[#fafafa20] border border-white/30"
+							/>
+						</div>
+
+						<div className="flex justify-end gap-3 mt-4">
+							<button
+								type="button"
+								onClick={() => setDrawerOpen(false)}
+								className="custom-button-light"
+							>
+								Annulla
+							</button>
+
+							<button type="submit" className="custom-button">
+								Salva
+							</button>
+						</div>
+					</form>
+				)}
+			</Drawer>
 		</div>
 	);
 };

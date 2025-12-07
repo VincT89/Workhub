@@ -139,35 +139,38 @@ const WarehouseTable = ({ data, columns }) => {
               className="hover:bg-white cursor-pointer text-center"
             >
 
-              {/* ETICHETTE COLORATE IN BASE ALLO STATO */}
-              {columns.map((col, j) => { // cicla i nomi delle colonne nell'array columns
+               {/* ETICHETTE COLORATE IN BASE ALLO STATO */}
+               {columns.map((col, j) => { // cicla i nomi delle colonne nell'array columns
                 if (col === "stato") { // significa se colonna è = a stato, cioè se il nome della colonna corrente è stato fai quando segue
                   //colori iniziali
-                  let border = "border-red-500";
-                  let bg = "bg-red-100";
+                  let border = "border-red-300";
+                  let bg = "bg-red-50";
                   let text = "Non disponibile";
+                  let textColor = "text-red-400";
 
                   //raw rappresenta una riga della tabella, quindi un singolo prodotto e va a controllare lo "status" 
                   if (row.status === "disponibile") {
-                    border = "border-green-600";
-                    bg = "bg-green-100";
+                    border = "border-green-300";
+                    bg = "bg-green-50";
                     text = "Disponibile";
+                    textColor = "text-green-700";
                   } else if (row.status === "fuori produzione") {
-                    border = "border-gray-700";
-                    bg = "bg-gray-200";
+                    border = "border-gray-300";
+                    bg = "bg-gray-50";
                     text = "Fuori produzione";
+                    textColor = "text-gray-500";
                   }
                   return (
                     <td
                       key={j}
-                      className={`p-3 ${j === 0 ? "rounded-l-xl" : ""} ${
-                        j === columns.length - 1 ? "rounded-r-xl" : ""
-                      }`}
+                      className={`p-3 ${j === 0 ? "rounded-l-xl" : ""} ${j === columns.length - 1 ? "rounded-r-xl" : ""
+                        }`}
                     >
                       <span
                         className={`
                           ${bg} 
                           ${border} 
+                          ${textColor}
                           border 
                           text-sm 
                           px-1.5
@@ -181,6 +184,7 @@ const WarehouseTable = ({ data, columns }) => {
                     </td>
                   );
                 }
+
 
                 if (col === "quantita") {
                   const qty = row.stock?.["Mia Sede"] || 0;
