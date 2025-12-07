@@ -5,6 +5,7 @@ import meRouter from "./routes/me.js";
 import pointOfSalesRouter from "./routes/pointOfSales.js";
 import userShiftRouter from "./routes/userShift.js";
 import userLeaveRouter from "./routes/userLeave.js";
+import ticketingRouter from "./routes/ticketing.js";
 
 
 
@@ -36,6 +37,10 @@ app.use("/shifts", userShiftRouter);
 /** /api/v1/leaves
 */
 app.use("/leaves", userLeaveRouter);
+
+/** /api/v1/ticketing
+*/
+app.use("/ticketing", ticketingRouter);
 
 
 
