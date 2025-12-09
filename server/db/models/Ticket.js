@@ -15,11 +15,6 @@ const TicketSchema = new Schema({
         type: String,
         required: true,
     },
-    category: {
-        type: Schema.Types.ObjectId,
-        ref: 'Category',
-        required: true
-    },
     status: {
         type: String,
         required: true,

@@ -1,17 +1,20 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const API_URL = "http://localhost:3030/api/v1";
+import {
+  fetchLeaveRequest,
+  fetchLeaveByUserIdRequest,
+  createLeaveRequestRequest,
+  updateLeaveStatusRequest,
+  initLeaveRecordRequest,
+} from "../../api/leaveApi";
 
 /* GET USER LEAVES */
 export const fetchLeaveAsync = createAsyncThunk(
   "leave/fetch",
   async (token, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${API_URL}/leaves`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const { res, data } = await fetchLeaveRequest(token);
 
-      const data = await res.json();
       if (!res.ok) return rejectWithValue(data.message);
 
       return data.data;
@@ -26,11 +29,11 @@ export const fetchLeaveByUserIdAsync = createAsyncThunk(
   "leave/fetchByUserId",
   async ({ userId, token }, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${API_URL}/leaves/user/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const { res, data } = await fetchLeaveByUserIdRequest({
+        userId,
+        token,
       });
 
-      const data = await res.json();
       if (!res.ok) return rejectWithValue(data.message);
 
       return data.data;
@@ -45,16 +48,11 @@ export const createLeaveRequestAsync = createAsyncThunk(
   "leave/createRequest",
   async ({ payload, token }, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${API_URL}/leaves/request`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
+      const { res, data } = await createLeaveRequestRequest({
+        payload,
+        token,
       });
 
-      const data = await res.json();
       if (!res.ok) return rejectWithValue(data.message);
 
       return data.data;
@@ -69,19 +67,12 @@ export const updateLeaveStatusAsync = createAsyncThunk(
   "leave/updateStatus",
   async ({ requestId, status, token }, { rejectWithValue }) => {
     try {
-      const res = await fetch(
-        `${API_URL}/leaves/${requestId}/status`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ status }),
-        }
-      );
+      const { res, data } = await updateLeaveStatusRequest({
+        requestId,
+        status,
+        token,
+      });
 
-      const data = await res.json();
       if (!res.ok) return rejectWithValue(data.message);
 
       return data.data;
@@ -96,12 +87,11 @@ export const initLeaveRecordAsync = createAsyncThunk(
   "leave/initRecord",
   async ({ userId, token }, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${API_URL}/leaves/init/${userId}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+      const { res, data } = await initLeaveRecordRequest({
+        userId,
+        token,
       });
 
-      const data = await res.json();
       if (!res.ok) return rejectWithValue(data.message);
 
       return data.data;
@@ -111,19 +101,21 @@ export const initLeaveRecordAsync = createAsyncThunk(
   }
 );
 
-const leaveSlice = createSlice({
+const userLeaveSlice = createSlice({
   name: "leave",
   initialState: {
     record: null,
     loading: false,
     error: null,
   },
+
   reducers: {
     clearLeave(state) {
       state.record = null;
       state.error = null;
     },
   },
+
   extraReducers: (builder) => {
     builder
       /* FETCH */
@@ -139,6 +131,7 @@ const leaveSlice = createSlice({
         s.loading = false;
         s.error = action.payload;
       })
+
       .addCase(fetchLeaveByUserIdAsync.fulfilled, (s, action) => {
         s.record = action.payload;
       })
@@ -160,5 +153,5 @@ const leaveSlice = createSlice({
   },
 });
 
-export const { clearLeave } = leaveSlice.actions;
-export default leaveSlice.reducer;
+export const { clearLeave } = userLeaveSlice.actions;
+export default userLeaveSlice.reducer;

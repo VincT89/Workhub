@@ -2,15 +2,15 @@ import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 import CalendarBox from "../components/CalendarBox";
 import {
-	Warehouse,
-	ShoppingCartSimple,
-	UserCircleCheck,
-	ChalkboardSimple,
-	Package,
-	WarningOctagon,
-	Calendar,
-	NotePencil,
-	Trash,
+	WarehouseIcon,
+	ShoppingCartSimpleIcon,
+	UserCircleCheckIcon,
+	ChalkboardSimpleIcon,
+	PackageIcon,
+	WarningOctagonIcon,
+	CalendarIcon,
+	NotePencilIcon,
+	TrashIcon
 } from "@phosphor-icons/react";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
@@ -19,8 +19,7 @@ import {
 	createEventAsync,
 	updateEventAsync,
 	deleteEventAsync,
-} from "../store/feature/eventsSlice";
-import { fetchPointsOfSalesAsync } from "../store/feature/pointOfSalesSlice";
+} from "../store/feature/eventsSlice.js";
 import Table from "../components/Table";
 import Drawer from "../components/Drawer";
 
@@ -36,25 +35,24 @@ const BoardPage = () => {
 
 	const dispatch = useDispatch();
 
-	const events = useSelector((state) => state.events.events);
+	const events = useSelector((state) => state.events.events); // tutti gli eventi
 
 	useEffect(() => {
-		dispatch(fetchEventsAsync());
 		if (token) {
-			dispatch(fetchPointsOfSalesAsync({ token }));
+			dispatch(fetchEventsAsync({token})); // carica tutti gli eventi
 		}
 	}, [dispatch, token]);
 
-	const boardPosts = events.map((event) => ({
+	const boardPosts = events.map((event) => ({ // dati per la tabella bacheca
 		_id: event._id,
 		title: event.title,
 		date: event.startDate ? event.startDate.slice(0, 10) : "",
 		description: event.description || "",
 	}));
 
-	const boardColumns = ["title", "date", "description"];
+	const boardColumns = ["title", "date", "description"]; // colonne tabella bacheca
 
-	// State per il Drawer
+	// State per il Drawer 
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [editData, setEditData] = useState(null);
 
@@ -87,20 +85,20 @@ const BoardPage = () => {
 		};
 
 		if (editData._id) {
-			dispatch(updateEventAsync({ id: editData._id, data: payload }));
+			dispatch(updateEventAsync({ id: editData._id, data: payload, token }));
 		} else {
-			dispatch(createEventAsync(payload));
+			dispatch(createEventAsync({ data: payload, token }));
 		}
 
 		setDrawerOpen(false);
 		setEditData(null);
 	};
 
-	const handleDelete = (row) => {
+	const handleDelete = (row) => { // elimina evento
 		if (
 			window.confirm(`Sei sicuro di voler eliminare l'evento "${row.title}"?`)
 		) {
-			dispatch(deleteEventAsync(row._id));
+			dispatch(deleteEventAsync({ id: row._id, token }));
 		}
 	};
 
@@ -117,7 +115,7 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<Warehouse size={28} color="#090c64" weight="duotone" />
+						<WarehouseIcon size={28} color="#090c64" weight="duotone" />
 						<span className="font-bold text-[14px]">Depositi</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
@@ -131,7 +129,7 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<ShoppingCartSimple size={28} color="#090c64" weight="duotone" />
+						<ShoppingCartSimpleIcon size={28} color="#090c64" weight="duotone" />
 						<span className="font-bold text-[14px]">Prodotti</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
@@ -145,7 +143,7 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<Package size={28} color="#090c64" weight="duotone" />
+						<PackageIcon size={28} color="#090c64" weight="duotone" />
 						<span className="font-bold text-[14px]">Ordini in uscita</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
@@ -159,7 +157,7 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<WarningOctagon size={28} color="#090c64" weight="duotone" />
+						<WarningOctagonIcon size={28} color="#090c64" weight="duotone" />
 						<span className="font-bold text-[14px]">Articoli sotto soglia</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
@@ -173,7 +171,7 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<UserCircleCheck size={28} color="#090c64" weight="duotone" />
+						<UserCircleCheckIcon size={28} color="#090c64" weight="duotone" />
 						<span className="font-bold text-[14px] ">Personale attivo</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
@@ -192,7 +190,7 @@ const BoardPage = () => {
 				>
 					{/* HEADER BACHECA */}
 					<div className="flex items-start gap-4 w-full">
-						<ChalkboardSimple size={28} color="#090c64" weight="duotone" />
+						<ChalkboardSimpleIcon size={28} color="#090c64" weight="duotone" />
 
 						<h3 className="text-[14px] font-bold font-nunito">Bacheca</h3>
 
@@ -215,26 +213,26 @@ const BoardPage = () => {
 							actions={
 								role === "admin"
 									? [
-											{
-												name: "edit",
-												icon: (
-													<NotePencil
-														size={28}
-														color="#090c64"
-														weight="duotone"
-														className="mr-4"
-													/>
-												),
-												onClick: openDrawerEdit,
-											},
-											{
-												name: "delete",
-												icon: (
-													<Trash size={28} color="#ff0000" weight="duotone" />
-												),
-												onClick: handleDelete,
-											},
-									  ]
+										{
+											name: "edit",
+											icon: (
+												<NotePencilIcon
+													size={28}
+													color="#090c64"
+													weight="duotone"
+													className="mr-4"
+												/>
+											),
+											onClick: openDrawerEdit,
+										},
+										{
+											name: "delete",
+											icon: (
+												<TrashIcon size={28} color="#ff0000" weight="duotone" />
+											),
+											onClick: handleDelete,
+										},
+									]
 									: []
 							}
 						/>
@@ -249,7 +247,7 @@ const BoardPage = () => {
 				>
 					{/* HEADER */}
 					<div className="flex items-center gap-4">
-						<ShoppingCartSimple size={28} color="#090c64" weight="duotone" />
+						<ShoppingCartSimpleIcon size={28} color="#090c64" weight="duotone" />
 
 						<h3 className="text-[14px] font-bold font-nunito">
 							Prodotti in esaurimento
@@ -278,7 +276,7 @@ const BoardPage = () => {
 				{/* Contenuto */}
 				<div className="flex-1 flex flex-col">
 					<div className="flex gap-4 justify-start items-start">
-						<Calendar size={28} color="#090c64" weight="duotone" />
+						<CalendarIcon size={28} color="#090c64" weight="duotone" />
 						<h3
 							className={`text-[14px] font-bold font-nunito ${textColor} mb-4`}
 						>
@@ -318,6 +316,19 @@ const BoardPage = () => {
 								placeholder="dd/mm/yyyy"
 								onChange={(e) =>
 									setEditData({ ...editData, date: e.target.value })
+								}
+								className="px-3 py-2 rounded-xl bg-[#fafafa20] border border-white/30"
+							/>
+						</div>
+
+						<div className="flex flex-col">
+							<label className="text-sm font-bold">Descrizione</label>
+							<input
+								type="text"
+								value={editData.description}
+								placeholder="Inserisci la descrizione dell'evento"
+								onChange={(e) =>
+									setEditData({ ...editData, description: e.target.value })
 								}
 								className="px-3 py-2 rounded-xl bg-[#fafafa20] border border-white/30"
 							/>

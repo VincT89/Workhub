@@ -1,17 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const API_URL = "http://localhost:3030/api/v1/shifts";
+import {
+  fetchAllShiftsRequest,
+  fetchUserShiftsRequest,
+  updateShiftRequest,
+  deleteShiftRequest,
+} from "../../api/shiftsApi";
 
 /* ------------------- GET ALL ------------------- */
 export const fetchAllShiftsAsync = createAsyncThunk(
   "shifts/fetchAll",
   async ({ token }, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${API_URL}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const { res, data } = await fetchAllShiftsRequest({ token });
 
-      const data = await res.json();
       if (!res.ok) return rejectWithValue(data.message);
 
       return data.data;
@@ -26,11 +28,8 @@ export const fetchUserShiftsAsync = createAsyncThunk(
   "shifts/fetchByUser",
   async ({ userId, token }, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${API_URL}/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const { res, data } = await fetchUserShiftsRequest({ userId, token });
 
-      const data = await res.json();
       if (!res.ok) return rejectWithValue(data.message);
 
       return data.data;
@@ -45,18 +44,14 @@ export const updateShiftAsync = createAsyncThunk(
   "shifts/update",
   async ({ id, day, period, value, token }, { rejectWithValue }) => {
     try {
-      const body = { day, period, value };
-
-      const res = await fetch(`${API_URL}/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(body),
+      const { res, data } = await updateShiftRequest({
+        id,
+        day,
+        period,
+        value,
+        token,
       });
 
-      const data = await res.json();
       if (!res.ok) return rejectWithValue(data.message);
 
       return data.data;
@@ -71,12 +66,8 @@ export const deleteShiftAsync = createAsyncThunk(
   "shifts/delete",
   async ({ id, token }, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const { res, data } = await deleteShiftRequest({ id, token });
 
-      const data = await res.json();
       if (!res.ok) return rejectWithValue(data.message);
 
       return id;

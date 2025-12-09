@@ -6,6 +6,7 @@ import userReducer from "./feature/userSlice";
 import pointOfSalesReducer from "./feature/pointOfSalesSlice";
 import shiftsReducer from "./feature/shiftsSlice";
 import leaveReducer from "./feature/userLeave";
+import orderReducer from "./feature/orderSlice";
 
 
 const store = configureStore({
@@ -17,6 +18,8 @@ const store = configureStore({
     events: eventReducer,
     shifts: shiftsReducer,
     leave: leaveReducer,
+    orders: orderReducer,
+    
   },
 });
 
