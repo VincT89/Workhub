@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
-
-import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
+import { useTheme } from "../context/ThemeContext";
 
 const Table = ({
 	data,
@@ -10,10 +9,14 @@ const Table = ({
 	actions,
 	actionLabel = null,
 	onRowClick,
+	sortLogic = null,
 }) => {
 
 	const [searchTerm, setSearchTerm] = useState("");
 	const [sortAZ, setSortAZ] = useState(false);
+
+	const { t } = useLanguage();
+	const { theme } = useTheme();
 	
 
 	const filteredData = useMemo(() => {
@@ -34,8 +37,10 @@ const Table = ({
 				return normalizedValue.includes(normalizedQuery);
 			})
 		);
-
-		if (sortAZ && columns.length > 1) {
+		
+		if (sortAZ && sortLogic != null) {
+			result = [...result].sort(sortLogic);
+		} else if (sortAZ && columns.length > 1) {
 			const sortColumn = columns[1];
 			result = [...result].sort((a, b) =>
 				String(a[sortColumn] || "").localeCompare(String(b[sortColumn] || ""))
@@ -44,9 +49,6 @@ const Table = ({
 
 		return result;
 	}, [searchTerm, data, columns, sortAZ]);
-
-	const { t } = useLanguage();
-	const { theme } = useTheme();
 
 	return (
 		<div className="w-full rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-4 sm:p-6 shadow-md border border-white flex flex-col gap-4">

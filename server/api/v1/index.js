@@ -48,5 +48,10 @@ app.use("/events", eventRouter);
  */
 app.use("/orders", orderRouter)
 
+/** /api/v1/products
+ */
+import productRouter from "./routes/product.js";
+app.use("/products", productRouter);
+
 
 export default app;

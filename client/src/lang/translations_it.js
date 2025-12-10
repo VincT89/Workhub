@@ -36,7 +36,7 @@ export const it = {
 		azioni: "Azioni",
 		seiSicuroEliminareEvento: "Sei sicuro di voler eliminare questo evento?",
 		modificaEvento: "Modifica Evento",
-		aggiungiEvento: "Aggiungi Evento",
+		aggiungiEvento: "Inserisci il titolo di un evento",
 		inserisciDescrizioneEvento: "Inserisci la descrizione dell'evento",
 		annulla: "Annulla",
 		salva: "Salva",

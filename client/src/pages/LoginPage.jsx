@@ -6,10 +6,10 @@ import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 
 import bgLight from "../assets/bg/bg.jpg";
-import bgDark from "../assets/bg/bgScuro.jpg";
+import bgDark from "../assets/bg/bgScuro2.jpg";
 import iconLogo from "../assets/logo/iconaLogo.png";
 import iconLogoDark from "../assets/logo/iconaLogoChiara.png";
-import { Eye, EyeSlash } from "@phosphor-icons/react";
+import { EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 
 
 const LoginPage = () => {
@@ -143,13 +143,13 @@ const LoginPage = () => {
 						className="absolute top-[75%] right-4 transform -translate-y-1/2 w-[30px] h-[30px] z-20 cursor-pointer flex items-center justify-center"
 					>
 						{showPassword ? (
-							<Eye
+							<EyeIcon
 								size={24}
 								color={theme === "dark" ? "#fff" : "#090c64"}
 								weight="duotone"
 							/>
 						) : (
-							<EyeSlash
+							<EyeSlashIcon
 								size={24}
 								color={theme === "dark" ? "#fff" : "#090c64"}
 								weight="duotone"

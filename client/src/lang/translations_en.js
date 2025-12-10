@@ -34,7 +34,7 @@ export const en = {
 		azioni: "Actions",
 		seiSicuroEliminareEvento: "Are you sure you want to delete this event?",
 		modificaEvento: "Edit Event",
-		aggiungiEvento: "Add Event",
+		aggiungiEvento: "Enter the event title",
 		inserisciDescrizioneEvento: "Enter the event description",
 		annulla: "Cancel",
 		salva: "Save",
