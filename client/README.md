@@ -213,7 +213,7 @@ UI dedicata con Drawer per aggiunta/modifica.
 2. Login e autenticazione JWT - `COMPLETATO`
 3. Gestione utenti e dipendenti - `COMPLETATO`
 4. Calendario turni ed eventi con react-big-calendar - `COMPLETATO`
-5. Bacheca eventi aziendali - `IN PROGRESS` 
+5. Bacheca eventi aziendali - `COMPLETATO` 
 6. Gestione magazzino - `IN PROGRESS`
 7. Gestione clienti - `IN PROGRESS`
 8. Gestione ticketing - `IN PROGRESS`

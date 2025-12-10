@@ -1,4 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { 
+  loginRequest, 
+  changePasswordRequest, 
+  recoverPasswordRequest 
+} from "../../api/authApi";
 
 const API_URL = "http://localhost:3030/api/v1"; // url base API riutilizzabile nelle chiamate
 
@@ -7,15 +12,9 @@ export const loginAsync = createAsyncThunk(
   "auth/login",
   async ({ username, password }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_URL}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
+      const { ok, data } = await loginRequest({ username, password });
 
-      const data = await response.json();
-
-      if (!response.ok) return rejectWithValue(data.message);
+      if (!ok) return rejectWithValue(data.message);
 
       const authData = {
         token: data.data.token,
@@ -25,52 +24,41 @@ export const loginAsync = createAsyncThunk(
 
       localStorage.setItem("auth", JSON.stringify(authData)); // memorizza i dati di autenticazione nel localStorage
       return authData;
+
     } catch {
       return rejectWithValue("Errore di rete.");
     }
   }
 );
 
-// CAMBIO PASSWORD - prende email, vecchia e nuova password e restituisce successo/fallimento
+// CAMBIO PASSWORD
 export const changePasswordAsync = createAsyncThunk(
   "auth/changePassword",
   async ({ email, oldPassword, newPassword, token }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_URL}/users/password`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ email, oldPassword, newPassword }),
-      });
+      const { ok, data } = await changePasswordRequest({ email, oldPassword, newPassword, token });
 
-      const data = await response.json();
-      if (!response.ok) return rejectWithValue(data.message);
-
+      if (!ok) return rejectWithValue(data.message);
       return true;
+
     } catch {
       return rejectWithValue("Errore di rete.");
     }
   }
 );
 
-// RECUPERO PASSWORD - prende email o username e restituisce successo/fallimento per ora restituisce una password temporanea in console
+// RECUPERO PASSWORD
 export const recoverPasswordAsync = createAsyncThunk(
   "auth/recoverPassword",
   async ({ email, username }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_URL}/auth/recover`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, username }),
-      });
+      const { ok, data } = await recoverPasswordRequest({ email, username });
 
-      const data = await response.json();
-      if (!response.ok) return rejectWithValue(data.message);
+      if (!ok) return rejectWithValue(data.message);
       console.log("RECOVERY PASSWORD RESPONSE:", data);
+
       return data.data;
-     
+
     } catch {
       return rejectWithValue("Errore di rete.");
     }
