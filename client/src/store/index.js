@@ -10,6 +10,7 @@ import orderReducer from "./feature/orderSlice";
 import productReducer from "./feature/productsSlice";
 import itemsReducer from "./feature/itemsSlice";
 import warehouseFiltersReducer from "./feature/warehouseFiltersSlice";
+import customerSlice from "./feature/customerSlice";
 
 const store = configureStore({
 	reducer: {
@@ -24,6 +25,7 @@ const store = configureStore({
 		products: productReducer,
 		items: itemsReducer,
 		warehouseFilters: warehouseFiltersReducer,
+		customers: customerSlice,
 	},
 });
 

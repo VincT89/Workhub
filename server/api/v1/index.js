@@ -9,6 +9,7 @@ import eventRouter from "./routes/event.js";
 import orderRouter from "./routes/orderRoutes.js";
 import productRouter from "./routes/product.js";
 import itemsRouter from "./routes/items.js";
+import customersRouter from "./routes/customers.js";
 
 
 
@@ -58,6 +59,11 @@ app.use("/products", productRouter);
  * /api/v1/items
  */
 app.use("/items", itemsRouter); 
+
+/**
+ * /api/v1/customers
+ */
+app.use("/customers", customersRouter);
 
 
 export default app;

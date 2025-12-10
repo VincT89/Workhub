@@ -1,177 +1,122 @@
 import Table from "../../components/Table";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import FilterByCard from "../../components/Customer/FilterByCard";
 import AddCustomerForm from "../../components/Customer/AddCustomerForm";
+import { 
+  fetchCustomersAsync, 
+  createCustomerAsync,
+  clearError 
+} from "../../store/feature/customerSlice";
 
 const CustomersPage = () => {
-
   const navigate = useNavigate();
-
-
-  const initialCustomers = [
-    {
-      id: 1,
-      nome: "Mario",
-      cognome: "Mario",
-      indirizzo: "Via Roma 12",
-      citta: "Roma",
-      cap: "00100",
-      provincia: "RM",
-      paese: "Italia",
-      email: "mariobros@super.com",
-      telefono: "+39 333 1234567",
-      nascita: "1985-06-01",
-      CF: "MRAMRA85H01H501Z",
-      livello: "Standard",
-      punti: 120,
-      tessera: "A001"
-    },
-    {
-      id: 2,
-      nome: "Luigi",
-      cognome: "Mario",
-      indirizzo: "Via Roma 12",
-      citta: "Roma",
-      cap: "00100",
-      provincia: "RM",
-      paese: "Italia",
-      email: "luigibros@super.com",
-      telefono: "+39 333 9876543",
-      nascita: "1987-09-15",
-      CF: "MRALGU87P15H501C",
-      livello: "Premium",
-      punti: 530,
-      tessera: "A002"
-    },
-    {
-      id: 3,
-      nome: "Homer",
-      cognome: "Simpson",
-      indirizzo: "Evergreen Terrace 123",
-      citta: "Springfield",
-      cap: "54321",
-      provincia: "SP",
-      paese: "USA",
-      email: "homer@simpson.com",
-      telefono: "+1 555 1234567",
-      nascita: "1970-05-12",
-      CF: "SMPHMR70E12Z404B",
-      livello: "Premium",
-      punti: 220,
-      tessera: "A003"
-    },
-    {
-      id: 4,
-      nome: "Marge",
-      cognome: "Simpson",
-      indirizzo: "Evergreen Terrace 123",
-      citta: "Springfield",
-      cap: "54321",
-      provincia: "SP",
-      paese: "USA",
-      email: "marge@simpson.com",
-      telefono: "+1 555 9876543",
-      nascita: "1973-03-19",
-      CF: "SMPMRG73C19Z404K",
-      livello: "Premium",
-      punti: 130,
-      tessera: "A004"
-    },
-    {
-      id: 5,
-      nome: "Bart",
-      cognome: "Simpson",
-      indirizzo: "Evergreen Terrace 123",
-      citta: "Springfield",
-      cap: "54321",
-      provincia: "SP",
-      paese: "USA",
-      email: "bart@simpson.com",
-      telefono: "+1 555 2223334",
-      nascita: "2005-04-01",
-      CF: "SMPBRT05D01Z404T",
-      livello: "Standard",
-      punti: 620,
-      tessera: "A005"
-    },
-    {
-      id: 6,
-      nome: "Lisa",
-      cognome: "Simpson",
-      indirizzo: "Evergreen Terrace 123",
-      citta: "Springfield",
-      cap: "54321",
-      provincia: "SP",
-      paese: "USA",
-      email: "lisa@simpson.com",
-      telefono: "+1 555 1112223",
-      nascita: "2007-05-09",
-      CF: "SMPLSI07E09Z404S",
-      livello: "Standard",
-      punti: 900,
-      tessera: "A006"
-    },
-    {
-      id: 7,
-      nome: "Peter",
-      cognome: "Griffin",
-      indirizzo: "Via Milano 30",
-      citta: "Milano",
-      cap: "20100",
-      provincia: "MI",
-      paese: "Italia",
-      email: "peter@griffin.com",
-      telefono: "+39 333 7654321",
-      nascita: "1978-07-20",
-      CF: "GRFPTR78L20F205T",
-      livello: "Premium",
-      punti: 350,
-      tessera: "A007"
-    },
-    {
-      id: 8,
-      nome: "Lois",
-      cognome: "Griffin",
-      indirizzo: "Via Milano 30",
-      citta: "Milano",
-      cap: "20100",
-      provincia: "MI",
-      paese: "Italia",
-      email: "lois@griffin.com",
-      telefono: "+39 333 6543210",
-      nascita: "1980-10-05",
-      CF: "GRFLIS80R05F205J",
-      livello: "Premium",
-      punti: 430,
-      tessera: "A008"
-    }
-  ];
-
-
-  const [customers, setCustomers] = useState(initialCustomers);
+  const dispatch = useDispatch();
+  
+  // Prendi i dati dallo stato Redux
+  const { list: customers, loading, error } = useSelector(state => state.customers); // list: customers -> creo un alias di list e lo chiamo customers
+  const token = useSelector(state => state.auth?.token) || localStorage.getItem('token'); // cerco prima il token di autenticazione nello stato di Redux, se non lo trovo e quindi  il valore è falsy, allora lo cerco nel localStorage
+  
   const [cardFilter, setCardFilter] = useState("");
 
+  // Carica i customers all'avvio
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchCustomersAsync(token)); //con dispatch invio l'azione per caricare customers
+    }
+  }, [dispatch, token]); //quando una di queste dipendenze cambia, riesegue lo useEffect
+
+  // Filtra i customers per livello della tessera
   const filteredCustomers = customers.filter((c) =>
-    cardFilter ? c.livello === cardFilter : true
+    cardFilter ? c.affiliateProgram?.name === cardFilter : true
   );
 
-  const handleAddCustomer = (customer) => {
-    setCustomers((prev) => [...prev, customer]);
+  const handleAddCustomer = async (newCustomer) => {
+    if (!token) {
+      alert("Token non disponibile. Effettua il login.");
+      return;
+    }
+
+    try {
+      // Il form deve ora passare i dati nel formato backend
+      await dispatch(createCustomerAsync({ 
+        newCustomer: newCustomer, 
+        token 
+      })).unwrap();
+      
+    } catch (err) {
+      console.error("Errore creazione customer:", err);
+    }
   };
 
+  // Gestione errori
+  useEffect(() => {
+    if (error) {
+      console.error("Errore customers:", error);
+      // Puoi mostrare un alert o un toast
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
+
+  // Prepara le colonne per la table in base alla struttura backend
+  const getTableColumns = () => {
+    if (customers.length === 0) return [];
+    
+    // Colonne base che vogliamo mostrare
+    return [
+      'firstName',
+      'lastName', 
+      'email',
+      'phoneNumber',
+      'fiscalCode',
+      'affiliateProgram.name'
+    ];
+  }; 
+
+  // Prepara i dati per la table
+  const getTableData = () => {
+    return filteredCustomers.map(customer => ({
+      // Mostriamo solo i campi rilevanti nella table
+      _id: customer._id,
+      firstName: customer.firstName,
+      lastName: customer.lastName,
+      email: customer.email,
+      phoneNumber: customer.phoneNumber,
+      fiscalCode: customer.fiscalCode,
+      'affiliateProgram.name': customer.affiliateProgram?.name || 'Nessuno',
+    }));
+  };
+
+  if (loading) {
+    return (
+      <div className="w-full min-h-screen p-8 flex justify-center items-center">
+        <div className="text-[#090c64]">Caricamento customers...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full min-h-screen p-8  text-[#090c64]">
+    <div className="w-full min-h-screen p-8 text-[#090c64]">
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          Errore: {error}
+        </div>
+      )}
+      
       <Table
-        data={filteredCustomers}
-        columns={Object.keys(customers[0])}
+        data={getTableData()}
+        columns={getTableColumns()}
         customToolbar={() => (
           <>
             <FilterByCard onFilter={setCardFilter} />
             <AddCustomerForm onAdd={handleAddCustomer} />
           </>
         )}
-        onRowClick={(row) => navigate(`/customer/${row.id}`, { state: row })}
+        onRowClick={(row) => navigate(`/customer/${row._id}`)}
+        sortLogic={(a, b) => {
+          return a.firstName.localeCompare(b.firstName)
+        }}
       />
     </div>
   );
