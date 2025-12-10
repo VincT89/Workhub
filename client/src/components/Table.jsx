@@ -1,4 +1,6 @@
 import { useState, useMemo } from "react";
+import { useLanguage } from "../context/LanguageContext";
+import { useTheme } from "../context/ThemeContext";
 
 const Table = ({
 	data,
@@ -7,10 +9,14 @@ const Table = ({
 	actions,
 	actionLabel = null,
 	onRowClick,
+	sortLogic = null,
 }) => {
 
 	const [searchTerm, setSearchTerm] = useState("");
 	const [sortAZ, setSortAZ] = useState(false);
+
+	const { t } = useLanguage();
+	const { theme } = useTheme();
 	
 
 	const filteredData = useMemo(() => {
@@ -31,8 +37,10 @@ const Table = ({
 				return normalizedValue.includes(normalizedQuery);
 			})
 		);
-
-		if (sortAZ && columns.length > 1) {
+		
+		if (sortAZ && sortLogic != null) {
+			result = [...result].sort(sortLogic);
+		} else if (sortAZ && columns.length > 1) {
 			const sortColumn = columns[1];
 			result = [...result].sort((a, b) =>
 				String(a[sortColumn] || "").localeCompare(String(b[sortColumn] || ""))
@@ -52,7 +60,7 @@ const Table = ({
 						onClick={() => setSortAZ(!sortAZ)}
 						className="px-3 py-2 bg-[#090c64] text-white font-bold border border-white rounded-xl shadow-sm text-sm transition"
 					>
-						{sortAZ ? "Annulla Ordine A-Z" : "Ordina A-Z"}
+						{sortAZ ? t("dashboard.annullaOrdineAZ") : t("dashboard.ordinaAZ")}
 					</button>
 
 					{/* Custom toolbar from parent */}
@@ -62,7 +70,7 @@ const Table = ({
 				{/* Search */}
 				<input
 					type="text"
-					placeholder="Cerca..."
+					placeholder={t("dashboard.cerca")}
 					value={searchTerm}
 					onChange={(e) => setSearchTerm(e.target.value)}
 					className="px-3 py-2 bg-white/70 border border-white rounded-xl shadow-sm text-sm w-full sm:w-60 focus:outline-none placeholder:text-gray-500"
@@ -154,7 +162,7 @@ const Table = ({
 
 			{filteredData.length === 0 && (
 				<p className="text-center text-gray-500 italic mt-2">
-					Nessun risultato trovato.
+					{t("dashboard.nessunRisultatoTrovato")}
 				</p>
 			)}
 		</div>

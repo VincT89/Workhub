@@ -10,11 +10,12 @@ body {
   color: #090c64;
 }
 
-@layer base {
-  body {
-    color: #090c64;
-  }
+/* Dark mode */
+.dark body {
+ color : white;
+ 
 }
+
 
 /* Nasconde scrollbar */
 *::-webkit-scrollbar { width: 0; height: 0; }

@@ -1,6 +1,7 @@
+//RICORDA DI COMMENTARE IL CODICE
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { setActiveTab } from "../../store/feature/tabSlice.js";
 import Table from "../../components/Table";
 import {
@@ -13,130 +14,146 @@ import {
     XCircle,
     FileXls
 } from "@phosphor-icons/react";
+import { 
+    fetchCustomerByIdAsync, 
+    updateCustomerAsync,
+    clearSelected,
+    clearError
+} from "../../store/feature/customerSlice";
 
 const CustomersRegistry = () => {
-    const location = useLocation();
+    const { id } = useParams(); // useParams() estrae i parametri dall'URL (es: /customer/123 → id = "123")
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-    const customer = location.state;
-    const activeTab = useSelector((state) => state.tab.activeTab);
+    
+    // useSelector() legge i dati dallo stato Redux
+    // selected: customer selezionato, loading: stato caricamento, error: eventuali errori
+    const { selected: customer, loading, error } = useSelector(state => state.customers);
+    console.log(customer);
+    const token = useSelector(state => state.auth?.token) || localStorage.getItem('token'); //Prende il JWT dallo stato auth o dal localStorage
+    const activeTab = useSelector((state) => state.tab.activeTab); //legge il tab attivo dallo stato di redux
 
-    const [isEditing, setIsEditing] = useState(false);
-    const [editedCustomer, setEditedCustomer] = useState(customer);
+    const [isEditing, setIsEditing] = useState(false); //gestisce la modifica di customer
+    const [editedCustomer, setEditedCustomer] = useState(null); //copia della modifica del customer 
+    const [saving, setSaving] = useState(false); //salva le modifiche
 
-    const stats = [
-        { label: "Anagrafica", icon: UserList },
-        { label: "Ordini", icon: ShoppingBag },
-        { label: "Resi", icon: ArrowCounterClockwise },
-        { label: "Affiliazione", icon: IdentificationBadge },
-    ];
+    // Carica il customer quando il componente viene montato
+    useEffect(() => {
+        if (id && token) { // Se abbiamo un id e un token valido, carica i dati del customer
+            dispatch(fetchCustomerByIdAsync({ id, token }));
+        }
+        
+        // Cleanup quando il componente si smonta
+        return () => {
+            dispatch(clearSelected());  // Pulisce il customer selezionato dallo stato
+        };
+    }, [dispatch, id, token]); // Dipendenze: quando queste cambiano, l'effect si ri-esegue
 
-    // ORDINI FITTIZI
-    const ordiniFittizi = [
-        {
-            id: 1,
-            prodotto: "LACK Tavolino",
-            dataOrdine: "2025-01-12",
-            categoria: "Soggiorno",
-            quantita: 1,
-            prezzo: 9.99,
-            totale: 9.99,
-            stato: "Consegnato",
-            metodoPagamento: "Carta di credito",
-            codiceTracking: "IK000987654",
-        },
-        {
-            id: 2,
-            prodotto: "BILLY Libreria",
-            dataOrdine: "2025-02-03",
-            categoria: "Ufficio",
-            quantita: 2,
-            prezzo: 39.99,
-            totale: 79.98,
-            stato: "In transito",
-            metodoPagamento: "PayPal",
-            codiceTracking: "IK001123789",
-        },
-        {
-            id: 3,
-            prodotto: "MALM Cassettiera",
-            dataOrdine: "2025-02-20",
-            categoria: "Camera",
-            quantita: 1,
-            prezzo: 79.99,
-            totale: 79.99,
-            stato: "Preparazione",
-            metodoPagamento: "Carta di credito",
-            codiceTracking: "IK001998321",
-        },
-        {
-            id: 4,
-            prodotto: "POÄNG Poltrona",
-            dataOrdine: "2025-03-01",
-            categoria: "Soggiorno",
-            quantita: 1,
-            prezzo: 69.99,
-            totale: 69.99,
-            stato: "Consegnato",
-            metodoPagamento: "Bonifico",
-            codiceTracking: "IK002112455",
-        },
-        {
-            id: 5,
-            prodotto: "HEMNES Comodino",
-            dataOrdine: "2025-03-15",
-            categoria: "Camera",
-            quantita: 1,
-            prezzo: 49.99,
-            totale: 49.99,
-            stato: "In transito",
-            metodoPagamento: "Carta di credito",
-            codiceTracking: "IK002778900",
-        },
-    ];
+    // Aggiorna editedCustomer quando customer cambia
+    useEffect(() => {
+        if (customer) {
+            setEditedCustomer(customer);
+        }
+    }, [customer]);
 
-    // RESI FITTIZI
-    const resiFittizi = [
-        {
-            id: 1,
-            prodotto: "MALM Cassettiera",
-            dataReso: "2025-03-02",
-            categoria: "Camera",
-            quantita: 1,
-            motivoReso: "Pezzo mancante nel kit",
-            statoReso: "Accettato",
-            rimborso: 79.99,
-            metodoPagamento: "PayPal",
-            codiceTrackingReso: "IKR001234567",
-        },
-        {
-            id: 2,
-            prodotto: "LACK Tavolino",
-            dataReso: "2025-02-18",
-            categoria: "Soggiorno",
-            quantita: 1,
-            motivoReso: "Colore diverso da quanto atteso",
-            statoReso: "In elaborazione",
-            rimborso: 9.99,
-            metodoPagamento: "Carta di credito",
-            codiceTrackingReso: "IKR000456789",
-        },
-    ];
-
-    // Gestione campi
+    // Gestione campi del form durante la modifica
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setEditedCustomer((prev) => ({ ...prev, [name]: value }));
+        
+        // Gestione campi annidati (location.address, etc.)
+        if (name.includes('.')) {
+            const [parent, child] = name.split('.');
+            setEditedCustomer(prev => ({
+                ...prev,
+                [parent]: {
+                    ...prev[parent],
+                    [child]: value
+                }
+            }));
+        } else {
+            setEditedCustomer(prev => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleEdit = () => setIsEditing(true);
+    
     const handleCancel = () => {
         setEditedCustomer(customer);
         setIsEditing(false);
     };
-    const handleSave = () => {
-        console.log("Dati salvati:", editedCustomer);
-        setIsEditing(false);
+    
+    const handleSave = async () => {
+        if (!token || !id) return;
+        
+        try {
+            setSaving(true);
+            
+            await dispatch(updateCustomerAsync({ 
+                id, 
+                updates: editedCustomer, 
+                token 
+            })).unwrap();
+            
+            setIsEditing(false);
+        } catch (err) {
+            console.error("Errore aggiornamento customer:", err);
+        } finally {
+            setSaving(false);
+        }
     };
+
+    // Gestione errori
+    useEffect(() => {
+        if (error) {
+            console.error("Errore customer:", error);
+            dispatch(clearError());
+        }
+    }, [error, dispatch]);
+
+    const stats = [
+        { label: "Anagrafica", icon: UserList },
+        { label: "Ordini", icon: ShoppingBag },
+        { label: "Affiliazione", icon: IdentificationBadge },
+    ];
+
+    // PER ORA lasciamo array vuoti 
+    const ordiniFittizi = [];
+
+    if (loading) {
+        return (
+            <div className="w-full min-h-screen flex justify-center items-start p-8">
+                <div className="text-[#090c64]">Caricamento customer...</div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="w-full min-h-screen flex justify-center items-start p-8">
+                <div className="text-red-600">Errore: {error}</div>
+                <button 
+                    onClick={() => navigate('/customers')}
+                    className="ml-4 px-4 py-2 bg-[#090c64] text-white rounded"
+                >
+                    Torna alla lista
+                </button>
+            </div>
+        );
+    }
+
+    if (!customer) {
+        return (
+            <div className="w-full min-h-screen flex justify-center items-start p-8">
+                <div className="text-[#090c64]">Customer non trovato</div>
+                <button 
+                    onClick={() => navigate('/customers')}
+                    className="ml-4 px-4 py-2 bg-[#090c64] text-white rounded"
+                >
+                    Torna alla lista
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="w-full min-h-screen flex justify-center items-start p-8">
@@ -161,11 +178,11 @@ const CustomersRegistry = () => {
                 {/* CONTENUTO */}
                 <div className="w-full rounded-xl bg-white/20 backdrop-blur-sm p-6 shadow-md border border-white">
                     <h2 className="text-[#134a7b] text-lg font-bold mb-6">
-                        Cliente: {customer.nome} {customer.cognome}
+                        Cliente: {customer.firstName} {customer.lastName}
                     </h2>
 
                     {/* ------------------------ ANAGRAFICA ------------------------ */}
-                    {activeTab === "Anagrafica" && (
+                    {activeTab === "Anagrafica" && editedCustomer && (
                         <div className="flex flex-col gap-3">
 
                             {/* HEADER */}
@@ -183,9 +200,11 @@ const CustomersRegistry = () => {
                                     <div className="flex gap-2">
                                         <button
                                             onClick={handleSave}
-                                            className="flex items-center gap-1 text-sm px-3 py-1 bg-green-200 rounded-xl border border-white shadow-sm hover:bg-green-300 transition"
+                                            disabled={saving}
+                                            className="flex items-center gap-1 text-sm px-3 py-1 bg-green-200 rounded-xl border border-white shadow-sm hover:bg-green-300 transition disabled:opacity-50"
                                         >
-                                            <FloppyDisk size={22} color="#090c64" weight="duotone" /> Salva
+                                            <FloppyDisk size={22} color="#090c64" weight="duotone" /> 
+                                            {saving ? 'Salvando...' : 'Salva'}
                                         </button>
                                         <button
                                             onClick={handleCancel}
@@ -197,171 +216,181 @@ const CustomersRegistry = () => {
                                 )}
                             </div>
 
-                            {/* -------------------- CAMPi MANUALI -------------------- */}
+                            {/* -------------------- CAMPi BACKEND -------------------- */}
                             <div className="grid grid-cols-2 gap-3">
 
-                                {/* Nome */}
+                                {/* First Name */}
                                 <div className="bg-white/60 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
-                                            name="nome"
-                                            value={editedCustomer.nome}
+                                            name="firstName"
+                                            value={editedCustomer.firstName || ''}
                                             onChange={handleChange}
                                             className="bg-transparent outline-none w-full"
+                                            placeholder="Nome"
                                         />
                                     ) : (
-                                        <span>{editedCustomer.nome}</span>
+                                        <span>{customer.firstName}</span>
                                     )}
                                 </div>
 
-                                {/* Cognome */}
+                                {/* Last Name */}
                                 <div className="bg-white/60 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
-                                            name="cognome"
-                                            value={editedCustomer.cognome}
+                                            name="lastName"
+                                            value={editedCustomer.lastName || ''}
                                             onChange={handleChange}
                                             className="bg-transparent outline-none w-full"
+                                            placeholder="Cognome"
                                         />
                                     ) : (
-                                        <span>{editedCustomer.cognome}</span>
-                                    )}
-                                </div>
-
-                                {/* Indirizzo */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm col-span-2">
-                                    {isEditing ? (
-                                        <input
-                                            type="text"
-                                            name="indirizzo"
-                                            value={editedCustomer.indirizzo}
-                                            onChange={handleChange}
-                                            className="bg-transparent outline-none w-full"
-                                        />
-                                    ) : (
-                                        <span>{editedCustomer.indirizzo}</span>
-                                    )}
-                                </div>
-
-                                {/* Città */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
-                                    {isEditing ? (
-                                        <input
-                                            type="text"
-                                            name="citta"
-                                            value={editedCustomer.citta}
-                                            onChange={handleChange}
-                                            className="bg-transparent outline-none w-full"
-                                        />
-                                    ) : (
-                                        <span>{editedCustomer.citta}</span>
-                                    )}
-                                </div>
-
-                                {/* Provincia */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
-                                    {isEditing ? (
-                                        <input
-                                            type="text"
-                                            name="provincia"
-                                            value={editedCustomer.provincia}
-                                            onChange={handleChange}
-                                            className="bg-transparent outline-none w-full"
-                                        />
-                                    ) : (
-                                        <span>{editedCustomer.provincia}</span>
-                                    )}
-                                </div>
-
-                                {/* CAP */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
-                                    {isEditing ? (
-                                        <input
-                                            type="text"
-                                            name="cap"
-                                            value={editedCustomer.cap}
-                                            onChange={handleChange}
-                                            className="bg-transparent outline-none w-full"
-                                        />
-                                    ) : (
-                                        <span>{editedCustomer.cap}</span>
-                                    )}
-                                </div>
-
-                                {/* Paese */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
-                                    {isEditing ? (
-                                        <input
-                                            type="text"
-                                            name="paese"
-                                            value={editedCustomer.paese}
-                                            onChange={handleChange}
-                                            className="bg-transparent outline-none w-full"
-                                        />
-                                    ) : (
-                                        <span>{editedCustomer.paese}</span>
-                                    )}
-                                </div>
-
-                                {/* Telefono */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
-                                    {isEditing ? (
-                                        <input
-                                            type="text"
-                                            name="telefono"
-                                            value={editedCustomer.telefono}
-                                            onChange={handleChange}
-                                            className="bg-transparent outline-none w-full"
-                                        />
-                                    ) : (
-                                        <span>{editedCustomer.telefono}</span>
+                                        <span>{customer.lastName}</span>
                                     )}
                                 </div>
 
                                 {/* Email */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <div className="bg-white/60 p-3 rounded-xl shadow-sm col-span-2">
                                     {isEditing ? (
                                         <input
                                             type="email"
                                             name="email"
-                                            value={editedCustomer.email}
+                                            value={editedCustomer.email || ''}
                                             onChange={handleChange}
                                             className="bg-transparent outline-none w-full"
+                                            placeholder="Email"
                                         />
                                     ) : (
-                                        <span>{editedCustomer.email}</span>
+                                        <span>{customer.email}</span>
                                     )}
                                 </div>
 
-                                {/* Nascita */}
+                                {/* Phone */}
+                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                    {isEditing ? (
+                                        <input
+                                            type="text"
+                                            name="phoneNumber"
+                                            value={editedCustomer.phoneNumber || ''}
+                                            onChange={handleChange}
+                                            className="bg-transparent outline-none w-full"
+                                            placeholder="Telefono"
+                                        />
+                                    ) : (
+                                        <span>{customer.phoneNumber}</span>
+                                    )}
+                                </div>
+
+                                {/* Fiscal Code */}
+                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                    {isEditing ? (
+                                        <input
+                                            type="text"
+                                            name="fiscalCode"
+                                            value={editedCustomer.fiscalCode || ''}
+                                            onChange={handleChange}
+                                            className="bg-transparent outline-none w-full"
+                                            placeholder="Codice Fiscale"
+                                        />
+                                    ) : (
+                                        <span>{customer.fiscalCode}</span>
+                                    )}
+                                </div>
+
+                                {/* Birth Date */}
                                 <div className="bg-white/60 p-3 rounded-xl shadow-sm col-span-2">
                                     {isEditing ? (
                                         <input
                                             type="date"
-                                            name="nascita"
-                                            value={editedCustomer.nascita}
+                                            name="birthDate"
+                                            value={editedCustomer.birthDate ? editedCustomer.birthDate.split('T')[0] : ''}
                                             onChange={handleChange}
                                             className="bg-transparent outline-none w-full"
                                         />
                                     ) : (
-                                        <span>{editedCustomer.nascita}</span>
+                                        <span>{customer.birthDate ? customer.birthDate.split('T')[0] : ''}</span>
                                     )}
                                 </div>
 
-                                {/* Codice fiscale */}
+                                {/* Address */}
                                 <div className="bg-white/60 p-3 rounded-xl shadow-sm col-span-2">
                                     {isEditing ? (
                                         <input
                                             type="text"
-                                            name="CF"
-                                            value={editedCustomer.CF}
+                                            name="location.address"
+                                            value={editedCustomer.location?.address || ''}
                                             onChange={handleChange}
                                             className="bg-transparent outline-none w-full"
+                                            placeholder="Indirizzo"
                                         />
                                     ) : (
-                                        <span>{editedCustomer.CF}</span>
+                                        <span>{customer.location?.address || 'N/D'}</span>
+                                    )}
+                                </div>
+
+                                {/* City */}
+                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                    {isEditing ? (
+                                        <input
+                                            type="text"
+                                            name="location.city"
+                                            value={editedCustomer.location?.city || ''}
+                                            onChange={handleChange}
+                                            className="bg-transparent outline-none w-full"
+                                            placeholder="Città"
+                                        />
+                                    ) : (
+                                        <span>{customer.location?.city || 'N/D'}</span>
+                                    )}
+                                </div>
+
+                                {/* State */}
+                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                    {isEditing ? (
+                                        <input
+                                            type="text"
+                                            name="location.state"
+                                            value={editedCustomer.location?.state || ''}
+                                            onChange={handleChange}
+                                            className="bg-transparent outline-none w-full"
+                                            placeholder="Provincia"
+                                        />
+                                    ) : (
+                                        <span>{customer.location?.state || 'N/D'}</span>
+                                    )}
+                                </div>
+
+                                {/* ZIP Code */}
+                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                    {isEditing ? (
+                                        <input
+                                            type="text"
+                                            name="location.zipCode"
+                                            value={editedCustomer.location?.zipCode || ''}
+                                            onChange={handleChange}
+                                            className="bg-transparent outline-none w-full"
+                                            placeholder="CAP"
+                                        />
+                                    ) : (
+                                        <span>{customer.location?.zipCode || 'N/D'}</span>
+                                    )}
+                                </div>
+
+                                {/* Country */}
+                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                    {isEditing ? (
+                                        <input
+                                            type="text"
+                                            name="location.country"
+                                            value={editedCustomer.location?.country || ''}
+                                            onChange={handleChange}
+                                            className="bg-transparent outline-none w-full"
+                                            placeholder="Paese"
+                                        />
+                                    ) : (
+                                        <span>{customer.location?.country || 'N/D'}</span>
                                     )}
                                 </div>
 
@@ -378,25 +407,20 @@ const CustomersRegistry = () => {
                                     <FileXls size={22} color="#090c64" weight="duotone" /> Excel
                                 </button>
                             </div>
-                            <Table data={ordiniFittizi} columns={Object.keys(ordiniFittizi[0])} />
+                            {ordiniFittizi.length > 0 ? (
+                                <Table data={ordiniFittizi} columns={Object.keys(ordiniFittizi[0])} />
+                            ) : (
+                                <div className="bg-white/60 p-4 rounded-xl text-center">
+                                    <p className="text-[#134a7b]">Nessun ordine trovato</p>
+                                    <p className="text-sm text-gray-600">Gli ordini verranno gestiti in futuro</p>
+                                </div>
+                            )}
                         </div>
                     )}
 
-                    {/* ------------------------ RESI ------------------------ */}
-                    {activeTab === "Resi" && (
-                        <div className="flex flex-col gap-3">
-                            <div className="flex justify-between items-center mb-2">
-                                <h3 className="text-[#134a7b] font-semibold text-left">Storico Resi</h3>
-                                <button className="flex items-center gap-1 text-sm px-3 py-1 bg-white/70 rounded-xl border border-white shadow-sm hover:bg-white transition">
-                                    <FileXls size={22} color="#090c64" weight="duotone" /> Excel
-                                </button>
-                            </div>
-                            <Table data={resiFittizi} columns={Object.keys(resiFittizi[0])} />
-                        </div>
-                    )}
-
+                    
                     {/* ------------------------ AFFILIAZIONE ------------------------ */}
-                    {activeTab === "Affiliazione" && (
+                    {activeTab === "Affiliazione" && customer.affiliateProgram && (
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center mb-2">
                                 <h3 className="text-[#134a7b] font-semibold">Affiliazione</h3>
@@ -406,15 +430,32 @@ const CustomersRegistry = () => {
                             </div>
 
                             <div className="bg-white/60 p-3 rounded-xl shadow-sm">
-                                Livello tessera: {customer.livello}
+                                <strong>Livello tessera:</strong> {customer.affiliateProgram.name || 'Nessuno'}
                             </div>
 
                             <div className="bg-white/60 p-3 rounded-xl shadow-sm">
-                                Punti: {customer.punti}
+                                <strong>Punti accumulati:</strong> {customer.affiliateProgram.points || 0}
                             </div>
 
                             <div className="bg-white/60 p-3 rounded-xl shadow-sm">
-                                Numero tessera: {customer.tessera}
+                                <strong>Numero tessera:</strong> {customer.affiliateProgram.cardNumber || 'N/D'}
+                            </div>
+
+                            <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <strong>Programma fedeltà:</strong> Attivo
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Messaggio se non c'è programma fedeltà */}
+                    {activeTab === "Affiliazione" && !customer.affiliateProgram && (
+                        <div className="flex flex-col gap-3">
+                            <div className="flex justify-between items-center mb-2">
+                                <h3 className="text-[#134a7b] font-semibold">Affiliazione</h3>
+                            </div>
+                            <div className="bg-white/60 p-4 rounded-xl text-center">
+                                <p className="text-[#134a7b]">Nessun programma fedeltà attivo</p>
+                                <p className="text-sm text-gray-600">Il cliente non è iscritto al programma fedeltà</p>
                             </div>
                         </div>
                     )}

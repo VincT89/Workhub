@@ -1,48 +1,77 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DrawerSede from "../Warehouse/DrawerSede.jsx";
 
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setSelectedCategory,
+  setSearchTerm,
+  toggleSortAZ,
+  toggleLowStockFilter
+} from "../../store/feature/warehouseFiltersSlice";
+
+
 const WarehouseTable = ({ data, columns }) => {
+
+  
+
+  // testando lo stato di items dallo store Redux
+  const itemsState = useSelector(state => state.items); // prendi lo slice "items"
+
+  useEffect(() => {
+    console.log("verifica data", data);
+    // itemsState.list -> array con tutti gli items normalizzati
+  }, [itemsState]);
+
   const navigate = useNavigate();
 
-  // ---------- STATE ----------
-  const [selectedCategory, setSelectedCategory] = useState("Categorie");
-  const [searchTerm, setSearchTerm] = useState(""); // cerca solo per nome
-  const [sortAZ, setSortAZ] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [lowStockFilter, setLowStockFilter] = useState(false); //parte da false, cioè nessun filtro attivo
+  //? ---------- STATE ----------
 
-  // ---------- MEMO: categorie ---------
+  // Stato dei filtri → Redux
+  const selectedCategory = useSelector(state => state.warehouseFilters.selectedCategory);
+  const searchTerm = useSelector(state => state.warehouseFilters.searchTerm);
+  const sortAZ = useSelector(state => state.warehouseFilters.sortAZ);
+  const lowStockFilter = useSelector(state => state.warehouseFilters.lowStockFilter);
+
+  // Stato locale → rimane useState
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Dispatcher Redux
+  const dispatch = useDispatch();
+
+  //? ---------- MEMO: categorie ---------
   const categories = useMemo(
-    () => ["Categorie", ...new Set(data.map(p => p.categoria))],
+    () => ["Categorie", ...new Set(data.map(p => p.product?.category?.name || "No category"))],
     [data]
   );
 
-  // ---------- DATA PROCESSING ----------
+  //? ---------- DATA PROCESSING ----------
   const filteredData = useMemo(() => {
-    let result = [...data];
+    let result = [...data]; // spread syntax: copia l'array "data" per applicare 
+    // filtri senza modificare l'originale
 
     // Filtro per nome prodotto
-    if (searchTerm) {
-      const q = searchTerm.toLowerCase();
-      result = result.filter(p =>
-        String(p.nome).toLowerCase().includes(q) ||
-        String(p.id).toLowerCase().includes(q)
+    if (searchTerm) { // controlliamo che non sia vuoto searchTerm
+      const q = searchTerm.toLowerCase(); // q = abbreviazione convenz. di query
+      result = result.filter(p => // p= ogni prodotto dell'array result
+        // converte in stringa per non avere errori con p.id che è un numero
+        // Se l’utente scrive “12”, e l’ID è 5129, il prodotto esce cmq col filtro
+        String(p.product?.name || "").toLowerCase().includes(q) || // se il nome include la query
+        String(p._id).toLowerCase().includes(q) // se l'id include la query
       );
     }
 
     // Filtro per categoria
     if (selectedCategory !== "Categorie") {
-
-      result = result.filter(p => p.categoria === selectedCategory);
+      result = result.filter(p => (p.product?.category?.name || "No category") === selectedCategory);
     }
 
     // filtro articoli in esaurimento
     if (lowStockFilter) { // se il filtro è attivo (cioè se l'utente clicca il bottone del filtro) applicalo
       result = result.filter( //filter sostituisce "result" con un nuovo array (i prodotti filtrati)
-        p => (p.stock?.["Mia Sede"] || 0) < 15 // filtro: "p" rappresenta ogni prodotto dell'array
+        p => (p.stock?.["Mia Sede"] || p.stock || 0) < 15 // filtro: "p" rappresenta ogni prodotto dell'array
         /* => indica che la funzione restituisce quello che c’è dopo ( come scrivere: function(p) { return ...} 
-         p.stock? --> accedo alla prorpietà "stock" di ogi p
+         p.stock? --> accedo alla proprietà "stock" di ogNi p
          ?. --> (optional chaining) è l'operatre che evita errore se stock non esiste: “Se stock esiste, continua.
          Se non esiste, restituisci undefined invece di errore”.
          ["Mia Sede"] accesso alla proprietà "Mia Sede" tramite stringa
@@ -53,7 +82,7 @@ const WarehouseTable = ({ data, columns }) => {
 
     // Ordinamento A-Z
     if (sortAZ) {
-      result.sort((a, b) => a.nome.localeCompare(b.nome));
+      result.sort((a, b) => (a.product?.name || "").localeCompare(b.product?.name || ""));
     }
 
     return result;
@@ -62,16 +91,14 @@ const WarehouseTable = ({ data, columns }) => {
   return (
     <div className="w-full rounded-2xl bg-[#fafafa]/10 p-6 shadow-md border border-white flex flex-col gap-4">
 
-      {/* ---------- TOOLBAR ---------- */}
+      {/* ---------- TOOLBAR CON FILTRI ---------- */}
       <div className="flex flex-wrap items-center gap-3 mb-3">
         <h2 className="text-[#134a7b] text-lg font-bold"> Warehouse </h2>
 
         {/* Ordinamento A-Z */}
         <button
-          onClick={() => setSortAZ(!sortAZ)}
+          onClick={() => dispatch(toggleSortAZ())}
           className="warehouse-btn"
-
-
         >
           {sortAZ ? "Z-A" : "A-Z"}
         </button>
@@ -79,7 +106,7 @@ const WarehouseTable = ({ data, columns }) => {
         {/* Filtro categoria */}
         <select
           value={selectedCategory}
-          onChange={e => setSelectedCategory(e.target.value)}
+          onChange={e => dispatch(setSelectedCategory(e.target.value))}
           className="warehouse-btn focus:outline-none focus:ring-0" //focus:outline-none focus:ring-0 PER TOGLIERE BORDO BLU DI DEFAULT DI SELECT
         >
           {categories.map(c => (
@@ -92,18 +119,18 @@ const WarehouseTable = ({ data, columns }) => {
           type="text"
           placeholder="Cerca codice id o nome"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={e => dispatch(setSearchTerm(e.target.value))}
           className="px-3 py-1.5 rounded-lg shadow-md border border-white/20 text-sm w-64 focus:outline-none bg-white"
         />
 
         {/* Articoli in esaurimento */}
         <button
-          onClick={() => setLowStockFilter(!lowStockFilter)}
+          onClick={() => dispatch(toggleLowStockFilter())}
           className="warehouse-btn"
         >
           {lowStockFilter ? "Mostra tutti" : "Articoli in esaurimento"}
-          {/* operatre ternario (ternay expression) --> condizione ? valore_se_vero : valore_se_falso 
-          quindi se lowStockFiltre è true "mostra tutti" se è false "articoli in esaurimento" */}
+          {/* operatore ternario (ternary expression) --> condizione ? valore_se_vero : valore_se_falso 
+          quindi se lowStockFilter è true "mostra tutti" se è false "articoli in esaurimento" */}
         </button>
 
         {/* Bottone Drawer. Disponibilità in altre sedi */}
@@ -115,7 +142,7 @@ const WarehouseTable = ({ data, columns }) => {
         </button>
       </div>
 
-      {/* ---------- TABELLA ---------- */}
+      {/* ---------- TABELLA CON DATI ---------- */}
       <table className="w-full border-collapse text-sm text-[#090c64]">
 
         <thead>
@@ -132,52 +159,46 @@ const WarehouseTable = ({ data, columns }) => {
         </thead>
 
         <tbody>
+          {/*  ------- LOGICA PER POPOLARE LA TABELLA -------- */}
           {filteredData.map((row, i) => (
             <tr
               key={i}
-              onClick={() => navigate(`/product/${row.id}`, { state: row })}
+              onClick={() => navigate(`/product/${row._id}`, { state: row })}
               className="hover:bg-white cursor-pointer text-center"
             >
 
-               {/* ETICHETTE COLORATE IN BASE ALLO STATO */}
-               {columns.map((col, j) => { // cicla i nomi delle colonne nell'array columns
-                if (col === "stato") { // significa se colonna è = a stato, cioè se il nome della colonna corrente è stato fai quando segue
-                  //colori iniziali
-                  let border = "border-red-300";
-                  let bg = "bg-red-50";
-                  let text = "Non disponibile";
-                  let textColor = "text-red-400";
+              {/* ETICHETTE COLORATE IN BASE ALLO STATO */}
+              {columns.map((col, j) => { // cicla i nomi delle colonne nell'array columns
 
-                  //raw rappresenta una riga della tabella, quindi un singolo prodotto e va a controllare lo "status" 
-                  if (row.status === "disponibile") {
+                // Colonna STATO
+                if (col === "stato") {
+                  const stockVal = row.stock?.["Mia Sede"] || row.stock || 0;
+                  let border, bg, textColor, text;
+
+                  if (stockVal > 0) {
                     border = "border-green-300";
                     bg = "bg-green-50";
-                    text = "Disponibile";
                     textColor = "text-green-700";
-                  } else if (row.status === "fuori produzione") {
+                    text = "Disponibile";
+                  } else if (stockVal === 0) {
                     border = "border-gray-300";
                     bg = "bg-gray-50";
-                    text = "Fuori produzione";
                     textColor = "text-gray-500";
+                    text = "Fuori produzione";
+                  } else {
+                    border = "border-red-300";
+                    bg = "bg-red-50";
+                    textColor = "text-red-400";
+                    text = "Non disponibile";
                   }
+
                   return (
                     <td
                       key={j}
-                      className={`p-3 ${j === 0 ? "rounded-l-xl" : ""} ${j === columns.length - 1 ? "rounded-r-xl" : ""
-                        }`}
+                      className={`p-3 ${j === 0 ? "rounded-l-xl" : ""} ${j === columns.length - 1 ? "rounded-r-xl" : ""}`}
                     >
                       <span
-                        className={`
-                          ${bg} 
-                          ${border} 
-                          ${textColor}
-                          border 
-                          text-sm 
-                          px-1.5
-                          py-1
-                          rounded-lg 
-                          font-semibold
-                        `}
+                        className={`${bg} ${border} ${textColor} border text-sm px-1.5 py-1 rounded-lg font-semibold`}
                       >
                         {text}
                       </span>
@@ -185,9 +206,9 @@ const WarehouseTable = ({ data, columns }) => {
                   );
                 }
 
-
+                // Colonna quantità
                 if (col === "quantita") {
-                  const qty = row.stock?.["Mia Sede"] || 0;
+                  const qty = row.stock?.["Mia Sede"] || row.stock || 0;
                   return (
                     <td key={j} className={`p-3 ${j === 0 ? "rounded-l-xl" : ""} ${j === columns.length - 1 ? "rounded-r-xl" : ""}`}>
                       {qty}
@@ -195,9 +216,16 @@ const WarehouseTable = ({ data, columns }) => {
                   );
                 }
 
+                // Colonne product, category, pointOfSales
+                if (col === "product") return <td key={j} className="p-3">{row.product?.name || ""}</td>;
+                if (col === "category") return <td key={j} className="p-3">{row.product?.category?.name || ""}</td>;
+                if (col === "pointOfSales") return <td key={j} className="p-3">{row.pointOfSales?.name || ""}</td>;
+                if (col === "promo") return <td key={j} className="p-3">{row.promo.mode == "percentage" ? `${row.promo.value}%` : `${row.promo.value}€`}</td>;
+
+                // Tutte le altre colonne
                 return (
                   <td key={j} className={`p-3 ${j === 0 ? "rounded-l-xl" : ""} ${j === columns.length - 1 ? "rounded-r-xl" : ""}`}>
-                    {String(row[col])}
+                    {String(row[col] || "")}
                   </td>
                 );
               })}

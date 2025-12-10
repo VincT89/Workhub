@@ -6,7 +6,10 @@ import pointOfSalesRouter from "./routes/pointOfSales.js";
 import userShiftRouter from "./routes/userShift.js";
 import userLeaveRouter from "./routes/userLeave.js";
 import eventRouter from "./routes/event.js";
-import orderRouter from "./routes/orderRoutes.js"
+import orderRouter from "./routes/orderRoutes.js";
+import productRouter from "./routes/product.js";
+import itemsRouter from "./routes/items.js";
+import customersRouter from "./routes/customers.js";
 
 
 
@@ -47,6 +50,20 @@ app.use("/events", eventRouter);
 /** /api/v1/orders
  */
 app.use("/orders", orderRouter)
+
+/** /api/v1/products
+ */
+app.use("/products", productRouter);
+
+/**
+ * /api/v1/items
+ */
+app.use("/items", itemsRouter); 
+
+/**
+ * /api/v1/customers
+ */
+app.use("/customers", customersRouter);
 
 
 export default app;

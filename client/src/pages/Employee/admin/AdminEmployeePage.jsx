@@ -1,11 +1,11 @@
 import { useTheme } from "../../../context/ThemeContext.jsx";
 import { useLanguage } from "../../../context/LanguageContext.jsx";
 import {
-  UserCircle,
-  NotePencil,
-  UsersThree,
-  UserCircleMinus,
-  Trash,
+  UserCircleIcon,
+  NotePencilIcon,
+  UsersThreeIcon,
+  UserCircleMinusIcon,
+  TrashIcon,
 } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
 import { useMemo, useState, useEffect } from "react";
@@ -55,12 +55,12 @@ const AdminEmployeePage = () => {
     {
       label: t("employees.dipendentiAttivi"),
       value: employees.length,
-      icon: <UsersThree size={28} color="#090c64" weight="duotone" />,
+      icon: <UsersThreeIcon size={28} color="#090c64" weight="duotone" />,
     },
     {
       label: t("employees.dipendentiInattivi"),
       value: 4,
-      icon: <UserCircleMinus size={28} color="#090c64" weight="duotone" />,
+      icon: <UserCircleMinusIcon size={28} color="#090c64" weight="duotone" />,
     },
   ];
 
@@ -190,7 +190,7 @@ const AdminEmployeePage = () => {
 
     if (
       !window.confirm(
-        `Vuoi eliminare ${employee.firstName} ${employee.lastName}?`
+        `${t("employees.vuoiEliminare")} ${employee.firstName} ${employee.lastName}?`
       )
     )
       return;
@@ -223,7 +223,7 @@ const AdminEmployeePage = () => {
           className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 backdrop-blur-sm border border-white/30 shadow-md cursor-pointer font-bold"
         >
           <span className="text-xl font-bold">+</span>
-          {t("Aggiungi Dipendente")}
+          {t("employees.aggiungiDipendente")}
         </div>
       </section>
 
@@ -231,14 +231,14 @@ const AdminEmployeePage = () => {
       {drawerOpen && (
         <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/30 shadow-md backdrop-blur-sm">
           <h3 className={`text-lg font-bold ${textColor}`}>
-            {t("Nuovo Dipendente")}
+            {t("employees.nuovoDipendente")}
           </h3>
 
           <form onSubmit={handleAddEmployee} className="grid grid-cols-2 gap-4">
             <input
               name="nome"
               type="text"
-              placeholder="Nome completo"
+              placeholder={t("employees.nomeCompleto")}
               required
               className="p-2 border rounded"
             />
@@ -246,7 +246,7 @@ const AdminEmployeePage = () => {
             <input
               name="ruolo"
               type="text"
-              placeholder="Ruolo / Reparto"
+              placeholder={t("employees.ruolo")}
               required
               className="p-2 border rounded"
             />
@@ -270,20 +270,20 @@ const AdminEmployeePage = () => {
             <input
               name="telefono"
               type="text"
-              placeholder="Telefono"
+              placeholder={t("employees.telefono")}
               className="p-2 border rounded"
             />
 
             <input
               name="personnelNumber"
               type="number"
-              placeholder="Matricola"
+              placeholder={t("employees.matricola")}
               required
               className="p-2 border rounded"
             />
 
             <select name="sede" required className="p-2 border rounded">
-              <option value="">Sede lavorativa</option>
+              <option value="">{t("employees.sedeLavorativa")}</option>
               {pointsOfSale.map((p) => (
                 <option key={p._id} value={p._id}>
                   {p.name} – {p.location?.city}
@@ -292,10 +292,10 @@ const AdminEmployeePage = () => {
             </select>
 
             <select name="contratto" className="p-2 border rounded">
-              <option value="">Tipo di contratto</option>
-              <option value="indeterminato">Indeterminato</option>
-              <option value="determinato">Determinato</option>
-              <option value="part-time">Part-time</option>
+              <option value="">{t("employees.tipoContratto")}</option>
+              <option value="indeterminato">{t("employees.indeterminato")}</option>
+              <option value="determinato">{t("employees.determinato")}</option>
+              <option value="part-time">{t("employees.partTime")}</option>
             </select>
 
             <input
@@ -305,7 +305,7 @@ const AdminEmployeePage = () => {
             />
 
             <select name="role" required className="p-2 border rounded">
-              <option value="">Ruolo account</option>
+              <option value="">{t("employees.ruoloAccount")}</option>
               <option value="user">User</option>
               <option value="admin">Admin</option>
             </select>
@@ -313,7 +313,7 @@ const AdminEmployeePage = () => {
             <input
               value={generatedPassword}
               readOnly
-              placeholder="Password generata"
+              placeholder={t("employees.passwordGenerata")}
               className="p-2 border rounded col-span-2 bg-gray-100"
             />
 
@@ -323,13 +323,13 @@ const AdminEmployeePage = () => {
                 onClick={() => setDrawerOpen(false)}
                 className="px-4 py-2 border rounded-xl"
               >
-                Annulla
+                {t("employees.annulla")}
               </button>
               <button
                 type="submit"
                 className="px-4 py-2 bg-[#090c64] text-white rounded-xl"
               >
-                Crea
+                {t("employees.crea")}
               </button>
             </div>
           </form>
@@ -346,7 +346,7 @@ const AdminEmployeePage = () => {
       <div className="flex items-center gap-2 mb-4">
         <input
           type="text"
-          placeholder={t("Cerca Dipendente")}
+          placeholder={t("employees.cercaDipendente")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="p-2 rounded-lg border flex-1"
@@ -369,12 +369,12 @@ const AdminEmployeePage = () => {
           <table className="min-w-full text-sm text-center">
             <thead className="font-bold">
               <tr>
-                <th>Foto</th>
-                <th>Nome</th>
-                <th>Ruolo</th>
-                <th>Email</th>
-                <th>Matricola</th>
-                <th>Azioni</th>
+                <th>{t("employees.foto")}</th>
+                <th>{t("employees.nome")}</th>
+                <th>{t("employees.ruolo")}</th>
+                <th>{t("employees.email")}</th>
+                <th>{t("employees.matricola")}</th>
+                <th>{t("employees.azioni")}</th>
               </tr>
             </thead>
 
@@ -385,7 +385,7 @@ const AdminEmployeePage = () => {
                   className="bg-white/30 hover:bg-white/70 transition rounded-xl"
                 >
                   <td className="py-2 flex justify-center">
-                    <UserCircle size={34} color="#090c64" weight="duotone" />
+                    <UserCircleIcon size={34} color="#090c64" weight="duotone" />
                   </td>
 
                   <td
@@ -402,11 +402,11 @@ const AdminEmployeePage = () => {
                   <td>
                     <div className="flex justify-center gap-3">
                       <button onClick={() => openEditDrawer(e)}>
-                        <NotePencil size={28} color="#090c64" weight="duotone" />
+                        <NotePencilIcon size={28} color="#090c64" weight="duotone" />
                       </button>
 
                       <button onClick={() => handleDeleteUser(e)}>
-                        <Trash size={28} color="red" weight="duotone" />
+                        <TrashIcon size={28} color="red" weight="duotone" />
                       </button>
                     </div>
                   </td>
