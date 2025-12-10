@@ -65,6 +65,14 @@ const UserSchema = new Schema(
 			type: Date,
 			required: false,
 		},
+		twofaSecret: {
+			type: String,
+			default: null,
+		},
+		twofaEnabled: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	{ strict: true, timestamps: true, versionKey: false }
 );
