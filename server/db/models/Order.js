@@ -16,12 +16,19 @@ const OrderSchema = new Schema({
         type: Number,
         required: true,
     },
-    clients: {
-        type: {
-            client: { type: Schema.Types.ObjectId, ref: 'Client', required: true },
-            quantity: { type: Number, required: true },
-        }
-    },    
+     clients: [
+      {
+        client: {
+          type: Schema.Types.ObjectId,
+          ref: "Client",
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+        },
+      },
+    ], 
     note: {
         type: String,
     }

@@ -8,6 +8,8 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { fetchUsersAsync } from "../store/feature/userSlice";
 import { fetchAllShiftsAsync } from "../store/feature/shiftsSlice";
+import { fetchEventsAsync } from "../store/feature/eventsSlice";
+import { fetchPointsOfSalesAsync } from "../store/feature/pointOfSalesSlice";
 
 /* LOCALIZZAZIONE */
 const localizer = dateFnsLocalizer({
@@ -107,6 +109,8 @@ const CalendarBox = () => {
 		if (!token) return;
 		dispatch(fetchUsersAsync(token));
 		dispatch(fetchAllShiftsAsync({ token }));
+		dispatch(fetchEventsAsync({ token }));
+		dispatch(fetchPointsOfSalesAsync({ token }));
 	}, [token]);
 
 	/* Click fuori per chiudere */

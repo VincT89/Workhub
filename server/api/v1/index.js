@@ -6,6 +6,8 @@ import pointOfSalesRouter from "./routes/pointOfSales.js";
 import userShiftRouter from "./routes/userShift.js";
 import userLeaveRouter from "./routes/userLeave.js";
 import ticketingRouter from "./routes/ticketing.js";
+import eventRouter from "./routes/event.js";
+import orderRouter from "./routes/orderRoutes.js"
 
 
 
@@ -42,6 +44,14 @@ app.use("/leaves", userLeaveRouter);
 */
 app.use("/ticketing", ticketingRouter);
 
+/**
+ * /api/v1/events
+ */
+app.use("/events", eventRouter); 
+
+/** /api/v1/orders
+ */
+app.use("/orders", orderRouter)
 
 
 export default app;
