@@ -1,5 +1,8 @@
 import { useState, useMemo } from "react";
 
+import { useTheme } from "../context/ThemeContext";
+import { useLanguage } from "../context/LanguageContext";
+
 const Table = ({
 	data,
 	columns,
@@ -42,6 +45,9 @@ const Table = ({
 		return result;
 	}, [searchTerm, data, columns, sortAZ]);
 
+	const { t } = useLanguage();
+	const { theme } = useTheme();
+
 	return (
 		<div className="w-full rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-4 sm:p-6 shadow-md border border-white flex flex-col gap-4">
 			{/* TOOLBAR */}
@@ -52,7 +58,7 @@ const Table = ({
 						onClick={() => setSortAZ(!sortAZ)}
 						className="px-3 py-2 bg-[#090c64] text-white font-bold border border-white rounded-xl shadow-sm text-sm transition"
 					>
-						{sortAZ ? "Annulla Ordine A-Z" : "Ordina A-Z"}
+						{sortAZ ? t("dashboard.annullaOrdineAZ") : t("dashboard.ordinaAZ")}
 					</button>
 
 					{/* Custom toolbar from parent */}
@@ -62,7 +68,7 @@ const Table = ({
 				{/* Search */}
 				<input
 					type="text"
-					placeholder="Cerca..."
+					placeholder={t("dashboard.cerca")}
 					value={searchTerm}
 					onChange={(e) => setSearchTerm(e.target.value)}
 					className="px-3 py-2 bg-white/70 border border-white rounded-xl shadow-sm text-sm w-full sm:w-60 focus:outline-none placeholder:text-gray-500"
@@ -154,7 +160,7 @@ const Table = ({
 
 			{filteredData.length === 0 && (
 				<p className="text-center text-gray-500 italic mt-2">
-					Nessun risultato trovato.
+					{t("dashboard.nessunRisultatoTrovato")}
 				</p>
 			)}
 		</div>

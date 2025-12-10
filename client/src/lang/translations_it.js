@@ -1,3 +1,5 @@
+import { de } from "date-fns/locale";
+
 export const it = {
   dashboard: {
     clientiAttivi: "Clienti Attivi",
@@ -8,7 +10,37 @@ export const it = {
     prodottiInEsaurimento: "Prodotti in Esaurimento",
     benvenuto: "Benvenuto",
     slogan: "Simplify your workflow",
-    calendario:"Calendario"
+    calendario: "Calendario",
+    bacheca: "Bacheca",
+    prodottiInEsaurimento: "Prodotti in Esaurimento",
+    depositi: "Depositi",
+    prodotti: "Prodotti",
+    ordiniInUscita: "Ordini in Uscita",
+    articoliSottoSoglia: "Articoli Sotto Soglia",
+    personaleAttivo: "Personale Attivo",
+    aggiungi: "Aggiungi",
+    ordinaAZ: "Ordina A-Z",
+    annullaOrdineAZ: "Annulla Ordine A-Z",
+    nessunRisultatoTrovato: "Nessun Risultato Trovato",
+    cerca: "Cerca...",
+    selezionaTutti: "Seleziona Tutti",
+    deselezionaTutti: "Deseleziona Tutti",
+    turni: "Turni",
+    eventi: "Eventi",
+    mese: "Mese",
+    settimana: "Settimana",
+    giorno: "Giorno",
+    titolo: "Titolo",
+    descrizione: "Descrizione",
+    data: "Data",
+    azioni: "Azioni",
+    seiSicuroEliminareEvento: "Sei sicuro di voler eliminare questo evento?",
+    modificaEvento: "Modifica Evento",
+    aggiungiEvento: "Aggiungi Evento",
+    inserisciDescrizioneEvento: "Inserisci la descrizione dell'evento",
+    annulla: "Annulla",
+    salva: "Salva",
+    chiudi: "Chiudi"
   },
 
   customers: {

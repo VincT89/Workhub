@@ -96,7 +96,7 @@ const BoardPage = () => {
 
 	const handleDelete = (row) => { // elimina evento
 		if (
-			window.confirm(`Sei sicuro di voler eliminare l'evento "${row.title}"?`)
+			window.confirm(` ${t("dashboard.seiSicuroEliminareEvento")}"${row.title}"?`)
 		) {
 			dispatch(deleteEventAsync({ id: row._id, token }));
 		}
@@ -116,7 +116,7 @@ const BoardPage = () => {
 				>
 					<div className="flex items-center gap-2">
 						<WarehouseIcon size={28} color="#090c64" weight="duotone" />
-						<span className="font-bold text-[14px]">Depositi</span>
+						<span className="font-bold text-[14px]">{t("dashboard.depositi")}</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
 						{pointOfSales?.list?.length ?? 0}
@@ -130,7 +130,7 @@ const BoardPage = () => {
 				>
 					<div className="flex items-center gap-2">
 						<ShoppingCartSimpleIcon size={28} color="#090c64" weight="duotone" />
-						<span className="font-bold text-[14px]">Prodotti</span>
+						<span className="font-bold text-[14px]">{t("dashboard.prodotti")}</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
 						2000
@@ -144,7 +144,7 @@ const BoardPage = () => {
 				>
 					<div className="flex items-center gap-2">
 						<PackageIcon size={28} color="#090c64" weight="duotone" />
-						<span className="font-bold text-[14px]">Ordini in uscita</span>
+						<span className="font-bold text-[14px]">{t("dashboard.ordiniInUscita")}</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
 						20
@@ -158,7 +158,7 @@ const BoardPage = () => {
 				>
 					<div className="flex items-center gap-2">
 						<WarningOctagonIcon size={28} color="#090c64" weight="duotone" />
-						<span className="font-bold text-[14px]">Articoli sotto soglia</span>
+						<span className="font-bold text-[14px]">{t("dashboard.articoliSottoSoglia")}</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
 						10
@@ -172,7 +172,7 @@ const BoardPage = () => {
 				>
 					<div className="flex items-center gap-2">
 						<UserCircleCheckIcon size={28} color="#090c64" weight="duotone" />
-						<span className="font-bold text-[14px] ">Personale attivo</span>
+						<span className="font-bold text-[14px] ">{t("dashboard.personaleAttivo")}</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
 						{users?.list?.length ?? 0}
@@ -192,14 +192,14 @@ const BoardPage = () => {
 					<div className="flex items-start gap-4 w-full">
 						<ChalkboardSimpleIcon size={28} color="#090c64" weight="duotone" />
 
-						<h3 className="text-[14px] font-bold font-nunito">Bacheca</h3>
+						<h3 className="text-[14px] font-bold font-nunito">{t("dashboard.bacheca")}</h3>
 
 						{(role === "supervisor" || role === "admin") && (
 							<button
 								onClick={openDrawerAdd}
 								className="ml-auto px-4 py-2 bg-[#090c64] text-white shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[14px] font-bold-nunito cursor-pointer"
 							>
-								+ Aggiungi
+								+ {t("dashboard.aggiungi")}
 							</button>
 						)}
 					</div>
@@ -250,7 +250,7 @@ const BoardPage = () => {
 						<ShoppingCartSimpleIcon size={28} color="#090c64" weight="duotone" />
 
 						<h3 className="text-[14px] font-bold font-nunito">
-							Prodotti in esaurimento
+							{t("dashboard.prodottiInEsaurimento")}
 						</h3>
 					</div>
 
@@ -291,12 +291,12 @@ const BoardPage = () => {
 			<Drawer
 				open={drawerOpen}
 				onClose={() => setDrawerOpen(false)}
-				title={editData && editData.title ? "Modifica evento" : "Nuovo evento"}
+				title={editData && editData.title ? t("dashboard.modificaEvento") : t("dashboard.aggiungiEvento")}
 			>
 				{editData && (
 					<form onSubmit={handleSavePost} className="flex flex-col gap-4">
 						<div className="flex flex-col">
-							<label className="text-sm font-bold">Titolo</label>
+							<label className="text-sm font-bold">{t("dashboard.titolo")}</label>
 							<input
 								type="text"
 								value={editData.title}
@@ -309,7 +309,7 @@ const BoardPage = () => {
 						</div>
 
 						<div className="flex flex-col">
-							<label className="text-sm font-bold">Data</label>
+							<label className="text-sm font-bold">{t("dashboard.data")}</label>
 							<input
 								type="date"
 								value={editData.date}
@@ -322,11 +322,11 @@ const BoardPage = () => {
 						</div>
 
 						<div className="flex flex-col">
-							<label className="text-sm font-bold">Descrizione</label>
+							<label className="text-sm font-bold">{t("dashboard.descrizione")}</label>
 							<input
 								type="text"
 								value={editData.description}
-								placeholder="Inserisci la descrizione dell'evento"
+								placeholder={t("dashboard.inserisciDescrizioneEvento")}
 								onChange={(e) =>
 									setEditData({ ...editData, description: e.target.value })
 								}
@@ -340,11 +340,11 @@ const BoardPage = () => {
 								onClick={() => setDrawerOpen(false)}
 								className="custom-button-light"
 							>
-								Annulla
+								{t("dashboard.annulla")}
 							</button>
 
 							<button type="submit" className="custom-button">
-								Salva
+								{t("dashboard.salva")}
 							</button>
 						</div>
 					</form>
