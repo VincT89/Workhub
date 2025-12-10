@@ -1,29 +1,5 @@
 import { Item } from "../../../db/index.js";
 import { handleRouteErrors } from "../../../utils/error.js";
-import Joi from "joi";   // <-- aggiunto Joi
-
-
-
-//! VALIDAZIONE JOI
-// Schema per creare un item
-const createItemSchema = Joi.object({
-  product: Joi.string().required(),
-  pointOfSales: Joi.string().required(),
-  price: Joi.number().required(),
-  quantity: Joi.number().integer().min(0).required(),
-});
-
-// Schema per aggiornare un item
-const updateItemSchema = Joi.object({
-  product: Joi.string(),
-  pointOfSales: Joi.string(),
-  price: Joi.number(),
-  quantity: Joi.number().integer().min(0),
-}).min(1); // impone che almeno un campo sia presente
-
-
-
-
 
 
 
@@ -32,16 +8,6 @@ const updateItemSchema = Joi.object({
 // creo un nuovo item che deve rispettare la struttura definita in Item
 export const createItem = async (req, res) => {
   try {
-
-    // Validazione Joi
-    const { error } = createItemSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({
-        error: "Dati non validi",
-        details: error.details.map((d) => d.message),
-      });
-    }
-
     const newItem = new Item(req.body);  // Crea un item coi dati passati nel corpo della richiesta (req.body)
     const savedItem = await newItem.save();  // Salva il nuovo prodotto nel database
 
@@ -64,10 +30,6 @@ Alcuni codici hanno anche un “reason phrase” (una descrizione testuale stand
 404 Not Found
 500 Internal Server Error
 */
-
-
-
-
 
 
 
@@ -102,9 +64,6 @@ export const getAllItems = async (req, res) => {
 
 
 
-
-
-
 //@ Controller per recuperare un singolo item per ID
 // restituisce un singolo item (cioè un prodotto in un punto vendita specifico) con i dettagli popolati.
 export const getItemById = async (req, res) => {
@@ -130,23 +89,10 @@ export const getItemById = async (req, res) => {
 
 
 
-
-
-
 //! UPDATE
 //@ Controller per modificare un item 
 export const updateItem = async (req, res) => {
   try {
-
-    // Validazione Joi
-    const { error } = updateItemSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({
-        error: "Dati aggiornamento non validi",
-        details: error.details.map((d) => d.message),
-      });
-    }
-
     const updatedItem = await Item.findByIdAndUpdate(
       req.params.id,    // ID dell'item da aggiornare
       req.body,        // dati da aggiornare
@@ -165,9 +111,6 @@ export const updateItem = async (req, res) => {
     return handleRouteErrors(res, { error });
   }
 };
-
-
-
 
 
 
@@ -212,9 +155,8 @@ se qualcosa è in più → Mongoose decide se ignorarlo o generare errore (a sec
 È il pacchetto di dati grezzi spedito dal client.
 Express lo mette in req.body per permetterti di lavorarci.
 
-
 //!il “controllo modello”:
 Lo fanno Mongoose o un middleware di validazione 
  (es. Zod, Yup, Joi… oppure Express Validator).
 
-*/  
+*/

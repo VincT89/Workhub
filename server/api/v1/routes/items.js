@@ -7,7 +7,7 @@ import {
   deliteItem
 } from "../controllers/items.js";
 //import { requireAdmin } from "../middleware/roles.js";
-import { authUser } from "../middleware/auth.js";
+ import { authUser } from "../middleware/auth.js";
 
 const itemsRouter = express.Router();
 
@@ -16,7 +16,7 @@ const itemsRouter = express.Router();
  * POST /api/v1/items
  * Crea un item
  */
-itemsRouter.post("/", authUser, createItem);
+itemsRouter.post("/",  createItem);
 
 /**
  * GET /api/v1/items
@@ -28,18 +28,18 @@ itemsRouter.get("/", authUser, getAllItems);
  * GET /api/v1/items/:id
  * Restituisce un singolo item per ID
  */
-itemsRouter.get("/:id", authUser, getItemById);
+itemsRouter.get("/:id", getItemById);
 
 /**
  * PUT /api/v1/items/:id
  * Modifica un singolo item per ID
  */
-itemsRouter.put("/:id", authUser, updateItem);
+itemsRouter.put("/:id", updateItem);
 
 /**
  * DELETE /api/v1/items/:id
  * Elimina un singolo item per ID
  */
-itemsRouter.delete("/:id", authUser, deliteItem);
+itemsRouter.delete("/:id", deliteItem);
 
 export default itemsRouter;

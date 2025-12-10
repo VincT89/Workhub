@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchItems } from "../../store/feature/itemsSlice";
 import { addItem } from "../../store/feature/itemsSlice";
 
-
 import WarehouseTable from "../../components/Warehouse/WarehouseTable";
 import DrawerAddNewProduct from "../../components/Warehouse/DrawerAddNewProduct";
 import { WarehouseIcon } from "@phosphor-icons/react";

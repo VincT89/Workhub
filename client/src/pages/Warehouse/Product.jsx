@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 import jsPDF from "jspdf"; // per usare l'export pdf
 // icone
@@ -10,47 +11,41 @@ import { NotepadIcon } from "@phosphor-icons/react";
 import { PaperclipIcon } from "@phosphor-icons/react";
 import { FilePdfIcon } from "@phosphor-icons/react";
 import { PlusCircleIcon } from "@phosphor-icons/react";
-import { useSelector } from "react-redux";
 
 
 const Product = () => {
     // ---- OTTENGO L'ID DEL PRODOTTO DALL'URL ----
     const { id } = useParams();
     const [item, setItem] = useState(null); // nuovo state per salvare i dati dal server
-    const user = useSelector(state => state.auth.user);
 
-useEffect(() => {
-    const token = user?.token;
-    if (!token) return;
+    const token = useSelector(state => state.auth.token); // prendo l'utente dallo store Redux
+    
+
+    useEffect(() => {
+    if (!id) return;
+    if (!token) {
+        console.warn("Nessun token disponibile");
+        return;
+    }
 
     fetch(`http://localhost:3030/api/v1/items/${id}`, {
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
+            "Authorization": `Bearer ${token}` // uso il token dall'utente loggato
         }
     })
         .then(res => {
             if (!res.ok) {
-                throw new Error(`Errore API: ${res.status}`);
+                throw new Error("Errore API: " + res.status);
             }
             return res.json();
         })
         .then(data => {
-            console.log("RISPOSTA API ITEM:", data);
-
-            // Se API restituisce un array, filtriamo l'item corretto
-            const foundItem = Array.isArray(data)
-                ? data.find(el => el._id === id)
-                : data;
-
-            setItem(foundItem);
+            console.log("ITEM CARICATO:", data);
+            setItem(data);
         })
-        .catch(err => {
-            console.error("Errore nel caricamento prodotto:", err);
-            setItem(null);
-        });
-}, [id, user]);
-
+        .catch(err => console.error("Errore nel caricamento prodotto:", err));
+}, [id, token]);
 
 
 
