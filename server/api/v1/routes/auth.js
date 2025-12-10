@@ -1,5 +1,5 @@
 import express from "express";
-import { login, register, recoverPassword } from "../controllers/auth.js";
+import { login, register, recoverPassword, enable2FA, disable2FA } from "../controllers/auth.js";
 import { authUser } from "../middleware/auth.js";
 import { requireAdmin } from "../middleware/roles.js";
 
@@ -23,5 +23,16 @@ app.post("/register", authUser, requireAdmin, register); // solo admin dopo il p
  */
 app.post("/recover", recoverPassword); // pubblica, non richiede autenticazione dopo il path ci sono direttamente i controller
 
+/**
+ * PATCH /api/v1/auth/enable-2fa
+ * Protetta → l'utente deve essere autenticato
+ */
+app.patch("/enable-2fa", authUser, enable2FA);
+
+/**
+ * PATCH /api/v1/auth/disable-2fa
+ * Protetta → l'utente deve essere autenticato
+ */
+app.patch("/disable-2fa", authUser, disable2FA);
 
 export default app;

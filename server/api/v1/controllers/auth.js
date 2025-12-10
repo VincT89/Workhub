@@ -2,99 +2,99 @@ import Joi from "joi";
 import { handleRouteErrors } from "../../../utils/error.js";
 import { formatResponse } from "../../../utils/format.js";
 import {
-	comparePassword,
-	generateAccessToken,
-	hashPassword,
-	generateTempPassword,
+  comparePassword,
+  generateAccessToken,
+  hashPassword,
+  generateTempPassword,
 } from "../../../utils/auth.js";
 import { User } from "../../../db/index.js";
+import { generate2FASecret, verify2FAToken } from "../services/twofa.js";
 
 /**
  * LOGIN dipendente
  * POST /api/v1/auth/login
- * body: { username, password }
+ * body: { username, password, token? }
  */
 export const login = async (req, res) => {
-	const schema = Joi.object({  // con Joi validiamo lo schema della richiesta, cioe i campi che ci aspettiamo
-		username: Joi.string().required(), // username obbligatorio
-		password: Joi.string().required(), // password obbligatoria
-	});
+  const schema = Joi.object({
+    username: Joi.string().required(),
+    password: Joi.string().required(),
+    // token opzionale o vuoto
+    token: Joi.string().allow("", null).optional(),
+  });
 
-	try {
-		const { value, error } = schema.validate(req.body); // validiamo il body della richiesta cioe i dati inviati dal client
+  try {
+    const { value, error } = schema.validate(req.body);
+    if (error) {
+      return res
+        .status(400)
+        .json(formatResponse(null, false, error.details[0].message));
+    }
 
-		if (error) {
-			return res
-				.status(400)
-				.json(formatResponse(null, false, error.details[0].message));
-		}
+    const { username, password, token } = value;
 
-		const { username, password } = value; // estrazione dei valori validati
+    const userDoc = await User.findOne({ username });
+    if (!userDoc) {
+      return res
+        .status(401)
+        .json(formatResponse(null, false, "Invalid credentials"));
+    }
 
-		// Cerca utente per username nel db e recupera hash password
-		const userDoc = await User.findOne({ username }); // cerca utente per username nel db e recupera hash password
+    if (userDoc.isActive === false) {
+      return res
+        .status(403)
+        .json(formatResponse(null, false, "User is disabled"));
+    }
 
-		if (!userDoc) {
-			return res
-				.status(401)
-				.json(formatResponse(null, false, "Invalid credentials"));
-		}
+    const isValid = await comparePassword(password, userDoc.password);
+    if (!isValid) {
+      return res
+        .status(401)
+        .json(formatResponse(null, false, "Invalid credentials"));
+    }
 
-		// Controlla se l'utente è attivo 
-		if (typeof userDoc.isActive !== "undefined" && userDoc.isActive === false) {
-			return res
-				.status(403)
-				.json(formatResponse(null, false, "User is disabled"));
-		}
+    // Se 2FA è abilitato → token obbligatorio
+    if (userDoc.twofaEnabled) {
+      if (!token) {
+        return res
+          .status(400)
+          .json(formatResponse(null, false, "2FA token required"));
+      }
 
-		// DEBUG START
-		console.log("DEBUG LOGIN:");
-		console.log("Body username:", username);
-		console.log("Body password:", password);
-		console.log("User found in DB:", userDoc.username);
-		console.log("Stored hash:", userDoc.password);
-		console.log(
-			"Compare result:",
-			await comparePassword(password, userDoc.password)
-		);
-		// DEBUG END
-
-		const isValid = await comparePassword(password, userDoc.password); // confronta la password inviata con l'hash memorizzato nel db
-
-		if (!isValid) {
-			return res
-				.status(401)
-				.json(formatResponse(null, false, "Invalid credentials"));
-		}
+      const result = verify2FAToken(userDoc.twofaSecret, token);
+      if (!result || result.delta !== 0) {
+        return res
+          .status(401)
+          .json(formatResponse(null, false, "Invalid 2FA token"));
+      }
+    }
 
     await userDoc.populate({
-      path: "workplace", // popola il campo workplace con i dati del workplace associato
-      select: "name location" // seleziona solo i campi name, location del workplace
-    }); 
+      path: "workplace",
+      select: "name location",
+    });
 
-		const user = userDoc.toObject();
-		// Tolgo password dall'oggetto utente prima di inviarlo al client in modo da non far vedere l'hash
-		delete user.password;
+    const user = userDoc.toObject();
+    delete user.password;
 
-		// Payload minimo nel token: id + ruolo
-		const token = generateAccessToken({ // genera token JWT
-			_id: userDoc._id.toString(),
-			role: user.role,
-		});
+    const jwtToken = generateAccessToken({
+      _id: userDoc._id.toString(),
+      role: user.role,
+    });
 
-		return res.status(200).json(
-			formatResponse(
-				{
-					token,
-					user,
-				},
-				true,
-				"Login successful"
-			)
-		);
-	} catch (error) {
-		return handleRouteErrors(res, { error });
-	}
+    return res.status(200).json(
+      formatResponse(
+        {
+          token: jwtToken,
+          user,
+        },
+        true,
+        "Login successful"
+      )
+    );
+  } catch (error) {
+    return handleRouteErrors(res, { error });
+  }
 };
 
 /**
@@ -107,24 +107,19 @@ export const register = async (req, res) => {
     username: Joi.string().min(3).required(),
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
-
     role: Joi.string().valid("admin", "user").default("user"),
     department: Joi.string().optional(),
-
-    password: Joi.string().min(6).optional(), // se manca → generata automaticamente
+    password: Joi.string().min(6).optional(),
     isGeneratedPassword: Joi.boolean().optional(),
-
     personnelNumber: Joi.number().required(),
     phone: Joi.number().optional(),
-
-    workplace: Joi.string().required(), // ObjectId del workplace
+    workplace: Joi.string().required(),
     contractType: Joi.string().valid("indeterminato", "determinato", "part-time").optional(),
-    hireDate: Joi.date().optional()
+    hireDate: Joi.date().optional(),
   });
 
   try {
     const { value, error } = schema.validate(req.body);
-
     if (error) {
       return res
         .status(400)
@@ -139,44 +134,31 @@ export const register = async (req, res) => {
       role,
       department,
       password,
-      isGeneratedPassword,
       personnelNumber,
       phone,
       workplace,
       contractType,
-      hireDate
+      hireDate,
     } = value;
 
-    // Controllo duplicati email / username / personnelNumber
     const existing = await User.findOne({
-      $or: [
-        { email },
-        { username },
-        { personnelNumber }
-      ]
+      $or: [{ email }, { username }, { personnelNumber }],
     });
 
     if (existing) {
-      return res.status(409).json(
-        formatResponse(
-          null,
-          false,
-          "Email, Username o Matricola già esistenti"
-        )
-      );
+      return res
+        .status(409)
+        .json(formatResponse(null, false, "Email, Username o Matricola già esistenti"));
     }
 
-    // Validazione workplace come ObjectId
-    if (!workplace.match(/^[0-9a-fA-F]{24}$/)) { // semplice controllo formato ObjectId che e' una stringa esadecimale di 24 caratteri che rappresenta un identificatore univoco in MongoDB
+    if (!workplace.match(/^[0-9a-fA-F]{24}$/)) {
       return res
         .status(400)
         .json(formatResponse(null, false, "workplace non valido (ObjectId non valido)"));
     }
 
-    // Password: se non fornita → generiamo password temporanea
     const plainPassword = password || generateTempPassword(10);
-
-    const hashedPassword = await hashPassword(plainPassword); // hash della password (fornita o generata)
+    const hashedPassword = await hashPassword(plainPassword);
 
     const newUserDoc = await User.create({
       email,
@@ -191,17 +173,17 @@ export const register = async (req, res) => {
       phone,
       workplace,
       contractType,
-      hireDate
+      hireDate,
     });
 
-    const newUser = newUserDoc.toObject(); // convertiamo il documento Mongoose in un oggetto JavaScript semplice cosi da poter manipolare i dati
-    delete newUser.password; // rimuoviamo la password (hash) dall'oggetto utente prima di inviarlo al client
+    const newUser = newUserDoc.toObject();
+    delete newUser.password;
 
     return res.status(201).json(
       formatResponse(
         {
           user: newUser,
-          tempPassword: password ? null : plainPassword
+          tempPassword: password ? null : plainPassword,
         },
         true,
         "User created successfully"
@@ -215,17 +197,15 @@ export const register = async (req, res) => {
 /**
  * RECOVER PASSWORD
  * POST /api/v1/auth/recover
- * body: { email?, username? }
  */
 export const recoverPassword = async (req, res) => {
-  const schema = Joi.object({ // definiamo lo schema di validazione per la richiesta di recupero password 
-    email: Joi.string().email().allow(null, ""), // email opzionale tramite allow(null, "")
-    username: Joi.string().allow(null, "") // username opzionale tramite allow(null, "")
+  const schema = Joi.object({
+    email: Joi.string().email().allow(null, ""),
+    username: Joi.string().allow(null, ""),
   });
 
   try {
     const { value, error } = schema.validate(req.body);
-
     if (error) {
       return res
         .status(400)
@@ -233,29 +213,22 @@ export const recoverPassword = async (req, res) => {
     }
 
     const { email, username } = value;
-
     if (!email && !username) {
       return res
         .status(400)
         .json(formatResponse(null, false, "Provide email or username"));
     }
 
-    // Trova l’utente
-    const userDoc = await User.findOne({
-      $or: [{ email }, { username }]
-    });
-
+    const userDoc = await User.findOne({ $or: [{ email }, { username }] });
     if (!userDoc) {
       return res
         .status(404)
         .json(formatResponse(null, false, "User not found"));
     }
 
-    // Genera password temporanea
     const tempPassword = generateTempPassword(10);
     const hashedPassword = await hashPassword(tempPassword);
 
-    // Aggiorna l’utente
     userDoc.password = hashedPassword;
     userDoc.isGeneratedPassword = true;
     await userDoc.save();
@@ -264,19 +237,72 @@ export const recoverPassword = async (req, res) => {
       formatResponse(
         {
           email: userDoc.email,
-          tempPassword
+          tempPassword,
         },
         true,
         "Temporary password generated"
       )
     );
+  } catch (error) {
+    return handleRouteErrors(res, { error });
+  }
+};
 
+/**
+ * ENABLE 2FA
+ * PATCH /api/v1/auth/enable-2fa
+ */
+
+export const enable2FA = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res
+        .status(404)
+        .json(formatResponse(null, false, "User not found"));
+    }
+
+    
+    const secret = await generate2FASecret(user.username);
+
+    user.twofaSecret = secret.secret;
+    user.twofaEnabled = true;
+    await user.save();
+
+    return res.status(200).json(
+      formatResponse(
+        { qr: secret.qr, uri: secret.uri },
+        true,
+        "2FA enabled successfully"
+      )
+    );
   } catch (error) {
     return handleRouteErrors(res, { error });
   }
 };
 
 
+/**
+ * DISABLE 2FA
+ * PATCH /api/v1/auth/disable-2fa
+ */
+export const disable2FA = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res
+        .status(404)
+        .json(formatResponse(null, false, "User not found"));
+    }
 
+    user.twofaSecret = null;
+    user.twofaEnabled = false;
+    await user.save();
 
-
+    return res
+      .status(200)
+      .json(formatResponse(null, true, "2FA disabled successfully"));
+  } catch (error) {
+    return handleRouteErrors(res, { error });
+  }
+};
