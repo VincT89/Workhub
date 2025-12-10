@@ -8,7 +8,17 @@ import { handleRouteErrors } from "../../../utils/error.js";
 // creo un nuovo ticket che deve rispettare la struttura definita in TicketModel
 export const createTickets = async (req, res) => {
   try {
-    const newTicket = new TicketModel(req.body);  // Crea un ticket coi dati passati nel corpo della richiesta (req.body)
+    // Ensure `name` exists and avoid trivial duplicate collisions when client doesn't provide it.
+    const payload = { ...req.body };
+
+    if (!payload.name) {
+      // Accept `title` from some clients as alias, otherwise build a fallback
+      const base = payload.title ? String(payload.title).trim() : 'ticket';
+      // Append timestamp to make name effectively unique by default
+      payload.name = `${base}-${Date.now()}`;
+    }
+
+    const newTicket = new TicketModel(payload);  // Crea un ticket coi dati passati nel corpo della richiesta (req.body)
     const savedTicket = await newTicket.save();  // Salva il nuovo ticket nel database
 
     // Popola il riferimento `user` prima di rispondere

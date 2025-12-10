@@ -258,7 +258,7 @@ const TicketPageAdmin = () => {
         </div>
 
         {/* COLONNA DESTRA: LISTA TICKET*/}
-        <div className="w-full lg:w-1/2 bg-white rounded-xl shadow p-6 h-fit sticky top-6">
+        <div className="w-full lg:w-1/2 bg-white rounded-xl shadow p-6 sticky top-6 h-[1190px]">
           <h2 className="font-bold text-3xl mb-4 flex items-center gap-3 text-[#090c64]">
             <ListMagnifyingGlass
               size={32}
