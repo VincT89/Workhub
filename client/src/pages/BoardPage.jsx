@@ -31,7 +31,7 @@ const BoardPage = () => {
 	const token = useSelector((state) => state.auth.token);
 	const users = useSelector((state) => state.users); // per richiamare i dati del personale (nelle box in alto)
 	const pointOfSales = useSelector((state) => state.pos); // per richiamare i dati dei depositi (nelle box in alto)
-	const products = useSelector((state) => state.products); // per richiamare i dati dei prodotti (nelle box in alto)
+	const products = useSelector((state) => state.items); // per richiamare i dati dei prodotti (nelle box in alto)
 	
 
 	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
