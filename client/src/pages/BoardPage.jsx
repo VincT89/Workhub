@@ -209,7 +209,7 @@ const BoardPage = () => {
 							<button
 								onClick={openDrawerAdd}
 
-								className="ml-auto px-4 py-2 bg-white  text-[#090c64]  shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[15px] font-bold cursor-pointer"
+								className="custom-button ml-auto"
 							>
 								+ {t("dashboard.aggiungi")}
 							</button>
@@ -321,7 +321,7 @@ const BoardPage = () => {
 								onChange={(e) =>
 									setEditData({ ...editData, title: e.target.value })
 								}
-								className="px-3 py-2 rounded-xl bg-[#fafafa20] border border-white/30"
+								className="custom-input"
 							/>
 						</div>
 
@@ -334,7 +334,7 @@ const BoardPage = () => {
 								onChange={(e) =>
 									setEditData({ ...editData, date: e.target.value })
 								}
-								className="px-3 py-2 rounded-xl bg-[#fafafa20] border border-white/30"
+								className="custom-input"
 							/>
 						</div>
 
@@ -347,7 +347,7 @@ const BoardPage = () => {
 								onChange={(e) =>
 									setEditData({ ...editData, description: e.target.value })
 								}
-								className="px-3 py-2 rounded-xl bg-[#fafafa20] border border-white/30"
+								className="custom-input"
 							/>
 						</div>
 

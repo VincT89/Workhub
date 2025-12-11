@@ -5,6 +5,10 @@
   --font-nunito: 'Nunito', sans-serif;
 }
 
+/* -----------------------------------------------------
+   BASE: BODY + DARKMODE + SCROLLBAR
+----------------------------------------------------- */
+
 body {
   font-family: var(--font-nunito);
   color: #090c64;
@@ -23,6 +27,7 @@ body {
 /* -----------------------------------------------------
    BASE LAYER
 ----------------------------------------------------- */
+
 @layer base {
 
   /* ================= INPUT ================= */
@@ -99,6 +104,7 @@ body {
 /* -----------------------------------------------------
    COMPONENTS LAYER
 ----------------------------------------------------- */
+
 @layer components {
 
   /* === BTN LOGIN === */
@@ -124,11 +130,93 @@ body {
     color: #090c64 !important;
     border-color: rgba(255,255,255,0.3) !important;
   }
+
+  /* -----------------------------------------------------
+     CALENDAR BUTTONS (toolbar + month/week/day)
+     Coerenti con custom-button / light
+  ----------------------------------------------------- */
+
+  /* BASE per tutti i bottoni del calendario */
+  .calendar-btn,
+  .calendar-view-btn {
+    @apply px-4 py-2 rounded-xl font-semibold cursor-pointer 
+           border shadow-md transition-all duration-300 select-none;
+  }
+
+  /* LIGHT MODE — default (inattivo) */
+  .calendar-btn,
+  .calendar-view-btn {
+    background-color: rgba(255,255,255,0.7);
+    color: #090c64;
+    border-color: rgba(255,255,255,0.4);
+  }
+
+  /* Hover light */
+  .calendar-btn:hover,
+  .calendar-view-btn:not(.active):hover {
+    background-color: #090c64 !important;
+    color: white !important;
+  }
+
+  /* ACTIVE (month/week/day) light */
+  .calendar-view-btn.active {
+    background-color: #090c64 !important;
+    color: white !important;
+    border-color: #090c64 !important;
+  }
+
+  /* DARK MODE — default (inattivo) */
+  .dark .calendar-btn,
+  .dark .calendar-view-btn {
+    background-color: rgba(255,255,255,0.10);
+    color: white;
+    border-color: rgba(255,255,255,0.25);
+  }
+
+  /* Hover dark */
+  .dark .calendar-btn:hover,
+  .dark .calendar-view-btn:not(.active):hover {
+    background-color: white !important;
+    color: #090c64 !important;
+  }
+
+  /* ACTIVE dark */
+  .dark .calendar-view-btn.active {
+    background-color: white !important;
+    color: #090c64 !important;
+    border-color: white !important;
+  }
+
+  /* SELECT MODE (Turni/Eventi) */
+  .calendar-select {
+    @apply px-6 py-2 rounded-xl text-sm font-semibold border shadow-sm bg-[#090c64] text-white;
+  }
+
+  .dark .calendar-select {
+    background-color: white !important;
+    color: #090c64 !important;
+  }
+
+  /* FILTRI REPARTO */
+  .dept-filter {
+    @apply flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer select-none text-sm font-semibold border shadow-sm transition-all;
+  }
+
+  .dark .dept-filter:not(.active) {
+    background: rgba(255,255,255,0.10) !important;
+    color: white !important;
+    border-color: rgba(255,255,255,0.25) !important;
+  }
+
+  .dark .dept-filter.active {
+    color: white !important;
+  }
 }
 
 /* -----------------------------------------------------
    HEADINGS
 ----------------------------------------------------- */
+
 h2 {
   @apply font-bold text-xl gap-3;
   color: #090c64;
@@ -147,6 +235,7 @@ h3 {
 /* -----------------------------------------------------
    WAREHOUSE TABLE BUTTONS
 ----------------------------------------------------- */
+
 .warehouse-btn {
   @apply px-3 py-2 rounded-lg shadow-sm text-sm border-0 transition-all duration-200;
   background-color: #090c64;
@@ -169,43 +258,10 @@ h3 {
 }
 
 /* -----------------------------------------------------
-   TABLE OVERRIDE
------------------------------------------------------ */
-table tbody tr:hover td {
-  @apply bg-white/40;
-}
-
-.dark table tbody tr:hover td {
-  background-color: rgba(255,255,255,0.15) !important;
-}
-
-table tbody tr td:first-child {
-  border-top-left-radius: 0.75rem;
-  border-bottom-left-radius: 0.75rem;
-}
-
-table tbody tr td:last-child {
-  border-top-right-radius: 0.75rem;
-  border-bottom-right-radius: 0.75rem;
-}
-
-/* DARK MODE PER TABELLE */
-.dark table td,
-.dark table th {
-  color: white !important;
-  border-color: rgba(255,255,255,0.2) !important;
-}
-
-.dark table tr:nth-child(even) td {
-  background-color: rgba(255,255,255,0.05) !important;
-}
-
-/* -----------------------------------------------------
-   TABLE COMPONENT (Table.jsx)
-   — integrazione completa con dark mode
+   TABLE OVERRIDE (stile globale + Table.jsx)
 ----------------------------------------------------- */
 
-/* WRAPPER ESTERNO DELLA TABELLA */
+/* Wrapper esterno glass */
 .table-wrapper {
   background-color: rgba(250,250,250,0.1);
   border: 1px solid white;
@@ -219,9 +275,7 @@ table tbody tr td:last-child {
   color: white !important;
 }
 
-/* =======================
-   HEADER TABELLA
-======================= */
+/* HEADER TABELLA */
 table thead tr {
   background-color: rgba(255,255,255,0.6);
   color: #090c64;
@@ -231,10 +285,8 @@ table thead tr {
 .dark table thead tr {
   background-color: rgba(255,255,255,0.1) !important;
   color: white !important;
-  border-bottom: 1px solid rgba(255,255,255,0.25);
 }
 
-/* Celle di header */
 table thead th {
   padding: 12px;
   text-align: center;
@@ -245,18 +297,10 @@ table thead th {
   color: white !important;
 }
 
-/* =======================
-   BODY TABELLA
-======================= */
+/* BODY TABELLA (senza bordi, solo padding) */
 table tbody td {
   padding: 12px;
   text-align: center;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-
-.dark table tbody td {
-  border-bottom: 1px solid rgba(255,255,255,0.1) !important;
-  color: white !important;
 }
 
 /* Hover su riga */
@@ -279,14 +323,25 @@ table tbody tr td:last-child {
   border-bottom-right-radius: 0.75rem;
 }
 
-/* Riga alternata */
+/* Riga alternata — solo dark mode (opzione A) */
 .dark table tr:nth-child(even) td {
   background-color: rgba(255,255,255,0.04) !important;
 }
 
-/* =======================
-   SEARCH BAR
-======================= */
+/* Nessun bordo visibile su celle e righe */
+table td,
+table th,
+table tr {
+  border: none !important;
+}
+
+/* DARK MODE PER TABELLE — solo colore testo */
+.dark table td,
+.dark table th {
+  color: white !important;
+}
+
+/* SEARCH BAR */
 .table-search {
   background-color: rgba(255,255,255,0.7);
   border: 1px solid white;
@@ -304,9 +359,7 @@ table tbody tr td:last-child {
   color: rgba(255,255,255,0.5) !important;
 }
 
-/* =======================
-   PULSANTE ORDINA A-Z
-======================= */
+/* PULSANTE ORDINA A-Z */
 .table-sort-btn {
   background-color: #090c64;
   color: white;
@@ -326,9 +379,7 @@ table tbody tr td:last-child {
   border-color: rgba(255,255,255,0.3) !important;
 }
 
-/* =======================
-   CELLA AZIONI (EDIT, DELETE)
-======================= */
+/* CELLA AZIONI (EDIT, DELETE) */
 .table-action-btn {
   cursor: pointer;
   padding: 4px;
@@ -344,9 +395,7 @@ table tbody tr td:last-child {
   filter: brightness(1.2);
 }
 
-/* =======================
-   MESSAGGIO "NESSUN RISULTATO"
-======================= */
+/* MESSAGGIO "NESSUN RISULTATO" */
 .no-results-text {
   text-align: center;
   opacity: 0.6;
@@ -367,15 +416,13 @@ table tbody tr td:last-child {
   color: white !important;
 }
 
-/* TESTO GENERALE */
-.dark .rbc-calendar * {
+/* TESTO GENERALE — esclusi i bottoni custom */
+.dark .rbc-calendar *:not(button):not(.calendar-btn):not(.calendar-view-btn) {
   color: white !important;
   border-color: rgba(255,255,255,0.15) !important;
 }
 
-/* -----------------------------------------------------
-   TOOLBAR CUSTOM
------------------------------------------------------ */
+/* TOOLBAR CUSTOM WRAPPER */
 .calendar-toolbar {
   @apply px-6 py-3 my-5 rounded-xl backdrop-blur-md shadow-md border flex justify-between items-center;
   background: rgba(255,255,255,0.20);
@@ -386,32 +433,7 @@ table tbody tr td:last-child {
   border-color: rgba(255,255,255,0.1) !important;
 }
 
-/* PULSANTI TOOLBAR */
-.calendar-btn {
-  @apply px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm transition cursor-pointer;
-  background-color: rgba(255,255,255,0.7) !important;
-  color: #090c64 !important;
-}
-
-.calendar-btn:hover {
-  background-color: #090c64;
-  color: white !important;
-}
-
-.dark .calendar-btn {
-  background-color: rgba(255,255,255,0.10) !important;
-  border-color: rgba(255,255,255,0.40) !important;
-  color: white !important;
-}
-
-.dark .calendar-btn:hover {
-  background-color: white !important;
-  color: #090c64 !important;
-}
-
-/* -----------------------------------------------------
-   HEADER SETTIMANA/GIORNO
------------------------------------------------------ */
+/* HEADER SETTIMANA/GIORNO */
 .rbc-header {
   padding: 10px 0;
   font-weight: 700;
@@ -424,9 +446,7 @@ table tbody tr td:last-child {
   color: white;
 }
 
-/* -----------------------------------------------------
-   CELLE GIORNI (MONTH / WEEK / DAY)
------------------------------------------------------ */
+/* CELLE GIORNI (MONTH / WEEK / DAY) */
 .rbc-month-row,
 .rbc-day-bg {
   background: transparent !important;
@@ -436,12 +456,11 @@ table tbody tr td:last-child {
   background: rgba(255,255,255,0.03) !important;
 }
 
-/* Celle month */
 .dark .rbc-month-row {
   border-color: rgba(255,255,255,0.08) !important;
 }
 
-/* Oggi */
+/* OGGI */
 .rbc-today {
   background-color: rgba(9,12,100,0.10) !important;
 }
@@ -450,9 +469,7 @@ table tbody tr td:last-child {
   background-color: rgba(255,255,255,0.12) !important;
 }
 
-/* -----------------------------------------------------
-   EVENTI — SHIFT / EVENTO
------------------------------------------------------ */
+/* EVENTI — SHIFT / EVENTO */
 .rbc-event {
   border-radius: 10px !important;
   padding: 4px 6px !important;
@@ -473,9 +490,7 @@ table tbody tr td:last-child {
   color: white !important;
 }
 
-/* -----------------------------------------------------
-   SLOT TEMPI WEEK/DAY VIEW
------------------------------------------------------ */
+/* SLOT TEMPI WEEK/DAY VIEW */
 .rbc-time-slot {
   border-color: rgba(0,0,0,0.08);
 }
@@ -489,45 +504,7 @@ table tbody tr td:last-child {
   background: #ff4d4d !important;
 }
 
-/* -----------------------------------------------------
-   SELECT MODE (Turni / Eventi)
------------------------------------------------------ */
-.calendar-select {
-  @apply px-6 py-2 rounded-xl text-sm font-semibold border shadow-sm bg-[#090c64] text-white;
-}
-
-.dark .calendar-select {
-  background-color: white !important;
-  color: #090c64 !important;
-}
-
-/* -----------------------------------------------------
-   FILTRI REPARTO
------------------------------------------------------ */
-.dept-filter {
-  @apply flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer select-none text-sm font-semibold border shadow-sm transition-all;
-}
-
-.dark .dept-filter:not(.active) {
-  background: rgba(255,255,255,0.10) !important;
-  color: white !important;
-  border-color: rgba(255,255,255,0.25) !important;
-}
-
-.dark .dept-filter.active {
-  color: white !important;
-}
-
-/* Cerchietto colore reparto */
-.dept-color-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-}
-
-/* -----------------------------------------------------
-   NO DATA / EMPTY ZONE
------------------------------------------------------ */
+/* NO DATA / EMPTY ZONE */
 .dark .rbc-agenda-view table td {
   background-color: rgba(255,255,255,0.05) !important;
   color: white !important;
@@ -538,9 +515,7 @@ table tbody tr td:last-child {
   color: white !important;
 }
 
-/* -----------------------------------------------------
-   SCROLLBAR INTERNA
------------------------------------------------------ */
+/* SCROLLBAR INTERNA CALENDARIO */
 .rbc-time-content::-webkit-scrollbar {
   width: 6px;
 }
@@ -552,41 +527,4 @@ table tbody tr td:last-child {
 
 .dark .rbc-time-content::-webkit-scrollbar-thumb {
   background: rgba(255,255,255,0.3) !important;
-}
-
-/* -----------------------------------------------------
-   CALENDAR VIEW BUTTON (month / week / day switch)
-   Coerente con custom-button e con tutto il design
------------------------------------------------------ */
-.calendar-view-btn {
-  @apply px-4 py-2 rounded-xl font-semibold cursor-pointer 
-         border shadow-md transition-all duration-300;
-  
-  /* LIGHT MODE default (inattivo) */
-  @apply bg-white/70 text-[#090c64] border-white/40;
-}
-
-/* Hover in light mode */
-.calendar-view-btn:not(.active):hover {
-  @apply bg-[#090c64] text-white;
-}
-
-/* Stato ATTIVO light mode */
-.calendar-view-btn.active {
-  @apply bg-[#090c64] text-white border-[#090c64];
-}
-
-/* DARK MODE stato inattivo */
-.dark .calendar-view-btn {
-  @apply bg-white/10 text-white border-white/40;
-}
-
-/* Hover dark mode */
-.dark .calendar-view-btn:not(.active):hover {
-  @apply bg-white text-[#090c64];
-}
-
-/* Stato ATTIVO dark mode */
-.dark .calendar-view-btn.active {
-  @apply bg-white text-[#090c64] border-white;
 }
