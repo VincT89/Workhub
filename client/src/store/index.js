@@ -11,6 +11,7 @@ import productReducer from "./feature/productsSlice";
 import itemsReducer from "./feature/itemsSlice";
 import warehouseFiltersReducer from "./feature/warehouseFiltersSlice";
 import customerSlice from "./feature/customerSlice";
+import ticketReducer from "./feature/ticketSlice";
 
 const store = configureStore({
 	reducer: {
@@ -26,6 +27,7 @@ const store = configureStore({
 		items: itemsReducer,
 		warehouseFilters: warehouseFiltersReducer,
 		customers: customerSlice,
+		tickets: ticketReducer,
 	},
 });
 
