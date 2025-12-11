@@ -5,10 +5,6 @@
   --font-nunito: 'Nunito', sans-serif;
 }
 
-/* -----------------------------------------------------
-   BASE: BODY + DARKMODE + SCROLLBAR
------------------------------------------------------ */
-
 body {
   font-family: var(--font-nunito);
   color: #090c64;
@@ -24,32 +20,30 @@ body {
 *::-webkit-scrollbar { width: 0; height: 0; }
 * { scrollbar-width: none; -ms-overflow-style: none; }
 
-/* -----------------------------------------------------
-   BASE LAYER
------------------------------------------------------ */
+/* BASE LAYER */
 
 @layer base {
 
-  /* ================= INPUT ================= */
+  /* Input di base */
   input {
     @apply w-full h-[35px] bg-[rgba(217,217,217,0.3)]
            border border-white/30 rounded-xl px-4 shadow-md
            outline-none font-semibold focus:ring-2 transition-all duration-200;
   }
 
-  /* LIGHT MODE INPUT */
+  /* Light mode input */
   :root input {
     @apply text-[#090c64] placeholder:text-[#090c64]/70 focus:ring-[#090c64];
   }
 
-  /* DARK MODE INPUT */
+  /* Dark mode input */
   .dark input {
     @apply text-white placeholder:text-white/60 focus:ring-white;
     background-color: rgba(255,255,255,0.08) !important;
     border-color: rgba(255,255,255,0.25) !important;
   }
 
-  /* ================= BOX ================= */
+  /* Box */
   .custom-box {
     @apply rounded-xl shadow-white border border-white/90 backdrop-blur-lg
            transition-colors duration-300 bg-white/10 text-[#090c64];
@@ -61,7 +55,7 @@ body {
     color: white !important;
   }
 
-  /* ================= CUSTOM INPUT (TUO) ================= */
+  /* Custom input */
   .custom-input {
     @apply border border-white/30 rounded-xl px-4 shadow-md outline-none font-semibold
            focus:ring-2 transition-all duration-200 text-[#090c64] placeholder:text-[#090c64]/70
@@ -74,7 +68,7 @@ body {
     border-color: rgba(255,255,255,0.25);
   }
 
-  /* ================= BUTTON (PRIMARIO) ================= */
+  /* Button (primario) */
   .custom-button {
     @apply rounded-xl p-2 shadow-md border border-white/20 transition-all duration-500
            cursor-pointer font-bold text-white bg-[#090c64];
@@ -87,7 +81,7 @@ body {
     border-color: rgba(255,255,255,0.3) !important;
   }
 
-  /* ================= BUTTON LIGHT ================= */
+  /* Button light */
   .custom-button-light {
     @apply rounded-xl p-2 shadow-md border border-white/20 transition-all duration-500
            cursor-pointer font-bold bg-white text-[#090c64];
@@ -101,13 +95,10 @@ body {
   }
 }
 
-/* -----------------------------------------------------
-   COMPONENTS LAYER
------------------------------------------------------ */
-
+/* COMPONENTS LAYER */
 @layer components {
 
-  /* === BTN LOGIN === */
+  /* Btn Login */
   .btn-login {
     @apply w-full sm:w-[225px] h-[50px] mt-8 rounded-xl shadow-md border border-white/20
            transition-all duration-500 cursor-pointer font-bold font-nunito
@@ -119,31 +110,31 @@ body {
     @apply opacity-60 cursor-not-allowed;
   }
 
-  /* LIGHT MODE */
+  /* Light mode */
   :root .btn-login {
     @apply border-white/30 hover:border-white/50 hover:shadow-lg hover:scale-105;
   }
 
-  /* DARK MODE */
+  /* Dark mode */
   .dark .btn-login {
     background-color: white !important;
     color: #090c64 !important;
     border-color: rgba(255,255,255,0.3) !important;
   }
 
-  /* -----------------------------------------------------
-     CALENDAR BUTTONS (toolbar + month/week/day)
+  /* 
+     Calendar buttons (toolbar + month/week/day)
      Coerenti con custom-button / light
-  ----------------------------------------------------- */
+   */
 
-  /* BASE per tutti i bottoni del calendario */
+  /* Base per tutti i bottoni del calendario */
   .calendar-btn,
   .calendar-view-btn {
     @apply px-4 py-2 rounded-xl font-semibold cursor-pointer 
            border shadow-md transition-all duration-300 select-none;
   }
 
-  /* LIGHT MODE — default (inattivo) */
+  /* Light mode — default (inattivo) */
   .calendar-btn,
   .calendar-view-btn {
     background-color: rgba(255,255,255,0.7);
@@ -158,14 +149,14 @@ body {
     color: white !important;
   }
 
-  /* ACTIVE (month/week/day) light */
+  /* Active (month/week/day) light */
   .calendar-view-btn.active {
     background-color: #090c64 !important;
     color: white !important;
     border-color: #090c64 !important;
   }
 
-  /* DARK MODE — default (inattivo) */
+  /* Dark mode — default (inattivo) */
   .dark .calendar-btn,
   .dark .calendar-view-btn {
     background-color: rgba(255,255,255,0.10);
@@ -180,7 +171,7 @@ body {
     color: #090c64 !important;
   }
 
-  /* ACTIVE dark */
+  /* Active dark */
   .dark .calendar-view-btn.active {
     background-color: white !important;
     color: #090c64 !important;
@@ -197,7 +188,7 @@ body {
     color: #090c64 !important;
   }
 
-  /* FILTRI REPARTO */
+  /* Filtri reparto */
   .dept-filter {
     @apply flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer select-none text-sm font-semibold border shadow-sm transition-all;
   }
@@ -213,10 +204,7 @@ body {
   }
 }
 
-/* -----------------------------------------------------
-   HEADINGS
------------------------------------------------------ */
-
+/* Headings */
 h2 {
   @apply font-bold text-xl gap-3;
   color: #090c64;
@@ -232,10 +220,7 @@ h3 {
   color: white !important;
 }
 
-/* -----------------------------------------------------
-   WAREHOUSE TABLE BUTTONS
------------------------------------------------------ */
-
+/* Warehouse table buttons */
 .warehouse-btn {
   @apply px-3 py-2 rounded-lg shadow-sm text-sm border-0 transition-all duration-200;
   background-color: #090c64;
@@ -257,9 +242,7 @@ h3 {
   color: white !important;
 }
 
-/* -----------------------------------------------------
-   TABLE OVERRIDE (stile globale + Table.jsx)
------------------------------------------------------ */
+/* Table override (stile globale + Table.jsx) */
 
 /* Wrapper esterno glass */
 .table-wrapper {
@@ -275,7 +258,7 @@ h3 {
   color: white !important;
 }
 
-/* HEADER TABELLA */
+/* Header tabella */
 table thead tr {
   background-color: rgba(255,255,255,0.6);
   color: #090c64;
@@ -297,7 +280,7 @@ table thead th {
   color: white !important;
 }
 
-/* BODY TABELLA (senza bordi, solo padding) */
+/* Body tabella (senza bordi, solo padding) */
 table tbody td {
   padding: 12px;
   text-align: center;
@@ -335,13 +318,13 @@ table tr {
   border: none !important;
 }
 
-/* DARK MODE PER TABELLE — solo colore testo */
+/* Dark mode per tabelle — solo colore testo */
 .dark table td,
 .dark table th {
   color: white !important;
 }
 
-/* SEARCH BAR */
+/* Search bar */
 .table-search {
   background-color: rgba(255,255,255,0.7);
   border: 1px solid white;
@@ -359,7 +342,7 @@ table tr {
   color: rgba(255,255,255,0.5) !important;
 }
 
-/* PULSANTE ORDINA A-Z */
+/* Pulsante ordina A-Z */
 .table-sort-btn {
   background-color: #090c64;
   color: white;
@@ -379,7 +362,7 @@ table tr {
   border-color: rgba(255,255,255,0.3) !important;
 }
 
-/* CELLA AZIONI (EDIT, DELETE) */
+/* Cella azioni (edit, delete) */
 .table-action-btn {
   cursor: pointer;
   padding: 4px;
@@ -395,7 +378,7 @@ table tr {
   filter: brightness(1.2);
 }
 
-/* MESSAGGIO "NESSUN RISULTATO" */
+/* Messaggio "nessun risultato" */
 .no-results-text {
   text-align: center;
   opacity: 0.6;
@@ -406,23 +389,20 @@ table tr {
   color: rgba(255,255,255,0.6);
 }
 
-/* -----------------------------------------------------
-   CALENDARBOX — react-big-calendar dark mode override
------------------------------------------------------ */
-
-/* WRAPPER CALENDARIO */
+/* Calendarbox — react-big-calendar dark mode override */
+/* Wrapper calendario */
 .dark .rbc-calendar {
   background-color: rgba(255, 255, 255, 0.05);
   color: white !important;
 }
 
-/* TESTO GENERALE — esclusi i bottoni custom */
+/* Testo generale — esclusi i bottoni custom */
 .dark .rbc-calendar *:not(button):not(.calendar-btn):not(.calendar-view-btn) {
   color: white !important;
   border-color: rgba(255,255,255,0.15) !important;
 }
 
-/* TOOLBAR CUSTOM WRAPPER */
+/* Toolbar custom wrapper */
 .calendar-toolbar {
   @apply px-6 py-3 my-5 rounded-xl backdrop-blur-md shadow-md border flex justify-between items-center;
   background: rgba(255,255,255,0.20);
@@ -433,7 +413,7 @@ table tr {
   border-color: rgba(255,255,255,0.1) !important;
 }
 
-/* HEADER SETTIMANA/GIORNO */
+/* Header settimana/giorno */
 .rbc-header {
   padding: 10px 0;
   font-weight: 700;
@@ -446,7 +426,7 @@ table tr {
   color: white;
 }
 
-/* CELLE GIORNI (MONTH / WEEK / DAY) */
+/* Celle giorni (month / week / day) */
 .rbc-month-row,
 .rbc-day-bg {
   background: transparent !important;
@@ -460,7 +440,7 @@ table tr {
   border-color: rgba(255,255,255,0.08) !important;
 }
 
-/* OGGI */
+/* Oggi */
 .rbc-today {
   background-color: rgba(9,12,100,0.10) !important;
 }
@@ -469,7 +449,7 @@ table tr {
   background-color: rgba(255,255,255,0.12) !important;
 }
 
-/* EVENTI — SHIFT / EVENTO */
+/* Eventi — shift / evento */
 .rbc-event {
   border-radius: 10px !important;
   padding: 4px 6px !important;
@@ -490,7 +470,7 @@ table tr {
   color: white !important;
 }
 
-/* SLOT TEMPI WEEK/DAY VIEW */
+/* Slot tempi week/day view */
 .rbc-time-slot {
   border-color: rgba(0,0,0,0.08);
 }
@@ -504,7 +484,7 @@ table tr {
   background: #ff4d4d !important;
 }
 
-/* NO DATA / EMPTY ZONE */
+/* No data / empty zone */
 .dark .rbc-agenda-view table td {
   background-color: rgba(255,255,255,0.05) !important;
   color: white !important;
@@ -515,7 +495,7 @@ table tr {
   color: white !important;
 }
 
-/* SCROLLBAR INTERNA CALENDARIO */
+/* Scrollbar interna calendario */
 .rbc-time-content::-webkit-scrollbar {
   width: 6px;
 }
