@@ -13,6 +13,8 @@ import englishFlag from "../assets/icons/Great Britain.png";
 
 import { EyeIcon, EyeSlashIcon, SunIcon, MoonIcon } from "@phosphor-icons/react";
 
+import Enable2FA from "./Enable2FA.jsx";
+
 const SettingsPage = () => {
 	const { theme, setTheme } = useTheme();
 	const { lang, toggleLang, t } = useLanguage();
@@ -376,7 +378,16 @@ const SettingsPage = () => {
 					</form>
 				</section>
 
-				{/*    SEZIONE 3 — ASPETTO       */}
+				 {/*   SEZIONE 3 — Sicurezza / 2FA        */}
+        <section className="w-full p-6 rounded-[25px] shadow-md border border-white/30 bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm">
+          <h2 className={`${textColor} text-xl font-bold mb-4 border-b border-[#090c64] pb-2`}>
+            {t("settings.autenticazione2FA")}
+          </h2>
+
+          <Enable2FA />
+        </section>
+
+				{/*    SEZIONE 4 — ASPETTO       */}
 				<section className="w-full p-6 rounded-[25px] shadow-md border border-white/30 bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm">
 					<h2
 						className={`${textColor} text-xl font-bold mb-4 border-b border-[#090c64] pb-2`}
@@ -455,7 +466,7 @@ const SettingsPage = () => {
 					</div>
 				</section>
 
-				{/*     SEZIONE 4 — BOTTONI      */}
+				{/*     SEZIONE 5 — BOTTONI      */}
 				<section className="w-full flex flex-col sm:flex-row justify-center gap-6 mt-2">
 					<button
 						type="submit"

@@ -1,10 +1,11 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay } from "date-fns";
-import { it } from "date-fns/locale";
+import { it, enGB } from "date-fns/locale";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useTheme } from "../context/ThemeContext";
 import { useSelector, useDispatch } from "react-redux";
+import { useLanguage } from "../context/LanguageContext";
 
 import { fetchUsersAsync } from "../store/feature/userSlice";
 import { fetchAllShiftsAsync } from "../store/feature/shiftsSlice";
@@ -12,12 +13,17 @@ import { fetchEventsAsync } from "../store/feature/eventsSlice";
 import { fetchPointsOfSalesAsync } from "../store/feature/pointOfSalesSlice";
 
 /* LOCALIZZAZIONE */
+const locales = { it, en: enGB };
+
 const localizer = dateFnsLocalizer({
 	format,
 	parse,
 	getDay,
-	startOfWeek: () => startOfWeek(new Date(), { locale: it }),
-	locales: { it },
+	// lingua dinamica letta direttamente dal browser (react-big-calendar la richiama a runtime)
+	startOfWeek: (date, culture) =>
+		startOfWeek(date, { locale: locales[culture] || it }),
+
+	locales,
 });
 
 /* UTILS */
@@ -43,53 +49,59 @@ const weekOffset = {
 };
 
 /* TOOLBAR */
-const CustomToolbar = ({ label, view, onView, onNavigate }) => (
-	<div className="flex items-center justify-between w-full px-6 py-3 my-5 rounded-xl backdrop-blur-md shadow-md bg-white/20 dark:bg-white/10 border border-white/30 dark:border-white/10">
-		{/* NAV */}
-		<div className="flex items-center gap-2">
-			<button
-				onClick={() => onNavigate("PREV")}
-				className="px-4 py-2 rounded-xl bg-white/70 dark:bg-white/10 text-[#090c64] dark:text-[#090c64] border border-white/40 dark:border-white/90 font-semibold hover:bg-[#090c64] hover:text-white transition"
-			>
-				‹
-			</button>
-
-			<button
-				onClick={() => onNavigate("NEXT")}
-				className="px-4 py-2 rounded-xl bg-white/70 dark:bg-white/10 text-[#090c64] dark:text-[#090c64] border border-white/40 dark:border-white/90 font-semibold hover:bg-[#090c64] hover:text-white transition"
-			>
-				›
-			</button>
-		</div>
-
-		<span className="text-xl font-extrabold text-[#090c64]">{label}</span>
-
-		{/* VIEW SELECT */}
-		<div className="flex items-center gap-2">
-			{["month", "week", "day"].map((v) => (
+const CustomToolbar = ({ label, view, onView, onNavigate }) => {
+	const { t } = useLanguage();
+	
+	return (
+		<div className="flex items-center justify-between w-full px-6 py-3 my-5 rounded-xl backdrop-blur-md shadow-md bg-white/20 dark:bg-white/10 border border-white/30 dark:border-white/10">
+			{/* NAV */}
+			<div className="flex items-center gap-2">
 				<button
-					key={v}
-					onClick={() => onView(v)}
-					className={`
-						px-4 py-2 rounded-xl font-semibold border transition
-						${
-							view === v
-								? "bg-[#090c64] text-white border-[#090c64]"
-								: "bg-white/70 dark:bg-white/10 text-[#090c64] border-white/40 hover:bg-[#090c64] hover:text-white"
-						}
-					`}
+					onClick={() => onNavigate("PREV")}
+					className="px-4 py-2 rounded-xl bg-white/70 dark:bg-white/10 text-[#090c64] dark:text-[#090c64] border border-white/40 dark:border-white/90 font-semibold hover:bg-[#090c64] hover:text-white transition"
 				>
-					{v === "month" ? "Mese" : v === "week" ? "Settimana" : "Giorno"}
+					‹
 				</button>
-			))}
+
+				<button
+					onClick={() => onNavigate("NEXT")}
+					className="px-4 py-2 rounded-xl bg-white/70 dark:bg-white/10 text-[#090c64] dark:text-[#090c64] border border-white/40 dark:border-white/90 font-semibold hover:bg-[#090c64] hover:text-white transition"
+				>
+					›
+				</button>
+			</div>
+
+			<span className="text-xl font-extrabold text-[#090c64]">{label}</span>
+
+			{/* VIEW SELECT */}
+			<div className="flex items-center gap-2">
+				{["month", "week", "day"].map((v) => (
+					<button
+						key={v}
+						onClick={() => onView(v)}
+						className={`
+							px-4 py-2 rounded-xl font-semibold border transition
+							${
+								view === v
+									? "bg-[#090c64] text-white border-[#090c64]"
+									: "bg-white/70 dark:bg-white/10 text-[#090c64] border-white/40 hover:bg-[#090c64] hover:text-white"
+							}
+						`}
+					>
+						{v === "month" ? t("dashboard.mese") : v === "week" ? t("dashboard.settimana") : t("dashboard.giorno")}
+					</button>
+				))}
+			</div>
 		</div>
-	</div>
-);
+	);
+};
 
 /* MAIN COMPONENT */
 const CalendarBox = () => {
-	const { theme } = useTheme();
+	const { theme, setTheme } = useTheme();
 	const isDark = theme === "dark";
+  const { t, lang } = useLanguage();
+
 
 	const dispatch = useDispatch();
 	const token = useSelector((s) => s.auth.token);
@@ -147,7 +159,7 @@ const CalendarBox = () => {
 		// mapping giorni
 		const weekdayMap = {
 			monday: "Lunedì",
-			tuesday: "Martedì",
+			tuesday: "Martedì", 
 			wednesday: "Mercoledì",
 			thursday: "Giovedì",
 			friday: "Venerdì",
@@ -301,14 +313,14 @@ const CalendarBox = () => {
 			start.setHours(8, 0, 0, 0); // 08:00
 
 			const end = new Date(ev.endDate);
-			end.setHours(13, 0, 0, 0); // 13:00
+			end.setHours(18, 0, 0, 0); // 18:00
 
 			return {
 				id: ev._id,
 				title: ev.title,
 				fullName: "Evento aziendale",
 				department: "Eventi",
-				orario: "08:00-13:00",
+				orario: "08:00-18:00",
 				start,
 				end,
 				type: "event",
@@ -450,14 +462,14 @@ const CalendarBox = () => {
 							onClick={() => setSelectedDepartments([...departments])}
 							className="px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm bg-[#090c64] text-white"
 						>
-							Seleziona tutti
+							{t("dashboard.selezionaTutti")}
 						</button>
 
 						<button
 							onClick={() => setSelectedDepartments([])}
 							className="px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm bg-[#090c64] text-white"
 						>
-							Deseleziona tutti
+							{t("dashboard.deselezionaTutti")}
 						</button>
 					</>
 				)}
@@ -468,8 +480,8 @@ const CalendarBox = () => {
 					onChange={(e) => setMode(e.target.value)}
 					className="ml-auto px-6 py-2 rounded-xl text-sm font-semibold border shadow-sm bg-[#090c64] text-white"
 				>
-					<option value="turni">Turni</option>
-					<option value="eventi">Eventi</option>
+					<option value="turni">{t("dashboard.turni")}</option>
+					<option value="eventi">{t("dashboard.eventi")}</option>
 				</select>
 			</div>
 
@@ -485,7 +497,7 @@ const CalendarBox = () => {
 						endAccessor="end"
 						views={["month", "week", "day"]}
 						defaultView="week"
-						culture="it"
+						culture={lang}
 						scrollToTime={new Date(1970, 0, 1, 7, 0)}
 						min={new Date(1970, 0, 1, 7, 0)}
 						max={new Date(1970, 0, 1, 20, 0)}

@@ -1,20 +1,20 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { 
-  loginRequest, 
-  changePasswordRequest, 
-  recoverPasswordRequest 
-} from "../../api/authApi";
 
-const API_URL = "http://localhost:3030/api/v1"; // url base API riutilizzabile nelle chiamate
+const API_URL = "http://localhost:3030/api/v1"; // url base API
 
-// LOGIN - prende username e password, restituisce token e dati utente
+// LOGIN
 export const loginAsync = createAsyncThunk(
   "auth/login",
-  async ({ username, password }, { rejectWithValue }) => {
+  async ({ username, password, token2fa }, { rejectWithValue }) => {
     try {
-      const { ok, data } = await loginRequest({ username, password });
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password, token: token2fa }), // includo token 2FA se presente
+      });
 
-      if (!ok) return rejectWithValue(data.message);
+      const data = await response.json();
+      if (!response.ok) return rejectWithValue(data.message);
 
       const authData = {
         token: data.data.token,
@@ -22,9 +22,8 @@ export const loginAsync = createAsyncThunk(
         role: data.data.user.role,
       };
 
-      localStorage.setItem("auth", JSON.stringify(authData)); // memorizza i dati di autenticazione nel localStorage
+      localStorage.setItem("auth", JSON.stringify(authData));
       return authData;
-
     } catch {
       return rejectWithValue("Errore di rete.");
     }
@@ -36,11 +35,19 @@ export const changePasswordAsync = createAsyncThunk(
   "auth/changePassword",
   async ({ email, oldPassword, newPassword, token }, { rejectWithValue }) => {
     try {
-      const { ok, data } = await changePasswordRequest({ email, oldPassword, newPassword, token });
+      const response = await fetch(`${API_URL}/users/password`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ email, oldPassword, newPassword }),
+      });
 
-      if (!ok) return rejectWithValue(data.message);
+      const data = await response.json();
+      if (!response.ok) return rejectWithValue(data.message);
+
       return true;
-
     } catch {
       return rejectWithValue("Errore di rete.");
     }
@@ -52,13 +59,82 @@ export const recoverPasswordAsync = createAsyncThunk(
   "auth/recoverPassword",
   async ({ email, username }, { rejectWithValue }) => {
     try {
-      const { ok, data } = await recoverPasswordRequest({ email, username });
+      const response = await fetch(`${API_URL}/auth/recover`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, username }),
+      });
 
-      if (!ok) return rejectWithValue(data.message);
-      console.log("RECOVERY PASSWORD RESPONSE:", data);
-
+      const data = await response.json();
+      if (!response.ok) return rejectWithValue(data.message);
       return data.data;
+    } catch {
+      return rejectWithValue("Errore di rete.");
+    }
+  }
+);
 
+// ENABLE 2FA
+export const enable2FAAsync = createAsyncThunk(
+  "auth/enable2FA",
+  async ({ token }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/enable-2fa`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      if (!response.ok) return rejectWithValue(data.message);
+
+      return data.data; // contiene qr e uri
+    } catch {
+      return rejectWithValue("Errore di rete.");
+    }
+  }
+);
+
+// DISABLE 2FA
+export const disable2FAAsync = createAsyncThunk(
+  "auth/disable2FA",
+  async ({ token }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/disable-2fa`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      if (!response.ok) return rejectWithValue(data.message);
+
+      return true;
+    } catch {
+      return rejectWithValue("Errore di rete.");
+    }
+  }
+);
+
+// VERIFY 2FA
+export const verify2FAAsync = createAsyncThunk(
+  "auth/verify2FA",
+  async ({ userId, token2fa }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_URL}/users/${userId}/2fa/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: token2fa }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) return rejectWithValue(data.message);
+
+      return true;
     } catch {
       return rejectWithValue("Errore di rete.");
     }
@@ -84,6 +160,9 @@ const authSlice = createSlice({
     recoveryLoading: false,
     recoveryError: null,
     recoveryMessage: null,
+    twofaLoading: false,
+    twofaError: null,
+    twofaData: null, // contiene QR e URI quando abiliti
   },
 
   reducers: {
@@ -92,11 +171,13 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.role = null;
+      state.twofaData = null;
     },
   },
 
   extraReducers: (builder) => {
     builder
+      // LOGIN
       .addCase(loginAsync.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -131,6 +212,37 @@ const authSlice = createSlice({
       .addCase(recoverPasswordAsync.rejected, (state, action) => {
         state.recoveryLoading = false;
         state.recoveryError = action.payload;
+      })
+
+      // ENABLE 2FA
+      .addCase(enable2FAAsync.pending, (state) => {
+        state.twofaLoading = true;
+        state.twofaError = null;
+      })
+      .addCase(enable2FAAsync.fulfilled, (state, action) => {
+        state.twofaLoading = false;
+        state.twofaData = action.payload; // contiene qr e uri
+      })
+      .addCase(enable2FAAsync.rejected, (state, action) => {
+        state.twofaLoading = false;
+        state.twofaError = action.payload;
+      })
+
+      // DISABLE 2FA
+      .addCase(disable2FAAsync.fulfilled, (state) => {
+        state.twofaData = null;
+        state.twofaError = null;
+      })
+      .addCase(disable2FAAsync.rejected, (state, action) => {
+        state.twofaError = action.payload;
+      })
+
+      // VERIFY 2FA
+      .addCase(verify2FAAsync.fulfilled, (state) => {
+        state.twofaError = null;
+      })
+      .addCase(verify2FAAsync.rejected, (state, action) => {
+        state.twofaError = action.payload;
       });
   },
 });

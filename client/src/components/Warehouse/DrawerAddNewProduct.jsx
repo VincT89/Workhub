@@ -1,122 +1,116 @@
 import { useState, useEffect } from "react";
 import bgLight from "../../assets/bg/bg.jpg";
 
-const DrawerAddNewProduct = ({ open, onClose, onAddProduct }) => {
-  const [code, setCode] = useState("");
-  const [name, setName] = useState("");
-  const [quantity, setQuantity] = useState("");
+// Drawer per vedere la disponibilità di un prodotto nelle sedi
+const DrawerSede = ({ open, onClose, itemsData }) => {
+  // itemsData: array di items già presi dal server, ognuno con product, pointOfSales, stock, stockLimit, ecc.
 
-  // Listener ESC per chiudere il drawer
+  const [searchCode, setSearchCode] = useState(""); // Codice prodotto da cercare
+  const [results, setResults] = useState([]);       // Risultati della ricerca
+
+  // Chiude il drawer premendo ESC
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose?.();
     if (open) document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  const handleAdd = () => {
-    if (!code.trim() || !name.trim() || !quantity.trim()) {
-      alert("Compila tutti i campi!");
+  // Funzione di ricerca
+  const searchStores = () => {
+    if (!searchCode.trim()) return;
+
+    // Filtra gli items per il prodotto selezionato
+    const filtered = itemsData.filter(
+      (item) => item.product?.sku.toLowerCase() === searchCode.toLowerCase()
+    );
+
+    if (filtered.length === 0) {
+      setResults([{ error: "Prodotto non trovato" }]);
       return;
     }
 
-    const newProduct = {
-      id: code.trim(),
-      nome: name.trim(),
-      stock: { "Mia Sede": parseInt(quantity, 10) },
-      categoria: "Non specificata",
-      status: "disponibile"
-    };
+    // Ordina per stock decrescente (opzionale)
+    filtered.sort((a, b) => b.stock - a.stock);
 
-    onAddProduct?.(newProduct);
-    // Resetta i campi
-    setCode("");
-    setName("");
-    setQuantity("");
-    onClose?.();
+    setResults(filtered);
   };
 
   if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-50">
-      {/* Sfondo scuro */}
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
 
-      {/* Drawer */}
       <aside
-        className="absolute right-0 top-0 w-[420px] h-full
-                   border-l border-white/40 shadow-2xl
-                   overflow-auto bg-cover bg-center"
+        className="absolute right-0 top-0 w-[420px] h-full border-l border-white/40 shadow-2xl overflow-auto bg-cover bg-center"
         role="dialog"
         aria-modal="true"
-         style={{
-                  backgroundImage: `url(${bgLight})`
-                }}
+        style={{ backgroundImage: `url(${bgLight})` }}
       >
-        {/* Header */}
-        <header className="sticky top-0  border-b border-white/60 px-6 py-4 flex items-center justify-between">
+        {/* HEADER */}
+        <header className="sticky top-0 border-b border-white/60 px-6 py-4 flex items-center justify-between">
           <h2 className="text-base font-semibold text-[#090c64]">
-            Carica giacenza prodotto
+            Disponibilità in altre sedi
           </h2>
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-[#090c64] border border-white/50 shadow-sm rounded-xl text-sm text-white cursor-pointer"
+            className="px-4 py-2 border border-white/70 shadow-sm rounded-xl text-sm bg-[#090c64] text-white cursor-pointer"
           >
             Chiudi
           </button>
         </header>
 
-        {/* Contenuto */}
-        <div className="p-6 text-[15px] text-[#090c64] flex flex-col gap-4">
+        {/* CONTENUTO */}
+        <div className="p-6 text-[15px] text-[#090c64]">
+          <label className="block mb-2 font-semibold">Codice prodotto</label>
+          <input
+            type="text"
+            placeholder="Es. A001"
+            value={searchCode}
+            onChange={(e) => setSearchCode(e.target.value)}
+            className="w-full mb-4 px-3 py-2 border rounded-xl"
+          />
 
-          {/* Input Codice */}
-          <div>
-            <label className="block mb-1 font-semibold">Codice prodotto</label>
-            <input
-              type="text"
-              placeholder="Es. A001"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              className="w-full px-3 py-2 border rounded-xl"
-            />
-          </div>
-
-          {/* Input Nome */}
-          <div>
-            <label className="block mb-1 font-semibold">Nome prodotto</label>
-            <input
-              type="text"
-              placeholder="Es. Lampada da tavolo"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border rounded-xl"
-            />
-          </div>
-
-          {/* Input Quantità */}
-          <div>
-            <label className="block mb-1 font-semibold">Quantità</label>
-            <input
-              type="number"
-              placeholder="Es. 10"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              className="w-full px-3 py-2 border rounded-xl"
-            />
-          </div>
-
-          {/* Bottone Aggiungi */}
           <button
-            onClick={handleAdd}
-            className="px-4 py-2 bg-[#090c64] border border-white/70 shadow-sm rounded-xl text-sm text-white cursor-pointer"
+            onClick={searchStores}
+            className="px-4 py-2 border border-white/70 shadow-sm rounded-xl text-sm text-white bg-[#090c64] mb-6 cursor-pointer"
           >
-            Aggiungi prodotto
+            Cerca disponibilità
           </button>
 
+          <div>
+            {results.length === 0 && <p className="opacity-70">Nessuna ricerca effettuata.</p>}
+
+            {results.map((item, i) => {
+              if (item.error)
+                return (
+                  <p key={i} className="text-red-600">
+                    {item.error}
+                  </p>
+                );
+
+              return (
+                <div
+                  key={i}
+                  className="py-2 border-b border-white/40 flex flex-col gap-1"
+                >
+                  <span><strong>Sede:</strong> {item.pointOfSales?.name}</span>
+                  <span><strong>Stock:</strong> {item.stock} pezzi</span>
+                  <span><strong>Stock limite:</strong> {item.stockLimit}</span>
+                  {item.promo?.isActive && (
+                    <span>
+                      <strong>Promo:</strong> {item.promo.value} {item.promo.mode === "percentage" ? "%" : "€"}
+                    </span>
+                  )}
+                  {item.note && <span><strong>Note:</strong> {item.note}</span>}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </aside>
     </div>
   );
 };
 
-export default DrawerAddNewProduct;
+export default DrawerSede;

@@ -3,12 +3,17 @@ import { createPortal } from "react-dom";
 
 import bgLight from "../assets/bg/bg.jpg";
 
+import { useTheme } from "../context/ThemeContext";
+import { useLanguage } from "../context/LanguageContext";
+
 // open (boolean) → true = mostra la drawer
 // onClose (function) → per chiudere la drawer
 // title (string) → testo dell’intestazione
 // children → contenuto del dettaglio
 // width → larghezza (classe tailwind es. "w-[540px]")
 const Drawer = ({ open, onClose, title, children, width = "w-[420px]" }) => {
+  const { theme } = useTheme();
+  const { t } = useLanguage();
   // ESC per chiudere
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose?.();
@@ -52,7 +57,7 @@ const Drawer = ({ open, onClose, title, children, width = "w-[420px]" }) => {
             onClick={onClose}
             className="custom-button"
           >
-            Chiudi
+            {t("dashboard.chiudi")}
           </button>
         </header>
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useTheme } from "../../../context/ThemeContext";
 import { useLanguage } from "../../../context/LanguageContext";
-import { UserCircle, CalendarCheck, Trash } from "@phosphor-icons/react";
+import { UserCircleIcon, CalendarCheckIcon, TrashIcon } from "@phosphor-icons/react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
@@ -165,7 +165,7 @@ const AdminEmployeeDetailsPage = () => {
 			userShifts?.shifts?.[dayKey]?.[period] === true ? true : false;
 
 		if (currentValue) {
-			showShiftMessage("Turno già presente per questo giorno/fascia.");
+			showShiftMessage(t("employees.turnoPresente"));
 			return;
 		}
 
@@ -179,10 +179,10 @@ const AdminEmployeeDetailsPage = () => {
 					token,
 				})
 			).unwrap();
-			showShiftMessage("Turno creato correttamente.");
+			showShiftMessage(t("employees.turnoCreato"));
 		} catch (err) {
 			console.error("Errore creazione turno:", err);
-			showShiftMessage("Errore nella creazione del turno.");
+			showShiftMessage(t("employees.erroreCreazioneTurno"));
 		}
 	};
 
@@ -200,10 +200,10 @@ const AdminEmployeeDetailsPage = () => {
 					token,
 				})
 			).unwrap();
-			showShiftMessage("Turno eliminato.");
+			showShiftMessage(t("employees.turnoEliminato"));
 		} catch (err) {
 			console.error("Errore eliminazione turno:", err);
-			showShiftMessage("Errore nell'eliminazione del turno.");
+			showShiftMessage(t("employees.erroreEliminazioneTurno"));
 		}
 	};
 
@@ -303,26 +303,25 @@ const AdminEmployeeDetailsPage = () => {
 
 	// TOP BOX
 	const topButtons = [
-		{ label: "Giorni lavorati", number: giorniLavorati },
-		{ label: "Ferie residue", number: leave?.vacationHours ?? 0 },
-		{ label: "Permessi residui", number: leave?.leaveHours ?? 0 },
-		{ label: "Richieste", number: totalActivities },
+		{ label: t("employees.giorniLavorati"), number: giorniLavorati },
+		{ label: t("employees.ferieResidue"), number: leave?.vacationHours ?? 0 },
+		{ label: t("employees.permessiResidui"), number: leave?.leaveHours ?? 0 },
+		{ label: t("employees.richieste"), number: totalActivities },
 	];
 
 	if (!token) return null;
 
 	if (loading && !anagrafica)
-		return <p className="p-4">Caricamento dati dipendente...</p>;
+		return <p className="p-4">{t("employees.caricamentoDipendenti")}</p>;
 
 	if (error && !anagrafica)
 		return (
 			<p className="p-4 text-red-500">
-				Errore nel caricamento del dipendente: {error}
+				{t("employees.erroreCaricamentoDipendenti")}: {error}
 			</p>
 		);
 
-	if (!anagrafica) return <p className="p-4">Nessun dipendente trovato.</p>;
-
+	if (!anagrafica) return <p className="p-4">{t("employees.nessunDipendenteTrovato")}</p>;
 	return (
 		<div className="w-full h-full flex flex-col gap-8 overflow-y-auto p-4">
 			{/* TOP BOX */}
@@ -346,7 +345,7 @@ const AdminEmployeeDetailsPage = () => {
 				{/* ANAGRAFICA */}
 				<div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
 					<div className="flex items-center gap-3 mb-4">
-						<UserCircle size={32} color="#090c64" weight="duotone" />
+						<UserCircleIcon size={32} color="#090c64" weight="duotone" />
 						<h2 className={`text-lg font-bold ${textColor}`}>
 							{t("employees.anagrafica")}
 						</h2>
@@ -367,16 +366,16 @@ const AdminEmployeeDetailsPage = () => {
 							<strong>{t("employees.email")}:</strong> {anagrafica.email}
 						</div>
 						<div>
-							<strong>Telefono:</strong> {anagrafica.telefono}
+							<strong>{t("employees.telefono")}:</strong> {anagrafica.telefono}
 						</div>
 						<div>
-							<strong>Sede lavorativa:</strong> {anagrafica.sede}
+							<strong>{t("employees.sedeLavorativa")}:</strong> {anagrafica.sede}
 						</div>
 						<div>
-							<strong>Tipo di contratto:</strong> {anagrafica.contratto}
+							<strong>{t("employees.tipoContratto")}:</strong> {anagrafica.contratto}
 						</div>
 						<div>
-							<strong>Data di assunzione:</strong> {anagrafica.assunzione}
+							<strong>{t("employees.dataAssunzione")}:</strong> {anagrafica.assunzione}
 						</div>
 					</div>
 				</div>
@@ -384,7 +383,7 @@ const AdminEmployeeDetailsPage = () => {
 				{/* TURNI (ADMIN CONFIGURA) */}
 				<div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md backdrop-blur-sm bg-white/20">
 					<div className="flex items-center gap-3 mb-2">
-						<CalendarCheck size={32} color="#090c64" weight="duotone" />
+						<CalendarCheckIcon size={32} color="#090c64" weight="duotone" />
 						<h2 className={`text-lg font-bold leading-none ${textColor}`}>
 							{t("employees.turniSettimanali")}
 						</h2>
@@ -460,7 +459,7 @@ const AdminEmployeeDetailsPage = () => {
 												}}
 												className="p-2 bg-white/60 rounded-xl cursor-pointer"
 											>
-												<Trash size={18} color="#090c64" weight="duotone" />
+												<TrashIcon size={18} color="#090c64" weight="duotone" />
 											</button>
 										)}
 									</div>
@@ -511,7 +510,7 @@ const AdminEmployeeDetailsPage = () => {
 							</div>
 						))}
 						{ferie.length === 0 && (
-							<p className="text-sm opacity-70">Nessuna richiesta ferie.</p>
+							<p className="text-sm opacity-70">{t("employees.nessunaRichiestaFerie")}</p>
 						)}
 					</div>
 				</div>
@@ -554,7 +553,7 @@ const AdminEmployeeDetailsPage = () => {
 							</div>
 						))}
 						{permessi.length === 0 && (
-							<p className="text-sm opacity-70">Nessuna richiesta permessi.</p>
+							<p className="text-sm opacity-70">{t("employees.nessunaRichiestaPermessi")}</p>
 						)}
 					</div>
 				</div>

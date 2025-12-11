@@ -20,6 +20,7 @@ import {
 	updateEventAsync,
 	deleteEventAsync,
 } from "../store/feature/eventsSlice.js";
+import { fetchProducts } from "../store/feature/productsSlice.js";
 import Table from "../components/Table";
 import Drawer from "../components/Drawer";
 
@@ -30,8 +31,11 @@ const BoardPage = () => {
 	const token = useSelector((state) => state.auth.token);
 	const users = useSelector((state) => state.users); // per richiamare i dati del personale (nelle box in alto)
 	const pointOfSales = useSelector((state) => state.pos); // per richiamare i dati dei depositi (nelle box in alto)
+	const products = useSelector((state) => state.items); // per richiamare i dati dei prodotti (nelle box in alto)
+	
 
 	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
+
 
 	const dispatch = useDispatch();
 
@@ -39,7 +43,8 @@ const BoardPage = () => {
 
 	useEffect(() => {
 		if (token) {
-			dispatch(fetchEventsAsync({token})); // carica tutti gli eventi
+			dispatch(fetchEventsAsync({ token })); // carica tutti gli eventi
+			dispatch(fetchProducts( token )); // carica tutti i prodotti
 		}
 	}, [dispatch, token]);
 
@@ -96,7 +101,7 @@ const BoardPage = () => {
 
 	const handleDelete = (row) => { // elimina evento
 		if (
-			window.confirm(`Sei sicuro di voler eliminare l'evento "${row.title}"?`)
+			window.confirm(` ${t("dashboard.seiSicuroEliminareEvento")}"${row.title}"?`)
 		) {
 			dispatch(deleteEventAsync({ id: row._id, token }));
 		}
@@ -115,10 +120,10 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<WarehouseIcon size={28} color="#090c64" weight="duotone" />
-						<span className="font-bold text-[14px]">Depositi</span>
+						<WarehouseIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
+						<span className="font-bold text-[14px]">{t("dashboard.depositi")}</span>
 					</div>
-					<span className="text-sm opacity-70 leading-none font-semibold">
+					<span className={`text-sm opacity-70 leading-none font-semibold ${theme === "dark" ? "text-white" : "text-[#090c64]"}`}>
 						{pointOfSales?.list?.length ?? 0}
 					</span>
 				</div>
@@ -129,11 +134,11 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<ShoppingCartSimpleIcon size={28} color="#090c64" weight="duotone" />
-						<span className="font-bold text-[14px]">Prodotti</span>
+						<ShoppingCartSimpleIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
+						<span className="font-bold text-[14px]">{t("dashboard.prodotti")}</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
-						2000
+						{products?.list?.length ?? 0}
 					</span>
 				</div>
 
@@ -143,8 +148,8 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<PackageIcon size={28} color="#090c64" weight="duotone" />
-						<span className="font-bold text-[14px]">Ordini in uscita</span>
+						<PackageIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
+						<span className="font-bold text-[14px]">{t("dashboard.ordiniInUscita")}</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
 						20
@@ -157,8 +162,8 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<WarningOctagonIcon size={28} color="#090c64" weight="duotone" />
-						<span className="font-bold text-[14px]">Articoli sotto soglia</span>
+						<WarningOctagonIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
+						<span className="font-bold text-[14px]">{t("dashboard.articoliSottoSoglia")}</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
 						10
@@ -171,8 +176,8 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<UserCircleCheckIcon size={28} color="#090c64" weight="duotone" />
-						<span className="font-bold text-[14px] ">Personale attivo</span>
+						<UserCircleCheckIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
+						<span className="font-bold text-[14px] ">{t("dashboard.personaleAttivo")}</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
 						{users?.list?.length ?? 0}
@@ -190,16 +195,17 @@ const BoardPage = () => {
 				>
 					{/* HEADER BACHECA */}
 					<div className="flex items-start gap-4 w-full">
-						<ChalkboardSimpleIcon size={28} color="#090c64" weight="duotone" />
+						<ChalkboardSimpleIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
 
-						<h3 className="text-[14px] font-bold font-nunito">Bacheca</h3>
+						<h3 className="text-[14px] font-bold font-nunito">{t("dashboard.bacheca")}</h3>
 
 						{(role === "supervisor" || role === "admin") && (
 							<button
 								onClick={openDrawerAdd}
-								className="ml-auto px-4 py-2 bg-[#090c64] text-white shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[14px] font-bold-nunito cursor-pointer"
+
+								className="ml-auto px-4 py-2 bg-white dark:bg-[#090c64] text-[#090c64] dark:text-white shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[15px] font-bold cursor-pointer"
 							>
-								+ Aggiungi
+								+ {t("dashboard.aggiungi")}
 							</button>
 						)}
 					</div>
@@ -218,7 +224,7 @@ const BoardPage = () => {
 											icon: (
 												<NotePencilIcon
 													size={28}
-													color="#090c64"
+													color={theme === "dark" ? "white" : "#090c64"}
 													weight="duotone"
 													className="mr-4"
 												/>
@@ -228,7 +234,7 @@ const BoardPage = () => {
 										{
 											name: "delete",
 											icon: (
-												<TrashIcon size={28} color="#ff0000" weight="duotone" />
+												<TrashIcon size={28} color={theme === "dark" ? "#ff4d4d" : "#ff0000"} weight="duotone" />
 											),
 											onClick: handleDelete,
 										},
@@ -247,10 +253,10 @@ const BoardPage = () => {
 				>
 					{/* HEADER */}
 					<div className="flex items-center gap-4">
-						<ShoppingCartSimpleIcon size={28} color="#090c64" weight="duotone" />
+						<ShoppingCartSimpleIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
 
 						<h3 className="text-[14px] font-bold font-nunito">
-							Prodotti in esaurimento
+							{t("dashboard.prodottiInEsaurimento")}
 						</h3>
 					</div>
 
@@ -276,7 +282,7 @@ const BoardPage = () => {
 				{/* Contenuto */}
 				<div className="flex-1 flex flex-col">
 					<div className="flex gap-4 justify-start items-start">
-						<CalendarIcon size={28} color="#090c64" weight="duotone" />
+						<CalendarIcon size={28} color={theme === "dark" ? "white" : "#090c64"}  weight="duotone" />
 						<h3
 							className={`text-[14px] font-bold font-nunito ${textColor} mb-4`}
 						>
@@ -291,16 +297,16 @@ const BoardPage = () => {
 			<Drawer
 				open={drawerOpen}
 				onClose={() => setDrawerOpen(false)}
-				title={editData && editData.title ? "Modifica evento" : "Nuovo evento"}
+				title={editData && editData.title ? t("dashboard.modificaEvento") : t("dashboard.aggiungiEvento")}
 			>
 				{editData && (
 					<form onSubmit={handleSavePost} className="flex flex-col gap-4">
 						<div className="flex flex-col">
-							<label className="text-sm font-bold">Titolo</label>
+							<label className="text-sm font-bold">{t("dashboard.titolo")}</label>
 							<input
 								type="text"
 								value={editData.title}
-								placeholder="Inserisci un evento..."
+								placeholder={t("dashboard.aggiungiEvento")}
 								onChange={(e) =>
 									setEditData({ ...editData, title: e.target.value })
 								}
@@ -309,7 +315,7 @@ const BoardPage = () => {
 						</div>
 
 						<div className="flex flex-col">
-							<label className="text-sm font-bold">Data</label>
+							<label className="text-sm font-bold">{t("dashboard.data")}</label>
 							<input
 								type="date"
 								value={editData.date}
@@ -322,11 +328,11 @@ const BoardPage = () => {
 						</div>
 
 						<div className="flex flex-col">
-							<label className="text-sm font-bold">Descrizione</label>
+							<label className="text-sm font-bold">{t("dashboard.descrizione")}</label>
 							<input
 								type="text"
 								value={editData.description}
-								placeholder="Inserisci la descrizione dell'evento"
+								placeholder={t("dashboard.inserisciDescrizioneEvento")}
 								onChange={(e) =>
 									setEditData({ ...editData, description: e.target.value })
 								}
@@ -340,11 +346,11 @@ const BoardPage = () => {
 								onClick={() => setDrawerOpen(false)}
 								className="custom-button-light"
 							>
-								Annulla
+								{t("dashboard.annulla")}
 							</button>
 
 							<button type="submit" className="custom-button">
-								Salva
+								{t("dashboard.salva")}
 							</button>
 						</div>
 					</form>
