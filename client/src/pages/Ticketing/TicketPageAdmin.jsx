@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchFakeTickets } from "../../store/feature/ticketSlice";
+import { fetchTickets } from "../../store/feature/ticketSlice";
 import {
   ListMagnifyingGlass,
   Pencil,
@@ -23,6 +23,7 @@ const TicketPageAdmin = () => {
   const tickets = useSelector((state) => state.tickets.tickets);
   const users = useSelector((state) => state.tickets.users);
   const ticketsStatus = useSelector((state) => state.tickets.status);
+  const ticketsError = useSelector((state) => state.tickets.error);
 
   // highlightDate: data selezionata tramite grafico o lista
   const [highlightDate, setHighlightDate] = useState("");
@@ -50,14 +51,25 @@ const TicketPageAdmin = () => {
 
   useEffect(() => {
     if ((tickets?.length || 0) === 0 && ticketsStatus === "idle") {
-      dispatch(fetchFakeTickets());
+      dispatch(fetchTickets());
     }
   }, [dispatch, tickets?.length, ticketsStatus]);
 
   // Initialize ticketStatus when tickets arrive
   useEffect(() => {
     if (tickets && tickets.length > 0) {
-      setTicketStatus(Object.fromEntries(tickets.map((t) => [t.id, "aperto"])));
+      setTicketStatus(
+        Object.fromEntries(
+          tickets.map((t) => {
+            const id = t._id || t.id;
+            // derive local status: prefer italian values if present, else map english backend
+            let s = t.status || "aperto";
+            if (s === "open") s = "aperto";
+            if (s === "closed") s = "risolto";
+            return [id, s];
+          })
+        )
+      );
     }
   }, [tickets]);
 
@@ -73,13 +85,16 @@ const TicketPageAdmin = () => {
     const end = state?.[0]?.endDate ? new Date(state[0].endDate) : null;
 
     return tickets.filter((ticket) => {
-      const ticketDate = new Date(ticket.date);
+      const rawDate = ticket.date || ticket.createdAt || ticket.updatedAt;
+      const ticketDate = new Date(rawDate);
 
       const matchDate = (!start || ticketDate >= start) && (!end || ticketDate <= end);
 
-      const matchUser = !selectedUser || ticket.user.id === selectedUser;
+      const ticketUserId = ticket.user?._id || ticket.user?.id || ticket.user;
+      const matchUser = !selectedUser || ticketUserId === selectedUser;
 
-      const matchStatus = !selectedStatus || ticketStatus[ticket.id] === selectedStatus;
+      const tid = ticket._id || ticket.id;
+      const matchStatus = !selectedStatus || ticketStatus[tid] === selectedStatus;
 
       return matchDate && matchUser && matchStatus;
     });
@@ -90,12 +105,14 @@ const TicketPageAdmin = () => {
     const grouped = {};
 
     filteredTickets.forEach((t) => {
-      const key = t.date.split("T")[0];
+      const rawDate = t.date || t.createdAt || t.updatedAt || new Date().toISOString();
+      const key = rawDate.split("T")[0];
 
       if (!grouped[key])
         grouped[key] = { date: key, aperti: 0, risolti: 0, totale: 0 };
 
-      const status = ticketStatus[t.id];
+      const tid = t._id || t.id;
+      const status = ticketStatus[tid];
 
       if (status === "aperto") grouped[key].aperti++;
       if (status === "risolto") grouped[key].risolti++;
@@ -137,6 +154,32 @@ const TicketPageAdmin = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 lg:px-16 xl:px-24">
+
+      {/* ERROR BANNER */}
+      {ticketsError && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 flex items-start justify-between">
+          <div>
+            <h3 className="font-bold">Errore nel caricamento</h3>
+            <p className="text-sm mt-1">{ticketsError}</p>
+          </div>
+          <button
+            onClick={() => dispatch(fetchTickets())}
+            className="ml-4 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+          >
+            Riprova
+          </button>
+        </div>
+      )}
+
+      {/* LOADING STATE */}
+      {ticketsStatus === "loading" && tickets.length === 0 && (
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#090c64]"></div>
+            <p className="mt-4 text-gray-600">Caricamento ticket...</p>
+          </div>
+        </div>
+      )}
 
       {/* LAYOUT DUE COLONNE (GRAFICO + LISTA)*/}
       <div className="flex flex-col lg:flex-row gap-6">
@@ -346,19 +389,19 @@ const TicketPageAdmin = () => {
             {filteredTickets.map((ticket) => (
               <div
                 key={ticket.id}
-                ref={(el) => (itemRefs.current[ticket.id] = el)}
+                ref={(el) => (itemRefs.current[ticket._id || ticket.id] = el)}
                 className={`rounded-xl shadow p-4 flex flex-col cursor-pointer transition ${getColor(
-                  ticketStatus[ticket.id]
-                )} ${ticket.date.split("T")[0] === highlightDate ? 'ring-2 ring-blue-300' : ''}`}
+                  ticketStatus[ticket._id || ticket.id]
+                )} ${(ticket.date || ticket.createdAt || ticket.updatedAt).split("T")[0] === highlightDate ? 'ring-2 ring-blue-300' : ''}`}
                 onClick={() => {
                   setSelectedTicket(ticket);
-                  setHighlightDate(ticket.date.split("T")[0]);
+                  setHighlightDate((ticket.date || ticket.createdAt || ticket.updatedAt).split("T")[0]);
                   setDrawerOpen(true);
                 }}
               >
                 <div className="flex justify-between items-center">
                   <span className="font-semibold text-lg">
-                    {ticket.title}
+                    {ticket.title || ticket.name}
                   </span>
                   <Pencil
                     size={20}
@@ -368,12 +411,12 @@ const TicketPageAdmin = () => {
                 </div>
 
                 <span className="text-sm text-gray-600 mt-1">
-                  {ticket.user.nome} {ticket.user.cognome} •{" "}
-                  {formatDateVisible(ticket.date)}
+                  {ticket.user?.nome || ticket.user?.firstName || ticket.user?.name} {ticket.user?.cognome || ticket.user?.lastName || ''} •{" "}
+                  {formatDateVisible(ticket.date || ticket.createdAt)}
                 </span>
 
                 <p className="text-sm text-gray-700 mt-2">
-                  {ticket.description}
+                  {ticket.description || ticket.content}
                 </p>
               </div>
             ))}
@@ -403,21 +446,21 @@ const TicketPageAdmin = () => {
               <div className="flex flex-col gap-3 mb-4 p-2 bg-gray-50 rounded-xl border border-gray-200">
                 <div className="flex items-center gap-3">
                   <img
-                    src={selectedTicket.user.avatar}
+                    src={selectedTicket.user?.avatar}
                     alt="Avatar"
                     className="w-12 h-12 rounded-full object-cover"
                   />
 
                   <div className="flex flex-col">
                     <span className="font-semibold text-gray-800">
-                      {selectedTicket.user.nome}{" "}
-                      {selectedTicket.user.cognome}
+                      {selectedTicket.user?.nome || selectedTicket.user?.firstName || selectedTicket.user?.name}{" "}
+                      {selectedTicket.user?.cognome || selectedTicket.user?.lastName || ''}
                     </span>
                     <span className="text-sm text-gray-500">
-                      {selectedTicket.user.ruolo}
+                      {selectedTicket.user?.ruolo || selectedTicket.user?.role}
                     </span>
                     <span className="text-sm text-gray-500">
-                      {selectedTicket.user.email}
+                      {selectedTicket.user?.email}
                     </span>
                   </div>
                 </div>
@@ -427,7 +470,7 @@ const TicketPageAdmin = () => {
                     Descrizione:
                   </span>
                   <p className="text-sm text-gray-700 mt-1">
-                    {selectedTicket.description}
+                    {selectedTicket.description || selectedTicket.content}
                   </p>
                 </div>
               </div>
@@ -439,7 +482,7 @@ const TicketPageAdmin = () => {
                   onClick={() =>
                     setTicketStatus((s) => ({
                       ...s,
-                      [selectedTicket.id]: "aperto"
+                      [selectedTicket._id || selectedTicket.id]: "aperto"
                     }))
                   }
                 >
@@ -452,7 +495,7 @@ const TicketPageAdmin = () => {
                   onClick={() =>
                     setTicketStatus((s) => ({
                       ...s,
-                      [selectedTicket.id]: "risolto"
+                      [selectedTicket._id || selectedTicket.id]: "risolto"
                     }))
                   }
                 >

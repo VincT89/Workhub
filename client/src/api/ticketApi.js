@@ -1,110 +1,62 @@
-// CRUD fetch helpers for tickets API
-// Usage: import { fetchTickets, fetchTicketById, createTicket, updateTicket, deleteTicket }
+import { API_URL } from "../config/api";
 
-import { API_URL } from "../../config/api.js";
+/* FETCH ALL TICKETS */
+export const fetchTicketsRequest = async (token) => {
+  const response = await fetch(`${API_URL}/ticketing`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 
-function getAuthHeader() {
-  try {
-    const raw = localStorage.getItem("auth");
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    if (!parsed || !parsed.token) return {};
-    return { Authorization: `Bearer ${parsed.token}` };
-  } catch {
-    return {};
-  }
-}
+  const data = await response.json();
+  return { response, data };
+};
 
-async function handleResponse(res) {
-  const text = await res.text();
-  let data = null;
-  try {
-    data = text ? JSON.parse(text) : null;
-  } catch {
-    data = text;
-  }
+/* FETCH TICKET BY ID */
+export const fetchTicketByIdRequest = async ({ id, token }) => {
+  const response = await fetch(`${API_URL}/ticketing/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 
-  if (!res.ok) {
-    const err = new Error(data?.message || res.statusText || "Request failed");
-    err.status = res.status;
-    err.data = data;
-    throw err;
-  }
+  const data = await response.json();
+  return { response, data };
+};
 
-  return data;
-}
-
-export async function fetchTickets() {
-  const headers = {
-    "Content-Type": "application/json",
-    ...getAuthHeader(),
-  };
-
-  const res = await fetch(`${API_URL}/ticketing`, { headers });
-  return handleResponse(res);
-}
-
-export async function fetchTicketById(id) {
-  if (!id) throw new Error("fetchTicketById requires an id");
-
-  const headers = {
-    "Content-Type": "application/json",
-    ...getAuthHeader(),
-  };
-
-  const res = await fetch(`${API_URL}/ticketing/${id}`, { headers });
-  return handleResponse(res);
-}
-
-export async function createTicket(payload) {
-  if (!payload) throw new Error("createTicket requires a payload");
-
-  const headers = {
-    "Content-Type": "application/json",
-    ...getAuthHeader(),
-  };
-
-  const res = await fetch(`${API_URL}/ticketing`, {
+/* CREATE TICKET */
+export const createTicketRequest = async ({ payload, token }) => {
+  const response = await fetch(`${API_URL}/ticketing`, {
     method: "POST",
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(payload),
   });
 
-  return handleResponse(res);
-}
+  const data = await response.json();
+  return { response, data };
+};
 
-export async function updateTicket(id, payload) {
-  if (!id) throw new Error("updateTicket requires an id");
-  if (!payload) throw new Error("updateTicket requires a payload");
-
-  const headers = {
-    "Content-Type": "application/json",
-    ...getAuthHeader(),
-  };
-
-  const res = await fetch(`${API_URL}/ticketing/${id}`, {
+/* UPDATE TICKET */
+export const updateTicketRequest = async ({ id, payload, token }) => {
+  const response = await fetch(`${API_URL}/ticketing/${id}`, {
     method: "PUT",
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(payload),
   });
 
-  return handleResponse(res);
-}
+  const data = await response.json();
+  return { response, data };
+};
 
-export async function deleteTicket(id) {
-  if (!id) throw new Error("deleteTicket requires an id");
-
-  const headers = {
-    "Content-Type": "application/json",
-    ...getAuthHeader(),
-  };
-
-  const res = await fetch(`${API_URL}/ticketing/${id}`, {
+/* DELETE TICKET */
+export const deleteTicketRequest = async ({ id, token }) => {
+  const response = await fetch(`${API_URL}/ticketing/${id}`, {
     method: "DELETE",
-    headers,
+    headers: { Authorization: `Bearer ${token}` },
   });
 
-  return handleResponse(res);
-}
-
-// End of ticketApi.js
+  const data = await response.json();
+  return { response, data };
+};

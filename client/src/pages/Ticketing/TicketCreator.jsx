@@ -1,41 +1,56 @@
 import React, { useState, useEffect } from "react";
-import { UserCircle } from "@phosphor-icons/react";
+import { useDispatch, useSelector } from "react-redux";
+import { createTicketAsync } from "../../store/feature/ticketSlice";
 
-const TicketCreator = ({ onTicketsChange, user }) => {
-  const [tickets, setTickets] = useState([]);
-  const [ticketCounter, setTicketCounter] = useState(1);
+const TicketCreator = ({ user }) => {
+  const dispatch = useDispatch();
   const [newTitle, setNewTitle] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const creatorStatus = useSelector((state) => state.tickets.status);
 
-  // Funzione per creare un nuovo ticket
-  const addTicket = (title) => {
-    const newTicket = {
-      id: `t${ticketCounter}`,
-      title: title?.trim() || `Ticket Numero ${ticketCounter}`,
-      user: user || {
-        nome: "Utente Sconosciuto",
-        ruolo: "Non definito",
-        email: "unknown@example.com",
-        avatar: <UserCircle size={32} color="#090c64" weight="duotone" />,
-      },
-      createdAt: new Date(),
+  // Auto-clear success message after 3 seconds
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(""), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
+  const handleAddTicket = async () => {
+    const title = newTitle.trim();
+    if (!title || title.length < 3) {
+      setError("Il titolo deve contenere almeno 3 caratteri");
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+    setSuccess("");
+
+    const payload = {
+      user: user?._id || user?.id || "default-user",
+      name: title,
+      content: `Ticket creato da ${user?.nome || 'Utente sconosciuto'}`,
+      status: "open",
     };
 
-    setTickets((prev) => [...prev, newTicket]);
-    setTicketCounter((prev) => prev + 1);
-  };
-
-  // Avvisa il componente padre quando i ticket cambiano
-  useEffect(() => {
-    onTicketsChange?.(tickets);
-  }, [tickets, onTicketsChange]);
-
-  const handleAddTicket = () => {
-    addTicket(newTitle);
-    setNewTitle("");
+    try {
+      const result = await dispatch(createTicketAsync(payload)).unwrap();
+      setNewTitle("");
+      setSuccess(`✓ Ticket "${result.name}" creato con successo`);
+    } catch (err) {
+      const errMsg = typeof err === 'string' ? err : err?.message || "Errore nella creazione del ticket";
+      setError(errMsg);
+      console.error("Create ticket error:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="p-4 bg-white/20 rounded-xl shadow-md w-full  mx-auto">
+    <div className="p-4 bg-white/20 rounded-xl shadow-md w-full mx-auto">
       <h2 className="font-bold text-xl mb-4">Crea Nuovo Ticket</h2>
 
       {/* Input Titolo Ticket */}
@@ -43,40 +58,50 @@ const TicketCreator = ({ onTicketsChange, user }) => {
         type="text"
         value={newTitle}
         onChange={(e) => setNewTitle(e.target.value)}
-        placeholder="Titolo del ticket"
-        className="border rounded-xl p-2 w-full mb-3"
+        onKeyDown={(e) => e.key === "Enter" && !isLoading && handleAddTicket()}
+        placeholder="Titolo del ticket (min. 3 caratteri)"
+        className="border rounded-xl p-2 w-full mb-3 focus:outline-none focus:ring-2 focus:ring-[#090c64]"
+        disabled={isLoading}
+        maxLength={100}
       />
+
+      {/* Error message */}
+      {error && (
+        <div className="mb-3 text-sm text-red-600 bg-red-50 p-3 rounded border border-red-200 flex justify-between items-start">
+          <span>{error}</span>
+          <button onClick={() => setError("")} className="ml-2 text-red-500 hover:text-red-700">✕</button>
+        </div>
+      )}
+
+      {/* Success message */}
+      {success && (
+        <div className="mb-3 text-sm text-green-600 bg-green-50 p-3 rounded border border-green-200">
+          {success}
+        </div>
+      )}
 
       {/* Pulsante crea ticket */}
       <button
         onClick={handleAddTicket}
-        className="bg-[#090c64] text-white px-4 py-2 rounded-xl transition cursor-pointer"
+        disabled={isLoading || !newTitle.trim()}
+        className={`w-full bg-[#090c64] text-white px-4 py-2 rounded-xl transition cursor-pointer font-medium ${
+          isLoading || !newTitle.trim() ? "opacity-50 cursor-not-allowed" : "hover:bg-[#0a0d7a]"
+        }`}
       >
-        + Crea Ticket
+        {isLoading ? "Creando..." : "+ Crea Ticket"}
       </button>
 
-      {/* Lista ticket creati */}
-      {tickets.length > 0 && (
-        <div className="mt-6">
-          <h3 className="font-semibold mb-2">Ticket creati</h3>
-          <ul className="space-y-2 max-h-64 overflow-y-auto">
-            {tickets.map((t) => (
-              <li
-                key={t.id}
-                className="flex justify-between items-center p-2 bg-gray-50 rounded shadow-sm"
-              >
-                <span>{t.title}</span>
-                <div className="flex items-center gap-2">
-                  {t.user?.avatar || <UserCircle size={32} color="#090c64" weight="duotone" />}
-                  <span className="text-sm text-gray-500">
-                    {t.user?.nome || "Utente Sconosciuto"}
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
+      {/* Status message */}
+      {creatorStatus === "loading" && (
+        <div className="mt-3 text-sm text-blue-600 bg-blue-50 p-2 rounded border border-blue-200">
+          Sincronizzazione con il server...
         </div>
       )}
+
+      {/* Character counter */}
+      <div className="mt-2 text-xs text-gray-500 text-right">
+        {newTitle.length}/100 caratteri
+      </div>
     </div>
   );
 };
