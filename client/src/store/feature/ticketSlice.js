@@ -53,7 +53,7 @@ export const createTicketAsync = createAsyncThunk(
       if (!token) return rejectWithValue("Token non trovato");
 
       const { response, data } = await ticketApi.createTicketRequest({ payload, token });
-      if (!response.ok) return rejectWithValue(data?.error || "Errore nella creazione");
+      if (!response.ok) return rejectWithValue({ message: data?.error || "Errore nella creazione", details: data?.details || data });
       return data;
     } catch (err) {
       return rejectWithValue(extractError(err));
@@ -69,7 +69,7 @@ export const updateTicketAsync = createAsyncThunk(
       if (!token) return rejectWithValue("Token non trovato");
 
       const { response, data } = await ticketApi.updateTicketRequest({ id, payload, token });
-      if (!response.ok) return rejectWithValue(data?.error || "Errore nell'aggiornamento");
+      if (!response.ok) return rejectWithValue({ message: data?.error || "Errore nell'aggiornamento", details: data?.details || data });
       return data;
     } catch (err) {
       return rejectWithValue(extractError(err));
@@ -85,7 +85,7 @@ export const deleteTicketAsync = createAsyncThunk(
       if (!token) return rejectWithValue("Token non trovato");
 
       const { response, data } = await ticketApi.deleteTicketRequest({ id, token });
-      if (!response.ok) return rejectWithValue(data?.error || "Errore nell'eliminazione");
+      if (!response.ok) return rejectWithValue({ message: data?.error || "Errore nell'eliminazione", details: data?.details || data });
       return { id };
     } catch (err) {
       return rejectWithValue(extractError(err));
