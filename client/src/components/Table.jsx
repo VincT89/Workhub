@@ -5,6 +5,7 @@ import { useTheme } from "../context/ThemeContext";
 const Table = ({
 	data,
 	columns,
+	columnLabels,
 	customToolbar,
 	actions,
 	actionLabel = null,
@@ -18,6 +19,12 @@ const Table = ({
 	const { t } = useLanguage();
 	const { theme } = useTheme();
 	
+	const getColumnLabel = (col) => {
+    if (columnLabels && columnLabels[col]) {
+      return columnLabels[col];
+    }
+    return col.charAt(0).toUpperCase() + col.slice(1);
+  };
 
 	const filteredData = useMemo(() => {
 		const query = searchTerm.toLowerCase();
@@ -86,12 +93,12 @@ const Table = ({
 								<th
 									key={idx}
 									className={`
-										p-3 whitespace-nowrap
+										p-3 whitespace-nowrap max-w-max text-center
 										${idx === 0 ? "rounded-l-xl" : ""}
 										${!actionLabel && idx === columns.length - 1 ? "rounded-r-xl" : ""}
 									`}
 								>
-									{item.charAt(0).toUpperCase() + item.slice(1)}
+									{getColumnLabel(item)}
 								</th>
 							))}
 							{actionLabel && (
@@ -125,7 +132,7 @@ const Table = ({
 									<td
 										key={j}
 										className={`
-											p-3
+											p-3 text-center
 											${j === 0 ? "rounded-l-xl" : ""}
 											${!actions && j === columns.length - 1 ? "rounded-r-xl" : ""}
 										`}

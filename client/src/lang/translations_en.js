@@ -102,6 +102,15 @@ export const en = {
 		ordiniInUscita: "Outgoing Orders",
 		articoliSottoSoglia: "Low Stock Items",
 		prodottiTotali: "Total Products",
+		nArt: "No. Items",
+		point: "Point of Sale",
+		stock: "Stock",
+		stockLimit: "Stock Limit",
+		promo: "Promo",
+		note: "Notes",
+		stato: "Status",
+		totArticoli: "Total Items",
+		caricaGiacenza: "Load Stock",
 	},
 
 	employees: {
@@ -179,6 +188,8 @@ export const en = {
 			accessoInCorso: "Logging in...",
 			erroreGenerico: "An error occurred. Please try again later.",
 			erroreCredenziali: "Invalid username or password.",
+			autenticazione2FA: "Two-Factor Authentication (optional)",
+			inserisciCodice2FA: "Enter the 2FA code",
 		},
 		recover: {
 			recuperaPassword: "Forgot Password",
@@ -219,6 +230,11 @@ export const en = {
 		inserisciUsername: "Enter your username",
 		passwordNonCoincidono: "Passwords do not match",
 		modificheSalvate: "Changes saved successfully",
+		autenticazione2FA: "Two-Factor Authentication (2FA)",
+		abilita2FA: "Enable 2FA",
+		disabilita2FA: "Disable 2FA",
+		attivazioneInCorso: "Activation in progress...",
+		scansionaQR: "Scan this QR with Google Authenticator",
 	},
 
 	sidebar: {

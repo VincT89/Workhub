@@ -159,7 +159,7 @@ const LoginPage = () => {
             htmlFor="token2fa"
             className={`block text-[18px] font-bold font-nunito mb-2 ${textColor}`}
           >
-            {t("Autenticazione 2FA")}
+            {t("auth.login.autenticazione2FA")}
           </label>
           <input
             id="token2fa"
@@ -169,7 +169,7 @@ const LoginPage = () => {
             className="custom-input w-full"
             value={token2fa}
             onChange={(e) => setToken2fa(e.target.value)}
-            placeholder="123456"
+            placeholder={t("auth.login.inserisciCodice2FA")}
           />
         </div>
 

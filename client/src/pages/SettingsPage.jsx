@@ -381,7 +381,7 @@ const SettingsPage = () => {
 				 {/*   SEZIONE 3 — Sicurezza / 2FA        */}
         <section className="w-full p-6 rounded-[25px] shadow-md border border-white/30 bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm">
           <h2 className={`${textColor} text-xl font-bold mb-4 border-b border-[#090c64] pb-2`}>
-            Autenticazione a due fattori (2FA)
+            {t("settings.autenticazione2FA")}
           </h2>
 
           <Enable2FA />

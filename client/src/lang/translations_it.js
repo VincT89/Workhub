@@ -104,6 +104,15 @@ export const it = {
 		ordiniInUscita: "Ordini in Uscita",
 		articoliSottoSoglia: "Articoli Sotto Soglia",
 		prodottiTotali: "Prodotti Totali",
+		nArt: "N.Art.",
+		point: "Punto Vendita",
+		stock: "Giacenza",
+		stockLimit: "Limite Scorte",
+		promo: "Promo",
+		note: "Note",
+		stato: "Stato",
+		totArticoli: "Totale Articoli",
+		caricaGiacenza: "Carica Giacenza",
 	},
 
 	employees: {
@@ -181,6 +190,8 @@ export const it = {
 			accessoInCorso: "Accesso in corso...",
 			erroreGenerico: "Si è verificato un errore. Riprova più tardi.",
 			erroreCredenziali: "Username o password errati.",
+			autenticazione2FA: "Autenticazione a due fattori (opzionale)",
+			inserisciCodice2FA: "Inserisci il codice 2FA",
 		},
 		recover: {
 			recuperaPassword: "Recupera Password",
@@ -221,6 +232,11 @@ export const it = {
 		inserisciUsername: "Inserisci il tuo username",
 		passwordNonCoincidono: "Le password non coincidono",
 		modificheSalvate: "Modifiche salvate con successo",
+		autenticazione2FA: "Autenticazione a due fattori (2FA)",
+		abilita2FA: "Abilita 2FA",
+		disabilita2FA: "Disabilita 2FA",
+		attivazioneInCorso: "Attivazione in corso...",
+		scansionaQR: "Scansiona questo QR con Google Authenticator",
 	},
 
 	sidebar: {

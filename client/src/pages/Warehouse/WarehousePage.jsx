@@ -8,6 +8,8 @@ import DrawerAddNewProduct from "../../components/Warehouse/DrawerAddNewProduct"
 import { WarehouseIcon } from "@phosphor-icons/react";
 import { PlusCircleIcon } from "@phosphor-icons/react";
 
+import { useLanguage } from "../../context/LanguageContext";
+
 
 const WarehousePage = () => {
 
@@ -15,6 +17,8 @@ const WarehousePage = () => {
   const dispatch = useDispatch();
   const items = useSelector(state => state.items.list);
   const status = useSelector(state => state.items.status);
+
+  const { t } = useLanguage();
 
   console.log("items", items)
 
@@ -26,9 +30,23 @@ const WarehousePage = () => {
       dispatch(fetchItems());
     }
   }, [status, dispatch]);
+
   
   // colonne dinamiche della tabella
-  const columns = ["_id", "product", "category", "pointOfSales", "stock", "stockLimit", "promo", "note", "stato"];
+  const columns = ["sku", "product", "category", "pointOfSales", "stock", "stockLimit", "promo", "note", "stato"];
+
+  const columnLabels = {
+  sku: t("warehouse.nArt"),
+  product: t("warehouse.prodotto"),
+  category: t("warehouse.categoria"),
+  pointOfSales: t("warehouse.point"),
+  stock: t("warehouse.stock"),
+  stockLimit: t("warehouse.stockLimit"),
+  promo: t("warehouse.promo"),
+  note: t("warehouse.note"),
+  stato: t("warehouse.stato")
+};
+  
 
   // Drawer per aggiungere prodotto
   const [drawerAddOpen, setDrawerAddOpen] = useState(false);
@@ -36,14 +54,14 @@ const WarehousePage = () => {
 // Box riassuntivi
   const summaryButtons = [
     {
-      label: "Totale articoli",
+      label: t("warehouse.totArticoli"),
       number: items.length,
       icon: <WarehouseIcon size={32} color="#090c64" weight="duotone" />,
 
       clickable: false
     },
     {
-      label: "Carica giacenza",
+      label: t("warehouse.caricaGiacenza"),
       icon: <PlusCircleIcon size={32} color="#090c64" weight="duotone" />,
       clickable: true,
       onClick: () => setDrawerAddOpen(true)
@@ -88,6 +106,7 @@ const WarehousePage = () => {
         <WarehouseTable
           data={items}
           columns={columns}
+          columnLabels={columnLabels}
         />
 
         {/* DRAWER AGGIUNGI PRODOTTO */}
