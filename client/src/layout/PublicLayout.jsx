@@ -33,7 +33,7 @@ const PublicLayout = () => {
             transition-all duration-700 ease-in-out
             ${
               theme === "dark"
-                ? "bg-[#D0D8FB]/90"
+                ? "bg-[#D0D8FB]/30"
                 : "bg-linear-to-br from-indigo-950 via-indigo-950/90 to-violet-900"
             }
             backdrop-blur-sm border-r border-white/30 shadow-md

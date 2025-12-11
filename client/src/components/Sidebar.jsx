@@ -65,7 +65,7 @@ const Sidebar = () => {
                     ? "border-violet-500/60 border-2 text-white scale-105"
                     : "border-violet-500/60 border-2 bg-white scale-105 text-[#090c64]"
                   : theme === "dark"
-                  ? "bg-violet/60  text-[#080ebf]/80 hover:bg-violet/40 "
+                  ? "bg-violet/60  text-[white]/80 hover:bg-violet/40 "
                   : "text-white hover:border-2 hover:border-violet-400/20"
               }
             `}
