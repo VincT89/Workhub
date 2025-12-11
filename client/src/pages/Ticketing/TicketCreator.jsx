@@ -11,6 +11,10 @@ const TicketCreator = ({ user }) => {
   const [success, setSuccess] = useState("");
   const creatorStatus = useSelector((state) => state.tickets.status);
   const tickets = useSelector(selectTickets);
+  // derive filtered tickets for the current authenticated user
+  const filteredTickets = (tickets || []).filter(
+    (t) => ((t.user && (t.user._id || t.user.id)) === (authUser?._id || authUser?.id) || (t.user === (authUser?._id || authUser?.id)))
+  );
 
   // Auto-clear success message after 3 seconds
   useEffect(() => {
@@ -137,17 +141,44 @@ const TicketCreator = ({ user }) => {
 
       <div className="mt-4">
         <h3 className="font-semibold mb-2">I tuoi ticket</h3>
-        {(!tickets || tickets.length===0) ? (
+        {(!filteredTickets || filteredTickets.length === 0) ? (
           <div className="text-sm text-gray-500">Nessun ticket trovato.</div>
         ) : (
-          <ul className="space-y-2 max-h-48 overflow-auto">
-            {tickets.filter(t => ((t.user && (t.user._id || t.user.id)) === (authUser?._id || authUser?.id) || (t.user === (authUser?._id || authUser?.id)))).map(t => (
-              <li key={t._id || t.id} className="p-2 bg-white/60 rounded border">
-                <div className="text-sm font-medium">{t.name}</div>
-                <div className="text-xs text-gray-600">{t.status} · {new Date(t.createdAt || t.updatedAt || t._id).toLocaleString()}</div>
-              </li>
-            ))}
-          </ul>
+          // Compute a dynamic maxHeight: itemHeight * count (with padding) and cap it
+          (() => {
+            const ITEM_HEIGHT = 56; // approx px per list item
+            const PADDING = 12; // extra space
+            const MAX_HEIGHT = 480; // px cap before scrollbar appears
+            const desired = Math.min(Math.max(filteredTickets.length * ITEM_HEIGHT + PADDING, ITEM_HEIGHT), MAX_HEIGHT);
+            return (
+              <ul
+                className="space-y-2 overflow-auto"
+                style={{ maxHeight: `${desired}px`, transition: 'max-height 180ms ease' }}
+              >
+                {filteredTickets.map((t) => {
+                  const rawStatus = t.status || '';
+                  const statusKey = rawStatus === 'open' ? 'aperto' : rawStatus === 'closed' ? 'risolto' : (rawStatus || '').toLowerCase();
+                  const statusLabel = statusKey === 'aperto' ? 'Aperto' : statusKey === 'risolto' ? 'Risolto' : rawStatus;
+                  // Use the same background / hover classes as in TicketPageAdmin's getColor
+                  const statusClass = statusKey === 'risolto'
+                    ? 'bg-[#FFD580] hover:bg-[#FFE8A0] text-[#663c00]'
+                    : 'bg-[#A3B8E0] hover:bg-[#C3D2F0] text-[#06234a]';
+
+                  return (
+                    <li key={t._id || t.id} className="p-2 bg-white/60 rounded border flex justify-between items-start">
+                      <div>
+                        <div className="text-sm font-medium">{t.name}</div>
+                        <div className="text-xs text-gray-600 mt-1">{new Date(t.createdAt || t.updatedAt || t._id).toLocaleString()}</div>
+                      </div>
+                      <div className="flex flex-col items-end gap-2">
+                        <span className={`text-xs px-2 py-1 rounded ${statusClass}`}>{statusLabel}</span>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            );
+          })()
         )}
       </div>
     </div>

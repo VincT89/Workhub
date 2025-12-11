@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTickets } from "../../store/feature/ticketSlice";
+import { fetchTickets, updateTicketAsync } from "../../store/feature/ticketSlice";
 import {
   ListMagnifyingGlass,
   Pencil,
@@ -479,12 +479,21 @@ const TicketPageAdmin = () => {
                 <div
                   className="p-2 flex justify-center items-center rounded-xl bg-[#A3B8E0]
                   border border-[#7A9CC6] cursor-pointer hover:bg-[#C3D2F0]"
-                  onClick={() =>
-                    setTicketStatus((s) => ({
-                      ...s,
-                      [selectedTicket._id || selectedTicket.id]: "aperto"
-                    }))
-                  }
+                  onClick={async () => {
+                    const id = selectedTicket._id || selectedTicket.id;
+                    if (!id) return;
+                    // optimistic UI: update local map immediately
+                    setTicketStatus((s) => ({ ...s, [id]: "aperto" }));
+                    try {
+                      // backend expects 'open' / 'closed'
+                      await dispatch(updateTicketAsync({ id, payload: { status: 'open' } })).unwrap();
+                      dispatch(fetchTickets());
+                    } catch (err) {
+                      // revert on error
+                      setTicketStatus((s) => ({ ...s, [id]: "risolto" }));
+                      console.error('Update ticket failed', err);
+                    }
+                  }}
                 >
                   Aperto
                 </div>
@@ -492,12 +501,19 @@ const TicketPageAdmin = () => {
                 <div
                   className="p-2 flex justify-center items-center rounded-xl bg-[#FFD580]
                   border border-[#FFE8A0] cursor-pointer hover:bg-[#FFE8A0]"
-                  onClick={() =>
-                    setTicketStatus((s) => ({
-                      ...s,
-                      [selectedTicket._id || selectedTicket.id]: "risolto"
-                    }))
-                  }
+                  onClick={async () => {
+                    const id = selectedTicket._id || selectedTicket.id;
+                    if (!id) return;
+                    setTicketStatus((s) => ({ ...s, [id]: "risolto" }));
+                    try {
+                      await dispatch(updateTicketAsync({ id, payload: { status: 'closed' } })).unwrap();
+                      dispatch(fetchTickets());
+                    } catch (err) {
+                      // revert on error
+                      setTicketStatus((s) => ({ ...s, [id]: "aperto" }));
+                      console.error('Update ticket failed', err);
+                    }
+                  }}
                 >
                   Risolto
                 </div>
