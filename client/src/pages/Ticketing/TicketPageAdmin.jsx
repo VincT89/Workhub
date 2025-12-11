@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchFakeTickets } from "../../store/feature/ticketSlice";
 import {
   ListMagnifyingGlass,
   Pencil,
@@ -17,8 +19,10 @@ import "react-date-range/dist/theme/default.css";
 
 const TicketPageAdmin = () => {
   /* STATI PRINCIPALI*/
-  const [tickets, setTickets] = useState([]);
-  const [users, setUsers] = useState([]);
+  const dispatch = useDispatch();
+  const tickets = useSelector((state) => state.tickets.tickets);
+  const users = useSelector((state) => state.tickets.users);
+  const ticketsStatus = useSelector((state) => state.tickets.status);
 
   // highlightDate: data selezionata tramite grafico o lista
   const [highlightDate, setHighlightDate] = useState("");
@@ -42,52 +46,20 @@ const TicketPageAdmin = () => {
     }
   ]);
 
-  /* CARICAMENTO DATI (FAKE API)*/
+  /* CARICAMENTO DATI (FAKE API) tramite Redux slice */
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const usersRes = await fetch(
-          "https://jsonplaceholder.typicode.com/users"
-        );
-        const usersData = await usersRes.json();
+    if ((tickets?.length || 0) === 0 && ticketsStatus === "idle") {
+      dispatch(fetchFakeTickets());
+    }
+  }, [dispatch, tickets?.length, ticketsStatus]);
 
-        const ticketsRes = await fetch(
-          "https://jsonplaceholder.typicode.com/posts"
-        );
-        const posts = await ticketsRes.json();
-
-        const formattedUsers = usersData.map((u, i) => ({
-          id: u.id.toString(),
-          nome: u.name.split(" ")[0],
-          cognome: u.name.split(" ")[1] || "",
-          ruolo: "Dipendente",
-          email: u.email,
-          avatar: `https://i.pravatar.cc/150?img=${i + 10}`
-        }));
-
-        const formattedTickets = posts.slice(0, 20).map((p, i) => ({
-          id: p.id.toString(),
-          title: p.title,
-          description: p.body,
-          user: formattedUsers[i % formattedUsers.length],
-          date: new Date(
-            Date.now() - Math.random() * 10 * 86400000
-          ).toISOString()
-        }));
-
-        setUsers(formattedUsers);
-        setTickets(formattedTickets);
-
-        setTicketStatus(
-          Object.fromEntries(formattedTickets.map((t) => [t.id, "aperto"]))
-        );
-      } catch (err) {
-        console.error("API ERROR:", err);
-      }
-    };
-
-    fetchData();
-  }, []);
+  // Initialize ticketStatus when tickets arrive
+  useEffect(() => {
+    if (tickets && tickets.length > 0) {
+      setTicketStatus(Object.fromEntries(tickets.map((t) => [t.id, "aperto"])));
+    }
+  }, [tickets]);
 
   /* FILTRAGGIO*/
   const formatDateVisible = (date) =>

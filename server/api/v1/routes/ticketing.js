@@ -15,8 +15,8 @@ const ticketingRouter = express.Router();
 // CRUD routes
 ticketingRouter.post("/", authUser, createTickets);
 ticketingRouter.get("/", authUser, getAllTickets);
-ticketingRouter.get("/:id", getItemById);
-ticketingRouter.put("/:id", authUser, requireAdmin, requireAdmin, updateTickets);
+ticketingRouter.get("/:id",authUser, getItemById);
+ticketingRouter.put("/:id", authUser, requireAdmin, updateTickets);
 ticketingRouter.delete("/:id", authUser, requireAdmin, deliteTickets);
 
 export default ticketingRouter;
