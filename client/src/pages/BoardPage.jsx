@@ -10,7 +10,7 @@ import {
 	WarningOctagonIcon,
 	CalendarIcon,
 	NotePencilIcon,
-	TrashIcon
+	TrashIcon,
 } from "@phosphor-icons/react";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
@@ -21,6 +21,8 @@ import {
 	deleteEventAsync,
 } from "../store/feature/eventsSlice.js";
 import { fetchProducts } from "../store/feature/productsSlice.js";
+import { fetchItems } from "../store/feature/itemsSlice.js";
+import { fetchOrders } from "../store/feature/orderSlice.js";
 import Table from "../components/Table";
 import Drawer from "../components/Drawer";
 
@@ -32,10 +34,12 @@ const BoardPage = () => {
 	const users = useSelector((state) => state.users); // per richiamare i dati del personale (nelle box in alto)
 	const pointOfSales = useSelector((state) => state.pos); // per richiamare i dati dei depositi (nelle box in alto)
 	const products = useSelector((state) => state.products); // per richiamare i dati dei prodotti (nelle box in alto)
-	
+	const orders = useSelector((state) => state.orders); // per richiamare i dati degli ordini (nelle box in alto)
+	const items = useSelector((state) => state.items);
+	const lowStockProducts =
+		items?.list?.filter((item) => item.stock <= item.stockLimit) || [];
 
 	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
-
 
 	const dispatch = useDispatch();
 
@@ -44,11 +48,14 @@ const BoardPage = () => {
 	useEffect(() => {
 		if (token) {
 			dispatch(fetchEventsAsync({ token })); // carica tutti gli eventi
-			dispatch(fetchProducts( token )); // carica tutti i prodotti
+			dispatch(fetchProducts(token)); // carica tutti i prodotti
+			dispatch(fetchItems(token)); // carica tutti gli items
+			dispatch(fetchOrders(token)); // carica tutti gli ordini
 		}
 	}, [dispatch, token]);
 
-	const boardPosts = events.map((event) => ({ // dati per la tabella bacheca
+	const boardPosts = events.map((event) => ({
+		// dati per la tabella bacheca
 		_id: event._id,
 		title: event.title,
 		date: event.startDate ? event.startDate.slice(0, 10) : "",
@@ -63,7 +70,7 @@ const BoardPage = () => {
 		description: t("dashboard.descrizione"),
 	};
 
-	// State per il Drawer 
+	// State per il Drawer
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [editData, setEditData] = useState(null);
 
@@ -105,9 +112,12 @@ const BoardPage = () => {
 		setEditData(null);
 	};
 
-	const handleDelete = (row) => { // elimina evento
+	const handleDelete = (row) => {
+		// elimina evento
 		if (
-			window.confirm(` ${t("dashboard.seiSicuroEliminareEvento")}"${row.title}"?`)
+			window.confirm(
+				` ${t("dashboard.seiSicuroEliminareEvento")}"${row.title}"?`
+			)
 		) {
 			dispatch(deleteEventAsync({ id: row._id, token }));
 		}
@@ -126,10 +136,20 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<WarehouseIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-						<span className="font-bold text-[14px]">{t("dashboard.depositi")}</span>
+						<WarehouseIcon
+							size={28}
+							color={theme === "dark" ? "white" : "#090c64"}
+							weight="duotone"
+						/>
+						<span className="font-bold text-[14px]">
+							{t("dashboard.depositi")}
+						</span>
 					</div>
-					<span className={`text-sm opacity-70 leading-none font-semibold ${theme === "dark" ? "text-white" : "text-[#090c64]"}`}>
+					<span
+						className={`text-sm opacity-70 leading-none font-semibold ${
+							theme === "dark" ? "text-white" : "text-[#090c64]"
+						}`}
+					>
 						{pointOfSales?.list?.length ?? 0}
 					</span>
 				</div>
@@ -140,8 +160,14 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<ShoppingCartSimpleIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-						<span className="font-bold text-[14px]">{t("dashboard.prodotti")}</span>
+						<ShoppingCartSimpleIcon
+							size={28}
+							color={theme === "dark" ? "white" : "#090c64"}
+							weight="duotone"
+						/>
+						<span className="font-bold text-[14px]">
+							{t("dashboard.prodotti")}
+						</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
 						{products?.list?.length ?? 0}
@@ -154,11 +180,17 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<PackageIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-						<span className="font-bold text-[14px]">{t("dashboard.ordiniInUscita")}</span>
+						<PackageIcon
+							size={28}
+							color={theme === "dark" ? "white" : "#090c64"}
+							weight="duotone"
+						/>
+						<span className="font-bold text-[14px]">
+							{t("dashboard.ordiniInUscita")}
+						</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
-						20
+						{orders?.list?.length ?? 0}
 					</span>
 				</div>
 
@@ -168,11 +200,17 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<WarningOctagonIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-						<span className="font-bold text-[14px]">{t("dashboard.articoliSottoSoglia")}</span>
+						<WarningOctagonIcon
+							size={28}
+							color={theme === "dark" ? "white" : "#090c64"}
+							weight="duotone"
+						/>
+						<span className="font-bold text-[14px]">
+							{t("dashboard.articoliSottoSoglia")}
+						</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
-						10
+						{lowStockProducts?.length ?? 0}
 					</span>
 				</div>
 
@@ -182,8 +220,14 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<UserCircleCheckIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-						<span className="font-bold text-[14px] ">{t("dashboard.personaleAttivo")}</span>
+						<UserCircleCheckIcon
+							size={28}
+							color={theme === "dark" ? "white" : "#090c64"}
+							weight="duotone"
+						/>
+						<span className="font-bold text-[14px] ">
+							{t("dashboard.personaleAttivo")}
+						</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
 						{users?.list?.length ?? 0}
@@ -201,14 +245,19 @@ const BoardPage = () => {
 				>
 					{/* HEADER BACHECA */}
 					<div className="flex items-start gap-4 w-full">
-						<ChalkboardSimpleIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
+						<ChalkboardSimpleIcon
+							size={28}
+							color={theme === "dark" ? "white" : "#090c64"}
+							weight="duotone"
+						/>
 
-						<h3 className="text-[14px] font-bold font-nunito">{t("dashboard.bacheca")}</h3>
+						<h3 className="text-[14px] font-bold font-nunito">
+							{t("dashboard.bacheca")}
+						</h3>
 
 						{(role === "supervisor" || role === "admin") && (
 							<button
 								onClick={openDrawerAdd}
-
 								className="custom-button ml-auto text-[14px]"
 							>
 								+ {t("dashboard.aggiungi")}
@@ -226,26 +275,30 @@ const BoardPage = () => {
 							actions={
 								role === "admin"
 									? [
-										{
-											name: "edit",
-											icon: (
-												<NotePencilIcon
-													size={28}
-													color={theme === "dark" ? "white" : "#090c64"}
-													weight="duotone"
-													className="mr-4"
-												/>
-											),
-											onClick: openDrawerEdit,
-										},
-										{
-											name: "delete",
-											icon: (
-												<TrashIcon size={28} color={theme === "dark" ? "#ff4d4d" : "#ff0000"} weight="duotone" />
-											),
-											onClick: handleDelete,
-										},
-									]
+											{
+												name: "edit",
+												icon: (
+													<NotePencilIcon
+														size={28}
+														color={theme === "dark" ? "white" : "#090c64"}
+														weight="duotone"
+														className="mr-4"
+													/>
+												),
+												onClick: openDrawerEdit,
+											},
+											{
+												name: "delete",
+												icon: (
+													<TrashIcon
+														size={28}
+														color={theme === "dark" ? "#ff4d4d" : "#ff0000"}
+														weight="duotone"
+													/>
+												),
+												onClick: handleDelete,
+											},
+									  ]
 									: []
 							}
 						/>
@@ -260,7 +313,11 @@ const BoardPage = () => {
 				>
 					{/* HEADER */}
 					<div className="flex items-center gap-4">
-						<ShoppingCartSimpleIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
+						<ShoppingCartSimpleIcon
+							size={28}
+							color={theme === "dark" ? "white" : "#090c64"}
+							weight="duotone"
+						/>
 
 						<h3 className="text-[14px] font-bold font-nunito">
 							{t("dashboard.prodottiInEsaurimento")}
@@ -270,15 +327,18 @@ const BoardPage = () => {
 					{/* TABELLA */}
 					<div className="w-full overflow-hidden h-full mt-3">
 						<Table
-							data={[
-								{ name: "Prodotto A", stock: "8" },
-								{ name: "Prodotto B", stock: "5" },
-								{ name: "Prodotto C", stock: "2" },
-							]}
-							columns={["name", "stock"]}
+							data={lowStockProducts
+								.slice(0, 3)
+								.map((item) => ({
+									name: item.product.name,
+									stock: item.stock,
+									pos: item.pointOfSales.name,
+								}))}
+							columns={["name", "stock", "pos"]}
 							columnLabels={{
 								name: t("dashboard.prodotto"),
 								stock: t("dashboard.giacenza"),
+								pos: t("dashboard.pos"),
 							}}
 						/>
 					</div>
@@ -293,7 +353,11 @@ const BoardPage = () => {
 				{/* Contenuto */}
 				<div className="flex-1 flex flex-col">
 					<div className="flex gap-4 justify-start items-start">
-						<CalendarIcon size={28} color={theme === "dark" ? "white" : "#090c64"}  weight="duotone" />
+						<CalendarIcon
+							size={28}
+							color={theme === "dark" ? "white" : "#090c64"}
+							weight="duotone"
+						/>
 						<h3
 							className={`text-[14px] font-bold font-nunito ${textColor} mb-4`}
 						>
@@ -308,12 +372,18 @@ const BoardPage = () => {
 			<Drawer
 				open={drawerOpen}
 				onClose={() => setDrawerOpen(false)}
-				title={editData && editData.title ? t("dashboard.modificaEvento") : t("dashboard.aggiungiEvento")}
+				title={
+					editData && editData.title
+						? t("dashboard.modificaEvento")
+						: t("dashboard.aggiungiEvento")
+				}
 			>
 				{editData && (
 					<form onSubmit={handleSavePost} className="flex flex-col gap-4">
 						<div className="flex flex-col">
-							<label className="text-sm font-bold">{t("dashboard.titolo")}</label>
+							<label className="text-sm font-bold">
+								{t("dashboard.titolo")}
+							</label>
 							<input
 								type="text"
 								value={editData.title}
@@ -339,7 +409,9 @@ const BoardPage = () => {
 						</div>
 
 						<div className="flex flex-col">
-							<label className="text-sm font-bold">{t("dashboard.descrizione")}</label>
+							<label className="text-sm font-bold">
+								{t("dashboard.descrizione")}
+							</label>
 							<input
 								type="text"
 								value={editData.description}

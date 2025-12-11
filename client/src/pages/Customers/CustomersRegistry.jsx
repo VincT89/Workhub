@@ -1,4 +1,8 @@
 //RICORDA DI COMMENTARE IL CODICE
+
+
+
+
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -21,6 +25,8 @@ import {
     clearError
 } from "../../store/feature/customerSlice";
 
+import * as XLSX from "xlsx"; // <-- !! import della libreria 'xlsx' !! per far si che venga generato il file excel nelle sezioni di ordini e affiliazione del dettaglio del singolo customer bisogna installare questa libreria
+
 const CustomersRegistry = () => {
     const { id } = useParams(); // useParams() estrae i parametri dall'URL (es: /customer/123 → id = "123")
     const navigate = useNavigate();
@@ -36,6 +42,30 @@ const CustomersRegistry = () => {
     const [isEditing, setIsEditing] = useState(false); //gestisce la modifica di customer
     const [editedCustomer, setEditedCustomer] = useState(null); //copia della modifica del customer 
     const [saving, setSaving] = useState(false); //salva le modifiche
+
+    // ================== FUNZIONE CHE GENERA L'EXCEL ==================
+    const exportAffiliateToExcel = () => {
+        if (!customer || !customer.affiliateProgram) return;
+
+        // CREO I DATI DA ESPORTARE
+        const data = [
+            {
+                "Livello Tessera": customer.affiliateProgram.name || "Nessuno",
+                "Punti Accumulati": customer.affiliateProgram.points || 0,
+                "Numero Tessera": customer.affiliateProgram.cardNumber || "N/D",
+                "Programma Fedeltà": "Attivo"
+            }
+        ];
+
+        // CREO IL WORKSHEET E WORKBOOK
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Affiliazione");
+
+        // GENERO IL FILE
+        XLSX.writeFile(workbook, `Affiliazione_${customer.firstName}_${customer.lastName}.xlsx`);
+    };
+    // ==================================================================
 
     // Carica il customer quando il componente viene montato
     useEffect(() => {
@@ -424,21 +454,27 @@ const CustomersRegistry = () => {
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center mb-2">
                                 <h3 className="text-[#134a7b] font-semibold">Affiliazione</h3>
-                                <button className="flex items-center gap-1 text-sm px-3 py-1 bg-white/70 rounded-xl border border-white shadow-sm hover:bg-white transition">
+
+                                {/* ========= BOTTONE EXCEL CHE USA LA FUNZIONE AGGIUNTA ========= */}
+                                <button
+                                    onClick={exportAffiliateToExcel}
+                                    className="flex items-center gap-1 text-sm px-3 py-1 bg-white/70 rounded-xl border border-white shadow-sm hover:bg-white transition"
+                                >
                                     <FileXls size={22} color="#090c64" weight="duotone" /> Excel
                                 </button>
+                                {/* ================================================================= */}
                             </div>
 
                             <div className="bg-white/60 p-3 rounded-xl shadow-sm">
-                                <strong>Livello tessera:</strong> {customer.affiliateProgram.name || 'Nessuno'}
+                                <strong>Livello tessera:</strong> {customer.affiliateProgram.name}
                             </div>
 
                             <div className="bg-white/60 p-3 rounded-xl shadow-sm">
-                                <strong>Punti accumulati:</strong> {customer.affiliateProgram.points || 0}
+                                <strong>Punti accumulati:</strong> {customer.affiliateProgram.points}
                             </div>
 
                             <div className="bg-white/60 p-3 rounded-xl shadow-sm">
-                                <strong>Numero tessera:</strong> {customer.affiliateProgram.cardNumber || 'N/D'}
+                                <strong>Numero tessera:</strong> {customer.affiliateProgram.cardNumber}
                             </div>
 
                             <div className="bg-white/60 p-3 rounded-xl shadow-sm">

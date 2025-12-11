@@ -41,6 +41,7 @@ export const en = {
 		chiudi: "Close",
 		prodotto: "Product",
 		giacenza: "Stock",
+		pos: "Location"
 	},
 
 	customers: {
