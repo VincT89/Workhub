@@ -209,7 +209,7 @@ const BoardPage = () => {
 							<button
 								onClick={openDrawerAdd}
 
-								className="ml-auto px-4 py-2 bg-white dark:bg-[#090c64] text-[#090c64] dark:text-white shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[15px] font-bold cursor-pointer"
+								className="ml-auto px-4 py-2 bg-white  text-[#090c64]  shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[15px] font-bold cursor-pointer"
 							>
 								+ {t("dashboard.aggiungi")}
 							</button>

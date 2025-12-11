@@ -388,9 +388,9 @@ table tbody tr td:last-child {
 
 /* PULSANTI TOOLBAR */
 .calendar-btn {
-  @apply px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm transition;
-  background-color: rgba(255,255,255,0.7);
-  color: #090c64;
+  @apply px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm transition cursor-pointer;
+  background-color: rgba(255,255,255,0.7) !important;
+  color: #090c64 !important;
 }
 
 .calendar-btn:hover {
@@ -552,4 +552,41 @@ table tbody tr td:last-child {
 
 .dark .rbc-time-content::-webkit-scrollbar-thumb {
   background: rgba(255,255,255,0.3) !important;
+}
+
+/* -----------------------------------------------------
+   CALENDAR VIEW BUTTON (month / week / day switch)
+   Coerente con custom-button e con tutto il design
+----------------------------------------------------- */
+.calendar-view-btn {
+  @apply px-4 py-2 rounded-xl font-semibold cursor-pointer 
+         border shadow-md transition-all duration-300;
+  
+  /* LIGHT MODE default (inattivo) */
+  @apply bg-white/70 text-[#090c64] border-white/40;
+}
+
+/* Hover in light mode */
+.calendar-view-btn:not(.active):hover {
+  @apply bg-[#090c64] text-white;
+}
+
+/* Stato ATTIVO light mode */
+.calendar-view-btn.active {
+  @apply bg-[#090c64] text-white border-[#090c64];
+}
+
+/* DARK MODE stato inattivo */
+.dark .calendar-view-btn {
+  @apply bg-white/10 text-white border-white/40;
+}
+
+/* Hover dark mode */
+.dark .calendar-view-btn:not(.active):hover {
+  @apply bg-white text-[#090c64];
+}
+
+/* Stato ATTIVO dark mode */
+.dark .calendar-view-btn.active {
+  @apply bg-white text-[#090c64] border-white;
 }
