@@ -209,7 +209,7 @@ const BoardPage = () => {
 							<button
 								onClick={openDrawerAdd}
 
-								className="custom-button ml-auto"
+								className="custom-button ml-auto text-[14px]"
 							>
 								+ {t("dashboard.aggiungi")}
 							</button>
