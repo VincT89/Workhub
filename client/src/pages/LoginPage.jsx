@@ -21,7 +21,7 @@ const LoginPage = () => {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [token2fa, setToken2fa] = useState(""); // 👈 nuovo stato per il codice 2FA
+  const [token2fa, setToken2fa] = useState(""); 
   const [showPassword, setShowPassword] = useState(false);
 
   const backgroundImage = theme === "dark" ? bgDark : bgLight;
@@ -35,7 +35,7 @@ const LoginPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!username || !password) return;
-    dispatch(loginAsync({ username, password, token2fa })); // 👈 passa anche il token 2FA
+    dispatch(loginAsync({ username, password, token2fa }));
   };
 
   const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";

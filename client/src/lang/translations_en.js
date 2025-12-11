@@ -39,6 +39,8 @@ export const en = {
 		annulla: "Cancel",
 		salva: "Save",
 		chiudi: "Close",
+		prodotto: "Product",
+		giacenza: "Stock",
 	},
 
 	customers: {

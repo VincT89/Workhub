@@ -1,14 +1,14 @@
-import { API_URL } from "../config/api"; 
+import { API_URL } from "../config/api";
 
 const ORDERS_URL = `${API_URL}/orders`;
 
 /* CREATE */
-export const createOrderRequest = async (orderData, token) => {
+export const createOrderRequest = async ({ orderData, token }) => {
   const res = await fetch(ORDERS_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : undefined,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(orderData),
   });
@@ -22,7 +22,7 @@ export const fetchOrdersRequest = async ({ token }) => {
   const res = await fetch(ORDERS_URL, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : undefined,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -31,11 +31,11 @@ export const fetchOrdersRequest = async ({ token }) => {
 };
 
 /* FETCH ONE */
-export const fetchOrderByIdRequest = async (id, token) => {
+export const fetchOrderByIdRequest = async ({ id, token }) => {
   const res = await fetch(`${ORDERS_URL}/${id}`, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : undefined,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -44,12 +44,12 @@ export const fetchOrderByIdRequest = async (id, token) => {
 };
 
 /* UPDATE */
-export const updateOrderRequest = async ({ id, data }, token) => {
+export const updateOrderRequest = async ({ id, data, token }) => {
   const res = await fetch(`${ORDERS_URL}/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : undefined,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
@@ -59,11 +59,11 @@ export const updateOrderRequest = async ({ id, data }, token) => {
 };
 
 /* DELETE */
-export const deleteOrderRequest = async (id, token) => {
+export const deleteOrderRequest = async ({ id, token }) => {
   const res = await fetch(`${ORDERS_URL}/${id}`, {
     method: "DELETE",
     headers: {
-      Authorization: token ? `Bearer ${token}` : undefined,
+      Authorization: `Bearer ${token}`,
     },
   });
 

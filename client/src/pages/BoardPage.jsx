@@ -31,7 +31,7 @@ const BoardPage = () => {
 	const token = useSelector((state) => state.auth.token);
 	const users = useSelector((state) => state.users); // per richiamare i dati del personale (nelle box in alto)
 	const pointOfSales = useSelector((state) => state.pos); // per richiamare i dati dei depositi (nelle box in alto)
-	const products = useSelector((state) => state.items); // per richiamare i dati dei prodotti (nelle box in alto)
+	const products = useSelector((state) => state.products); // per richiamare i dati dei prodotti (nelle box in alto)
 	
 
 	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
@@ -56,6 +56,12 @@ const BoardPage = () => {
 	}));
 
 	const boardColumns = ["title", "date", "description"]; // colonne tabella bacheca
+
+	const columnLabels = {
+		title: t("dashboard.titolo"),
+		date: t("dashboard.data"),
+		description: t("dashboard.descrizione"),
+	};
 
 	// State per il Drawer 
 	const [drawerOpen, setDrawerOpen] = useState(false);
@@ -215,6 +221,7 @@ const BoardPage = () => {
 						<Table
 							data={boardPosts}
 							columns={boardColumns}
+							columnLabels={columnLabels}
 							actionLabel={"Actions"}
 							actions={
 								role === "admin"
@@ -269,6 +276,10 @@ const BoardPage = () => {
 								{ name: "Prodotto C", stock: "2" },
 							]}
 							columns={["name", "stock"]}
+							columnLabels={{
+								name: t("dashboard.prodotto"),
+								stock: t("dashboard.giacenza"),
+							}}
 						/>
 					</div>
 				</div>

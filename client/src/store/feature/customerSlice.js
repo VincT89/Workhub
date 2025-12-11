@@ -9,7 +9,10 @@ export const fetchCustomersAsync = createAsyncThunk( //createAsyncThunk() è una
     // rejectWithValue() è una funzione di redux toolkit che ci perfette di restituire un errore personalizzato. quindi possiamo restituire messaggi di errore specifici invece che generici
     try {
       const response = await fetch(`${API_URL}/customers`, {
-        headers: { Authorization: `Bearer ${token}` }, // bearer -> schema di autenticazione standard per HTTP. indica che stiamo usando un token bearer 
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,  // bearer -> schema di autenticazione standard per HTTP. indica che stiamo usando un token bearer
+        },  
       });
 
       const data = await response.json();
@@ -28,7 +31,10 @@ export const fetchCustomerByIdAsync = createAsyncThunk(
   async ({ id, token }, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}/customers/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
       });
 
       const data = await response.json();

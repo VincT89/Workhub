@@ -80,12 +80,10 @@ const CustomToolbar = ({ label, view, onView, onNavigate }) => {
 						key={v}
 						onClick={() => onView(v)}
 						className={`
-							px-4 py-2 rounded-xl font-semibold border transition
-							${
-								view === v
-									? "bg-[#090c64] text-white border-[#090c64]"
-									: "bg-white/70 dark:bg-white/10 text-[#090c64] border-white/40 hover:bg-[#090c64] hover:text-white"
-							}
+							px-4 py-2 rounded-xl font-semibold border transition cursor-pointer
+							${view === v
+							? "bg-[#090c64] text-white border-white/90"
+							: "bg-white/70 dark:bg-white/10 text-[#090c64] border-white/40 dark:border-white/90 "}
 						`}
 					>
 						{v === "month" ? t("dashboard.mese") : v === "week" ? t("dashboard.settimana") : t("dashboard.giorno")}

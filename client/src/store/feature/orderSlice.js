@@ -13,8 +13,8 @@ export const createOrder = createAsyncThunk(
   "orders/createOrder",
   async ({ orderData, token }, { rejectWithValue }) => {
     try {
-      const { res, data } = await createOrderRequest(orderData, token);
-      if (!res.ok) throw new Error(data?.error || "Errore nella creazione ordine");
+      const { res, data } = await createOrderRequest({ orderData, token });
+      if (!res.ok)  throw new Error(data?.error || "Errore nella creazione ordine");
       return data;
     } catch (err) {
       return rejectWithValue(err.message);
@@ -43,7 +43,7 @@ export const fetchOrderById = createAsyncThunk(
   "orders/fetchOrderById",
   async ({ id, token }, { rejectWithValue }) => {
     try {
-      const { res, data } = await fetchOrderByIdRequest(id, token);
+      const { res, data } = await fetchOrderByIdRequest({id, token});
       if (!res.ok) throw new Error(data?.error || "Ordine non trovato");
       return data;
     } catch (err) {
@@ -57,7 +57,7 @@ export const updateOrder = createAsyncThunk(
   "orders/updateOrder",
   async ({ id, data, token }, { rejectWithValue }) => {
     try {
-      const { res, data: updated } = await updateOrderRequest({ id, data }, token);
+      const { res, data: updated } = await updateOrderRequest({ id, data, token });
       if (!res.ok) throw new Error(updated?.error || "Errore nell’aggiornamento ordine");
       return updated;
     } catch (err) {
@@ -71,7 +71,7 @@ export const deleteOrder = createAsyncThunk(
   "orders/deleteOrder",
   async ({ id, token }, { rejectWithValue }) => {
     try {
-      const { res } = await deleteOrderRequest(id, token);
+      const { res } = await deleteOrderRequest({ id, token });
       if (!res.ok) throw new Error("Errore nell’eliminazione ordine");
       return id;
     } catch (err) {

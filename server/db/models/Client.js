@@ -42,15 +42,15 @@ const ClientSchema = new Schema({
         required: true,
         index: true,
     },
-    affiliateType: {
-        type: String,
-        enum: ["standard", "premium"],
-        default: "standard"
-    },
-    ordersCount: {
-        type: Number,
-        default: 0
-    },
+    // affiliateType: {
+    //     type: String,
+    //     enum: ["standard", "premium"],
+    //     default: "standard"
+    // },
+    // ordersCount: {
+    //     type: Number,
+    //     default: 0
+    // },
     affiliateProgram: {
         type: Schema.Types.ObjectId,
         ref: 'AffiliateProgram',

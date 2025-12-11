@@ -58,14 +58,14 @@ const Table = ({
 	}, [searchTerm, data, columns, sortAZ]);
 
 	return (
-		<div className="w-full rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-4 sm:p-6 shadow-md border border-white flex flex-col gap-4">
+		<div className="w-full rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-4 sm:p-6 shadow-md border border-white flex flex-col gap-4 table-wrapper">
 			{/* TOOLBAR */}
 			<div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-between gap-3 mb-3">
 				{/* Left tools */}
 				<div className="flex flex-wrap gap-2 items-center">
 					<button
 						onClick={() => setSortAZ(!sortAZ)}
-						className="px-3 py-2 bg-[#090c64] text-white font-bold border border-white rounded-xl shadow-sm text-sm transition"
+						className="px-3 py-2 bg-[#090c64] text-white font-bold border border-white rounded-xl shadow-sm text-sm transition table-sort-btn"
 					>
 						{sortAZ ? t("dashboard.annullaOrdineAZ") : t("dashboard.ordinaAZ")}
 					</button>
@@ -80,7 +80,7 @@ const Table = ({
 					placeholder={t("dashboard.cerca")}
 					value={searchTerm}
 					onChange={(e) => setSearchTerm(e.target.value)}
-					className="px-3 py-2 bg-white/70 border border-white rounded-xl shadow-sm text-sm w-full sm:w-60 focus:outline-none placeholder:text-gray-500"
+					className="px-3 py-2 bg-white/70 border border-white rounded-xl shadow-sm text-sm w-full sm:w-60 focus:outline-none placeholder:text-gray-500 table-search"
 				/>
 			</div>
 

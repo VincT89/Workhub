@@ -1,116 +1,138 @@
 import { useState, useEffect } from "react";
 import bgLight from "../../assets/bg/bg.jpg";
 
-// Drawer per vedere la disponibilità di un prodotto nelle sedi
-const DrawerSede = ({ open, onClose, itemsData }) => {
-  // itemsData: array di items già presi dal server, ognuno con product, pointOfSales, stock, stockLimit, ecc.
+const DrawerAddNewProduct = ({ open, onClose, onAddProduct }) => {
+  const [productId, setProductId] = useState("");
+  const [pointOfSalesId, setPointOfSalesId] = useState("");
+  const [stock, setStock] = useState("");
+  const [stockLimit, setStockLimit] = useState("");
+  const [note, setNote] = useState("");
 
-  const [searchCode, setSearchCode] = useState(""); // Codice prodotto da cercare
-  const [results, setResults] = useState([]);       // Risultati della ricerca
-
-  // Chiude il drawer premendo ESC
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose?.();
     if (open) document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  // Funzione di ricerca
-  const searchStores = () => {
-    if (!searchCode.trim()) return;
-
-    // Filtra gli items per il prodotto selezionato
-    const filtered = itemsData.filter(
-      (item) => item.product?.sku.toLowerCase() === searchCode.toLowerCase()
-    );
-
-    if (filtered.length === 0) {
-      setResults([{ error: "Prodotto non trovato" }]);
+  const handleAdd = () => {
+    if (!productId || !pointOfSalesId || !stock || !stockLimit) {
+      alert("Compila tutti i campi obbligatori!");
       return;
     }
 
-    // Ordina per stock decrescente (opzionale)
-    filtered.sort((a, b) => b.stock - a.stock);
+    const newItem = {
+      product: productId,
+      pointOfSales: pointOfSalesId,
+      stock: parseInt(stock, 10),
+      stockLimit: parseInt(stockLimit, 10),
+      note: note || ""
+    };
 
-    setResults(filtered);
+    onAddProduct?.(newItem);
+
+    setProductId("");
+    setPointOfSalesId("");
+    setStock("");
+    setStockLimit("");
+    setNote("");
+    onClose?.();
   };
 
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50">
-      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
-
+    <div className="fixed inset-0 bg-black/40 flex justify-end z-50">
       <aside
-        className="absolute right-0 top-0 w-[420px] h-full border-l border-white/40 shadow-2xl overflow-auto bg-cover bg-center"
-        role="dialog"
+        className="w-full max-w-md h-full bg-white shadow-xl overflow-y-auto"
         aria-modal="true"
         style={{ backgroundImage: `url(${bgLight})` }}
       >
-        {/* HEADER */}
         <header className="sticky top-0 border-b border-white/60 px-6 py-4 flex items-center justify-between">
           <h2 className="text-base font-semibold text-[#090c64]">
-            Disponibilità in altre sedi
+            Carica giacenza prodotto
           </h2>
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-white/70 shadow-sm rounded-xl text-sm bg-[#090c64] text-white cursor-pointer"
+            className="px-4 py-2 bg-[#090c64] border border-white/50 shadow-sm rounded-xl text-sm text-white cursor-pointer"
           >
             Chiudi
           </button>
         </header>
 
-        {/* CONTENUTO */}
-        <div className="p-6 text-[15px] text-[#090c64]">
-          <label className="block mb-2 font-semibold">Codice prodotto</label>
-          <input
-            type="text"
-            placeholder="Es. A001"
-            value={searchCode}
-            onChange={(e) => setSearchCode(e.target.value)}
-            className="w-full mb-4 px-3 py-2 border rounded-xl"
-          />
+        <div className="p-6 text-[15px] text-[#090c64] flex flex-col gap-4">
+          {/* Product ID */}
+          <div>
+            <label className="block mb-1 font-semibold">
+              ID Prodotto
+            </label>
+            <input
+              type="text"
+              placeholder="Es. 65f2c1a..."
+              value={productId}
+              onChange={(e) => setProductId(e.target.value)}
+              className="w-full px-3 py-2 border rounded-xl"
+            />
+          </div>
+
+          {/* Point of Sales */}
+          <div>
+            <label className="block mb-1 font-semibold">
+              ID Punto Vendita
+            </label>
+            <input
+              type="text"
+              placeholder="Es. 65f2c1a..."
+              value={pointOfSalesId}
+              onChange={(e) => setPointOfSalesId(e.target.value)}
+              className="w-full px-3 py-2 border rounded-xl"
+            />
+          </div>
+
+          {/* Stock */}
+          <div>
+            <label className="block mb-1 font-semibold">QuantitÃ </label>
+            <input
+              type="number"
+              placeholder="Es. 10"
+              value={stock}
+              onChange={(e) => setStock(e.target.value)}
+              className="w-full px-3 py-2 border rounded-xl"
+            />
+          </div>
+
+          {/* Stock Limit */}
+          <div>
+            <label className="block mb-1 font-semibold">Soglia minima</label>
+            <input
+              type="number"
+              placeholder="Es. 5"
+              value={stockLimit}
+              onChange={(e) => setStockLimit(e.target.value)}
+              className="w-full px-3 py-2 border rounded-xl"
+            />
+          </div>
+
+          {/* Note */}
+          <div>
+            <label className="block mb-1 font-semibold">Note (opzionale)</label>
+            <textarea
+              placeholder="Aggiungi note..."
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              className="w-full px-3 py-2 border rounded-xl"
+            />
+          </div>
 
           <button
-            onClick={searchStores}
-            className="px-4 py-2 border border-white/70 shadow-sm rounded-xl text-sm text-white bg-[#090c64] mb-6 cursor-pointer"
+            onClick={handleAdd}
+            className="px-4 py-2 bg-[#090c64] border border-white/70 shadow-sm rounded-xl text-sm text-white cursor-pointer"
           >
-            Cerca disponibilità
+            Aggiungi prodotto
           </button>
-
-          <div>
-            {results.length === 0 && <p className="opacity-70">Nessuna ricerca effettuata.</p>}
-
-            {results.map((item, i) => {
-              if (item.error)
-                return (
-                  <p key={i} className="text-red-600">
-                    {item.error}
-                  </p>
-                );
-
-              return (
-                <div
-                  key={i}
-                  className="py-2 border-b border-white/40 flex flex-col gap-1"
-                >
-                  <span><strong>Sede:</strong> {item.pointOfSales?.name}</span>
-                  <span><strong>Stock:</strong> {item.stock} pezzi</span>
-                  <span><strong>Stock limite:</strong> {item.stockLimit}</span>
-                  {item.promo?.isActive && (
-                    <span>
-                      <strong>Promo:</strong> {item.promo.value} {item.promo.mode === "percentage" ? "%" : "€"}
-                    </span>
-                  )}
-                  {item.note && <span><strong>Note:</strong> {item.note}</span>}
-                </div>
-              );
-            })}
-          </div>
         </div>
       </aside>
     </div>
   );
 };
 
-export default DrawerSede;
+export default DrawerAddNewProduct;
