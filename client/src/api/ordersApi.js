@@ -1,15 +1,19 @@
-import { API_URL } from "../config/api";  // http://localhost:3030/api/v1
+import { API_URL } from "../config/api"; 
 
 const ORDERS_URL = `${API_URL}/orders`;
 
 /* CREATE */
-export const createOrderRequest = async (orderData) => {
+export const createOrderRequest = async (orderData, token) => {
   const res = await fetch(ORDERS_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `Bearer ${token}` : undefined,
+    },
     body: JSON.stringify(orderData),
   });
-  const data = await res.json();
+
+  const data = await res.json().catch(() => ({}));
   return { res, data };
 };
 
@@ -18,34 +22,51 @@ export const fetchOrdersRequest = async ({ token }) => {
   const res = await fetch(ORDERS_URL, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      Authorization: token ? `Bearer ${token}` : undefined,
     },
   });
-  const data = await res.json();
+
+  const data = await res.json().catch(() => ({}));
   return { res, data };
 };
 
 /* FETCH ONE */
-export const fetchOrderByIdRequest = async (id) => {
-  const res = await fetch(`${ORDERS_URL}/${id}`);
-  const data = await res.json();
+export const fetchOrderByIdRequest = async (id, token) => {
+  const res = await fetch(`${ORDERS_URL}/${id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `Bearer ${token}` : undefined,
+    },
+  });
+
+  const data = await res.json().catch(() => ({}));
   return { res, data };
 };
 
 /* UPDATE */
-export const updateOrderRequest = async ({ id, data }) => {
+export const updateOrderRequest = async ({ id, data }, token) => {
   const res = await fetch(`${ORDERS_URL}/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `Bearer ${token}` : undefined,
+    },
     body: JSON.stringify(data),
   });
-  const json = await res.json();
+
+  const json = await res.json().catch(() => ({}));
   return { res, data: json };
 };
 
 /* DELETE */
-export const deleteOrderRequest = async (id) => {
-  const res = await fetch(`${ORDERS_URL}/${id}`, { method: "DELETE" });
+export const deleteOrderRequest = async (id, token) => {
+  const res = await fetch(`${ORDERS_URL}/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: token ? `Bearer ${token}` : undefined,
+    },
+  });
+
   const data = await res.json().catch(() => ({}));
   return { res, data };
 };

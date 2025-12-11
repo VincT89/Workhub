@@ -42,11 +42,21 @@ const ClientSchema = new Schema({
         required: true,
         index: true,
     },
+    affiliateType: {
+        type: String,
+        enum: ["standard", "premium"],
+        default: "standard"
+    },
+    ordersCount: {
+        type: Number,
+        default: 0
+    },
     affiliateProgram: {
         type: Schema.Types.ObjectId,
         ref: 'AffiliateProgram',
         required: false
     }
+
 }, { strict: true, timestamps: true, versionKey: false });
 
 ClientSchema.virtual('fullName').get(function() {

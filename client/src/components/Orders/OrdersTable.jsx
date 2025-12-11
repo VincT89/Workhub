@@ -1,9 +1,7 @@
+// USEMEMO → PER MEMORIZZARE UN RISULTATO DI UN CALCOLO E NON FARLO TUTTE LE VOLTE
 import { useState, useMemo } from "react";
 
-const DEFAULT_STATUS = ["In preparazione", "Spedito", "In consegna", "Consegnato"];
-const DEFAULT_COURIERS = ["BRT", "SDA", "DHL", "UPS", "GLS", "FedEx"];
-
-// formattatore €
+// Formattatore € 
 const formatEuro = (value) => {
   if (value === null || value === undefined || isNaN(value)) return "-";
   return new Intl.NumberFormat("it-IT", {
@@ -21,32 +19,16 @@ const OrdersTable = ({
   onRowClick,
   productsOptions = [],
   customersOptions = [],
-  onAddProduct,
-  onUpdateStatus,
-  onUpdateCarrier,
-  onUpdateClient,
-  onDeleteClient,
-  onAddClient,
-  onReorderStock,   
   statusOptions = [],
   courierOptions = [],
 }) => {
-
-  const statusOpts = statusOptions.length ? statusOptions : DEFAULT_STATUS;
-  const courierOpts = courierOptions.length ? courierOptions : DEFAULT_COURIERS;
-
   const [searchTerm, setSearchTerm] = useState("");
   const [sortAZ, setSortAZ] = useState(false);
-  const [selectedProductId, setSelectedProductId] = useState("default");
 
+  // apre finestra dettaglio
   const [openRowId, setOpenRowId] = useState(null);
 
-  const [editingClient, setEditingClient] = useState(null);
-  const [editingClientForm, setEditingClientForm] = useState(null);
-
-  // quantità per riordino magazzino
-  const [reorderQty, setReorderQty] = useState({});
-
+  // FILTRO + A-Z
   const filteredData = useMemo(() => {
     const query = searchTerm.toLowerCase();
 
@@ -68,6 +50,7 @@ const OrdersTable = ({
     return result;
   }, [searchTerm, data, columns, sortAZ]);
 
+  // colonne da centrare
   const centeredCols = ["quantità totale", "data", "stato", "corriere", "totale"];
 
   return (
@@ -75,10 +58,10 @@ const OrdersTable = ({
       {/* TOOLBAR */}
       <div className="flex flex-col gap-3 mb-3">
         <div className="flex flex-wrap items-center gap-6">
-
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-bold text-[#090c64]">Ordini</h2>
 
+            {/* bottone A-Z → solo ordinamento locale, non modifica i dati */}
             <button onClick={() => setSortAZ(!sortAZ)} className="warehouse-btn">
               {sortAZ ? "Annulla A-Z" : "A-Z"}
             </button>
@@ -92,36 +75,15 @@ const OrdersTable = ({
             className="px-3 py-2 bg-white/40 border border-white/30 rounded-xl shadow-sm text-sm w-full sm:w-60 focus:outline-none placeholder:text-gray-600 backdrop-blur-md"
           />
 
-          <select
-            value={selectedProductId}
-            onChange={(e) => {
-              const value = e.target.value;
-              setSelectedProductId(value);
-
-              if (value !== "default" && typeof onAddProduct === "function") {
-                onAddProduct(value);
-                setSelectedProductId("default");
-              }
-            }}
-            className="warehouse-btn"
-          >
-            <option value="default">Aggiungi prodotto</option>
-            {productsOptions.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.nome || p.name}
-              </option>
-            ))}
-          </select>
-
+          {/* bottone Nuovo Ordine passato dal parent */}
           {customToolbar}
-
         </div>
       </div>
 
       {/* TABELLA */}
       <div className="w-full overflow-x-auto rounded-xl border border-white/10">
         <table className="w-full text-xs sm:text-sm text-[#090c64] border-auto">
-
+          {/* HEADER */}
           <thead>
             <tr className="bg-white/40 backdrop-blur-md text-[#090c64] border-y border-white/10">
               {columns.map((item, idx) => {
@@ -138,6 +100,7 @@ const OrdersTable = ({
                 );
               })}
 
+              {/* colonna azioni solo se actionLabel è valorizzato */}
               {actionLabel && (
                 <th className="p-3 whitespace-nowrap text-center">
                   {actionLabel}
@@ -146,6 +109,7 @@ const OrdersTable = ({
             </tr>
           </thead>
 
+          {/* BODY */}
           <tbody>
             {filteredData.map((row, i) => {
               const isOpen = openRowId === row.id;
@@ -160,66 +124,31 @@ const OrdersTable = ({
                     className="rounded-xl"
                     style={{ transition: "none" }}
                   >
-
                     {columns.map((col, j) => {
-
-                      // STATO
+                      // STATO → solo testo
                       if (col === "stato") {
                         return (
                           <td key={j} className="p-3 text-center">
-                            <select
-                              value={row.stato || ""}
-                              onClick={(e) => e.stopPropagation()}
-                              onChange={(e) => {
-                                e.stopPropagation();
-                                onUpdateStatus?.(row.id, e.target.value);
-                              }}
-                              className="bg-transparent border-none text-xs cursor-pointer focus:outline-none text-center"
-                            >
-                              <option value="" disabled>
-                                Seleziona stato
-                              </option>
-                              {statusOpts.map((s) => (
-                                <option key={s} value={s}>
-                                  {s}
-                                </option>
-                              ))}
-                            </select>
+                            {row.stato || "-"}
                           </td>
                         );
                       }
 
-                      // CORRIERE
+                      // CORRIERE → solo testo
                       if (col === "corriere") {
                         return (
                           <td key={j} className="p-3 text-center">
-                            <select
-                              value={row.corriere || ""}
-                              onClick={(e) => e.stopPropagation()}
-                              onChange={(e) => {
-                                e.stopPropagation();
-                                onUpdateCarrier?.(row.id, e.target.value);
-                              }}
-                              className="bg-transparent border-none text-xs cursor-pointer focus:outline-none text-center"
-                            >
-                              <option value="" disabled>
-                                Seleziona corriere
-                              </option>
-                              {courierOpts.map((c) => (
-                                <option key={c} value={c}>
-                                  {c}
-                                </option>
-                              ))}
-                            </select>
+                            {row.corriere || "-"}
                           </td>
                         );
                       }
 
-                      // PRODOTTO
+                      // PRODOTTO → freccia apri/chiudi dettaglio
                       if (col === "prodotto") {
                         return (
                           <td key={j} className="p-3">
                             <div className="flex items-center gap-3">
+                              {/* FRECCIA */}
                               <span
                                 className={`cursor-pointer text-base transition-transform ${
                                   isOpen ? "rotate-180" : ""
@@ -238,7 +167,7 @@ const OrdersTable = ({
                         );
                       }
 
-                      // TOTALE
+                      // TOTALE → formattato €
                       if (col === "totale") {
                         return (
                           <td key={j} className="p-3 text-center">
@@ -247,19 +176,22 @@ const OrdersTable = ({
                         );
                       }
 
+                      // CELLE NORMALI
                       const centered = centeredCols.includes(col);
                       return (
                         <td
                           key={j}
                           className={`p-3 ${centered ? "text-center" : ""}`}
                         >
-                          {row[col] ?? "-"}
+                          {row[col] !== null && row[col] !== undefined
+                            ? String(row[col])
+                            : "-"}
                         </td>
                       );
                     })}
 
-                    {/* AZIONI */}
-                    {actions && (
+                    {/* AZIONI → cestino ecc. */}
+                    {actions && actions.length > 0 && (
                       <td className="p-3 flex gap-2 items-center justify-center">
                         {actions.map((action) => (
                           <button
@@ -274,26 +206,29 @@ const OrdersTable = ({
                     )}
                   </tr>
 
-                  {/* DETTAGLI */}
+                  {/* FINESTRELLA DETTAGLI */}
                   {isOpen && (
                     <tr>
                       <td colSpan={totalColumns} className="p-4">
                         <div className="rounded-2xl bg-[rgba(255,255,255,0.14)] backdrop-blur-xl border border-white/20 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.06)] flex flex-col gap-6">
-
                           {/* IMG + INFO PRODOTTO */}
                           <div className="flex flex-col md:flex-row gap-3 items-start">
+                            {/* IMG PRODOTTO */}
                             <div className="shrink-0 flex justify-center md:justify-start">
                               {row.prodottoDettaglio?.img && (
                                 <img
                                   src={row.prodottoDettaglio.img}
-                                  alt={row.prodottoDettaglio.nome || "Immagine prodotto"}
+                                  alt={
+                                    row.prodottoDettaglio.nome ||
+                                    "Immagine prodotto"
+                                  }
                                   className="max-w-[140px] rounded-2xl object-cover shadow-md border border-white/40 bg-white/40"
                                 />
                               )}
                             </div>
 
+                            {/* TESTO + PREZZO */}
                             <div className="flex-1 flex flex-col justify-between gap-3 mt-1.5">
-
                               <div>
                                 <h3 className="font-bold text-[#090c64]">
                                   Dettagli
@@ -307,193 +242,96 @@ const OrdersTable = ({
                                 </p>
                               </div>
 
-                              {/* RIORDINO */}
                               <div className="text-right flex flex-col items-end gap-2">
-
                                 <p className="text-sm font-semibold text-[#090c64]">
                                   Prezzo unitario:{" "}
                                   {row.prodottoDettaglio?.prezzo
                                     ? formatEuro(row.prodottoDettaglio.prezzo)
                                     : "-"}
                                 </p>
-
-                                <div className="flex items-center gap-2 text-xs text-gray-700">
-
-                                  <button
-                                    className="warehouse-btn text-[10px]"
-                                    onClick={() => {
-                                      const qty = reorderQty[row.id] || 0;
-                                      onReorderStock?.(row.id, qty);
-
-                                      // svuoto input
-                                      setReorderQty((prev) => ({
-                                        ...prev,
-                                        [row.id]: "",
-                                      }));
-                                    }}
-                                  >
-                                    Riordino per magazzino
-                                  </button>
-
-                                  <input
-                                    type="number"
-                                    className="w-20 custom-input text-xs text-right"
-                                    placeholder="Qtà"
-                                    value={reorderQty[row.id] || ""}
-                                    onChange={(e) =>
-                                      setReorderQty((prev) => ({
-                                        ...prev,
-                                        [row.id]: e.target.value,
-                                      }))
-                                    }
-                                  />
-
-                                </div>
                               </div>
                             </div>
                           </div>
 
-                          {/* CLIENTI */}
+                          {/* TITOLINO CLIENTI */}
                           <div className="flex items-center justify-between mt-2">
                             <h4 className="text-xs font-semibold text-[#090c64]">
                               Dettagli clienti ({row.clienti.length})
                             </h4>
-
-                            <select
-                              defaultValue="default"
-                              className="warehouse-btn text-xs"
-                              onChange={(e) => {
-                                const value = e.target.value;
-                                if (value === "default") return;
-                                onAddClient?.(row.id, value);
-                                e.target.value = "default";
-                              }}
-                            >
-                              <option value="default">+ Aggiungi cliente</option>
-                              {customersOptions.map((c) => (
-                                <option key={c.id} value={c.id}>
-                                  {c.nome} ({c.citta})
-                                </option>
-                              ))}
-                            </select>
                           </div>
 
                           {/* GRID CLIENTI */}
                           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                            {row.clienti.map((cliente) => (
+                              <div
+                                key={cliente.id}
+                                className="rounded-2xl bg-[rgba(255,255,255,0.15)] border border-white/20 backdrop-blur-lg p-4 shadow-sm text-xs text-[#090c64] flex flex-col gap-1"
+                              >
+                                {/* DATI CLIENTE */}
+                                <p className="font-bold">{cliente.nome}</p>
+                                <p>{cliente.email}</p>
+                                <p>Tel: {cliente.telefono}</p>
+                                <p>
+                                  {cliente.indirizzo}, {cliente.citta}{" "}
+                                  {cliente.cap}
+                                </p>
 
-                            {row.clienti.map((cliente) => {
-                              const isEditing =
-                                editingClient &&
-                                editingClient.orderId === row.id &&
-                                editingClient.clientId === cliente.id;
-
-                              const currentQty =
-                                (isEditing && editingClientForm?.qty) ?? cliente.qty;
-
-                              return (
-                                <div
-                                  key={cliente.id}
-                                  className="rounded-2xl bg-[rgba(255,255,255,0.15)] border border-white/20 backdrop-blur-lg p-4 shadow-sm text-xs text-[#090c64] flex flex-col gap-1"
-                                >
-                                  <p className="font-bold">{cliente.nome}</p>
-                                  <p>{cliente.email}</p>
-                                  <p>Tel: {cliente.telefono}</p>
-                                  <p>
-                                    {cliente.indirizzo}, {cliente.citta} {cliente.cap}
-                                  </p>
-
-                                  <div className="flex justify-between mt-2 items-center">
-                                    <div className="flex items-center gap-2">
-                                      <span>Qty:</span>
-
-                                      {isEditing ? (
-                                        <input
-                                          type="number"
-                                          min="0"
-                                          className="w-16 custom-input text-xs"
-                                          value={currentQty}
-                                          onChange={(e) =>
-                                            setEditingClientForm((prev) => ({
-                                              ...(prev || {}),
-                                              qty: e.target.value,
-                                            }))
-                                          }
-                                        />
-                                      ) : (
-                                        <strong>{cliente.qty}</strong>
-                                      )}
-                                    </div>
-
-                                    <span>
-                                      Tot:{" "}
-                                      <strong>
-                                        {formatEuro(cliente.totale)}
-                                      </strong>
-                                    </span>
+                                {/* QTY + TOTALE SOLO TESTO */}
+                                <div className="flex justify-between mt-2 items-center">
+                                  <div className="flex itemscenter gap-2">
+                                    <span>Qty:</span>
+                                    <strong>{cliente.qty}</strong>
                                   </div>
-
-                                  <div className="flex justify-end gap-2 mt-2">
-                                    {isEditing ? (
-                                      <>
-                                        <button
-                                          className="warehouse-btn text-xs"
-                                          onClick={() => {
-                                            setEditingClient(null);
-                                            setEditingClientForm(null);
-                                          }}
-                                        >
-                                          Annulla
-                                        </button>
-                                        <button
-                                          className="warehouse-btn text-xs"
-                                          onClick={() => {
-                                            onUpdateClient(row.id, cliente.id, {
-                                              qty: editingClientForm?.qty,
-                                            });
-                                            setEditingClient(null);
-                                            setEditingClientForm(null);
-                                          }}
-                                        >
-                                          Salva
-                                        </button>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <button
-                                          className="warehouse-btn text-xs"
-                                          onClick={() => {
-                                            setEditingClient({
-                                              orderId: row.id,
-                                              clientId: cliente.id,
-                                            });
-                                            setEditingClientForm({
-                                              qty: cliente.qty,
-                                            });
-                                          }}
-                                        >
-                                          Modifica
-                                        </button>
-
-                                        <button
-                                          className="warehouse-btn text-xs"
-                                          onClick={() =>
-                                            onDeleteClient(row.id, cliente.id)
-                                          }
-                                        >
-                                          Elimina
-                                        </button>
-                                      </>
-                                    )}
-                                  </div>
+                                  <span>
+                                    Tot:{" "}
+                                    <strong>
+                                      {formatEuro(cliente.totale)}
+                                    </strong>
+                                  </span>
                                 </div>
-                              );
-                            })}
+                              </div>
+                            ))}
                           </div>
+
+                          {/* RIEPILOGO QUANTITÀ / GIACENZA */}
+                          {(() => {
+                            const totalQuantity =
+                              Number(row["quantità totale"]) || 0;
+                            const totClientQty = Array.isArray(row.clienti)
+                              ? row.clienti.reduce(
+                                  (sum, c) => sum + (Number(c.qty) || 0),
+                                  0
+                                )
+                              : 0;
+                            const giacenza = totalQuantity - totClientQty;
+
+                            return (
+                              <div className="mt-4 flex flex-wrap gap-4 justify-end text-xs text-[#090c64]">
+                                <div>
+                                  <span className="font-semibold">
+                                    Totale ordinato clienti:{" "}
+                                  </span>
+                                  <span>{totClientQty}</span>
+                                </div>
+                                <div>
+                                  <span className="font-semibold">
+                                    Quantità totale prodotto:{" "}
+                                  </span>
+                                  <span>{totalQuantity}</span>
+                                </div>
+                                <div>
+                                  <span className="font-semibold">
+                                    Giacenza:{" "}
+                                  </span>
+                                  <span>{giacenza}</span>
+                                </div>
+                              </div>
+                            );
+                          })()}
                         </div>
                       </td>
                     </tr>
                   )}
-
                 </>
               );
             })}
