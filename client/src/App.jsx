@@ -9,9 +9,6 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 // Pagine pubbliche
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage.jsx";
-import SettingsPage from "./pages/SettingsPage.jsx";
-import TicketPageAdmin from "./pages/Ticketing/TicketPageAdmin.jsx";
-import TicketCreator from "./pages/Ticketing/TicketCreator.jsx";
 import PasswordRecoveryPage from "./pages/PasswordRecoveryPage.jsx";
 
 // Pagine protette
