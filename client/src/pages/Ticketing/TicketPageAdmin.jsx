@@ -17,52 +17,88 @@ import { addDays } from "date-fns";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
+/**
+ * ===== COMPONENTE: TicketPageAdmin =====
+ * 
+ * SCOPO: Pagina amministrativa per visualizzare e gestire TUTTI i ticket
+ * 
+ * FEATURES PRINCIPALI:
+ * 1. GRAFICO: Mostra l'andamento dei ticket nel tempo (aperti, risolti, totale)
+ * 2. CALENDARIO: Filtra i ticket per intervallo di date
+ * 3. FILTRI: Per utente e per status
+ * 4. LISTA INTERATTIVA: Click su ticket o grafico per aprire dettagli
+ * 5. DRAWER: Pannello laterale per vedere dettagli e cambiare lo status
+ * 
+ * INTERATTIVITÀ:
+ * - Click su punto del grafico → evidenzia quella data + apre drawer del primo ticket
+ * - Click su ticket nella lista → apre drawer con dettagli
+ * - Click su "Aperto"/"Risolto" nel drawer → aggiorna status sul server
+ * 
+ * SINCRONIZZAZIONE:
+ * - Quando si aggiorna uno status, ricarica tutti i ticket
+ * - Questo fa sì che anche TicketCreator veda i cambiamenti (stesso store Redux)
+ */
 const TicketPageAdmin = () => {
-  /* STATI PRINCIPALI*/
+  /* ===== STATI PRINCIPALI =====*/
   const dispatch = useDispatch();
-  const tickets = useSelector((state) => state.tickets.tickets);
-  const users = useSelector((state) => state.tickets.users);
-  const ticketsStatus = useSelector((state) => state.tickets.status);
-  const ticketsError = useSelector((state) => state.tickets.error);
+  
+  // DATI DA REDUX (stato globale condiviso)
+  const tickets = useSelector((state) => state.tickets.tickets);     // Array di tutti i ticket
+  const users = useSelector((state) => state.tickets.users);         // Array di utenti
+  const ticketsStatus = useSelector((state) => state.tickets.status); // "idle", "loading", ecc.
+  const ticketsError = useSelector((state) => state.tickets.error);   // Messaggio di errore
 
-  // highlightDate: data selezionata tramite grafico o lista
-  const [highlightDate, setHighlightDate] = useState("");
-  const itemRefs = useRef({});
-  const [selectedUser, setSelectedUser] = useState("");
-  const [userSearch, setUserSearch] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
+  // STATI LOCALI (privati di questo componente)
+  const [highlightDate, setHighlightDate] = useState(""); // Data evidenziata nel grafico
+  const itemRefs = useRef({}); // Riferimenti agli elementi DOM per lo scroll
+  const [selectedUser, setSelectedUser] = useState("");  // Utente selezionato nel filtro
+  const [userSearch, setUserSearch] = useState("");     // Testo di ricerca utente
+  const [selectedStatus, setSelectedStatus] = useState(""); // Status selezionato nel filtro
 
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);   // Drawer aperto/chiuso
+  const [selectedTicket, setSelectedTicket] = useState(null); // Ticket selezionato nel drawer
 
+  // ticketStatus: mappa locale degli status (aperto/risolto) per ogni ticket
+  // Serve per aggiornamenti ottimistici nell'UI
   const [ticketStatus, setTicketStatus] = useState({});
-  const [hiddenLines, setHiddenLines] = useState([]);
+  const [hiddenLines, setHiddenLines] = useState([]); // Linee nascoste nel grafico
 
+  // STATO: Intervallo di date selezionato
+  // Default: ultimi 30 giorni fino ad oggi
   const [state, setState] = useState([
     {
-      // default range: ultimi 30 giorni fino ad oggi (inclusi)
-      startDate: addDays(new Date(), -30),
-      endDate: new Date(),
+      startDate: addDays(new Date(), -30), // 30 giorni fa
+      endDate: new Date(),                 // Oggi
       key: "selection"
     }
   ]);
 
-  /* CARICAMENTO DATI (FAKE API) tramite Redux slice */
-
+  /**
+   * EFFETTO: Caricamento iniziale dei ticket
+   * 
+   * QUANDO SI ESEGUE: Solo se non ci sono ticket e lo status è "idle"
+   * COSA FA: Chiama fetchTickets per caricare i dati dal server
+   */
   useEffect(() => {
     if ((tickets?.length || 0) === 0 && ticketsStatus === "idle") {
       dispatch(fetchTickets());
     }
   }, [dispatch, tickets?.length, ticketsStatus]);
 
-  // Initialize ticketStatus when tickets arrive
+  /**
+   * EFFETTO: Inizializza la mappa degli status
+   * 
+   * QUANDO SI ESEGUE: Ogni volta che l'array dei ticket cambia
+   * COSA FA: Crea una mappa { ticketId: "aperto" | "risolto" }
+   * PERCHÉ: Permette di gestire aggiornamenti ottimistici nell'UI
+   */
   useEffect(() => {
     if (tickets && tickets.length > 0) {
       setTicketStatus(
         Object.fromEntries(
           tickets.map((t) => {
             const id = t._id || t.id;
-            // derive local status: prefer italian values if present, else map english backend
+            // Normalizza: "open" → "aperto", "closed" → "risolto"
             let s = t.status || "aperto";
             if (s === "open") s = "aperto";
             if (s === "closed") s = "risolto";
@@ -73,44 +109,87 @@ const TicketPageAdmin = () => {
     }
   }, [tickets]);
 
-  /* FILTRAGGIO*/
+  /* ===== FUNZIONI DI UTILITÀ ===== */
+  
+  /**
+   * FUNZIONE: formatDateVisible
+   * Formatta una data in formato leggibile italiano (es: "12 dic")
+   */
   const formatDateVisible = (date) =>
     new Date(date).toLocaleDateString("it-IT", {
       day: "numeric",
       month: "short"
     });
 
+  /**
+   * MEMO: filteredTickets
+   * 
+   * COSA SONO I MEMO?
+   * useMemo "memorizza" il risultato di un calcolo costoso.
+   * Il calcolo si riesegue solo quando cambiano le dipendenze.
+   * 
+   * QUESTA MEMO:
+   * Filtra i ticket in base a:
+   * 1. Intervallo di date selezionato
+   * 2. Utente selezionato
+   * 3. Status selezionato (aperto/risolto)
+   * 
+   * PERCHÉ USARE MEMO?
+   * Evita di ricalcolare il filtro ad ogni render, migliorando le performance
+   */
   const filteredTickets = useMemo(() => {
     const start = state?.[0]?.startDate ? new Date(state[0].startDate) : null;
     const end = state?.[0]?.endDate ? new Date(state[0].endDate) : null;
 
     return tickets.filter((ticket) => {
+      // FILTRO 1: Data del ticket
       const rawDate = ticket.date || ticket.createdAt || ticket.updatedAt;
       const ticketDate = new Date(rawDate);
-
       const matchDate = (!start || ticketDate >= start) && (!end || ticketDate <= end);
 
+      // FILTRO 2: Utente
       const ticketUserId = ticket.user?._id || ticket.user?.id || ticket.user;
       const matchUser = !selectedUser || ticketUserId === selectedUser;
 
+      // FILTRO 3: Status
       const tid = ticket._id || ticket.id;
       const matchStatus = !selectedStatus || ticketStatus[tid] === selectedStatus;
 
+      // Il ticket passa se soddisfa TUTTI i filtri
       return matchDate && matchUser && matchStatus;
     });
   }, [tickets, state, selectedUser, selectedStatus, ticketStatus]);
 
-  /* DATA PER GRAFICO*/
+  /**
+   * MEMO: lineChartData
+   * 
+   * COSA FA: Prepara i dati per il grafico LineChart
+   * 
+   * PROCESSO:
+   * 1. Raggruppa i ticket per data (YYYY-MM-DD)
+   * 2. Per ogni data, conta quanti ticket sono aperti, risolti e il totale
+   * 3. Ritorna un array di oggetti { date, aperti, risolti, totale }
+   * 
+   * ESEMPIO OUTPUT:
+   * [
+   *   { date: "2025-12-01", aperti: 5, risolti: 3, totale: 8 },
+   *   { date: "2025-12-02", aperti: 7, risolti: 2, totale: 9 },
+   *   ...
+   * ]
+   */
   const lineChartData = useMemo(() => {
-    const grouped = {};
+    const grouped = {}; // Oggetto per raggruppare: { "2025-12-01": { aperti: 5, ... } }
 
     filteredTickets.forEach((t) => {
+      // Estrai la data in formato YYYY-MM-DD
       const rawDate = t.date || t.createdAt || t.updatedAt || new Date().toISOString();
-      const key = rawDate.split("T")[0];
+      const key = rawDate.split("T")[0]; // "2025-12-01T10:30:00" → "2025-12-01"
 
+      // Inizializza l'oggetto per questa data se non esiste
       if (!grouped[key])
         grouped[key] = { date: key, aperti: 0, risolti: 0, totale: 0 };
 
+      // Incrementa i contatori in base allo status
       const tid = t._id || t.id;
       const status = ticketStatus[tid];
 
@@ -120,9 +199,14 @@ const TicketPageAdmin = () => {
       grouped[key].totale++;
     });
 
+    // Converti l'oggetto in array: { "2025-12-01": {...} } → [ {...}, {...} ]
     return Object.values(grouped);
   }, [filteredTickets, ticketStatus]);
 
+  /**
+   * MEMO: totals
+   * Calcola i totali globali (somma di tutti i giorni) per la legenda
+   */
   const totals = useMemo(() => {
     const t = { aperti: 0, risolti: 0, totale: 0 };
     lineChartData.forEach((d) => {
@@ -133,14 +217,25 @@ const TicketPageAdmin = () => {
     return t;
   }, [lineChartData]);
 
+  /**
+   * FUNZIONE: toggleLine
+   * Nasconde/mostra una linea nel grafico
+   * (es: nascondere la linea "totale" per vedere meglio aperti/risolti)
+   */
   const toggleLine = (key) => {
     setHiddenLines((prev) =>
       prev.includes(key)
-        ? prev.filter((k) => k !== key)
-        : [...prev, key]
+        ? prev.filter((k) => k !== key) // Rimuovi dalla lista (mostra)
+        : [...prev, key]                // Aggiungi alla lista (nascondi)
     );
   };
 
+  /**
+   * FUNZIONE: getColor
+   * Ritorna le classi CSS per colorare una card in base allo status
+   * - "risolto" → giallo (#FFD580)
+   * - "aperto" (default) → blu (#A3B8E0)
+   */
   const getColor = (status) => {
     switch (status) {
       case "risolto":
@@ -475,21 +570,27 @@ const TicketPageAdmin = () => {
                 </div>
               </div>
 
+              {/* AZIONI: Pulsanti per cambiare lo status del ticket */}
               <div className="flex flex-col gap-2 mb-4">
+                {/* PULSANTE: Segna come APERTO */}
                 <div
                   className="p-2 flex justify-center items-center rounded-xl bg-[#A3B8E0]
                   border border-[#7A9CC6] cursor-pointer hover:bg-[#C3D2F0]"
                   onClick={async () => {
                     const id = selectedTicket._id || selectedTicket.id;
                     if (!id) return;
-                    // optimistic UI: update local map immediately
+                    
+                    // 1. AGGIORNAMENTO OTTIMISTICO: cambia subito l'UI
                     setTicketStatus((s) => ({ ...s, [id]: "aperto" }));
+                    
                     try {
-                      // backend expects 'open' / 'closed'
+                      // 2. AGGIORNA SUL SERVER: invia richiesta PUT
                       await dispatch(updateTicketAsync({ id, payload: { status: 'open' } })).unwrap();
+                      
+                      // 3. RICARICA TUTTI I TICKET: così anche TicketCreator vede il cambiamento
                       dispatch(fetchTickets());
                     } catch (err) {
-                      // revert on error
+                      // 4. SE FALLISCE: ripristina lo stato precedente
                       setTicketStatus((s) => ({ ...s, [id]: "risolto" }));
                       console.error('Update ticket failed', err);
                     }
@@ -498,18 +599,20 @@ const TicketPageAdmin = () => {
                   Aperto
                 </div>
 
+                {/* PULSANTE: Segna come RISOLTO */}
                 <div
                   className="p-2 flex justify-center items-center rounded-xl bg-[#FFD580]
                   border border-[#FFE8A0] cursor-pointer hover:bg-[#FFE8A0]"
                   onClick={async () => {
                     const id = selectedTicket._id || selectedTicket.id;
                     if (!id) return;
+                    
                     setTicketStatus((s) => ({ ...s, [id]: "risolto" }));
+                    
                     try {
                       await dispatch(updateTicketAsync({ id, payload: { status: 'closed' } })).unwrap();
-                      dispatch(fetchTickets());
+                      dispatch(fetchTickets()); // Sincronizza con altri componenti
                     } catch (err) {
-                      // revert on error
                       setTicketStatus((s) => ({ ...s, [id]: "aperto" }));
                       console.error('Update ticket failed', err);
                     }
