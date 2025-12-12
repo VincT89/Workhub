@@ -77,9 +77,9 @@ const AddCustomerForm = ({ onAdd }) => {
             {/* Bottone che apre il drawer */}
             <button
                 onClick={() => setIsOpen(true)}
-                className="px-3 py-2 bg-[#090c64] font-bold border border-white rounded-xl shadow-sm text-sm text-white cursor-pointer transition"
+                className="px-3 py-2 bg-[#090c64] font-bold border border-white rounded-xl shadow-sm text-sm text-white cursor-pointer transition custom-button"
             >
-                ➕ Aggiungi Cliente
+                  <span className="font-bold text-center mr-2 ">+</span>Aggiungi Cliente
             </button>
 
             {/* Drawer */}
@@ -248,7 +248,7 @@ const AddCustomerForm = ({ onAdd }) => {
                         </button>
                         <button 
                             type="submit"
-                            className="px-4 py-2 bg-[#090c64] text-white rounded-xl hover:bg-[#1a1f8c] transition"
+                            className="px-4 py-2 bg-[#090c64] text-white rounded-xl hover:bg-[#1a1f8c] transition custom-button"
                         >
                             Salva Cliente
                         </button>

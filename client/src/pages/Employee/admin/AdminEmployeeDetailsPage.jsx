@@ -323,7 +323,7 @@ const AdminEmployeeDetailsPage = () => {
 
 	if (!anagrafica) return <p className="p-4">{t("employees.nessunDipendenteTrovato")}</p>;
 	return (
-		<div className="w-full h-full flex flex-col gap-8 overflow-y-auto p-4">
+		<div className=" adminEmployee w-full h-full flex flex-col gap-8 overflow-y-auto p-4">
 			{/* TOP BOX */}
 			<div className="grid grid-cols-4 gap-6 mb-6 w-full">
 				{topButtons.map((btn, i) => (
@@ -345,7 +345,7 @@ const AdminEmployeeDetailsPage = () => {
 				{/* ANAGRAFICA */}
 				<div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
 					<div className="flex items-center gap-3 mb-4">
-						<UserCircleIcon size={32} color="#090c64" weight="duotone" />
+						<UserCircleIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
 						<h2 className={`text-lg font-bold ${textColor}`}>
 							{t("employees.anagrafica")}
 						</h2>
@@ -383,7 +383,7 @@ const AdminEmployeeDetailsPage = () => {
 				{/* TURNI (ADMIN CONFIGURA) */}
 				<div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md backdrop-blur-sm bg-white/20">
 					<div className="flex items-center gap-3 mb-2">
-						<CalendarCheckIcon size={32} color="#090c64" weight="duotone" />
+						<CalendarCheckIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
 						<h2 className={`text-lg font-bold leading-none ${textColor}`}>
 							{t("employees.turniSettimanali")}
 						</h2>
@@ -459,7 +459,7 @@ const AdminEmployeeDetailsPage = () => {
 												}}
 												className="p-2 bg-white/60 rounded-xl cursor-pointer"
 											>
-												<TrashIcon size={18} color="#090c64" weight="duotone" />
+												<TrashIcon size={18} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
 											</button>
 										)}
 									</div>

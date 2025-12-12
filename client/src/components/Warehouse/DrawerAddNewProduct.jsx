@@ -42,21 +42,36 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
     setResults(filtered); // aggiorna lo stato con i risultati
   };
 
-  // Funzione per aggiungere quantità a un prodotto
-  const handleAddStock = (itemId) => {
-    if (!quantity || quantity <= 0) return; // non aggiunge se quantità non valida
+  // Funzione per modificare la quantità di un prodotto specifico per id
+  const handleAddStock = async (itemId) => {
+    if (!quantity || quantity === 0) return alert("Inserisci quantità valida");
+    try {
+      const resultAction = await dispatch(updateItemQuantity({ id: itemId, quantityToAdd: Number(quantity) }));
 
-    // Invio azione Redux per aggiornare lo stock
-    dispatch(updateItemQuantity({ id: itemId, quantityToAdd: Number(quantity) }));
 
-    // Resetta input e risultati
-    setQuantity(1);
-    setSearch("");
-    setResults([]);
+      if (updateItemQuantity.fulfilled.match(resultAction)) {
+        // successo: puoi mostrare toast o alert
+        alert(`Stock aggiornato: ${resultAction.payload.stock}`);
+        // reset UI
+        setQuantity(1);
+        setSearch("");
+        setResults([]);
+        onClose();
+      } else {
+        // errore
+        const err = resultAction.payload || resultAction.error?.message;
+        alert("Errore: " + err);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Errore imprevisto");
+    }
   };
+
 
   // Se il drawer non è aperto, non renderizza nulla
   if (!open) return null;
+
 
   return (
     <div className="fixed inset-0 z-50">

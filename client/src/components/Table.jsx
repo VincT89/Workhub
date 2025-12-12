@@ -87,7 +87,7 @@ const Table = ({
 			{/* RESPONSIVE SCROLL WRAPPER */}
 			<div className="w-full overflow-x-auto rounded-xl">
 				<table className="w-full text-xs sm:text-sm text-[#090c64] border-auto">
-					<thead>
+					<thead className="font-bold bg-white/30">
 						<tr className="bg-white/60 text-[#090c64]">
 							{columns.map((item, idx) => (
 								<th

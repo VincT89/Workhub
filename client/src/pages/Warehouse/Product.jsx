@@ -109,7 +109,7 @@ const Product = () => {
             <div className="flex flex-col gap-3 text-[#090c64]">
               <div className="grid grid-cols-2 bg-white/40 rounded-lg p-2 shadow-sm">
                 <span>ID</span>
-                <span>{item._id}</span>
+                <span className="break-all">{item._id}</span> {/* break-all per spezzare stringhe lunghe senza spazi */ }
               </div>
               <div className="grid grid-cols-2 bg-white/40 rounded-lg p-2 shadow-sm">
                 <span>Nome</span>

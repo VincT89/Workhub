@@ -60,9 +60,9 @@ const WarehouseTable = ({ data, columns }) => {
       .map(p => p.product?.category?.name)
       .filter(Boolean); // rimuove null/undefined/vuoti
 
-    return ["Categorie", ...new Set(names)];
+    return ["Tutte le categorie", ...new Set(names)];
   }, [data]);
-  console.log(" categorie", data.map(i => i.product?.category));
+  console.log("categorie", data.map(i => i.product?.category));
 
 
   //? ---------- DATA PROCESSING ----------
@@ -82,7 +82,7 @@ const WarehouseTable = ({ data, columns }) => {
     }
 
     // Filtro per categoria
-    if (selectedCategory !== "Categorie") {
+    if (selectedCategory !== "Tutte le categorie") {
       result = result.filter(p => p.product?.category?.name === selectedCategory);
     }
 
@@ -115,21 +115,21 @@ const WarehouseTable = ({ data, columns }) => {
 
       {/* ---------- TOOLBAR CON FILTRI ---------- */}
       <div className="flex flex-wrap items-center gap-3 mb-3">
-        <h2 className="text-[#134a7b] text-lg font-bold"> Warehouse </h2>
+        <h2 className="text-lg font-bold"> Warehouse </h2>
 
         {/* Ordinamento A-Z */}
         <button
           onClick={() => dispatch(toggleSortAZ())}
-          className="warehouse-btn"
+          className="custom-button text-[14px]"
         >
-          {sortAZ ? "Z-A" : "A-Z"}
+          {sortAZ ? " Ordina Z-A" : " Ordina A-Z"}
         </button>
 
         {/* Filtro categoria */}
         <select
           value={selectedCategory}
           onChange={e => dispatch(setSelectedCategory(e.target.value))}
-          className="warehouse-btn focus:outline-none focus:ring-0" //focus:outline-none focus:ring-0 PER TOGLIERE BORDO BLU DI DEFAULT DI SELECT
+          className="custom-button text-[14px] focus:outline-none focus:ring-0" //focus:outline-none focus:ring-0 PER TOGLIERE BORDO BLU DI DEFAULT DI SELECT
         >
           {categories.map(c => (
             <option key={c} value={c}>{c}</option>
@@ -148,7 +148,7 @@ const WarehouseTable = ({ data, columns }) => {
         {/* Articoli in esaurimento */}
         <button
           onClick={() => dispatch(toggleLowStockFilter())}
-          className="warehouse-btn"
+          className="custom-button text-[14px]"
         >
           {lowStockFilter ? "Mostra tutti" : "Articoli in esaurimento"}
           {/* operatore ternario (ternary expression) --> condizione ? valore_se_vero : valore_se_falso 
@@ -158,7 +158,7 @@ const WarehouseTable = ({ data, columns }) => {
         {/* Bottone Drawer. Disponibilità in altre sedi */}
         <button
           onClick={() => setDrawerOpen(true)}
-          className="warehouse-btn"
+          className="custom-button text-[14px]"
         >
           Disponibilità in altre sedi
         </button>
@@ -167,7 +167,7 @@ const WarehouseTable = ({ data, columns }) => {
       {/* ---------- TABELLA CON DATI ---------- */}
       <table className="w-full border-collapse text-sm text-[#090c64]">
 
-        <thead>
+        <thead className="font-bold bg-white/30">
           <tr className="bg-white/60 rounded-xl text-center">
             {columns.map((c, i) => (
               <th

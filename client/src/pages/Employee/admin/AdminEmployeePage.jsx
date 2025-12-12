@@ -55,12 +55,12 @@ const AdminEmployeePage = () => {
     {
       label: t("employees.dipendentiAttivi"),
       value: employees.length,
-      icon: <UsersThreeIcon size={28} color="#090c64" weight="duotone" />,
+      icon: <UsersThreeIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />,
     },
     {
       label: t("employees.dipendentiInattivi"),
       value: 4,
-      icon: <UserCircleMinusIcon size={28} color="#090c64" weight="duotone" />,
+      icon: <UserCircleMinusIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />,
     },
   ];
 
@@ -203,7 +203,7 @@ const AdminEmployeePage = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col gap-8 overflow-y-auto p-4">
+    <div className="adminEmployee w-full h-full flex flex-col gap-8 overflow-y-auto p-4">
       {/* STATISTICHE + AGGIUNGI DIPENDENTE */}
       <section className="grid grid-cols-3 gap-6 mb-2 w-full items-center">
         {stats.map((stat, i) => (
@@ -327,7 +327,7 @@ const AdminEmployeePage = () => {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-[#090c64] text-white rounded-xl"
+                className="px-4 py-2 bg-[#090c64] text-white rounded-xl custom-button"
               >
                 {t("employees.crea")}
               </button>
@@ -349,13 +349,13 @@ const AdminEmployeePage = () => {
           placeholder={t("employees.cercaDipendente")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="p-2 rounded-lg border flex-1"
+          className="p-2 rounded-lg border flex-1 focus:outline-none focus:ring-2 focus:ring-[#090c64]"
         />
         <button
           onClick={() => setSortAsc(!sortAsc)}
-          className="p-2 bg-[#090c64] text-white rounded-lg"
+          className="p-2 bg-[#090c64] text-white rounded-lg w-40 custom-button text-[14px]"
         >
-          {sortAsc ? "A-Z" : "Z-A"}
+          {sortAsc ? " Ordina A-Z" : "Ordina Z-A"}
         </button>
       </div>
 
@@ -367,7 +367,7 @@ const AdminEmployeePage = () => {
 
         <div className="overflow-y-auto h-full">
           <table className="min-w-full text-sm text-center">
-            <thead className="font-bold">
+            <thead className="font-bold bg-white/30">
               <tr>
                 <th>{t("employees.foto")}</th>
                 <th>{t("employees.nome")}</th>
@@ -382,10 +382,10 @@ const AdminEmployeePage = () => {
               {filteredEmployees.map((e) => (
                 <tr
                   key={e._id}
-                  className="bg-white/30 hover:bg-white/70 transition rounded-xl"
+                  className="bg-white/20 hover:bg-white/20 transition rounded-xl"
                 >
                   <td className="py-2 flex justify-center">
-                    <UserCircleIcon size={34} color="#090c64" weight="duotone" />
+                    <UserCircleIcon size={34} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
                   </td>
 
                   <td
@@ -402,11 +402,11 @@ const AdminEmployeePage = () => {
                   <td>
                     <div className="flex justify-center gap-3">
                       <button onClick={() => openEditDrawer(e)}>
-                        <NotePencilIcon size={28} color="#090c64" weight="duotone" />
+                        <NotePencilIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
                       </button>
 
                       <button onClick={() => handleDeleteUser(e)}>
-                        <TrashIcon size={28} color="red" weight="duotone" />
+                        <TrashIcon size={28} color={theme === "dark" ? "#ff4d4d" : "#ff0000"} weight="duotone" />
                       </button>
                     </div>
                   </td>

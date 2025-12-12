@@ -54,6 +54,16 @@ export const getAllItems = async (req, res) => {
     // senza .populate apparirebbero solo gli ID dei documenti correlati a quei models, 
     // cioè i dettgli dei riferimenti definiti nello schema (product e pointOfSales)
 
+
+    // DEBUG: verifica cosa arriva da MongoDB
+    console.log("verifica categorie",
+      allItems.map(i => ({
+        product: i.product?.name,
+        category: i.product?.category?.name
+      }))
+    );
+
+
     res.json(allItems); // Risponde(res) al client con un JSON contenente tutti i prodotti
   } catch (error) { // Se c’è un errore risponde con status 500 (errore server)
     console.error(error);
@@ -109,6 +119,38 @@ export const updateItem = async (req, res) => {
     res.json(updatedItem);
   } catch (error) {
     return handleRouteErrors(res, { error });
+  }
+};
+
+
+//@ Controller per modificare la quantità di un item usando $inc
+// AGGIORNA SOLO LO STOCK DI UN ITEM ($inc)
+
+/* $inc è un operatore di MongoDB che incrementa (o decrementa, se passi valore negativo) 
+il valore di un campo numerico in modo atomico sulla singola riga del DB. */
+export const updateItemQuantity = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { quantityToAdd } = req.body;
+
+    if (!quantityToAdd || isNaN(quantityToAdd)) {
+      return res.status(400).json({ error: "Quantità non valida" });
+    }
+    
+    // Esegui l'update atomico con $inc e restituisci il documento aggiornato
+    const updatedItem = await Item.findByIdAndUpdate(
+      id,
+      { $inc: { stock: quantityToAdd } },
+      { new: true }
+    );
+
+    if (!updatedItem) {
+      return res.status(404).json({ error: "Item non trovato" });
+    }
+
+    res.json(updatedItem);
+  } catch (error) {
+    res.status(500).json({ error: "Errore server", details: error.message });
   }
 };
 

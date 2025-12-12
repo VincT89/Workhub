@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchItems } from "../../store/feature/itemsSlice";
 import { addItem } from "../../store/feature/itemsSlice";
+import { useTheme } from "../../context/ThemeContext.jsx";
 
 
 import WarehouseTable from "../../components/Warehouse/WarehouseTable";
@@ -16,6 +17,8 @@ const WarehousePage = () => {
   const dispatch = useDispatch();
   const items = useSelector(state => state.items.list);
   const status = useSelector(state => state.items.status);
+  const { theme } = useTheme();
+   const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 
   console.log("items", items)
 
@@ -39,13 +42,13 @@ const WarehousePage = () => {
     {
       label: "Totale articoli",
       number: items.length,
-      icon: <WarehouseIcon size={32} color="#090c64" weight="duotone" />,
+      icon: <WarehouseIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />,
 
       clickable: false
     },
     {
       label: "Carica giacenza",
-      icon: <PlusCircleIcon size={32} color="#090c64" weight="duotone" />,
+      icon: <PlusCircleIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />,
       clickable: true,
       onClick: () => setDrawerAddOpen(true)
     },
@@ -73,9 +76,9 @@ const WarehousePage = () => {
             >
               {btn.icon}
               <span className="inline-flex items-baseline gap-2">
-                <span className="font-bold">{btn.label}</span>
+                <span className={`font-bold ${textColor}`}>{btn.label}</span>
                 {btn.number !== undefined && (
-                  <span className="text-sm opacity-70 leading-none">{btn.number}</span>
+                  <span className={`text-sm opacity-70 leading-none ${textColor}`}>{btn.number}</span>
                 )}
               </span>
             </button>

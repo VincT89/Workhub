@@ -7,16 +7,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { setActiveTab } from "../../store/feature/tabSlice.js";
+import { useTheme } from "../../context/ThemeContext";
 import Table from "../../components/Table";
 import {
-    UserList,
-    ShoppingBag,
-    ArrowCounterClockwise,
-    IdentificationBadge,
-    PencilSimple,
-    FloppyDisk,
-    XCircle,
-    FileXls
+    UserListIcon,
+    ShoppingBagIcon,
+    ArrowCounterClockwiseIcon,
+    IdentificationBadgeIcon,
+    PencilSimpleIcon,
+    FloppyDiskIcon,
+    XCircleIcon,
+    FileXlsIcon
 } from "@phosphor-icons/react";
 import { 
     fetchCustomerByIdAsync, 
@@ -31,6 +32,8 @@ const CustomersRegistry = () => {
     const { id } = useParams(); // useParams() estrae i parametri dall'URL (es: /customer/123 → id = "123")
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
+    const { theme } = useTheme(); // Prende il tema corrente (dark o light) dal contesto ThemeContext
     
     // useSelector() legge i dati dallo stato Redux
     // selected: customer selezionato, loading: stato caricamento, error: eventuali errori
@@ -141,9 +144,9 @@ const CustomersRegistry = () => {
     }, [error, dispatch]);
 
     const stats = [
-        { label: "Anagrafica", icon: UserList },
-        { label: "Ordini", icon: ShoppingBag },
-        { label: "Affiliazione", icon: IdentificationBadge },
+        { label: "Anagrafica", icon: UserListIcon },
+        { label: "Ordini", icon: ShoppingBagIcon },
+        { label: "Affiliazione", icon: IdentificationBadgeIcon },
     ];
 
     // PER ORA lasciamo array vuoti 
@@ -196,10 +199,10 @@ const CustomersRegistry = () => {
                             key={item.label}
                             onClick={() => dispatch(setActiveTab(item.label))}
                             className={`flex items-center gap-2 rounded-xl p-2 shadow-md border border-white transition duration-200 cursor-pointer ${activeTab === item.label
-                                ? "bg-white text-[#134a7b] font-semibold"
+                                ? "bg-white text-[#090c64] font-semibold"
                                 : "bg-white/40 hover:bg-white/70"
                                 }`}>
-                            <item.icon size={22} />
+                            <item.icon size={22}  weight="duotone" />
                             {item.label}
                         </button>
                     ))}
@@ -222,9 +225,9 @@ const CustomersRegistry = () => {
                                 {!isEditing ? (
                                     <button
                                         onClick={handleEdit}
-                                        className="flex items-center gap-1 text-sm px-3 py-1 bg-white/70 rounded-xl border border-white shadow-sm hover:bg-white transition"
+                                        className="flex items-center gap-1 text-sm px-3 py-1 bg-white/30 rounded-xl border border-white shadow-sm hover:bg-white transition"
                                     >
-                                        <PencilSimple size={22} color="#090c64" weight="duotone" /> Modifica
+                                        <PencilSimpleIcon size={22} color="#090c64" weight="duotone" /> Modifica
                                     </button>
                                 ) : (
                                     <div className="flex gap-2">
@@ -233,14 +236,14 @@ const CustomersRegistry = () => {
                                             disabled={saving}
                                             className="flex items-center gap-1 text-sm px-3 py-1 bg-green-200 rounded-xl border border-white shadow-sm hover:bg-green-300 transition disabled:opacity-50"
                                         >
-                                            <FloppyDisk size={22} color="#090c64" weight="duotone" /> 
+                                            <FloppyDiskIcon size={22} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" /> 
                                             {saving ? 'Salvando...' : 'Salva'}
                                         </button>
                                         <button
                                             onClick={handleCancel}
                                             className="flex items-center gap-1 text-sm px-3 py-1 bg-red-200 rounded-xl border border-white shadow-sm hover:bg-red-300 transition"
                                         >
-                                            <XCircle size={22} color="#090c64" weight="duotone" /> Annulla
+                                            <XCircleIcon size={22} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" /> Annulla
                                         </button>
                                     </div>
                                 )}
@@ -250,7 +253,7 @@ const CustomersRegistry = () => {
                             <div className="grid grid-cols-2 gap-3">
 
                                 {/* First Name */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -266,7 +269,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* Last Name */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -282,7 +285,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* Email */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm col-span-2">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm col-span-2">
                                     {isEditing ? (
                                         <input
                                             type="email"
@@ -298,7 +301,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* Phone */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -314,7 +317,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* Fiscal Code */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -330,7 +333,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* Birth Date */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm col-span-2">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm col-span-2">
                                     {isEditing ? (
                                         <input
                                             type="date"
@@ -345,7 +348,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* Address */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm col-span-2">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm col-span-2">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -361,7 +364,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* City */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -377,7 +380,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* State */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -393,7 +396,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* ZIP Code */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -409,7 +412,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* Country */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -433,16 +436,16 @@ const CustomersRegistry = () => {
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center mb-2">
                                 <h3 className="text-[#134a7b] font-semibold text-left">Storico Ordini</h3>
-                                <button className="flex items-center gap-1 text-sm px-3 py-1 bg-white/70 rounded-xl border border-white shadow-sm hover:bg-white transition">
-                                    <FileXls size={22} color="#090c64" weight="duotone" /> Excel
+                                <button className="flex items-center gap-1 font-bold text-sm px-3 py-1 bg-white/30 rounded-xl border border-white shadow-sm hover:bg-white transition">
+                                    <FileXlsIcon size={22} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" /> Excel
                                 </button>
                             </div>
                             {ordiniFittizi.length > 0 ? (
                                 <Table data={ordiniFittizi} columns={Object.keys(ordiniFittizi[0])} />
                             ) : (
-                                <div className="bg-white/60 p-4 rounded-xl text-center">
-                                    <p className="text-[#134a7b]">Nessun ordine trovato</p>
-                                    <p className="text-sm text-gray-600">Gli ordini verranno gestiti in futuro</p>
+                                <div className="bg-white/20 p-4 rounded-xl text-center">
+                                    <p className="font-bold">Nessun ordine trovato</p>
+                                    <p className="text-sm">Gli ordini verranno gestiti in futuro</p>
                                 </div>
                             )}
                         </div>
@@ -458,26 +461,25 @@ const CustomersRegistry = () => {
                                 {/* ========= BOTTONE EXCEL CHE USA LA FUNZIONE AGGIUNTA ========= */}
                                 <button
                                     onClick={exportAffiliateToExcel}
-                                    className="flex items-center gap-1 text-sm px-3 py-1 bg-white/70 rounded-xl border border-white shadow-sm hover:bg-white transition"
-                                >
-                                    <FileXls size={22} color="#090c64" weight="duotone" /> Excel
+                                    className="flex items-center gap-1 font-bold text-sm px-3 py-1 bg-white/30 rounded-xl border border-white shadow-sm hover:bg-white transition">
+                                    <FileXlsIcon size={22} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" /> Excel
                                 </button>
                                 {/* ================================================================= */}
                             </div>
 
-                            <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                            <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                 <strong>Livello tessera:</strong> {customer.affiliateProgram.name}
                             </div>
 
-                            <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                            <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                 <strong>Punti accumulati:</strong> {customer.affiliateProgram.points}
                             </div>
 
-                            <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                            <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                 <strong>Numero tessera:</strong> {customer.affiliateProgram.cardNumber}
                             </div>
 
-                            <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                            <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                 <strong>Programma fedeltà:</strong> Attivo
                             </div>
                         </div>
@@ -489,9 +491,9 @@ const CustomersRegistry = () => {
                             <div className="flex justify-between items-center mb-2">
                                 <h3 className="text-[#134a7b] font-semibold">Affiliazione</h3>
                             </div>
-                            <div className="bg-white/60 p-4 rounded-xl text-center">
-                                <p className="text-[#134a7b]">Nessun programma fedeltà attivo</p>
-                                <p className="text-sm text-gray-600">Il cliente non è iscritto al programma fedeltà</p>
+                            <div className="bg-white/20 p-4 rounded-xl text-center">
+                                <p className="font-bold">Nessun programma fedeltà attivo</p>
+                                <p className="text-sm">Il cliente non è iscritto al programma fedeltà</p>
                             </div>
                         </div>
                     )}
