@@ -221,7 +221,7 @@ const OrdersTable = ({
 														</div>
 
 														{/* TESTO + PREZZO */}
-														<div className="flex-1 flex flex-col justify-between gap-3 mt-[6px]">
+														<div className="flex-1 flex flex-col justify-between gap-3 mt-1.5">
 															<div>
 																<h3 className="font-bold text-[#090c64] text-sm md:text-base">
 																	Dettagli prodotto
