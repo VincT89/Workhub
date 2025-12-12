@@ -14,6 +14,7 @@ import {
 } from "@phosphor-icons/react";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
 	fetchEventsAsync,
 	createEventAsync,
@@ -29,6 +30,7 @@ import Drawer from "../components/Drawer";
 const BoardPage = () => {
 	const { theme } = useTheme();
 	const { t } = useLanguage();
+	const navigate = useNavigate();
 	const { role } = useSelector((state) => state.auth.user);
 	const token = useSelector((state) => state.auth.token);
 	const users = useSelector((state) => state.users); // per richiamare i dati del personale (nelle box in alto)
@@ -322,18 +324,22 @@ const BoardPage = () => {
 						<h3 className="text-[14px] font-bold font-nunito">
 							{t("dashboard.prodottiInEsaurimento")}
 						</h3>
+						<button
+							onClick={() => navigate("/warehouse")}
+							className="ml-auto px-4 py-2 bg-white dark:bg-[#090c64] text-[#090c64] dark:text-white shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[14px] font-bold cursor-pointer custom-button"
+						>
+							{t("dashboard.vediTutti")}
+						</button>
 					</div>
 
 					{/* TABELLA */}
 					<div className="w-full overflow-hidden h-full mt-3">
 						<Table
-							data={lowStockProducts
-								.slice(0, 3)
-								.map((item) => ({
-									name: item.product.name,
-									stock: item.stock,
-									pos: item.pointOfSales.name,
-								}))}
+							data={lowStockProducts.slice(0, 3).map((item) => ({
+								name: item.product.name,
+								stock: item.stock,
+								pos: item.pointOfSales.name,
+							}))}
 							columns={["name", "stock", "pos"]}
 							columnLabels={{
 								name: t("dashboard.prodotto"),
