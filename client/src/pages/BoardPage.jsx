@@ -192,7 +192,7 @@ const BoardPage = () => {
 						</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
-						{orders?.list?.length ?? 0}
+						{orders?.items?.length ?? 0}
 					</span>
 				</div>
 

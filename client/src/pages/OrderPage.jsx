@@ -47,24 +47,6 @@ const OrderPage = () => {
 
   const { theme } = useTheme();//dark mode
 
-  //→ Aggiunge una nuova riga alla lista clientRows
-  const handleAddClientRow = () => {
-    //→(prev) = l'array che c'era prima
-    //→[...prev, copia tutto quello che c'era prima=spread
-    //{...}=nuova riga vuota
-    setClientRows((prev) => [...prev, { customerId: "", qty: "" }]);
-  };
-
-  //→ serve per modificare una singola riga dei clienti
-  //→ field= quale campo vuoi cambiare
-  //→ value= il nuovo valore
-  const handleClientChange = (index, field, value) => {
-    setClientRows((prev) =>
-      //→ map= serve per creare un nuvo array trasformando ogni elemento
-      prev.map((row, i) => (i === index ? { ...row, [field]: value } : row))
-    );
-  };
-
   const products = useSelector((state) => state.products.list);
   const pointOfSales = useSelector((state) => state.pos.list); //punti vendita
   const customers = useSelector((state) => state.customers.list);
@@ -82,74 +64,70 @@ const OrderPage = () => {
     dispatch(fetchCustomersAsync(token));
   }, [dispatch, token]);
 
-  //Bottone → Crea (dentro nuovo ordine) → Drawer
-  const handleCreateOrder = (e) => {
-    // → non ricarica la pagina
-    e.preventDefault();
+  //→ Aggiunge una nuova riga alla lista clientRows
+  const handleAddClientRow = () => {
+    setClientRows((prev) => [...prev, { customerId: "", qty: "" }]);
+  };
 
-    // → Prendo tutti i valori che ho scritto nel form
-    // e li metto in un’unica scatola chiamata formData
-    const formData = new FormData(e.target);
-
-    const pointOfSaleId = formData.get("pointOfSaleId");
-    const productId = formData.get("productId");
-
-    // Number → converte la stringa in numero
-    // → Prendo dal form la quantità totale, la trasformo in numero,
-    //   e se non è valida metto 0, e la salvo
-    const totalQuantity = Number(formData.get("totalQuantity")) || 0;
-
-    //→ punto vendita
-    const pointOfSale = pointOfSales?.find(
-      (pv) => String(pv._id) === String(pointOfSaleId)
+  //→ serve per modificare una singola riga dei clienti
+  const handleClientChange = (index, field, value) => {
+    setClientRows((prev) =>
+      prev.map((row, i) => (i === index ? { ...row, [field]: value } : row))
     );
-    const pointOfSaleName = pointOfSale?.name || "";
+  };
 
-    //  Cerco il prodotto vero dentro Redux
-    const productFromStore = products?.find(
-      (p) => String(p._id) === String(productId)
-    );
+  // DATI ADATTATI PER LA TABELLA (DAL BACKEND)
+  const ordersForTable = orders.map((o) => {
+    const prodottoDettaglio = o.product;
+    const prezzoUnitario = prodottoDettaglio?.price || 0;
 
-    const prezzoUnitario = productFromStore?.price || 0;
-    const nomeProdotto = productFromStore?.name || "Prodotto";
+    const clienti = o.clients.map((c) => ({
+      ...c.client,
+      qty: c.quantity,
+      totale: c.quantity * prezzoUnitario,
+    }));
 
-    //  DETTAGLI CLIENTI
-    const clientiDettaglio = clientRows
-      .filter((row) => row.customerId && row.qty !== "")
-      .map((row) => {
-        const customer = customers?.find(
-          (c) => String(c._id) === String(row.customerId)
-        );
-
-        const qtyNumber = Number(row.qty) || 0;
-
-        return {
-          ...customer,
-          qty: qtyNumber,
-          totale: qtyNumber * prezzoUnitario,
-        };
-      });
-
-    // → calcolo il totale dell’intero ordine in euro
-    const totaleOrdine = clientiDettaglio.reduce(
+    const totale = clienti.reduce(
       (sum, c) => sum + (c.totale || 0),
       0
     );
 
-    const newOrder = {
-      prodotto: nomeProdotto,
-      "quantità totale": totalQuantity,
-      data: new Date().toLocaleDateString("it-IT"),
-      stato: "In preparazione",
-      corriere: "Bartolini",
-      totale: Number(totaleOrdine.toFixed(2)),
-      prodottoDettaglio: productFromStore,
-      clienti: clientiDettaglio,
-      pointOfSaleId,
-      pointOfSaleName,
+    return {
+      _id: o._id,
+      prodotto: prodottoDettaglio?.name,
+      "quantità totale": o.totalQuantity,
+      data: new Date(o.createdAt).toLocaleDateString("it-IT"),
+      stato: o.stato || "In lavorazione",
+      corriere: o.corriere || "Bartolini",
+      totale: Number(totale.toFixed(2)),
+      prodottoDettaglio,
+      clienti,
+    };
+  });
+
+  //Bottone → Crea (dentro nuovo ordine) → Drawer
+  const handleCreateOrder = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const totalQuantity = Number(formData.get("totalQuantity")) || 0;
+
+    // PAYLOAD PER IL BACKEND (Joi)
+    const orderPayload = {
+      pointOfSales: selectedPointOfSaleId,
+      product: selectedProductId,
+      totalQuantity,
+      clients: clientRows
+        .filter((row) => row.customerId && row.qty !== "")
+        .map((row) => ({
+          client: row.customerId,
+          quantity: Number(row.qty),
+        })),
     };
 
-    dispatch(createOrder({newOrder, token}));
+    dispatch(createOrder({ orderData: orderPayload, token })).then(() => {
+			dispatch(fetchOrders({ token }));
+		});
 
     // Chiudo drawer e resetto tutto
     setDrawerOpen(false);
@@ -161,7 +139,7 @@ const OrderPage = () => {
 
   // CESTINO/ELIMINA
   const handleDeleteOrder = (orderId) => {
-    dispatch(deleteOrder(orderId));
+    dispatch(deleteOrder({ id: orderId, token }));
   };
 
   return (
@@ -204,7 +182,7 @@ const OrderPage = () => {
               ))}
             </select>
 
-            {/* QUANTITÀ TOTALE (spostata accanto al prodotto) */}
+            {/* QUANTITÀ TOTALE */}
             <input
               name="totalQuantity"
               type="number"
@@ -284,7 +262,7 @@ const OrderPage = () => {
 
       {/* TABELLA ORDINI */}
       <OrdersTable
-        data={orders}
+        data={ordersForTable}
         columns={orderColumns}
         customToolbar={
           <button
