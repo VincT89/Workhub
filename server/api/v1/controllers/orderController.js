@@ -1,9 +1,4 @@
 import OrderModel from "../../../db/models/Order.js";
-import ProductsModel from "../../../db/models/Product.js";
-import ClientModel from "../../../db/models/Client.js";
-import AffiliateProgramModel from "../../../db/models/AffiliateProgram.js";
-
-import { calculateAffiliatePoints } from "../../../utils/orders.js";
 import { formatResponse } from "../../../utils/format.js";
 
 import Joi from "joi";
@@ -38,10 +33,11 @@ const createOrderSchema = Joi.object({
     .required(),
 
   stato: Joi.string().valid("Inviato", "In lavorazione", "Consegnato").default("Inviato"),
-  corriere: Joi.string().default("Bartolini"), // 🔥 Default richiesto
+  corriere: Joi.string().default("Da assegnare"),
   note: Joi.string().allow("").optional(),
 
 }).unknown(false);
+
 
 // -----------------------------
 // SCHEMA UPDATE
@@ -64,10 +60,9 @@ const updateOrderSchema = Joi.object({
 
 }).unknown(false);
 
-const PREMIUM_THRESHOLD = 10;
 
 // =====================================================================
-//                               CREATE
+//                              CREATE
 // =====================================================================
 export const createOrder = async (req, res) => {
   try {
@@ -79,47 +74,9 @@ export const createOrder = async (req, res) => {
       });
     }
 
-    // 1. Creo l'ordine
     const order = new OrderModel(req.body);
     await order.save();
 
-    // 2. Recupero il prodotto (serve il prezzo per i punti)
-    const product = await ProductsModel.findById(order.product);
-    if (!product) {
-      return res.status(400).json({ error: "Prodotto non trovato" });
-    }
-
-    // 3. Ciclo i clienti per assegnare punti e aggiornare livello
-    for (const c of order.clients) {
-      const client = await ClientModel.findById(c.client).populate("affiliateProgram");
-      if (!client) continue;
-
-      // Incremento numero ordini
-      client.ordersCount = (client.ordersCount || 0) + 1;
-
-      // Upgrade premium
-      if (client.ordersCount >= PREMIUM_THRESHOLD) {
-        client.affiliateType = "premium";
-      }
-
-      await client.save();
-
-      // Calcolo importo relativo del cliente
-      const customerAmount = c.quantity * product.price;
-
-      // Calcolo punti
-      const points = calculateAffiliatePoints(customerAmount, client.affiliateType);
-
-      // Aggiorno affiliate program con $inc
-      if (client.affiliateProgram) {
-        await AffiliateProgramModel.updateOne(
-          { _id: client.affiliateProgram },
-          { $inc: { points: points } }
-        );
-      }
-    }
-
-    // 4. Restituisco ordine popolato
     const populated = await order.populate([
       "pointOfSales",
       "product",
@@ -133,8 +90,9 @@ export const createOrder = async (req, res) => {
   }
 };
 
+
 // =====================================================================
-//                               READ ALL
+//                              READ ALL
 // =====================================================================
 export const getOrders = async (req, res) => {
   try {
@@ -150,8 +108,9 @@ export const getOrders = async (req, res) => {
   }
 };
 
+
 // =====================================================================
-//                               READ ONE
+//                              READ ONE
 // =====================================================================
 export const getOrderById = async (req, res) => {
   try {
@@ -170,8 +129,9 @@ export const getOrderById = async (req, res) => {
   }
 };
 
+
 // =====================================================================
-//                               UPDATE
+//                              UPDATE
 // =====================================================================
 export const updateOrder = async (req, res) => {
   try {
@@ -202,8 +162,9 @@ export const updateOrder = async (req, res) => {
   }
 };
 
+
 // =====================================================================
-//                               DELETE
+//                              DELETE
 // =====================================================================
 export const deleteOrder = async (req, res) => {
   try {

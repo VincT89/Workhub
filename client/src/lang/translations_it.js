@@ -43,7 +43,8 @@ export const it = {
 		chiudi: "Chiudi",
 		prodotto: "Prodotto",
 		giacenza: "Giacenza",
-		pos: "Sede"
+		pos: "Sede",
+		vediTutti: "Vedi Tutti",
 	},
 
 	customers: {

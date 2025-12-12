@@ -11,10 +11,10 @@ import {
 /* CREATE */
 export const createOrder = createAsyncThunk(
   "orders/createOrder",
-  async ({ orderData, token }, { rejectWithValue }) => {
+  async (orderData, { rejectWithValue }) => {
     try {
-      const { res, data } = await createOrderRequest({ orderData, token });
-      if (!res.ok)  throw new Error(data?.error || "Errore nella creazione ordine");
+      const { res, data } = await createOrderRequest(orderData);
+      if (!res.ok) throw new Error("Errore nella creazione ordine");
       return data;
     } catch (err) {
       return rejectWithValue(err.message);
@@ -28,10 +28,8 @@ export const fetchOrders = createAsyncThunk(
   async ({ token }, { rejectWithValue }) => {
     try {
       const { res, data } = await fetchOrdersRequest({ token });
-      if (!res.ok) throw new Error(data?.error || "Errore nel recupero ordini");
-
-      // formatResponse può restituire sia {data: [...]} che array diretto
-      return data?.data || data;
+      if (!res.ok) throw new Error("Errore nel recupero ordini");
+      return data.data;
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -41,10 +39,10 @@ export const fetchOrders = createAsyncThunk(
 /* FETCH ONE */
 export const fetchOrderById = createAsyncThunk(
   "orders/fetchOrderById",
-  async ({ id, token }, { rejectWithValue }) => {
+  async (id, { rejectWithValue }) => {
     try {
-      const { res, data } = await fetchOrderByIdRequest({id, token});
-      if (!res.ok) throw new Error(data?.error || "Ordine non trovato");
+      const { res, data } = await fetchOrderByIdRequest(id);
+      if (!res.ok) throw new Error("Ordine non trovato");
       return data;
     } catch (err) {
       return rejectWithValue(err.message);
@@ -55,10 +53,10 @@ export const fetchOrderById = createAsyncThunk(
 /* UPDATE */
 export const updateOrder = createAsyncThunk(
   "orders/updateOrder",
-  async ({ id, data, token }, { rejectWithValue }) => {
+  async ({ id, data }, { rejectWithValue }) => {
     try {
-      const { res, data: updated } = await updateOrderRequest({ id, data, token });
-      if (!res.ok) throw new Error(updated?.error || "Errore nell’aggiornamento ordine");
+      const { res, data: updated } = await updateOrderRequest({ id, data });
+      if (!res.ok) throw new Error("Errore nell’aggiornamento ordine");
       return updated;
     } catch (err) {
       return rejectWithValue(err.message);
@@ -69,9 +67,9 @@ export const updateOrder = createAsyncThunk(
 /* DELETE */
 export const deleteOrder = createAsyncThunk(
   "orders/deleteOrder",
-  async ({ id, token }, { rejectWithValue }) => {
+  async (id, { rejectWithValue }) => {
     try {
-      const { res } = await deleteOrderRequest({ id, token });
+      const { res } = await deleteOrderRequest(id);
       if (!res.ok) throw new Error("Errore nell’eliminazione ordine");
       return id;
     } catch (err) {
@@ -95,7 +93,6 @@ const orderSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      /* CREATE */
       .addCase(createOrder.pending, (state) => {
         state.loading = true;
       })
@@ -108,7 +105,6 @@ const orderSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* FETCH ALL */
       .addCase(fetchOrders.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -123,7 +119,6 @@ const orderSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* FETCH ONE */
       .addCase(fetchOrderById.pending, (state) => {
         state.loading = true;
       })
@@ -136,13 +131,14 @@ const orderSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* UPDATE */
       .addCase(updateOrder.pending, (state) => {
         state.loading = true;
       })
       .addCase(updateOrder.fulfilled, (state, action) => {
         state.loading = false;
-        const idx = state.items.findIndex((o) => o._id === action.payload._id);
+        const idx = state.items.findIndex(
+          (o) => o._id === action.payload._id
+        );
         if (idx !== -1) state.items[idx] = action.payload;
       })
       .addCase(updateOrder.rejected, (state, action) => {
@@ -150,7 +146,6 @@ const orderSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* DELETE */
       .addCase(deleteOrder.pending, (state) => {
         state.loading = true;
       })
