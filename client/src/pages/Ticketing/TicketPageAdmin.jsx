@@ -8,6 +8,7 @@ import {
   UserList,
   Circle
 } from "@phosphor-icons/react";
+import bgLight from "../../assets/bg/bg.jpg";
 //Libreria per Grafico
 import { LineChart } from "@mui/x-charts/LineChart";
 //Libreria per calendario date
@@ -519,24 +520,42 @@ const TicketPageAdmin = () => {
         </div>
       </div>
 
-      {/* DRAWER LATERALE*/}
-      <div
-        className={`fixed inset-0 z-50 transition-all duration-300 ${drawerOpen
-          ? "bg-black/40 visible"
-          : "bg-transparent invisible"
-          }`}
-        onClick={() => setDrawerOpen(false)}
-      >
-        <div
-          className={`absolute right-0 top-0 h-full w-80 bg-white shadow-xl p-6 transition-transform duration-300
-          ${drawerOpen ? "translate-x-0" : "translate-x-full"}`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {selectedTicket && (
-            <>
-              <h3 className="font-semibold text-xl mb-4">
+      {/* DRAWER LATERALE - Stile uguale a Drawer.jsx */}
+      {drawerOpen && (
+        <div className="fixed inset-0 z-50">
+          {/* Overlay scuro */}
+          <div
+            className="absolute inset-0 bg-black/30"
+            onClick={() => setDrawerOpen(false)}
+          />
+
+          {/* Drawer vera */}
+          <aside
+            className="absolute right-0 top-0 h-full w-[420px] border-l border-white/40 shadow-2xl transform transition-transform duration-300 translate-x-0 overflow-auto bg-cover bg-center"
+            style={{ backgroundImage: `url(${bgLight})` }}
+            role="dialog"
+            aria-modal="true"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header sticky con bordo */}
+            <header className="sticky top-0 z-10 border-b border-white/60 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-base font-semibold text-[#090c64]">
                 Dettagli Ticket
-              </h3>
+              </h2>
+
+              {/* Bottone Chiudi */}
+              <button
+                onClick={() => setDrawerOpen(false)}
+                className="custom-button"
+              >
+                Chiudi
+              </button>
+            </header>
+
+            {/* Contenuto */}
+            <div className="p-6 text-[15px] leading-relaxed text-[#090c64]">
+              {selectedTicket && (
+                <>
 
               <div className="flex flex-col gap-3 mb-4 p-2 bg-gray-50 rounded-xl border border-gray-200">
                 <div className="flex items-center gap-3">
@@ -622,16 +641,12 @@ const TicketPageAdmin = () => {
                 </div>
               </div>
 
-              <button
-                onClick={() => setDrawerOpen(false)}
-                className="w-full bg-gray-300 text-gray-800 py-2 rounded-lg hover:bg-gray-400"
-              >
-                Chiudi
-              </button>
-            </>
-          )}
+                </>
+              )}
+            </div>
+          </aside>
         </div>
-      </div>
+      )}
     </div>
   );
 };

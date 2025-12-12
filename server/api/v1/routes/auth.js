@@ -15,7 +15,7 @@ app.post("/login", login); // pubblica, non richiede autenticazione dopo il path
  * POST /api/v1/auth/register
  * Protetta → solo admin
  */
-app.post("/register", authUser, requireAdmin, register); // solo admin dopo il path ci sono i middleware authUser e requireAdmin e poi il controller register
+app.post("/register", requireAdmin, register); // solo admin dopo il path ci sono i middleware authUser e requireAdmin e poi il controller register
 
 /**
  * POST /api/v1/auth/recover
