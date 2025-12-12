@@ -55,13 +55,13 @@ export const getAllItems = async (req, res) => {
     // cioè i dettgli dei riferimenti definiti nello schema (product e pointOfSales)
 
 
-    // DEBUG: verifica cosa arriva da MongoDB
-    console.log("verifica categorie",
-      allItems.map(i => ({
-        product: i.product?.name,
-        category: i.product?.category?.name
-      }))
-    );
+    // // DEBUG: verifica cosa arriva da MongoDB
+    // console.log("verifica categorie",
+    //   allItems.map(i => ({
+    //     product: i.product?.name,
+    //     category: i.product?.category?.name
+    //   }))
+    // );
 
 
     res.json(allItems); // Risponde(res) al client con un JSON contenente tutti i prodotti
