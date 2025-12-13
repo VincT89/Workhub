@@ -126,7 +126,7 @@ const TicketCreator = ({ user }) => {
       >
         {isLoading ? "Creando..." : "+ Crea Ticket"}
       </button>
-
+              
       {/* Status message */}
       {creatorStatus === "loading" && (
         <div className="mt-3 text-sm text-blue-600 bg-blue-50 p-2 rounded border border-blue-200">
