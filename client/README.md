@@ -151,29 +151,37 @@ UI dedicata con Drawer per aggiunta/modifica.
 - `GET /users`
 - `POST /users`
 - `PATCH /users/:id`
-- `DELETE /users/:id`
+- `DELETE /users/:id` *solo admin*
 
 ###  Eventi
 - `GET /events`
-- `POST /events` *(solo admin/supervisor)*
+- `POST /events` *solo admin*
 - `PATCH /events/:id`
 - `DELETE /events/:id`
 
 ###  Dipendenti
-- CRUD completo  
-- Turni, reparti, dettagli lavorativi  
+- `GET /employees`
+- `POST /employees`
+- `PATCH /employees/:id`
+- `DELETE /employees/:id` 
 
 ###  Magazzino
-- `GET /products`
-- `POST /products`
-- `PATCH /products/:id`
-- `DELETE /products/:id`
+- `GET /items`
+- `POST /items`
+- `PATCH /items/:id`
+- `DELETE /items/:id`
 
 ###  Ordini
-- CRUD ordini
+- `GET /orders`
+- `POST /orders`
+- `PATCH /orders/:id`
+- `DELETE /orders/:id`
 
 ###  Ticket
-- CRUD ticket
+- `GET /tickets`
+- `POST /tickets`
+- `PATCH /tickets/:id`
+- `DELETE /tickets/:id`
 
 ---
 
@@ -209,12 +217,13 @@ UI dedicata con Drawer per aggiunta/modifica.
 ---
 
 ### Aggiornamenti
-1. SISTEMAZIONE DARK MODE E MULTILINGUA - `IN ATTESA MODIFICHE PAGINE`
-2. Login e autenticazione JWT - `COMPLETATO`
-3. Gestione utenti e dipendenti - `COMPLETATO`
-4. Calendario turni ed eventi con react-big-calendar - `COMPLETATO`
-5. Bacheca eventi aziendali - `COMPLETATO` 
-6. Gestione magazzino - `IN PROGRESS`
-7. Gestione clienti - `IN PROGRESS`
-8. Gestione ticketing - `IN PROGRESS`
-9. Gestione ordini - `IN PROGRESS`
+1. DARK MODE - `COMPLETATO`
+2. MULTILINGUA - ` mancano solo clienti, magazzino, ticketing, ordini`  
+3. Login e autenticazione JWT - `COMPLETATO`
+4. Gestione utenti e dipendenti - `COMPLETATO`
+5. Calendario turni ed eventi con react-big-calendar - `COMPLETATO`
+6. Bacheca eventi aziendali - `COMPLETATO` 
+7. Gestione magazzino - `COMPLETATO`
+8. Gestione clienti - `COMPLETATO - solo richiamare ordini per cliente`
+9. Gestione ticketing - `COMPLETATO`
+10. Gestione ordini - `test in corso`
