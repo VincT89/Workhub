@@ -80,17 +80,17 @@ const UserEmployeePage = () => {
     {
       label: t("employees.giorniLavorati"),
       number: 215,
-      icon: <CalendarCheckIcon size={28} color="#090c64" weight="duotone" />,
+      icon: <CalendarCheckIcon size={28} color={theme === "dark" ? "white" : "#090c64"}weight="duotone" />,
     },
     {
       label: t("employees.ferieResidue"),
       number: leave?.vacationHours ?? 0,
-      icon: <BagIcon size={28} color="#090c64" weight="duotone" />,
+      icon: <BagIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />,
     },
     {
       label: t("employees.permessi"),
       number: leave?.leaveHours ?? 0,
-      icon: <CalendarBlankIcon size={28} color="#090c64" weight="duotone" />,
+      icon: <CalendarBlankIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />,
     },
   ];
 
@@ -180,11 +180,6 @@ const UserEmployeePage = () => {
   const [oraInizio, setOraInizio] = useState("08:00");
   const [oraFine, setOraFine] = useState("18:00");
 
-  const buttonClass = `
-    mt-4 bg-[#090c64] text-white font-semibold px-6 py-3
-    rounded-xl shadow-md cursor-pointer transition-all duration-200
-    w-fit text-center
-  `;
 
   const formatDate = (date) => {
     if (!date) return "";
@@ -289,7 +284,7 @@ const UserEmployeePage = () => {
         {/* ANAGRAFICA */}
         <div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
           <div className="flex items-center gap-3 mb-4">
-            <UserCircleIcon size={32} color="#090c64" weight="duotone" />
+            <UserCircleIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
             <h2 className={`text-lg font-bold ${textColor}`}>
               {t("employees.anagrafica")}
             </h2>
@@ -330,7 +325,7 @@ const UserEmployeePage = () => {
         {/* TURNI */}
         <div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
           <div className="flex items-center gap-3 mb-4">
-            <CalendarCheckIcon size={32} color="#090c64" weight="duotone" />
+            <CalendarCheckIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
             <h2 className={`text-lg font-bold ${textColor}`}>
               {t("employees.turniSettimanali")}
             </h2>
@@ -368,13 +363,13 @@ const UserEmployeePage = () => {
         <div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <BagIcon size={32} color="#090c64" weight="duotone" />
+              <BagIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
               <h2 className={`text-lg font-bold ${textColor}`}>
                 {t("employees.ferie")}
               </h2>
             </div>
             <button
-              className={buttonClass}
+              className="custom-button"
               onClick={() => setOpenFerieDrawer(true)}
             >
               {t("employees.richiestaFerie")}
@@ -403,13 +398,13 @@ const UserEmployeePage = () => {
         <div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md bg-white/20 backdrop-blur-sm">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <CalendarCheckIcon size={32} color="#090c64" weight="duotone" />
+              <CalendarCheckIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
               <h2 className={`text-lg font-bold ${textColor}`}>
                 {t("employees.permessi")}
               </h2>
             </div>
             <button
-              className={buttonClass}
+              className="custom-button"
               onClick={() => setOpenPermessiDrawer(true)}
             >
               {t("employees.richiestaPermessi")}
@@ -466,7 +461,7 @@ const UserEmployeePage = () => {
           </div>
 
           <button
-            className={`${buttonClass} w-full py-3`}
+            className= "custom-button w-full py-3"
             onClick={handleInviaFerie}
           >
             {t("Invia Richiesta Ferie")}
@@ -515,7 +510,7 @@ const UserEmployeePage = () => {
           </div>
 
           <button
-            className={`${buttonClass} w-full py-3`}
+            className="custom-button w-full py-3"
             onClick={handleInviaPermesso}
           >
             {t("Invia Richiesta Permessi")}

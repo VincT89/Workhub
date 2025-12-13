@@ -155,7 +155,7 @@ const CustomersRegistry = () => {
     if (loading) {
         return (
             <div className="w-full min-h-screen flex justify-center items-start p-8">
-                <div className="text-[#090c64]">Caricamento customer...</div>
+                <div>Caricamento customer...</div>
             </div>
         );
     }
@@ -177,7 +177,7 @@ const CustomersRegistry = () => {
     if (!customer) {
         return (
             <div className="w-full min-h-screen flex justify-center items-start p-8">
-                <div className="text-[#090c64]">Customer non trovato</div>
+                <div>Customer non trovato</div>
                 <button 
                     onClick={() => navigate('/customers')}
                     className="ml-4 px-4 py-2 bg-[#090c64] text-white rounded"
@@ -227,7 +227,7 @@ const CustomersRegistry = () => {
                                         onClick={handleEdit}
                                         className="flex items-center gap-1 text-sm px-3 py-1 bg-white/30 rounded-xl border border-white shadow-sm hover:bg-white transition"
                                     >
-                                        <PencilSimpleIcon size={22} color="#090c64" weight="duotone" /> Modifica
+                                        <PencilSimpleIcon size={22} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" /> Modifica
                                     </button>
                                 ) : (
                                     <div className="flex gap-2">

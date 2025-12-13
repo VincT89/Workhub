@@ -209,7 +209,7 @@ const AdminEmployeePage = () => {
         {stats.map((stat, i) => (
           <div
             key={i}
-            className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 backdrop-blur-sm border border-white/30 shadow-md ${textColor}`}
+            className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 backdrop-blur-sm border border-white/90 shadow-md ${textColor} bg-[#fafafa20] dark:bg-[#fafafa10]`}
           >
             {stat.icon}
             <span className="font-bold">
@@ -220,7 +220,7 @@ const AdminEmployeePage = () => {
 
         <div
           onClick={() => setDrawerOpen(!drawerOpen)}
-          className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 backdrop-blur-sm border border-white/30 shadow-md cursor-pointer font-bold"
+          className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 backdrop-blur-sm border border-white/90 shadow-md cursor-pointer font-bold bg-[#fafafa20] dark:bg-[#fafafa10]"
         >
           <span className="text-xl font-bold">+</span>
           {t("employees.aggiungiDipendente")}
@@ -240,7 +240,7 @@ const AdminEmployeePage = () => {
               type="text"
               placeholder={t("employees.nomeCompleto")}
               required
-              className="p-2 border rounded"
+              className="p-2 border rounded-xl"
             />
 
             <input
@@ -248,7 +248,7 @@ const AdminEmployeePage = () => {
               type="text"
               placeholder={t("employees.ruolo")}
               required
-              className="p-2 border rounded"
+              className="p-2 border rounded-xl"
             />
 
             <input
@@ -256,7 +256,7 @@ const AdminEmployeePage = () => {
               type="text"
               placeholder="Username"
               required
-              className="p-2 border rounded"
+              className="p-2 border rounded-xl"
             />
 
             <input
@@ -264,14 +264,14 @@ const AdminEmployeePage = () => {
               type="email"
               placeholder="Email"
               required
-              className="p-2 border rounded"
+              className="p-2 border rounded-xl"
             />
 
             <input
               name="telefono"
               type="text"
               placeholder={t("employees.telefono")}
-              className="p-2 border rounded"
+              className="p-2 border rounded-xl"
             />
 
             <input
@@ -279,10 +279,10 @@ const AdminEmployeePage = () => {
               type="number"
               placeholder={t("employees.matricola")}
               required
-              className="p-2 border rounded"
+              className="p-2 border rounded-xl"
             />
 
-            <select name="sede" required className="p-2 border rounded">
+            <select name="sede" required className="p-2 border rounded-xl">
               <option value="">{t("employees.sedeLavorativa")}</option>
               {pointsOfSale.map((p) => (
                 <option key={p._id} value={p._id}>
@@ -291,7 +291,7 @@ const AdminEmployeePage = () => {
               ))}
             </select>
 
-            <select name="contratto" className="p-2 border rounded">
+            <select name="contratto" className="p-2 border rounded-xl">
               <option value="">{t("employees.tipoContratto")}</option>
               <option value="indeterminato">{t("employees.indeterminato")}</option>
               <option value="determinato">{t("employees.determinato")}</option>
@@ -301,10 +301,10 @@ const AdminEmployeePage = () => {
             <input
               name="dataAssunzione"
               type="date"
-              className="p-2 border rounded"
+              className="p-2 border rounded-xl"
             />
 
-            <select name="role" required className="p-2 border rounded">
+            <select name="role" required className="p-2 border rounded-xl">
               <option value="">{t("employees.ruoloAccount")}</option>
               <option value="user">User</option>
               <option value="admin">Admin</option>
@@ -314,7 +314,7 @@ const AdminEmployeePage = () => {
               value={generatedPassword}
               readOnly
               placeholder={t("employees.passwordGenerata")}
-              className="p-2 border rounded col-span-2 bg-gray-100"
+              className="p-2 border rounded-xl col-span-2 bg-gray-100"
             />
 
             <div className="col-span-2 flex justify-end gap-2">
@@ -335,7 +335,7 @@ const AdminEmployeePage = () => {
           </form>
 
           {toastMessage && (
-            <div className="mt-2 p-2 bg-green-500 text-white rounded text-center">
+            <div className="mt-2 p-2 bg-green-500 text-white rounded-xl text-center">
               {toastMessage}
             </div>
           )}
@@ -360,7 +360,7 @@ const AdminEmployeePage = () => {
       </div>
 
       {/* LISTA DIPENDENTI */}
-      <div className="p-6 flex flex-col gap-4 h-full rounded-xl border border-white/30 shadow-md backdrop-blur-sm">
+      <div className="p-6 flex flex-col gap-4 h-full rounded-xl border border-white/30 shadow-md backdrop-blur-sm bg-[#fafafa20] dark:bg-[#fafafa10]">
         <h2 className={`text-lg font-bold ${textColor}`}>
           {t("employees.listaDipendenti")}
         </h2>

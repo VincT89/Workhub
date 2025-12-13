@@ -58,7 +58,7 @@ const Table = ({
 	}, [searchTerm, data, columns, sortAZ]);
 
 	return (
-		<div className="w-full rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-4 sm:p-6 shadow-md border border-white flex flex-col gap-4 table-wrapper">
+		<div className="w-full rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-4 sm:p-6 shadow-md  flex flex-col gap-4 table-wrapper">
 			{/* TOOLBAR */}
 			<div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-between gap-3 mb-3">
 				{/* Left tools */}

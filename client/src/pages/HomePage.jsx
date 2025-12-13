@@ -4,7 +4,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 
 import bgLight from "../assets/bg/bg.jpg";
-import bgDark from "../assets/bg/bgScuro2.jpg";
+import bgDark from "../assets/bg/bgScuro.jpg";
 import Logo from "../assets/logo/LogoCompletoSenzaBG.png";
 import logoDark from "../assets/logo/logoVuoto.png";
 

@@ -166,7 +166,7 @@ const SettingsPage = () => {
 				{/*   SEZIONE 1 — ANAGRAFICA     */}
 
 				<section className="w-full p-6 rounded-[25px] shadow-md border border-white/30 bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm">
-					<div className="flex justify-between items-center mb-4 border-b border-[#090c64] pb-2">
+					<div className="flex justify-between items-center mb-4 border-b  pb-2">
 						<h2 className={`${textColor} text-xl font-bold`}>
 							{t("settings.anagraficaUtente")}
 						</h2>
@@ -174,7 +174,7 @@ const SettingsPage = () => {
 						<button
 							type="button"
 							onClick={() => setIsEditing((prev) => !prev)}
-							className="px-4 py-1 rounded-xl text-sm font-semibold border border-white text-white bg-[#090c64] hover:bg-[#090c64]/80"
+							className="px-4 py-1 rounded-xl text-[14px] font-semibold border border-white text-white bg-[#090c64] hover:bg-[#090c64]/80 custom-button"
 						>
 							{isEditing ? t("settings.annulla") : t("settings.modifica")}
 						</button>
@@ -251,7 +251,7 @@ const SettingsPage = () => {
 
 				{/*   SEZIONE 2 — ACCOUNT        */}
 				<section className="w-full p-6 rounded-[25px] shadow-md border border-white/30 bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm">
-					<div className="flex justify-between items-center mb-4 border-b border-[#090c64] pb-2">
+					<div className="flex justify-between items-center mb-4 border-b  pb-2">
 						<h2 className={`${textColor} text-xl font-bold`}>
 							{t("settings.account")}
 						</h2>
@@ -259,7 +259,7 @@ const SettingsPage = () => {
 						<button
 							type="button"
 							onClick={() => setIsEditingAccount((prev) => !prev)}
-							className="px-4 py-1 rounded-xl text-sm font-semibold border border-white text-white bg-[#090c64] hover:bg-[#090c64]/80"
+							className="px-4 py-1 rounded-xl text-[14px] font-semibold border border-white text-white bg-[#090c64] hover:bg-[#090c64]/80 custom-button"
 						>
 							{isEditingAccount
 								? t("settings.annulla")
@@ -380,7 +380,7 @@ const SettingsPage = () => {
 
 				 {/*   SEZIONE 3 — Sicurezza / 2FA        */}
         <section className="w-full p-6 rounded-[25px] shadow-md border border-white/30 bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm">
-          <h2 className={`${textColor} text-xl font-bold mb-4 border-b border-[#090c64] pb-2`}>
+          <h2 className={`${textColor} text-xl font-bold mb-4 border-b  pb-2`}>
             {t("settings.autenticazione2FA")}
           </h2>
 
@@ -390,7 +390,7 @@ const SettingsPage = () => {
 				{/*    SEZIONE 4 — ASPETTO       */}
 				<section className="w-full p-6 rounded-[25px] shadow-md border border-white/30 bg-[#fafafa20] dark:bg-[#fafafa30] backdrop-blur-sm">
 					<h2
-						className={`${textColor} text-xl font-bold mb-4 border-b border-[#090c64] pb-2`}
+						className={`${textColor} text-xl font-bold mb-4 border-b pb-2`}
 					>
 						{t("settings.aspetto")}
 					</h2>
@@ -406,25 +406,25 @@ const SettingsPage = () => {
 								<button
 									type="button"
 									onClick={() => setTheme("light")}
-									className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-colors text-[#090c64] duration-300 ${
+									className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-colors  duration-300 ${
 										theme === "light"
 											? "border-[#090c64] bg-[rgba(217,217,217,0.3)]"
 											: "border-gray-300 dark:border-white/30"
 									}`}
 								>
-									<SunIcon size={28} color="#090c64" weight="duotone" /> Light
+									<SunIcon size={28} color={theme === "light" ? "#090c64" : "white"} weight="duotone" /> Light
 								</button>
 
 								<button
 									type="button"
 									onClick={() => setTheme("dark")}
-									className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-colors text-[#090c64] duration-300 ${
+									className={`flex items-center gap-2 px-4 py-2 rounded-xl border  transition-colors duration-300 ${
 										theme === "dark"
 											? "border-[#090c64] bg-[rgba(217,217,217,0.3)]"
 											: "border-gray-300 dark:border-white/30"
 									}`}
 								>
-									<MoonIcon size={28} color="#090c64" weight="duotone" /> Dark
+									<MoonIcon size={28} color={theme === "light" ? "#090c64" : "white"} weight="duotone" /> Dark
 								</button>
 							</div>
 						</div>
@@ -439,7 +439,7 @@ const SettingsPage = () => {
 								<button
 									type="button"
 									onClick={() => toggleLang("it")}
-									className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-[#090c64] transition-colors duration-300 ${
+									className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-colors duration-300 ${
 										lang === "it"
 											? "border-[#090c64] bg-[rgba(217,217,217,0.3)]"
 											: "border-gray-300 dark:border-white/30"
@@ -452,7 +452,7 @@ const SettingsPage = () => {
 								<button
 									type="button"
 									onClick={() => toggleLang("en")}
-									className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-[#090c64] transition-colors duration-300 ${
+									className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-colors duration-300 ${
 										lang === "en"
 											? "border-[#090c64] bg-[rgba(217,217,217,0.3)]"
 											: "border-gray-300 dark:border-white/30"

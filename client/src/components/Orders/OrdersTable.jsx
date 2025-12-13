@@ -66,7 +66,7 @@ const OrdersTable = ({
 						{/* bottone A-Z → solo ordinamento locale, non modifica i dati */}
 						<button
 							onClick={() => setSortAZ(!sortAZ)}
-							className="warehouse-btn"
+							className="warehouse-btn font-bold"
 						>
 							{sortAZ ? "Annulla A-Z" : "Ordina A-Z"}
 						</button>
@@ -197,13 +197,13 @@ const OrdersTable = ({
 												))}
 											</td>
 										)}
-                  </tr>
-                  
+									</tr>
+
 									{/* FINESTRELLA DETTAGLI */}
 									{isOpen && (
 										<tr>
 											<td colSpan={totalColumns} className="p-4">
-												<div className="rounded-2xl bg-white/30 backdrop-blur-xl border border-white/20 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.06)] flex flex-col gap-6">
+												<div className="flex flex-col gap-6 p-4">
 													{/* IMG + INFO PRODOTTO */}
 													<div className="flex flex-col md:flex-row gap-3 items-start">
 														{/* IMG PRODOTTO */}
@@ -215,7 +215,7 @@ const OrdersTable = ({
 																		row.prodottoDettaglio.name ||
 																		"Immagine prodotto"
 																	}
-																	className="max-w-[140px] rounded-2xl object-cover shadow-md border border-white/40 bg-white/40"
+																	className="max-w-[140px] rounded-xl object-cover shadow-md border border-white/40 bg-white/40"
 																/>
 															)}
 														</div>
@@ -223,25 +223,25 @@ const OrdersTable = ({
 														{/* TESTO + PREZZO */}
 														<div className="flex-1 flex flex-col justify-between gap-3 mt-1.5">
 															<div>
-																<h3 className="font-bold text-[#090c64] text-sm md:text-base">
+																<h3 className="font-bold text-sm md:text-base">
 																	Dettagli prodotto
 																</h3>
 
 																{/* Nome prodotto */}
-																<p className="text-sm md:text-base text-gray-800 font-semibold">
+																<p className="text-sm md:text-base font-semibold">
 																	{row.prodottoDettaglio?.name || row.prodotto}
 																</p>
 
 																{/* Descrizione (se c'è) */}
 																{row.prodottoDettaglio?.description && (
-																	<p className="text-xs md:text-sm text-gray-700 mt-1">
+																	<p className="text-xs md:text-sm mt-1">
 																		{row.prodottoDettaglio.description}
 																	</p>
 																)}
 															</div>
 
 															<div className="text-right flex flex-col items-end gap-2">
-																<p className="text-sm md:text-base font-semibold text-[#090c64]">
+																<p className="text-sm md:text-base font-semibold">
 																	Prezzo unitario:{" "}
 																	{row.prodottoDettaglio?.price
 																		? formatEuro(row.prodottoDettaglio.price)
@@ -253,7 +253,7 @@ const OrdersTable = ({
 
 													{/* TITOLINO CLIENTI */}
 													<div className="flex items-center justify-between mt-2">
-														<h4 className="text-xs font-semibold text-[#090c64]">
+														<h4 className="text-md font-semibold">
 															Dettagli clienti ({row.clienti.length})
 														</h4>
 													</div>
@@ -263,7 +263,7 @@ const OrdersTable = ({
 														{row.clienti.map((cliente) => (
 															<div
 																key={cliente._id}
-																className="rounded-2xl bg-[rgba(255,255,255,0.15)] border border-white/20 backdrop-blur-lg p-4 shadow-sm text-sm md:text-base text-[#090c64] flex flex-col gap-1"
+																className="rounded-2xl bg-[rgba(255,255,255,0.15)] border border-white/20 backdrop-blur-lg p-4 shadow-sm text-sm md:text-base flex flex-col gap-1"
 															>
 																{/* NOME + EMAIL */}
 																<p className="font-bold">
@@ -302,6 +302,24 @@ const OrdersTable = ({
 																		</strong>
 																	</span>
 																</div>
+																<div className="mt-3 pt-3 border-t border-white/30 text-md flex flex-col gap-1">
+																	<div className="flex justify-between">
+																		<span>Ordini totali:</span>
+																		<strong>
+																			{cliente.ordiniTotali ?? "-"}
+																		</strong>
+																	</div>
+
+																	<div className="flex justify-between">
+																		<span>Punti totali:</span>
+																		<strong>{cliente.puntiTotali ?? 0}</strong>
+																	</div>
+
+																	<div className="flex justify-between font-bold text-green-700 dark:text-green-900">
+																		<span>Punti per questo ordine:</span>
+																		<span>+{cliente.puntiOrdine ?? 0}</span>
+																	</div>
+																</div>
 															</div>
 														))}
 													</div>
@@ -321,7 +339,7 @@ const OrdersTable = ({
 														const giacenza = totalQuantity - totClientQty;
 
 														return (
-															<div className="mt-4 flex flex-wrap gap-4 justify-end text-xs text-[#090c64]">
+															<div className="mt-4 flex flex-wrap gap-4 justify-end text-md">
 																<div>
 																	<span className="font-semibold">
 																		Totale ordinato clienti:{" "}

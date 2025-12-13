@@ -2,16 +2,14 @@ import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import jsPDF from "jspdf";
 // icone
-import { SignOutIcon } from "@phosphor-icons/react";
-import { WarehouseIcon } from "@phosphor-icons/react";
-import { NoteIcon } from "@phosphor-icons/react";
-import { NotepadIcon } from "@phosphor-icons/react";
-import { PaperclipIcon } from "@phosphor-icons/react";
-import { FilePdfIcon } from "@phosphor-icons/react";
-import { PlusCircleIcon } from "@phosphor-icons/react";
+import { SignOutIcon, WarehouseIcon, NoteIcon, NotepadIcon, PaperclipIcon, FilePdfIcon } from "@phosphor-icons/react";
+
+import { useTheme } from "../../context/ThemeContext";
 
 const Product = () => {
   const { id } = useParams();
+
+  const { theme } = useTheme();
 
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -93,20 +91,20 @@ const Product = () => {
         <div className="rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md flex flex-col gap-2">
           {/* RIGA superiore: NOME PRODOTTO + TORNA ALLA LISTA */}
           <div className="flex items-center justify-between mb-4">
-            <span className="text-[#090c64] font-bold text-3xl">
+            <span className=" font-bold text-3xl">
               {item.product.name}
             </span>
             <Link
               to="/warehouse"
               className="w-12 h-12 flex items-center justify-center bg-white/50 rounded-full shadow-md hover:bg-white/70 transition-all duration-200"
             >
-              <SignOutIcon size={32} color="#090c64" weight="duotone" />
+              <SignOutIcon size={32} 	color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
             </Link>
           </div>
 
           {/* DIV INFO PRODOTTO + IMMAGINE */}
           <div className="grid grid-cols-2 gap-6 items-start">
-            <div className="flex flex-col gap-3 text-[#090c64]">
+            <div className="flex flex-col gap-3 ">
               <div className="grid grid-cols-2 bg-white/40 rounded-lg p-2 shadow-sm">
                 <span>ID</span>
                 <span className="break-all">{item._id}</span> {/* break-all per spezzare stringhe lunghe senza spazi */ }
@@ -141,7 +139,7 @@ const Product = () => {
                   className="w-full h-full max-h-80 object-contain rounded-2xl shadow-md bg-white/30"
                 />
               ) : (
-                <div className="w-full h-80 rounded-2xl bg-white/30 flex items-center justify-center text-sm text-[#090c64] shadow-md">
+                <div className="w-full h-80 rounded-2xl bg-white/30 flex items-center justify-center text-sm shadow-md">
                   Nessuna immagine
                 </div>
               )}
@@ -153,7 +151,7 @@ const Product = () => {
         <div className="flex gap-4">
           <div className="flex-1 rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md">
             <div className="flex items-center gap-2 mb-4">
-              <WarehouseIcon size={32} color="#090c64" weight="duotone" />
+              <WarehouseIcon size={32} 	color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
               <h3 className="text-[#090c64] text-lg font-bold">Disponibilità</h3>
             </div>
             <div className="grid grid-cols-6 bg-white/40 rounded-xl p-2 shadow-sm">
@@ -165,17 +163,10 @@ const Product = () => {
 
           <div className="flex-1 flex flex-col justify-center items-center gap-4">
             <button
-              className="bg-[#090c64] text-white font-semibold px-6 py-3 rounded-xl shadow-md hover:bg-[#090c64]/70 transition-all duration-200 w-3/4 flex items-center justify-center gap-2"
-            >
-              <PlusCircleIcon size={32} color="#f5f5f5" weight="duotone" />
-              Rifornimento
-            </button>
-
-            <button
               onClick={handleExportPDF}
-              className="bg-[#fafafa]/50 text-[#090c64] font-semibold px-6 py-3 rounded-xl shadow-md hover:bg-white/80 transition-all duration-200 w-3/4 flex items-center justify-center gap-2"
+              className="bg-[#fafafa]/50 font-semibold px-6 py-3 rounded-xl shadow-md hover:bg-white/80 transition-all duration-200 w-3/4 flex items-center justify-center gap-2"
             >
-              <FilePdfIcon size={32} color="#090c64" weight="duotone" />
+              <FilePdfIcon size={32}	color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
               <span> Esporta PDF </span>
             </button>
           </div>
@@ -184,11 +175,11 @@ const Product = () => {
         {/* STORICO MOVIMENTI */}
         <div className="rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md">
           <div className="flex items-center gap-2 mb-4">
-            <NotepadIcon size={32} color="#090c64" weight="duotone" />
+            <NotepadIcon size={32} 	color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
             <h3 className="text-[#090c64] text-lg font-bold">Storico movimenti</h3>
           </div>
 
-          <div className="grid grid-cols-3 font-bold text-[#090c64] text-sm mb-2">
+          <div className="grid grid-cols-3 font-bold  text-sm mb-2">
             <span>Data</span>
             <span>Tipo</span>
             <span>Quantità</span>
@@ -206,7 +197,7 @@ const Product = () => {
         {/* NOTE E ALLEGATI */}
         <div className="rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md">
           <div className="flex items-center gap-2 mb-4">
-            <NoteIcon size={32} color="#090c64" weight="duotone" />
+            <NoteIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
             <h3 className="text-[#090c64] text-lg font-bold m-0 leading-none">Note e allegati</h3>
           </div>
 
@@ -217,7 +208,7 @@ const Product = () => {
           ></textarea>
 
           <label className="flex items-center gap-2 cursor-pointer bg-[#fafafa]/50 text-[#090c64] font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-white/80 transition-all duration-200">
-            <PaperclipIcon size={32} color="#090c64" weight="duotone" />
+            <PaperclipIcon size={32} 	color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
             <input type="file" />
           </label>
         </div>

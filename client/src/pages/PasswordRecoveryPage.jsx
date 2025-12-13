@@ -66,7 +66,7 @@ const PasswordRecoveryPage = () => {
         {/* CARD */}
         <section className="w-full p-6 rounded-[25px] shadow-md border border-white/90 bg-white/10 dark:bg-white/10 backdrop-blur-sm">
 
-          <h2 className={`${textColor} text-xl font-bold mb-4 pb-2 border-b border-[#090c64]`}>
+          <h2 className={`${textColor} text-xl font-bold mb-4 pb-2 border-b`}>
             {t("auth.recover.inserisciDati")}
           </h2>
 
@@ -118,7 +118,7 @@ const PasswordRecoveryPage = () => {
             <button
               type="submit"
               disabled={recoveryLoading}
-              className="w-full mt-4 py-3 font-bold rounded-2xl shadow-md bg-[#090c64] text-white hover:scale-[1.02] transition"
+              className="w-full mt-4 py-3 font-bold rounded-2xl shadow-md bg-[#090c64] text-white hover:scale-[1.02] transition custom-button"
             >
               {recoveryLoading
                 ? t("auth.recover.invioInCorso")

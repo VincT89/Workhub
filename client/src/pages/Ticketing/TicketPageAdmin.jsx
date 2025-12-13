@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useTheme } from '../../context/ThemeContext';
+import { useTheme } from "../../context/ThemeContext";
 import {
 	fetchTickets,
 	updateTicketAsync,
@@ -11,7 +11,7 @@ import {
 	CalendarDotsIcon,
 	UserListIcon,
 	CircleIcon,
-  CalendarDots,
+	CalendarDots,
 } from "@phosphor-icons/react";
 //Libreria per Grafico
 import { LineChart } from "@mui/x-charts/LineChart";
@@ -41,9 +41,9 @@ const TicketPageAdmin = () => {
 	const [selectedTicket, setSelectedTicket] = useState(null);
 
 	const [ticketStatus, setTicketStatus] = useState({});
-  const [hiddenLines, setHiddenLines] = useState([]);
-  
-  const { theme } = useTheme();
+	const [hiddenLines, setHiddenLines] = useState([]);
+
+	const { theme } = useTheme();
 
 	const [state, setState] = useState([
 		{
@@ -194,8 +194,12 @@ const TicketPageAdmin = () => {
 				<div className="w-full lg:w-1/2 flex flex-col gap-4 sticky top-6 h-fit">
 					{/*  Date */}
 					<div className="bg-white/30 border border-white/90 rounded-xl shadow p-4">
-						<h2 className="font-bold text-xl mb-2 text-[#090c64] flex items-center gap-2">
-							<CalendarDotsIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
+						<h2 className="font-bold text-xl mb-2  flex items-center gap-2">
+							<CalendarDotsIcon
+								size={32}
+								color={theme === "dark" ? "white" : "#090c64"}
+								weight="duotone"
+							/>
 							Seleziona intervallo date
 						</h2>
 
@@ -216,9 +220,7 @@ const TicketPageAdmin = () => {
 
 					{/* Grafico */}
 					<div className="bg-white/30 border border-white/90 rounded-xl shadow p-6">
-						<h2 className="font-bold text-2xl mb-4 text-[#090c64]">
-							Andamento Ticket
-						</h2>
+						<h2 className="font-bold text-2xl mb-4">Andamento Ticket</h2>
 
 						{/* Legenda */}
 						<div className="flex flex-wrap gap-3 mb-6 font-bold">
@@ -226,7 +228,7 @@ const TicketPageAdmin = () => {
 								<button
 									key={key}
 									onClick={() => toggleLine(key)}
-									className={`px-4 py-1.5 rounded-full text-sm border shadow-sm transition ${
+									className={`px-4 py-1.5 rounded-xl custom-button text-sm border shadow-sm transition ${
 										hiddenLines.includes(key)
 											? "opacity-40 bg-gray-100"
 											: "opacity-100 bg-white"
@@ -278,14 +280,18 @@ const TicketPageAdmin = () => {
 				</div>
 
 				{/* COLONNA DESTRA: LISTA TICKET*/}
-				<div className="w-full lg:w-1/2 bg-white/30 rounded-xl shadow p-6 sticky top-6 h-[1190px] flex flex-col">
-					<h2 className="font-bold text-3xl mb-4 flex items-center gap-3 text-[#090c64]">
-						<ListMagnifyingGlassIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
+				<div className="w-full lg:w-1/2 bg-white/30 border-white/90 border rounded-xl shadow p-6 sticky top-6 h-[1190px] flex flex-col">
+					<h2 className="font-bold text-3xl mb-4 flex items-center gap-3 ">
+						<ListMagnifyingGlassIcon
+							size={32}
+							color={theme === "dark" ? "white" : "#090c64"}
+							weight="duotone"
+						/>
 						Ticket
 					</h2>
 
 					{/* FILTRI */}
-					<div className="bg-white/40 backdrop-blur-md border border-white/50 rounded-xl p-4 mb-6 flex flex-col lg:flex-row gap-4">
+					<div className=" backdrop-blur-md border border-white/50 rounded-xl p-4 mb-6 flex flex-col lg:flex-row gap-4">
 						{/* ------------------- FILTRO UTENTE ------------------- */}
 						<div className="flex flex-col w-full lg:w-2/4 relative">
 							<label className="text-sm font-semibold text-gray-700 mb-1"></label>
@@ -420,7 +426,11 @@ const TicketPageAdmin = () => {
 									<span className="font-semibold text-lg">
 										{ticket.title || ticket.name}
 									</span>
-									<PencilIcon size={20} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
+									<PencilIcon
+										size={20}
+										color={theme === "dark" ? "white" : "#090c64"}
+										weight="duotone"
+									/>
 								</div>
 
 								<span className="text-sm text-gray-600 mt-1">

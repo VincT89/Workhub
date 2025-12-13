@@ -120,7 +120,7 @@ const TicketCreator = ({ user }) => {
       <button
         onClick={handleAddTicket}
         disabled={isLoading || !newTitle.trim()}
-        className={`w-full bg-[#090c64] text-white px-4 py-2 rounded-xl transition cursor-pointer font-medium ${
+        className={` custom-button w-full bg-[#090c64] text-white px-4 py-2 rounded-xl transition cursor-pointer font-medium ${
           isLoading || !newTitle.trim() ? "opacity-50 cursor-not-allowed" : "hover:bg-[#0a0d7a]"
         }`}
       >
