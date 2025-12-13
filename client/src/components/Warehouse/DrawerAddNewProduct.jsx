@@ -2,7 +2,9 @@
 import { useState, useEffect } from "react"; // useState per stato locale, useEffect per effetti collaterali
 import { useDispatch, useSelector } from "react-redux"; // Redux: dispatch per inviare azioni, useSelector per leggere lo stato
 import { updateItemQuantity } from "../../store/feature/itemsSlice"; // thunk per aggiornare stock
+import { useTheme } from "../../context/ThemeContext"; // contesto tema (chiaro/scuro)
 import bgLight from "../../assets/bg/bg.jpg"; // immagine di sfondo del drawer
+import bgDark from "../../assets/bg/bgScuro.jpg"; // immagine di sfondo del drawer scuro
 
 const DrawerAddNewProduct = ({ open, onClose }) => {
   const dispatch = useDispatch(); // funzione per inviare azioni a Redux
@@ -12,6 +14,8 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
   const [search, setSearch] = useState(""); // stringa di ricerca per nome prodotto o SKU
   const [results, setResults] = useState([]); // risultati della ricerca
   const [quantity, setQuantity] = useState(1); // quantità da aggiungere
+
+  const { theme } = useTheme(); // tema attuale (chiaro/scuro)
 
   // Chiude il drawer premendo "Escape"
   useEffect(() => {
@@ -83,23 +87,23 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
         className="absolute right-0 top-0 w-[420px] h-full border-l border-white/40 shadow-2xl overflow-auto bg-cover bg-center"
         role="dialog"
         aria-modal="true"
-        style={{ backgroundImage: `url(${bgLight})` }}
+       style={{ backgroundImage: `url(${theme === "dark" ? bgDark : bgLight})` }}
       >
         {/* HEADER: titolo e bottone chiudi */}
         <header className="sticky top-0 border-b border-white/60 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-[#090c64]">
+          <h2 className="text-base font-semibold">
             Aggiungi stock
           </h2>
           <button
             onClick={onClose} // chiude il drawer
-            className="px-4 py-2 border border-white/70 shadow-sm rounded-xl text-sm bg-[#090c64] text-white cursor-pointer"
+            className="px-4 py-2 border border-white/70 shadow-sm rounded-xl text-sm custom-button cursor-pointer"
           >
             Chiudi
           </button>
         </header>
 
         {/* CONTENUTO PRINCIPALE */}
-        <div className="p-6 text-[15px] text-[#090c64]">
+        <div className="p-6 text-[15px] ">
           {/* Input ricerca prodotto/SKU */}
           <label className="block mb-2 font-semibold">Nome prodotto o SKU</label>
           <input
@@ -123,7 +127,7 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
           {/* Bottone per cercare */}
           <button
             onClick={searchItems}
-            className="px-4 py-2 border border-white/70 shadow-sm rounded-xl text-sm text-white bg-[#090c64] mb-6 cursor-pointer"
+            className="px-4 py-2 border border-white/70 shadow-sm rounded-xl text-sm custom-button mb-6 cursor-pointer"
           >
             Cerca prodotto
           </button>

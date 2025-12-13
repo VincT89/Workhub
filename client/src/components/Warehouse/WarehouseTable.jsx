@@ -13,16 +13,6 @@ import {
 
 const WarehouseTable = ({ data, columns }) => {
 
-
-
-  // testando lo stato di items dallo store Redux
-  const itemsState = useSelector(state => state.items); // prendi lo slice "items"
-
-  useEffect(() => {
-    console.log("verifica data", data);
-    // itemsState.list -> array con tutti gli items normalizzati
-  }, [itemsState]);
-
   const navigate = useNavigate();
 
   //? ---------- STATE ----------
@@ -59,10 +49,9 @@ const WarehouseTable = ({ data, columns }) => {
     const names = data
       .map(p => p.product?.category?.name)
       .filter(Boolean); // rimuove null/undefined/vuoti
-
     return ["Tutte le categorie", ...new Set(names)];
   }, [data]);
-  console.log("categorie", data.map(i => i.product?.category));
+  
 
 
   //? ---------- DATA PROCESSING ----------
@@ -108,7 +97,6 @@ const WarehouseTable = ({ data, columns }) => {
     return result;
   }, [data, searchTerm, selectedCategory, sortAZ, lowStockFilter]);
 
-  console.log("Dati filtrati:", filteredData); // ✅ adesso funziona
 
   return (
     <div className="w-full rounded-2xl bg-[#fafafa]/10 p-6 shadow-md border border-white flex flex-col gap-4">

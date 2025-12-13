@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { createPortal } from "react-dom";
 
 import bgLight from "../assets/bg/bg.jpg";
+import bgDark from "../assets/bg/bgScuro.jpg";
+
 
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
@@ -41,14 +43,14 @@ const Drawer = ({ open, onClose, title, children, width = "w-[420px]" }) => {
           overflow-auto bg-cover bg-center
         `}
         style={{
-          backgroundImage: `url(${bgLight})`
+          backgroundImage: `url(${theme === "dark" ? bgDark : bgLight})`
         }}
         role="dialog"
         aria-modal="true"
       >
         {/* Header lilla chiaro */}
         <header className="sticky top-0 z-10 border-b border-white/60 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-[#090c64]">
+          <h2 className="text-base font-semibold ">
             {title}
           </h2>
 
@@ -62,7 +64,7 @@ const Drawer = ({ open, onClose, title, children, width = "w-[420px]" }) => {
         </header>
 
         {/* Contenuto */}
-        <div className="p-6 text-[15px] leading-relaxed text-[#090c64]">
+        <div className="p-6 text-[15px] leading-relaxed ">
           {children}
         </div>
       </aside>

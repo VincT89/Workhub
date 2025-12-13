@@ -13,12 +13,10 @@ const WarehousePage = () => {
 	//? Prendo dispatcher e items dal Redux store
 	const dispatch = useDispatch();
 	const items = useSelector((state) => state.items.list);
-  const status = useSelector((state) => state.items.status);
-const userWorkplaceId = useSelector(state => state.auth.user?.workplace?._id);// punti vendita associati all'utente
+	const status = useSelector((state) => state.items.status);
+	const userWorkplaceId = useSelector((state) => state.auth.user?.workplace?._id); // punti vendita associati all'utente
 	const { theme } = useTheme();
 	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
-
-	console.log("items", items);
 
 	//? Chiamo il server quando la pagina si apre
 	useEffect(() => {
@@ -80,17 +78,15 @@ const userWorkplaceId = useSelector(state => state.auth.user?.workplace?._id);//
 	};
 
 	// funzione per filtrare i prodotti in base ai punti vendita dell'utente
-const filteredItems = useMemo(() => {
-  // se user non è ancora pronto → mostra TUTTI gli items
-  if (!userWorkplaceId) return items;
+	const filteredItems = useMemo(() => {
+		// se user non è ancora pronto → mostra TUTTI gli items
+		if (!userWorkplaceId) return items;
 
-  return items.filter(
-    item =>
-      String(item.pointOfSales?._id) === String(userWorkplaceId)
-  );
-}, [items, userWorkplaceId]);
-
-
+		return items.filter(
+			(item) => String(item.pointOfSales?._id) === String(userWorkplaceId) // confronto come stringhe
+		);
+	}, [items, userWorkplaceId]);
+	
 
 	return (
 		<div className="w-full min-h-screen flex justify-center items-start">
@@ -125,10 +121,7 @@ const filteredItems = useMemo(() => {
 				</div>
 
 				{/* TABELLA */}
-				<WarehouseTable
-					data={filteredItems}
-					columns={columns}
-				/>
+				<WarehouseTable data={filteredItems} columns={columns} />
 
 				{/* DRAWER AGGIUNGI PRODOTTO */}
 				<DrawerAddNewProduct

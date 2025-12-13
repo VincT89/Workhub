@@ -95,7 +95,7 @@ const AddCustomerForm = ({ onAdd }) => {
 
                         {/* 🔹 Nome (firstName) */}
                         <div>
-                            <label className="text-sm text-[#090c64] block mb-1">Nome*</label>
+                            <label className="text-sm block mb-1">Nome*</label>
                             <input
                                 name="firstName"
                                 type="text"
@@ -108,7 +108,7 @@ const AddCustomerForm = ({ onAdd }) => {
 
                         {/* 🔹 Cognome (lastName) */}
                         <div>
-                            <label className="text-sm text-[#090c64] block mb-1">Cognome*</label>
+                            <label className="text-sm block mb-1">Cognome*</label>
                             <input 
                                 name="lastName" 
                                 value={newCustomer.lastName} 
@@ -120,7 +120,7 @@ const AddCustomerForm = ({ onAdd }) => {
 
                         {/* 🔹 Email */}
                         <div className="col-span-2">
-                            <label className="text-sm text-[#090c64] block mb-1">Email*</label>
+                            <label className="text-sm block mb-1">Email*</label>
                             <input 
                                 name="email" 
                                 type="email" 
@@ -133,7 +133,7 @@ const AddCustomerForm = ({ onAdd }) => {
 
                         {/* 🔹 Telefono (phoneNumber) */}
                         <div>
-                            <label className="text-sm text-[#090c64] block mb-1">Telefono*</label>
+                            <label className="text-sm block mb-1">Telefono*</label>
                             <input 
                                 name="phoneNumber" 
                                 value={newCustomer.phoneNumber} 
@@ -145,7 +145,7 @@ const AddCustomerForm = ({ onAdd }) => {
 
                         {/* 🔹 Codice Fiscale (fiscalCode) */}
                         <div>
-                            <label className="text-sm text-[#090c64] block mb-1">Codice Fiscale*</label>
+                            <label className="text-sm block mb-1">Codice Fiscale*</label>
                             <input 
                                 name="fiscalCode" 
                                 value={newCustomer.fiscalCode} 
@@ -157,7 +157,7 @@ const AddCustomerForm = ({ onAdd }) => {
 
                         {/* 🔹 Data di nascita (birthDate) */}
                         <div className="col-span-2">
-                            <label className="text-sm text-[#090c64] block mb-1">Data di nascita*</label>
+                            <label className="text-sm block mb-1">Data di nascita*</label>
                             <input 
                                 name="birthDate" 
                                 type="date" 
@@ -170,7 +170,7 @@ const AddCustomerForm = ({ onAdd }) => {
 
                         {/* 🔹 Indirizzo (location.address) */}
                         <div className="col-span-2">
-                            <label className="text-sm text-[#090c64] block mb-1">Indirizzo*</label>
+                            <label className="text-sm block mb-1">Indirizzo*</label>
                             <input 
                                 name="location.address" 
                                 value={newCustomer.location.address} 
@@ -182,7 +182,7 @@ const AddCustomerForm = ({ onAdd }) => {
 
                         {/* 🔹 Città (location.city) */}
                         <div>
-                            <label className="text-sm text-[#090c64] block mb-1">Città*</label>
+                            <label className="text-sm block mb-1">Città*</label>
                             <input 
                                 name="location.city" 
                                 value={newCustomer.location.city} 
@@ -194,7 +194,7 @@ const AddCustomerForm = ({ onAdd }) => {
 
                         {/* 🔹 Provincia (location.state) */}
                         <div>
-                            <label className="text-sm text-[#090c64] block mb-1">Provincia*</label>
+                            <label className="text-sm block mb-1">Provincia*</label>
                             <input 
                                 name="location.state" 
                                 value={newCustomer.location.state} 
@@ -206,7 +206,7 @@ const AddCustomerForm = ({ onAdd }) => {
 
                         {/* 🔹 CAP (location.zipCode) */}
                         <div>
-                            <label className="text-sm text-[#090c64] block mb-1">CAP*</label>
+                            <label className="text-sm block mb-1">CAP*</label>
                             <input 
                                 name="location.zipCode" 
                                 value={newCustomer.location.zipCode} 
@@ -218,7 +218,7 @@ const AddCustomerForm = ({ onAdd }) => {
 
                         {/* 🔹 Paese (location.country) */}
                         <div>
-                            <label className="text-sm text-[#090c64] block mb-1">Paese*</label>
+                            <label className="text-sm block mb-1">Paese*</label>
                             <input 
                                 name="location.country" 
                                 value={newCustomer.location.country} 
@@ -242,7 +242,7 @@ const AddCustomerForm = ({ onAdd }) => {
                         <button 
                             type="button" 
                             onClick={() => setIsOpen(false)}
-                            className="px-4 py-2 bg-gray-200 rounded-xl hover:bg-gray-300 transition"
+                            className="px-4 py-2 bg-gray-300 text-[#090c64] font-bold rounded-xl hover:bg-gray-300 transition"
                         >
                             Annulla
                         </button>
