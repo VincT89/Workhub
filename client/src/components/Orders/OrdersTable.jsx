@@ -303,7 +303,7 @@ const OrdersTable = ({
 																	</span>
 																</div>
 																<div className="mt-3 pt-3 border-t border-white/30 text-md flex flex-col gap-1">
-																	<div className="flex justify-between">
+																	{/* <div className="flex justify-between">
 																		<span>Ordini totali:</span>
 																		<strong>
 																			{cliente.ordiniTotali ?? "-"}
@@ -313,9 +313,9 @@ const OrdersTable = ({
 																	<div className="flex justify-between">
 																		<span>Punti totali:</span>
 																		<strong>{cliente.puntiTotali ?? 0}</strong>
-																	</div>
+																	</div> */}
 
-																	<div className="flex justify-between font-bold text-green-700 dark:text-green-900">
+																	<div className="flex justify-between font-bold ">
 																		<span>Punti per questo ordine:</span>
 																		<span>+{cliente.puntiOrdine ?? 0}</span>
 																	</div>
