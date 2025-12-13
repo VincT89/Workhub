@@ -11,11 +11,13 @@ Include un backend moderno in **Node.js/Express** e un frontend scalabile in **R
 
 - Login tramite **JWT token**
 - Persistenza sessione con **localStorage**
+- Autenticazione 2FA (opzionale)
 - Middleware di protezione per ruoli (`user`, `admin`)
 - Recupero password tramite generazione password temporanea casuale
 - Cambio password dalla pagina impostazioni
 - Hashing sicuro con **bcrypt**
 - Validazioni backend tramite **Joi**
+
 
 ---
 
@@ -220,10 +222,11 @@ UI dedicata con Drawer per aggiunta/modifica.
 1. DARK MODE - `COMPLETATO`
 2. MULTILINGUA - ` mancano solo clienti, magazzino, ticketing, ordini`  
 3. Login e autenticazione JWT - `COMPLETATO`
-4. Gestione utenti e dipendenti - `COMPLETATO`
-5. Calendario turni ed eventi con react-big-calendar - `COMPLETATO`
-6. Bacheca eventi aziendali - `COMPLETATO` 
-7. Gestione magazzino - `COMPLETATO`
-8. Gestione clienti - `COMPLETATO - solo richiamare ordini per cliente`
-9. Gestione ticketing - `COMPLETATO`
-10. Gestione ordini - `test in corso`
+4. Autenticazione 2FA (opzionale) - `COMPLETATO`
+5. Gestione utenti e dipendenti - `COMPLETATO`
+6. Calendario turni ed eventi con react-big-calendar - `COMPLETATO`
+7. Bacheca eventi aziendali - `COMPLETATO` 
+8. Gestione magazzino - `COMPLETATO`
+9. Gestione clienti - `COMPLETATO - solo richiamare ordini per cliente`
+10. Gestione ticketing - `COMPLETATO`
+11. Gestione ordini - `test in corso`
