@@ -186,7 +186,7 @@ const WarehouseTable = ({ data, allItems, columns }) => {
 						<tr
 							key={i}
 							onClick={() => navigate(`/product/${row._id}`, { state: row })}
-							className="hover:bg-white cursor-pointer text-center"
+							className="cursor-pointer text-center"
 						>
 							{/* ETICHETTE COLORATE IN BASE ALLO STATO */}
 							{columns.map((col, j) => {
