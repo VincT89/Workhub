@@ -52,7 +52,7 @@ const BoardPage = () => {
 			dispatch(fetchEventsAsync({ token })); // carica tutti gli eventi
 			dispatch(fetchProducts(token)); // carica tutti i prodotti
 			dispatch(fetchItems(token)); // carica tutti gli items
-			dispatch(fetchOrders(token)); // carica tutti gli ordini
+			dispatch(fetchOrders({ token })); // carica tutti gli ordini
 		}
 	}, [dispatch, token]);
 

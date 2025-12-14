@@ -1,4 +1,5 @@
 // USEMEMO → PER MEMORIZZARE UN RISULTATO DI UN CALCOLO E NON FARLO TUTTE LE VOLTE
+import React from "react";
 import { useState, useMemo } from "react";
 import { useLanguage } from "../../context/LanguageContext.jsx";
 
@@ -124,7 +125,7 @@ const OrdersTable = ({
 								columns.length + (actions && actions.length > 0 ? 1 : 0);
 
 							return (
-								<>
+								<React.Fragment key={row._id}>
 									{/* RIGA PRINCIPALE */}
 									<tr key={row._id} className="rounded-xl">
 										{columns.map((col, j) => {
@@ -370,7 +371,7 @@ const OrdersTable = ({
 											</td>
 										</tr>
 									)}
-								</>
+								</React.Fragment>
 							);
 						})}
 					</tbody>

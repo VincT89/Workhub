@@ -22,13 +22,10 @@ const WarehousePage = () => {
 
 	//? Chiamo il server quando la pagina si apre
 	useEffect(() => {
-		if (status === "idle") {
-			// se lo stato è uguale ad "idle" (cioè:
-			// non ho ancora caricato i dati) esegui il dispatch,
-			// così evito richieste multiple al server.
-			dispatch(fetchItems(userWorkplaceId));
-		}
-	}, [status, userWorkplaceId, dispatch]);
+	if (userWorkplaceId) {
+		dispatch(fetchItems(userWorkplaceId));
+	}
+}, [userWorkplaceId, dispatch]);
 
 	// colonne dinamiche della tabella
 	const columns = [

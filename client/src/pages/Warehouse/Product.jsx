@@ -149,7 +149,26 @@ const Product = () => {
           </div>
         </div>
 
-        {/* DISPONIBILITÀ E AZIONI */}
+        {/* NOTE E ALLEGATI */}
+        <div className="rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md">
+          <div className="flex items-center gap-2 mb-4">
+            <NoteIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
+            <h3 className="text-[#090c64] text-lg font-bold m-0 leading-none">{t("noteAllegati")}</h3>
+          </div>
+
+          <textarea
+            placeholder={t("aggiungiNota")}
+            className="w-full p-3 rounded-xl bg-white/40 text-[#090c64] shadow-sm mb-4"
+            rows={4}
+          ></textarea>
+
+          <label className="flex items-center gap-2 cursor-pointer bg-[#fafafa]/50 text-[#090c64] font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-white/80 transition-all duration-200">
+            <PaperclipIcon size={32} 	color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
+            <input type="file" hidden /> {t("scegliFile")}
+          </label>
+        </div>
+
+          {/* DISPONIBILITÀ E AZIONI */}
         <div className="flex gap-4">
           <div className="flex-1 rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md">
             <div className="flex items-center gap-2 mb-4">
@@ -172,47 +191,6 @@ const Product = () => {
               <span> {t("esportaPDF")} </span>
             </button>
           </div>
-        </div>
-
-        {/* STORICO MOVIMENTI */}
-        <div className="rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md">
-          <div className="flex items-center gap-2 mb-4">
-            <NotepadIcon size={32} 	color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-            <h3 className="text-[#090c64] text-lg font-bold">{t("storicoMovimenti")}</h3>
-          </div>
-
-          <div className="grid grid-cols-3 font-bold  text-sm mb-2">
-            <span>{t("data")}</span>
-            <span>{t("tipo")}</span>
-            <span>{t("quantita")}</span>
-          </div>
-
-          {storico.map((m, i) => (
-            <div key={i} className="grid grid-cols-3 bg-white/40 rounded-lg p-2 shadow-sm mb-2">
-              <span>{m.data}</span>
-              <span>{m.tipo}</span>
-              <span>{m.quantita}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* NOTE E ALLEGATI */}
-        <div className="rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md">
-          <div className="flex items-center gap-2 mb-4">
-            <NoteIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-            <h3 className="text-[#090c64] text-lg font-bold m-0 leading-none">{t("noteAllegati")}</h3>
-          </div>
-
-          <textarea
-            placeholder={t("aggiungiNota")}
-            className="w-full p-3 rounded-xl bg-white/40 text-[#090c64] shadow-sm mb-4"
-            rows={4}
-          ></textarea>
-
-          <label className="flex items-center gap-2 cursor-pointer bg-[#fafafa]/50 text-[#090c64] font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-white/80 transition-all duration-200">
-            <PaperclipIcon size={32} 	color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-            <input type="file" hidden /> {t("scegliFile")}
-          </label>
         </div>
 
       </div>

@@ -24,6 +24,7 @@ const WarehouseTable = ({ data, columns }) => {
   const searchTerm = useSelector(state => state.warehouseFilters.searchTerm);
   const sortAZ = useSelector(state => state.warehouseFilters.sortAZ);
   const lowStockFilter = useSelector(state => state.warehouseFilters.lowStockFilter);
+  const userWorkplaceId = useSelector(state => state.auth.user?.workplace?._id); // punto vendita associato all'utente
 
   // Stato locale → rimane useState
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -285,6 +286,7 @@ const WarehouseTable = ({ data, columns }) => {
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         productData={data}
+        userWorkplaceId={userWorkplaceId}
       />
     </div>
   );
