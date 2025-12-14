@@ -269,6 +269,8 @@ export const en = {
 	sincronizzazioneInCorso: "Synchronizing...",
 	caratteri: "characters",
 	iTuoiTicket: "Your Tickets",
+	risolto: "Resolved",
+	aperto: "Open",
 
 	// Order Page
 	nuovoOrdine: "New Order",

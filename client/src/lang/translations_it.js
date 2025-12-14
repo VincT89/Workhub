@@ -265,6 +265,8 @@ export const it = {
 	sincronizzazioneInCorso: "Sincronizzazione in corso...",
 	caratteri: "caratteri",
 	iTuoiTicket: "I tuoi ticket",
+	risolto: "Risolto",
+	aperto: "Aperto",
 
 	// Order Page
 	nuovoOrdine: "Nuovo Ordine",

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "../../context/ThemeContext";
 import { useLanguage } from "../../context/LanguageContext";
 import bgLight from "../../assets/bg/bg.jpg";
+import bgDark from "../../assets/bg/bgScuro.jpg";
 import {
 	fetchTickets,
 	updateTicketAsync,
@@ -13,7 +14,6 @@ import {
 	CalendarDotsIcon,
 	UserListIcon,
 	CircleIcon,
-	CalendarDots,
 } from "@phosphor-icons/react";
 //Libreria per Grafico
 import { LineChart } from "@mui/x-charts/LineChart";
@@ -471,15 +471,15 @@ const TicketPageAdmin = () => {
           {/* Drawer vera */}
           <aside
             className="absolute right-0 top-0 h-full w-[420px] border-l border-white/40 shadow-2xl transform transition-transform duration-300 translate-x-0 overflow-auto bg-cover bg-center"
-            style={{ backgroundImage: `url(${bgLight})` }}
+            style={{ backgroundImage: `url(${theme === 'dark' ? bgDark : bgLight})` }}
             role="dialog"
             aria-modal="true"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header sticky con bordo */}
             <header className="sticky top-0 z-10 border-b border-white/60 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-base font-semibold text-[#090c64]">
-                Dettagli Ticket
+              <h2 className="text-base font-semibold ">
+                {t("dettagliTicket")}
               </h2>
 
               {/* Bottone Chiudi */}
@@ -520,7 +520,7 @@ const TicketPageAdmin = () => {
 
                 <div className="mt-2 p-2 bg-white rounded-lg border border-gray-200">
                   <span className="font-semibold text-gray-800">
-                    Descrizione:
+                    {t("descrizione")}:
                   </span>
                   <p className="text-sm text-gray-700 mt-1">
                     {selectedTicket.description || selectedTicket.content}
@@ -554,7 +554,7 @@ const TicketPageAdmin = () => {
                     }
                   }}
                 >
-                  Aperto
+                  {t("aperto")}
                 </div>
 
                 {/* PULSANTE: Segna come RISOLTO */}
@@ -576,7 +576,7 @@ const TicketPageAdmin = () => {
                     }
                   }}
                 >
-                  Risolto
+                  {t("risolto")}
                 </div>
               </div>
 
