@@ -6,7 +6,8 @@ import {
   Pencil,
   CalendarDots,
   UserList,
-  Circle
+  Circle,
+  UserCircle 
 } from "@phosphor-icons/react";
 import bgLight from "../../assets/bg/bg.jpg";
 //Libreria per Grafico
@@ -425,34 +426,44 @@ const TicketPageAdmin = () => {
                   </div>
 
                   {/* Nessun risultato */}
-                  {users.filter(u =>
-                    (u.nome + " " + u.cognome).toLowerCase().includes(userSearch.toLowerCase())
-                  ).length === 0 && (
+                  {users.filter(u => {
+                    // Normalizza i nomi utente (supporta sia nome/cognome che firstName/lastName)
+                    const firstName = u.nome || u.firstName || u.name || '';
+                    const lastName = u.cognome || u.lastName || '';
+                    const fullName = `${firstName} ${lastName}`.toLowerCase();
+                    return fullName.includes(userSearch.toLowerCase());
+                  }).length === 0 && (
                       <div className="px-3 py-2 text-sm text-gray-500">
-                        Nessun risultato
+                        Nessun risultato (solo utenti con ticket)
                       </div>
                     )}
 
-                  {/* Lista risultati */}
-                  {users.filter(u =>
-                    (u.nome + " " + u.cognome).toLowerCase().includes(userSearch.toLowerCase())
-                  ).map(u => (
-                    <div
-                      key={u.id}
-                      onClick={() => {
-                        setSelectedUser(u.id);
-                        setUserSearch(`${u.nome} ${u.cognome}`);
-                      }}
-                      className="px-3 py-2 flex items-center gap-2 hover:bg-gray-100 cursor-pointer"
-                    >
-                      <img
-                        src={u.avatar}
-                        className="w-7 h-7 rounded-full border"
-                        alt="avatar"
-                      />
-                      <span className="text-sm">{u.nome} {u.cognome}</span>
-                    </div>
-                  ))}
+                  {/* Lista risultati - Solo utenti che hanno creato ticket */}
+                  {users.filter(u => {
+                    const firstName = u.nome || u.firstName || u.name || '';
+                    const lastName = u.cognome || u.lastName || '';
+                    const fullName = `${firstName} ${lastName}`.toLowerCase();
+                    return fullName.includes(userSearch.toLowerCase());
+                  }).map(u => {
+                    // Normalizza ID e nomi
+                    const userId = u._id || u.id;
+                    const firstName = u.nome || u.firstName || u.name || '';
+                    const lastName = u.cognome || u.lastName || '';
+                    
+                    return (
+                      <div
+                        key={userId}
+                        onClick={() => {
+                          setSelectedUser(userId);
+                          setUserSearch(`${firstName} ${lastName}`);
+                        }}
+                        className="px-3 py-2 flex items-center gap-2 hover:bg-gray-100 cursor-pointer"
+                      >
+                        <UserCircle size={28} color="#090c64" weight="duotone" />
+                        <span className="text-sm">{firstName} {lastName}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -559,11 +570,7 @@ const TicketPageAdmin = () => {
 
               <div className="flex flex-col gap-3 mb-4 p-2 bg-gray-50 rounded-xl border border-gray-200">
                 <div className="flex items-center gap-3">
-                  <img
-                    src={selectedTicket.user?.avatar}
-                    alt="Avatar"
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
+                  <UserCircle size={48} color="#090c64" weight="duotone" />
 
                   <div className="flex flex-col">
                     <span className="font-semibold text-gray-800">
