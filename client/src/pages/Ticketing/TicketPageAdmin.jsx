@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "../../context/ThemeContext";
 import { useLanguage } from "../../context/LanguageContext";
+import bgLight from "../../assets/bg/bg.jpg";
 import {
 	fetchTickets,
 	updateTicketAsync,
@@ -458,118 +459,135 @@ const TicketPageAdmin = () => {
 				</div>
 			</div>
 
-			{/* DRAWER LATERALE*/}
-			<div
-				className={`fixed inset-0 z-50 transition-all duration-300 ${
-					drawerOpen ? "bg-black/40 visible" : "bg-transparent invisible"
-				}`}
-				onClick={() => setDrawerOpen(false)}
-			>
-				<div
-					className={`absolute right-0 top-0 h-full w-80 bg-white shadow-xl p-6 transition-transform duration-300
-          ${drawerOpen ? "translate-x-0" : "translate-x-full"}`}
-					onClick={(e) => e.stopPropagation()}
-				>
-					{selectedTicket && (
-						<>
-							<h3 className="font-semibold text-xl mb-4">{t("dettagliTicket")}</h3>
+			 {/* DRAWER LATERALE - Stile uguale a Drawer.jsx */}
+      {drawerOpen && (
+        <div className="fixed inset-0 z-50">
+          {/* Overlay scuro */}
+          <div
+            className="absolute inset-0 bg-black/30"
+            onClick={() => setDrawerOpen(false)}
+          />
 
-							<div className="flex flex-col gap-3 mb-4 p-2 bg-gray-50 rounded-xl border border-gray-200">
-								<div className="flex items-center gap-3">
-									<img
-										src={selectedTicket.user?.avatar}
-										alt="Avatar"
-										className="w-12 h-12 rounded-full object-cover"
-									/>
+          {/* Drawer vera */}
+          <aside
+            className="absolute right-0 top-0 h-full w-[420px] border-l border-white/40 shadow-2xl transform transition-transform duration-300 translate-x-0 overflow-auto bg-cover bg-center"
+            style={{ backgroundImage: `url(${bgLight})` }}
+            role="dialog"
+            aria-modal="true"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header sticky con bordo */}
+            <header className="sticky top-0 z-10 border-b border-white/60 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-base font-semibold text-[#090c64]">
+                Dettagli Ticket
+              </h2>
 
-									<div className="flex flex-col">
-										<span className="font-semibold text-gray-800">
-											{selectedTicket.user?.nome ||
-												selectedTicket.user?.firstName ||
-												selectedTicket.user?.name}{" "}
-											{selectedTicket.user?.cognome ||
-												selectedTicket.user?.lastName ||
-												""}
-										</span>
-										<span className="text-sm text-gray-500">
-											{selectedTicket.user?.ruolo || selectedTicket.user?.role}
-										</span>
-										<span className="text-sm text-gray-500">
-											{selectedTicket.user?.email}
-										</span>
-									</div>
-								</div>
+              {/* Bottone Chiudi */}
+              <button
+                onClick={() => setDrawerOpen(false)}
+                className="custom-button"
+              >
+                Chiudi
+              </button>
+            </header>
 
-								<div className="mt-2 p-2 bg-white rounded-lg border border-gray-200">
-									<span className="font-semibold text-gray-800">
-										{t("descrizione")}:
-									</span>
-									<p className="text-sm text-gray-700 mt-1">
-										{selectedTicket.description || selectedTicket.content}
-									</p>
-								</div>
-							</div>
+            {/* Contenuto */}
+            <div className="p-6 text-[15px] leading-relaxed text-[#090c64]">
+              {selectedTicket && (
+                <>
 
-							<div className="flex flex-col gap-2 mb-4">
-								<div
-									className="p-2 flex justify-center items-center rounded-xl bg-[#A3B8E0]
+              <div className="flex flex-col gap-3 mb-4 p-2 bg-gray-50 rounded-xl border border-gray-200">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={selectedTicket.user?.avatar}
+                    alt="Avatar"
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-gray-800">
+                      {selectedTicket.user?.nome || selectedTicket.user?.firstName || selectedTicket.user?.name}{" "}
+                      {selectedTicket.user?.cognome || selectedTicket.user?.lastName || ''}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      {selectedTicket.user?.ruolo || selectedTicket.user?.role}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      {selectedTicket.user?.email}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-2 p-2 bg-white rounded-lg border border-gray-200">
+                  <span className="font-semibold text-gray-800">
+                    Descrizione:
+                  </span>
+                  <p className="text-sm text-gray-700 mt-1">
+                    {selectedTicket.description || selectedTicket.content}
+                  </p>
+                </div>
+              </div>
+
+              {/* AZIONI: Pulsanti per cambiare lo status del ticket */}
+              <div className="flex flex-col gap-2 mb-4">
+                {/* PULSANTE: Segna come APERTO */}
+                <div
+                  className="p-2 flex justify-center items-center rounded-xl bg-[#A3B8E0]
                   border border-[#7A9CC6] cursor-pointer hover:bg-[#C3D2F0]"
-									onClick={async () => {
-										const id = selectedTicket._id || selectedTicket.id;
-										if (!id) return;
-										// optimistic UI: update local map immediately
-										setTicketStatus((s) => ({ ...s, [id]: "aperto" }));
-										try {
-											// backend expects 'open' / 'closed'
-											await dispatch(
-												updateTicketAsync({ id, payload: { status: "open" } })
-											).unwrap();
-											dispatch(fetchTickets());
-										} catch (err) {
-											// revert on error
-											setTicketStatus((s) => ({ ...s, [id]: "risolto" }));
-											console.error("Update ticket failed", err);
-										}
-									}}
-								>
-									{t("aperti")}
-								</div>
+                  onClick={async () => {
+                    const id = selectedTicket._id || selectedTicket.id;
+                    if (!id) return;
+                    
+                    // 1. AGGIORNAMENTO OTTIMISTICO: cambia subito l'UI
+                    setTicketStatus((s) => ({ ...s, [id]: "aperto" }));
+                    
+                    try {
+                      // 2. AGGIORNA SUL SERVER: invia richiesta PUT
+                      await dispatch(updateTicketAsync({ id, payload: { status: 'open' } })).unwrap();
+                      
+                      // 3. RICARICA TUTTI I TICKET: così anche TicketCreator vede il cambiamento
+                      dispatch(fetchTickets());
+                    } catch (err) {
+                      // 4. SE FALLISCE: ripristina lo stato precedente
+                      setTicketStatus((s) => ({ ...s, [id]: "risolto" }));
+                      console.error('Update ticket failed', err);
+                    }
+                  }}
+                >
+                  Aperto
+                </div>
 
-								<div
-									className="p-2 flex justify-center items-center rounded-xl bg-[#FFD580]
+                {/* PULSANTE: Segna come RISOLTO */}
+                <div
+                  className="p-2 flex justify-center items-center rounded-xl bg-[#FFD580]
                   border border-[#FFE8A0] cursor-pointer hover:bg-[#FFE8A0]"
-									onClick={async () => {
-										const id = selectedTicket._id || selectedTicket.id;
-										if (!id) return;
-										setTicketStatus((s) => ({ ...s, [id]: "risolto" }));
-										try {
-											await dispatch(
-												updateTicketAsync({ id, payload: { status: "closed" } })
-											).unwrap();
-											dispatch(fetchTickets());
-										} catch (err) {
-											// revert on error
-											setTicketStatus((s) => ({ ...s, [id]: "aperto" }));
-											console.error("Update ticket failed", err);
-										}
-									}}
-								>
-									{t("risolti")}
-								</div>
-							</div>
+                  onClick={async () => {
+                    const id = selectedTicket._id || selectedTicket.id;
+                    if (!id) return;
+                    
+                    setTicketStatus((s) => ({ ...s, [id]: "risolto" }));
+                    
+                    try {
+                      await dispatch(updateTicketAsync({ id, payload: { status: 'closed' } })).unwrap();
+                      dispatch(fetchTickets()); // Sincronizza con altri componenti
+                    } catch (err) {
+                      setTicketStatus((s) => ({ ...s, [id]: "aperto" }));
+                      console.error('Update ticket failed', err);
+                    }
+                  }}
+                >
+                  Risolto
+                </div>
+              </div>
 
-							<button
-								onClick={() => setDrawerOpen(false)}
-								className="w-full bg-gray-300 text-gray-800 py-2 rounded-lg hover:bg-gray-400"
-							>
-								{t("chiudi")}
-							</button>
-						</>
-					)}
-				</div>
-			</div>
-		</div>
-	);
+                </>
+              )}
+            </div>
+          </aside>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default TicketPageAdmin;

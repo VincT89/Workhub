@@ -51,9 +51,25 @@ const WarehouseTable = ({ data, allItems, columns }) => {
 
 	//? ---------- MEMO: categorie ---------
 	const categories = useMemo(() => {
-		const names = data.map((p) => p.product?.category?.name).filter(Boolean); // rimuove null/undefined/vuoti
+		const names = allItems
+			.map((p) => p.product?.category?.name)
+			.filter(Boolean); // rimuove null/undefined/vuoti
 		return [t("tutteCategorie"), ...new Set(names)];
-	}, [data]);
+	}, [allItems, t]);
+
+	// prendo mappa categorie per filtro usando useMemo per non ricalcolarla ad ogni render 
+	const categoryMap = useMemo(() => {
+		const map = new Map();
+
+		allItems.forEach((item) => {
+			const cat = item.product?.category;
+			if (cat?.name && cat?._id) {
+				map.set(cat.name, cat._id);
+			}
+		});
+
+		return map;
+	}, [allItems]);
 
 	//? ---------- DATA PROCESSING ----------
 	const filteredData = useMemo(() => {
@@ -78,8 +94,14 @@ const WarehouseTable = ({ data, allItems, columns }) => {
 		}
 
 		// Filtro per categoria
-		if (!selectedCategory || selectedCategory === t("tutteCategorie")) {
-			return result;
+		if (selectedCategory !== t("tutteCategorie")) {
+			const selectedCategoryId = categoryMap.get(selectedCategory);
+
+			if (selectedCategoryId) {
+				result = result.filter(
+					(p) => String(p.product?.category?._id) === String(selectedCategoryId)
+				);
+			}
 		}
 
 		// filtro articoli in esaurimento
