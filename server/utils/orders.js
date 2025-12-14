@@ -1,4 +1,4 @@
-import { AppConfig } from "../config/app"
+import { AppConfig } from "../config/app.js"
 
 const { affiliate } = AppConfig;
 

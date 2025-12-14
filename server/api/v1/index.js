@@ -11,6 +11,7 @@ import orderRouter from "./routes/orderRoutes.js";
 import productRouter from "./routes/product.js";
 import itemsRouter from "./routes/items.js";
 import customersRouter from "./routes/customers.js";
+import ticketingRouter from "./routes/ticketing.js";
 
 
 
@@ -69,6 +70,10 @@ app.use("/items", itemsRouter);
  * /api/v1/customers
  */
 app.use("/customers", customersRouter);
+
+/** /api/v1/ticketing
+*/
+app.use("/ticketing", ticketingRouter);
 
 
 export default app;

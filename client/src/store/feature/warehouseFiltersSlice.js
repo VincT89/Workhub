@@ -22,7 +22,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 // INITIAL STATE DEI FILTRI 
 const initialState = {
-  selectedCategory: "Categorie",
+  selectedCategory: "Tutte le categorie",
   searchTerm: "",
   sortAZ: false,
   lowStockFilter: false,
@@ -45,7 +45,7 @@ const warehouseFiltersSlice = createSlice({
       state.lowStockFilter = !state.lowStockFilter;
     },
     resetFilters: (state) => {
-      state.selectedCategory = "Categorie";
+      state.selectedCategory = "Tutte le categorie";
       state.searchTerm = "";
       state.sortAZ = false;
       state.lowStockFilter = false;

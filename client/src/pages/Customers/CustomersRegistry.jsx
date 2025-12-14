@@ -1,18 +1,24 @@
 //RICORDA DI COMMENTARE IL CODICE
+
+
+
+
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { setActiveTab } from "../../store/feature/tabSlice.js";
+import { useTheme } from "../../context/ThemeContext";
+import { useLanguage } from "../../context/LanguageContext.jsx";
 import Table from "../../components/Table";
 import {
-    UserList,
-    ShoppingBag,
-    ArrowCounterClockwise,
-    IdentificationBadge,
-    PencilSimple,
-    FloppyDisk,
-    XCircle,
-    FileXls
+    UserListIcon,
+    ShoppingBagIcon,
+    ArrowCounterClockwiseIcon,
+    IdentificationBadgeIcon,
+    PencilSimpleIcon,
+    FloppyDiskIcon,
+    XCircleIcon,
+    FileXlsIcon
 } from "@phosphor-icons/react";
 import { 
     fetchCustomerByIdAsync, 
@@ -21,21 +27,49 @@ import {
     clearError
 } from "../../store/feature/customerSlice";
 
+import * as XLSX from "xlsx"; // <-- !! import della libreria 'xlsx' !! per far si che venga generato il file excel nelle sezioni di ordini e affiliazione del dettaglio del singolo customer bisogna installare questa libreria
+
 const CustomersRegistry = () => {
     const { id } = useParams(); // useParams() estrae i parametri dall'URL (es: /customer/123 → id = "123")
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
+    const { theme } = useTheme(); // Prende il tema corrente (dark o light) dal contesto ThemeContext
+    const { t } = useLanguage(); // Prende la lingua corrente (it o en) dal contesto LanguageContext
     
     // useSelector() legge i dati dallo stato Redux
     // selected: customer selezionato, loading: stato caricamento, error: eventuali errori
     const { selected: customer, loading, error } = useSelector(state => state.customers);
-    console.log(customer);
     const token = useSelector(state => state.auth?.token) || localStorage.getItem('token'); //Prende il JWT dallo stato auth o dal localStorage
     const activeTab = useSelector((state) => state.tab.activeTab); //legge il tab attivo dallo stato di redux
 
     const [isEditing, setIsEditing] = useState(false); //gestisce la modifica di customer
     const [editedCustomer, setEditedCustomer] = useState(null); //copia della modifica del customer 
     const [saving, setSaving] = useState(false); //salva le modifiche
+
+    // ================== FUNZIONE CHE GENERA L'EXCEL ==================
+    const exportAffiliateToExcel = () => {
+        if (!customer || !customer.affiliateProgram) return;
+
+        // CREO I DATI DA ESPORTARE
+        const data = [
+            {
+                "Livello Tessera": customer.affiliateProgram.name || "Nessuno",
+                "Punti Accumulati": customer.affiliateProgram.points || 0,
+                "Numero Tessera": customer.affiliateProgram.cardNumber || "N/D",
+                "Programma Fedeltà": "Attivo"
+            }
+        ];
+
+        // CREO IL WORKSHEET E WORKBOOK
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Affiliazione");
+
+        // GENERO IL FILE
+        XLSX.writeFile(workbook, `Affiliazione_${customer.firstName}_${customer.lastName}.xlsx`);
+    };
+    // ==================================================================
 
     // Carica il customer quando il componente viene montato
     useEffect(() => {
@@ -111,9 +145,9 @@ const CustomersRegistry = () => {
     }, [error, dispatch]);
 
     const stats = [
-        { label: "Anagrafica", icon: UserList },
-        { label: "Ordini", icon: ShoppingBag },
-        { label: "Affiliazione", icon: IdentificationBadge },
+        { label: t("anagrafica"), icon: UserListIcon },
+        { label: t("ordini"), icon: ShoppingBagIcon },
+        { label: t("affiliazione"), icon: IdentificationBadgeIcon },
     ];
 
     // PER ORA lasciamo array vuoti 
@@ -122,7 +156,7 @@ const CustomersRegistry = () => {
     if (loading) {
         return (
             <div className="w-full min-h-screen flex justify-center items-start p-8">
-                <div className="text-[#090c64]">Caricamento customer...</div>
+                <div>{t("caricamentoClienti")}</div>
             </div>
         );
     }
@@ -135,7 +169,7 @@ const CustomersRegistry = () => {
                     onClick={() => navigate('/customers')}
                     className="ml-4 px-4 py-2 bg-[#090c64] text-white rounded"
                 >
-                    Torna alla lista
+                    {t("tornaAllaLista")}
                 </button>
             </div>
         );
@@ -144,12 +178,12 @@ const CustomersRegistry = () => {
     if (!customer) {
         return (
             <div className="w-full min-h-screen flex justify-center items-start p-8">
-                <div className="text-[#090c64]">Customer non trovato</div>
+                <div>{t("clienteNonTrovato")}</div>
                 <button 
                     onClick={() => navigate('/customers')}
                     className="ml-4 px-4 py-2 bg-[#090c64] text-white rounded"
                 >
-                    Torna alla lista
+                    {t("tornaAllaLista")}
                 </button>
             </div>
         );
@@ -166,10 +200,10 @@ const CustomersRegistry = () => {
                             key={item.label}
                             onClick={() => dispatch(setActiveTab(item.label))}
                             className={`flex items-center gap-2 rounded-xl p-2 shadow-md border border-white transition duration-200 cursor-pointer ${activeTab === item.label
-                                ? "bg-white text-[#134a7b] font-semibold"
+                                ? "bg-white text-[#090c64] font-semibold"
                                 : "bg-white/40 hover:bg-white/70"
                                 }`}>
-                            <item.icon size={22} />
+                            <item.icon size={22}  weight="duotone" />
                             {item.label}
                         </button>
                     ))}
@@ -178,23 +212,23 @@ const CustomersRegistry = () => {
                 {/* CONTENUTO */}
                 <div className="w-full rounded-xl bg-white/20 backdrop-blur-sm p-6 shadow-md border border-white">
                     <h2 className="text-[#134a7b] text-lg font-bold mb-6">
-                        Cliente: {customer.firstName} {customer.lastName}
+                        {t("cliente")} : {customer.firstName} {customer.lastName}
                     </h2>
 
                     {/* ------------------------ ANAGRAFICA ------------------------ */}
-                    {activeTab === "Anagrafica" && editedCustomer && (
+                    {activeTab === t("anagrafica") && editedCustomer && (
                         <div className="flex flex-col gap-3">
 
                             {/* HEADER */}
                             <div className="flex justify-between items-center mb-2">
-                                <h3 className="text-[#134a7b] font-semibold">Anagrafica</h3>
+                                <h3 className="text-[#134a7b] font-semibold">{t("anagrafica")}</h3>
 
                                 {!isEditing ? (
                                     <button
                                         onClick={handleEdit}
-                                        className="flex items-center gap-1 text-sm px-3 py-1 bg-white/70 rounded-xl border border-white shadow-sm hover:bg-white transition"
+                                        className="flex items-center gap-1 text-sm px-3 py-1 bg-white/30 rounded-xl border border-white shadow-sm hover:bg-white transition"
                                     >
-                                        <PencilSimple size={22} color="#090c64" weight="duotone" /> Modifica
+                                        <PencilSimpleIcon size={22} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" /> {t("modifica")}
                                     </button>
                                 ) : (
                                     <div className="flex gap-2">
@@ -203,14 +237,14 @@ const CustomersRegistry = () => {
                                             disabled={saving}
                                             className="flex items-center gap-1 text-sm px-3 py-1 bg-green-200 rounded-xl border border-white shadow-sm hover:bg-green-300 transition disabled:opacity-50"
                                         >
-                                            <FloppyDisk size={22} color="#090c64" weight="duotone" /> 
+                                            <FloppyDiskIcon size={22} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" /> 
                                             {saving ? 'Salvando...' : 'Salva'}
                                         </button>
                                         <button
                                             onClick={handleCancel}
                                             className="flex items-center gap-1 text-sm px-3 py-1 bg-red-200 rounded-xl border border-white shadow-sm hover:bg-red-300 transition"
                                         >
-                                            <XCircle size={22} color="#090c64" weight="duotone" /> Annulla
+                                            <XCircleIcon size={22} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" /> Annulla
                                         </button>
                                     </div>
                                 )}
@@ -220,7 +254,7 @@ const CustomersRegistry = () => {
                             <div className="grid grid-cols-2 gap-3">
 
                                 {/* First Name */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -236,7 +270,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* Last Name */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -252,7 +286,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* Email */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm col-span-2">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm col-span-2">
                                     {isEditing ? (
                                         <input
                                             type="email"
@@ -268,7 +302,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* Phone */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -284,7 +318,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* Fiscal Code */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -300,7 +334,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* Birth Date */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm col-span-2">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm col-span-2">
                                     {isEditing ? (
                                         <input
                                             type="date"
@@ -315,7 +349,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* Address */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm col-span-2">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm col-span-2">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -331,7 +365,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* City */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -347,7 +381,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* State */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -363,7 +397,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* ZIP Code */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -379,7 +413,7 @@ const CustomersRegistry = () => {
                                 </div>
 
                                 {/* Country */}
-                                <div className="bg-white/60 p-3 rounded-xl shadow-sm">
+                                <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                                     {isEditing ? (
                                         <input
                                             type="text"
@@ -399,20 +433,19 @@ const CustomersRegistry = () => {
                     )}
 
                     {/* ------------------------ ORDINI ------------------------ */}
-                    {activeTab === "Ordini" && (
+                    {activeTab === t("ordini") && (
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center mb-2">
-                                <h3 className="text-[#134a7b] font-semibold text-left">Storico Ordini</h3>
-                                <button className="flex items-center gap-1 text-sm px-3 py-1 bg-white/70 rounded-xl border border-white shadow-sm hover:bg-white transition">
-                                    <FileXls size={22} color="#090c64" weight="duotone" /> Excel
+                                <h3 className="text-[#134a7b] font-semibold text-left">{t("storicoOrdini")}</h3>
+                                <button className="flex items-center gap-1 font-bold text-sm px-3 py-1 bg-white/30 rounded-xl border border-white shadow-sm hover:bg-white transition">
+                                    <FileXlsIcon size={22} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" /> Excel
                                 </button>
                             </div>
                             {ordiniFittizi.length > 0 ? (
                                 <Table data={ordiniFittizi} columns={Object.keys(ordiniFittizi[0])} />
                             ) : (
-                                <div className="bg-white/60 p-4 rounded-xl text-center">
-                                    <p className="text-[#134a7b]">Nessun ordine trovato</p>
-                                    <p className="text-sm text-gray-600">Gli ordini verranno gestiti in futuro</p>
+                                <div className="bg-white/20 p-4 rounded-xl text-center">
+                                    <p className="font-bold">{t("nessunOrdineTrovato")}</p>
                                 </div>
                             )}
                         </div>
@@ -420,42 +453,47 @@ const CustomersRegistry = () => {
 
                     
                     {/* ------------------------ AFFILIAZIONE ------------------------ */}
-                    {activeTab === "Affiliazione" && customer.affiliateProgram && (
+                    {activeTab === t("affiliazione") && customer.affiliateProgram && (
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center mb-2">
-                                <h3 className="text-[#134a7b] font-semibold">Affiliazione</h3>
-                                <button className="flex items-center gap-1 text-sm px-3 py-1 bg-white/70 rounded-xl border border-white shadow-sm hover:bg-white transition">
-                                    <FileXls size={22} color="#090c64" weight="duotone" /> Excel
+                                <h3 className="text-[#134a7b] font-semibold">{t("affiliazione")}</h3>
+
+                                {/* ========= BOTTONE EXCEL CHE USA LA FUNZIONE AGGIUNTA ========= */}
+                                <button
+                                    onClick={exportAffiliateToExcel}
+                                    className="flex items-center gap-1 font-bold text-sm px-3 py-1 bg-white/30 rounded-xl border border-white shadow-sm hover:bg-white transition">
+                                    <FileXlsIcon size={22} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" /> Excel
                                 </button>
+                                {/* ================================================================= */}
                             </div>
 
-                            <div className="bg-white/60 p-3 rounded-xl shadow-sm">
-                                <strong>Livello tessera:</strong> {customer.affiliateProgram.name || 'Nessuno'}
+                            <div className="bg-white/20 p-3 rounded-xl shadow-sm">
+                                <strong>{t("livelloTessera")}:</strong> {customer.affiliateProgram.name}
                             </div>
 
-                            <div className="bg-white/60 p-3 rounded-xl shadow-sm">
-                                <strong>Punti accumulati:</strong> {customer.affiliateProgram.points || 0}
+                            <div className="bg-white/20 p-3 rounded-xl shadow-sm">
+                                <strong>{t("puntiAccumulati")}:</strong> {customer.affiliateProgram.points}
                             </div>
 
-                            <div className="bg-white/60 p-3 rounded-xl shadow-sm">
-                                <strong>Numero tessera:</strong> {customer.affiliateProgram.cardNumber || 'N/D'}
+                            <div className="bg-white/20 p-3 rounded-xl shadow-sm">
+                                <strong>{t("numeroTessera")}:</strong> {customer.affiliateProgram.cardNumber}
                             </div>
 
-                            <div className="bg-white/60 p-3 rounded-xl shadow-sm">
-                                <strong>Programma fedeltà:</strong> Attivo
+                            <div className="bg-white/20 p-3 rounded-xl shadow-sm">
+                                <strong>{t("programmaFedelta")}:</strong> {t("attivo")}
                             </div>
                         </div>
                     )}
 
                     {/* Messaggio se non c'è programma fedeltà */}
-                    {activeTab === "Affiliazione" && !customer.affiliateProgram && (
+                    {activeTab === t("affiliazione") && !customer.affiliateProgram && (
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-center mb-2">
-                                <h3 className="text-[#134a7b] font-semibold">Affiliazione</h3>
+                                <h3 className="text-[#134a7b] font-semibold">{t("affiliazione")}</h3>
                             </div>
-                            <div className="bg-white/60 p-4 rounded-xl text-center">
-                                <p className="text-[#134a7b]">Nessun programma fedeltà attivo</p>
-                                <p className="text-sm text-gray-600">Il cliente non è iscritto al programma fedeltà</p>
+                            <div className="bg-white/20 p-4 rounded-xl text-center">
+                                <p className="font-bold">{t("nessunProgrammaFedeltaAttivo")}</p>
+                                <p className="text-sm">{t("clienteNonIscrittoProgrammaFedelta")}</p>
                             </div>
                         </div>
                     )}

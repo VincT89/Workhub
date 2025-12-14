@@ -4,7 +4,6 @@ import { API_URL } from "../config/api.js";
 
 export async function fetchItems() {
 	const token = JSON.parse(localStorage.getItem("auth")).token; // il token salvato al login
-	console.log("token", token);
 	const res = await fetch(`${API_URL}/items`, {
 		headers: {
 			"Content-Type": "application/json",

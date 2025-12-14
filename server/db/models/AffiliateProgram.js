@@ -1,10 +1,18 @@
 import { Schema, model } from 'mongoose';
 
 const AffiliateProgramSchema = new Schema({
-    name: {
-        type: String,
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'Client',
         required: true,
         unique: true,
+        index: true,
+    },
+    name: {
+        type: String,
+        enum: ["standard", "premium"],
+        default: "standard",
+        required: true,
         index: true,
     },
     points: {

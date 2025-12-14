@@ -10,10 +10,11 @@ import {
 	WarningOctagonIcon,
 	CalendarIcon,
 	NotePencilIcon,
-	TrashIcon
+	TrashIcon,
 } from "@phosphor-icons/react";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
 	fetchEventsAsync,
 	createEventAsync,
@@ -21,21 +22,26 @@ import {
 	deleteEventAsync,
 } from "../store/feature/eventsSlice.js";
 import { fetchProducts } from "../store/feature/productsSlice.js";
+import { fetchItems } from "../store/feature/itemsSlice.js";
+import { fetchOrders } from "../store/feature/orderSlice.js";
 import Table from "../components/Table";
 import Drawer from "../components/Drawer";
 
 const BoardPage = () => {
 	const { theme } = useTheme();
 	const { t } = useLanguage();
+	const navigate = useNavigate();
 	const { role } = useSelector((state) => state.auth.user);
 	const token = useSelector((state) => state.auth.token);
 	const users = useSelector((state) => state.users); // per richiamare i dati del personale (nelle box in alto)
 	const pointOfSales = useSelector((state) => state.pos); // per richiamare i dati dei depositi (nelle box in alto)
 	const products = useSelector((state) => state.products); // per richiamare i dati dei prodotti (nelle box in alto)
-	
+	const orders = useSelector((state) => state.orders); // per richiamare i dati degli ordini (nelle box in alto)
+	const items = useSelector((state) => state.items);
+	const lowStockProducts =
+		items?.list?.filter((item) => item.stock <= item.stockLimit) || [];
 
 	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
-
 
 	const dispatch = useDispatch();
 
@@ -44,11 +50,14 @@ const BoardPage = () => {
 	useEffect(() => {
 		if (token) {
 			dispatch(fetchEventsAsync({ token })); // carica tutti gli eventi
-			dispatch(fetchProducts( token )); // carica tutti i prodotti
+			dispatch(fetchProducts(token)); // carica tutti i prodotti
+			dispatch(fetchItems(token)); // carica tutti gli items
+			dispatch(fetchOrders({ token })); // carica tutti gli ordini
 		}
 	}, [dispatch, token]);
 
-	const boardPosts = events.map((event) => ({ // dati per la tabella bacheca
+	const boardPosts = events.map((event) => ({
+		// dati per la tabella bacheca
 		_id: event._id,
 		title: event.title,
 		date: event.startDate ? event.startDate.slice(0, 10) : "",
@@ -57,7 +66,13 @@ const BoardPage = () => {
 
 	const boardColumns = ["title", "date", "description"]; // colonne tabella bacheca
 
-	// State per il Drawer 
+	const columnLabels = {
+		title: t("titolo"),
+		date: t("data"),
+		description: t("descrizione"),
+	};
+
+	// State per il Drawer
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [editData, setEditData] = useState(null);
 
@@ -99,9 +114,12 @@ const BoardPage = () => {
 		setEditData(null);
 	};
 
-	const handleDelete = (row) => { // elimina evento
+	const handleDelete = (row) => {
+		// elimina evento
 		if (
-			window.confirm(` ${t("dashboard.seiSicuroEliminareEvento")}"${row.title}"?`)
+			window.confirm(
+				` ${t("seiSicuroEliminareEvento")}"${row.title}"?`
+			)
 		) {
 			dispatch(deleteEventAsync({ id: row._id, token }));
 		}
@@ -120,10 +138,20 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<WarehouseIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-						<span className="font-bold text-[14px]">{t("dashboard.depositi")}</span>
+						<WarehouseIcon
+							size={28}
+							color={theme === "dark" ? "white" : "#090c64"}
+							weight="duotone"
+						/>
+						<span className="font-bold text-[14px]">
+							{t("depositi")}
+						</span>
 					</div>
-					<span className={`text-sm opacity-70 leading-none font-semibold ${theme === "dark" ? "text-white" : "text-[#090c64]"}`}>
+					<span
+						className={`text-sm opacity-70 leading-none font-semibold ${
+							theme === "dark" ? "text-white" : "text-[#090c64]"
+						}`}
+					>
 						{pointOfSales?.list?.length ?? 0}
 					</span>
 				</div>
@@ -134,8 +162,14 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<ShoppingCartSimpleIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-						<span className="font-bold text-[14px]">{t("dashboard.prodotti")}</span>
+						<ShoppingCartSimpleIcon
+							size={28}
+							color={theme === "dark" ? "white" : "#090c64"}
+							weight="duotone"
+						/>
+						<span className="font-bold text-[14px]">
+							{t("prodotti")}
+						</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
 						{products?.list?.length ?? 0}
@@ -148,11 +182,17 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<PackageIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-						<span className="font-bold text-[14px]">{t("dashboard.ordiniInUscita")}</span>
+						<PackageIcon
+							size={28}
+							color={theme === "dark" ? "white" : "#090c64"}
+							weight="duotone"
+						/>
+						<span className="font-bold text-[14px]">
+							{t("ordiniInUscita")}
+						</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
-						20
+						{orders?.items?.length ?? 0}
 					</span>
 				</div>
 
@@ -162,11 +202,17 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<WarningOctagonIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-						<span className="font-bold text-[14px]">{t("dashboard.articoliSottoSoglia")}</span>
+						<WarningOctagonIcon
+							size={28}
+							color={theme === "dark" ? "white" : "#090c64"}
+							weight="duotone"
+						/>
+						<span className="font-bold text-[14px]">
+							{t("articoliSottoSoglia")}
+						</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
-						10
+						{lowStockProducts?.length ?? 0}
 					</span>
 				</div>
 
@@ -176,8 +222,14 @@ const BoardPage = () => {
 					border border-white/30 dark:border-white/80 ${textColor}`}
 				>
 					<div className="flex items-center gap-2">
-						<UserCircleCheckIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-						<span className="font-bold text-[14px] ">{t("dashboard.personaleAttivo")}</span>
+						<UserCircleCheckIcon
+							size={28}
+							color={theme === "dark" ? "white" : "#090c64"}
+							weight="duotone"
+						/>
+						<span className="font-bold text-[14px] ">
+							{t("personaleAttivo")}
+						</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
 						{users?.list?.length ?? 0}
@@ -195,17 +247,22 @@ const BoardPage = () => {
 				>
 					{/* HEADER BACHECA */}
 					<div className="flex items-start gap-4 w-full">
-						<ChalkboardSimpleIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
+						<ChalkboardSimpleIcon
+							size={28}
+							color={theme === "dark" ? "white" : "#090c64"}
+							weight="duotone"
+						/>
 
-						<h3 className="text-[14px] font-bold font-nunito">{t("dashboard.bacheca")}</h3>
+						<h3 className="text-[14px] font-bold font-nunito">
+							{t("bacheca")}
+						</h3>
 
 						{(role === "supervisor" || role === "admin") && (
 							<button
 								onClick={openDrawerAdd}
-
-								className="ml-auto px-4 py-2 bg-white dark:bg-[#090c64] text-[#090c64] dark:text-white shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[15px] font-bold cursor-pointer"
+								className="custom-button ml-auto text-[14px]"
 							>
-								+ {t("dashboard.aggiungi")}
+								+ {t("aggiungi")}
 							</button>
 						)}
 					</div>
@@ -215,30 +272,35 @@ const BoardPage = () => {
 						<Table
 							data={boardPosts}
 							columns={boardColumns}
+							columnLabels={columnLabels}
 							actionLabel={"Actions"}
 							actions={
 								role === "admin"
 									? [
-										{
-											name: "edit",
-											icon: (
-												<NotePencilIcon
-													size={28}
-													color={theme === "dark" ? "white" : "#090c64"}
-													weight="duotone"
-													className="mr-4"
-												/>
-											),
-											onClick: openDrawerEdit,
-										},
-										{
-											name: "delete",
-											icon: (
-												<TrashIcon size={28} color={theme === "dark" ? "#ff4d4d" : "#ff0000"} weight="duotone" />
-											),
-											onClick: handleDelete,
-										},
-									]
+											{
+												name: "edit",
+												icon: (
+													<NotePencilIcon
+														size={28}
+														color={theme === "dark" ? "white" : "#090c64"}
+														weight="duotone"
+														className="mr-4"
+													/>
+												),
+												onClick: openDrawerEdit,
+											},
+											{
+												name: "delete",
+												icon: (
+													<TrashIcon
+														size={28}
+														color={theme === "dark" ? "#ff4d4d" : "#ff0000"}
+														weight="duotone"
+													/>
+												),
+												onClick: handleDelete,
+											},
+									  ]
 									: []
 							}
 						/>
@@ -253,22 +315,37 @@ const BoardPage = () => {
 				>
 					{/* HEADER */}
 					<div className="flex items-center gap-4">
-						<ShoppingCartSimpleIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
+						<ShoppingCartSimpleIcon
+							size={28}
+							color={theme === "dark" ? "white" : "#090c64"}
+							weight="duotone"
+						/>
 
 						<h3 className="text-[14px] font-bold font-nunito">
-							{t("dashboard.prodottiInEsaurimento")}
+							{t("prodottiInEsaurimento")}
 						</h3>
+						<button
+							onClick={() => navigate("/warehouse")}
+							className="ml-auto px-4 py-2 bg-white dark:bg-[#090c64] text-[#090c64] dark:text-white shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[14px] font-bold cursor-pointer custom-button"
+						>
+							{t("vediTutti")}
+						</button>
 					</div>
 
 					{/* TABELLA */}
 					<div className="w-full overflow-hidden h-full mt-3">
 						<Table
-							data={[
-								{ name: "Prodotto A", stock: "8" },
-								{ name: "Prodotto B", stock: "5" },
-								{ name: "Prodotto C", stock: "2" },
-							]}
-							columns={["name", "stock"]}
+							data={lowStockProducts.slice(0, 3).map((item) => ({
+								name: item.product.name,
+								stock: item.stock,
+								pos: item.pointOfSales.name,
+							}))}
+							columns={["name", "stock", "pos"]}
+							columnLabels={{
+								name: t("prodotto"),
+								stock: t("giacenza"),
+								pos: t("pos"),
+							}}
 						/>
 					</div>
 				</div>
@@ -282,11 +359,15 @@ const BoardPage = () => {
 				{/* Contenuto */}
 				<div className="flex-1 flex flex-col">
 					<div className="flex gap-4 justify-start items-start">
-						<CalendarIcon size={28} color={theme === "dark" ? "white" : "#090c64"}  weight="duotone" />
+						<CalendarIcon
+							size={28}
+							color={theme === "dark" ? "white" : "#090c64"}
+							weight="duotone"
+						/>
 						<h3
 							className={`text-[14px] font-bold font-nunito ${textColor} mb-4`}
 						>
-							{t("dashboard.calendario")}
+							{t("calendario")}
 						</h3>
 					</div>
 
@@ -297,25 +378,31 @@ const BoardPage = () => {
 			<Drawer
 				open={drawerOpen}
 				onClose={() => setDrawerOpen(false)}
-				title={editData && editData.title ? t("dashboard.modificaEvento") : t("dashboard.aggiungiEvento")}
+				title={
+					editData && editData.title
+						? t("modificaEvento")
+						: t("aggiungiEvento")
+				}
 			>
 				{editData && (
 					<form onSubmit={handleSavePost} className="flex flex-col gap-4">
 						<div className="flex flex-col">
-							<label className="text-sm font-bold">{t("dashboard.titolo")}</label>
+							<label className="text-sm font-bold">
+								{t("titolo")}
+							</label>
 							<input
 								type="text"
 								value={editData.title}
-								placeholder={t("dashboard.aggiungiEvento")}
+								placeholder={t("aggiungiEvento")}
 								onChange={(e) =>
 									setEditData({ ...editData, title: e.target.value })
 								}
-								className="px-3 py-2 rounded-xl bg-[#fafafa20] border border-white/30"
+								className="custom-input"
 							/>
 						</div>
 
 						<div className="flex flex-col">
-							<label className="text-sm font-bold">{t("dashboard.data")}</label>
+							<label className="text-sm font-bold">{t("data")}</label>
 							<input
 								type="date"
 								value={editData.date}
@@ -323,20 +410,22 @@ const BoardPage = () => {
 								onChange={(e) =>
 									setEditData({ ...editData, date: e.target.value })
 								}
-								className="px-3 py-2 rounded-xl bg-[#fafafa20] border border-white/30"
+								className="custom-input"
 							/>
 						</div>
 
 						<div className="flex flex-col">
-							<label className="text-sm font-bold">{t("dashboard.descrizione")}</label>
+							<label className="text-sm font-bold">
+								{t("descrizione")}
+							</label>
 							<input
 								type="text"
 								value={editData.description}
-								placeholder={t("dashboard.inserisciDescrizioneEvento")}
+								placeholder={t("inserisciDescrizioneEvento")}
 								onChange={(e) =>
 									setEditData({ ...editData, description: e.target.value })
 								}
-								className="px-3 py-2 rounded-xl bg-[#fafafa20] border border-white/30"
+								className="custom-input"
 							/>
 						</div>
 
@@ -346,11 +435,11 @@ const BoardPage = () => {
 								onClick={() => setDrawerOpen(false)}
 								className="custom-button-light"
 							>
-								{t("dashboard.annulla")}
+								{t("annulla")}
 							</button>
 
 							<button type="submit" className="custom-button">
-								{t("dashboard.salva")}
+								{t("salva")}
 							</button>
 						</div>
 					</form>

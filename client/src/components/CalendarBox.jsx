@@ -51,27 +51,21 @@ const weekOffset = {
 /* TOOLBAR */
 const CustomToolbar = ({ label, view, onView, onNavigate }) => {
 	const { t } = useLanguage();
-	
+
 	return (
-		<div className="flex items-center justify-between w-full px-6 py-3 my-5 rounded-xl backdrop-blur-md shadow-md bg-white/20 dark:bg-white/10 border border-white/30 dark:border-white/10">
+		<div className="calendar-toolbar w-full">
 			{/* NAV */}
 			<div className="flex items-center gap-2">
-				<button
-					onClick={() => onNavigate("PREV")}
-					className="px-4 py-2 rounded-xl bg-white/70 dark:bg-white/10 text-[#090c64] dark:text-[#090c64] border border-white/40 dark:border-white/90 font-semibold hover:bg-[#090c64] hover:text-white transition"
-				>
+				<button onClick={() => onNavigate("PREV")} className="calendar-btn">
 					‹
 				</button>
 
-				<button
-					onClick={() => onNavigate("NEXT")}
-					className="px-4 py-2 rounded-xl bg-white/70 dark:bg-white/10 text-[#090c64] dark:text-[#090c64] border border-white/40 dark:border-white/90 font-semibold hover:bg-[#090c64] hover:text-white transition"
-				>
+				<button onClick={() => onNavigate("NEXT")} className="calendar-btn">
 					›
 				</button>
 			</div>
 
-			<span className="text-xl font-extrabold text-[#090c64]">{label}</span>
+			<span className="text-xl font-extrabold">{label}</span>
 
 			{/* VIEW SELECT */}
 			<div className="flex items-center gap-2">
@@ -79,16 +73,13 @@ const CustomToolbar = ({ label, view, onView, onNavigate }) => {
 					<button
 						key={v}
 						onClick={() => onView(v)}
-						className={`
-							px-4 py-2 rounded-xl font-semibold border transition
-							${
-								view === v
-									? "bg-[#090c64] text-white border-[#090c64]"
-									: "bg-white/70 dark:bg-white/10 text-[#090c64] border-white/40 hover:bg-[#090c64] hover:text-white"
-							}
-						`}
+						className={`calendar-view-btn ${view === v ? "active" : ""}`}
 					>
-						{v === "month" ? t("dashboard.mese") : v === "week" ? t("dashboard.settimana") : t("dashboard.giorno")}
+						{v === "month"
+							? t("mese")
+							: v === "week"
+							? t("settimana")
+							: t("giorno")}
 					</button>
 				))}
 			</div>
@@ -100,8 +91,7 @@ const CustomToolbar = ({ label, view, onView, onNavigate }) => {
 const CalendarBox = () => {
 	const { theme, setTheme } = useTheme();
 	const isDark = theme === "dark";
-  const { t, lang } = useLanguage();
-
+	const { t, lang } = useLanguage();
 
 	const dispatch = useDispatch();
 	const token = useSelector((s) => s.auth.token);
@@ -159,7 +149,7 @@ const CalendarBox = () => {
 		// mapping giorni
 		const weekdayMap = {
 			monday: "Lunedì",
-			tuesday: "Martedì", 
+			tuesday: "Martedì",
 			wednesday: "Mercoledì",
 			thursday: "Giovedì",
 			friday: "Venerdì",
@@ -460,16 +450,16 @@ const CalendarBox = () => {
 					<>
 						<button
 							onClick={() => setSelectedDepartments([...departments])}
-							className="px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm bg-[#090c64] text-white"
+							className="custom-button text-[15px]"
 						>
-							{t("dashboard.selezionaTutti")}
+							{t("selezionaTutti")}
 						</button>
 
 						<button
 							onClick={() => setSelectedDepartments([])}
-							className="px-4 py-2 rounded-xl text-sm font-semibold border shadow-sm bg-[#090c64] text-white"
+							className="custom-button text-[15px]"
 						>
-							{t("dashboard.deselezionaTutti")}
+							{t("deselezionaTutti")}
 						</button>
 					</>
 				)}
@@ -478,10 +468,10 @@ const CalendarBox = () => {
 				<select
 					value={mode}
 					onChange={(e) => setMode(e.target.value)}
-					className="ml-auto px-6 py-2 rounded-xl text-sm font-semibold border shadow-sm bg-[#090c64] text-white"
+					className="calendar-select ml-auto text-[15px]"
 				>
-					<option value="turni">{t("dashboard.turni")}</option>
-					<option value="eventi">{t("dashboard.eventi")}</option>
+					<option value="turni">{t("turni")}</option>
+					<option value="eventi">{t("eventi")}</option>
 				</select>
 			</div>
 
