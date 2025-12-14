@@ -250,8 +250,7 @@ const TicketPageAdmin = () => {
   /* UI / RENDER*/
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4 lg:px-16 xl:px-24">
-
+    <div class="p-6 flex flex-col gap-4 h-full rounded-xl border border-white/30 shadow-md backdrop-blur-sm">
       {/* ERROR BANNER */}
       {ticketsError && (
         <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 flex items-start justify-between">
@@ -282,10 +281,10 @@ const TicketPageAdmin = () => {
       <div className="flex flex-col lg:flex-row gap-6">
 
         {/* COLONNA SINISTRA: DATE + GRAFICO*/}
-        <div className="w-full lg:w-1/2 flex flex-col gap-6 sticky top-6 h-fit">
+        <div className="w-full lg:w-2/5 flex flex-col gap-6 sticky top-6 h-fit">
 
           {/*  Date */}
-                <div className="bg-white rounded-xl shadow p-4">
+                <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/30 shadow-md backdrop-blur-sm">
                 <h2 className="font-bold text-xl mb-2 text-[#090c64] flex items-center gap-2">
                   <CalendarDots size={32} weight="duotone" />
                   Seleziona intervallo date
@@ -307,7 +306,7 @@ const TicketPageAdmin = () => {
                 </div>
 
                 {/* Grafico */}
-                <div className="bg-white rounded-xl shadow p-6">
+                <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/30 shadow-md backdrop-blur-sm">
                 <h2 className="font-bold text-2xl mb-4 text-[#090c64]">
                   Andamento Ticket
                 </h2>
@@ -370,7 +369,7 @@ const TicketPageAdmin = () => {
         </div>
 
         {/* COLONNA DESTRA: LISTA TICKET*/}
-        <div className="w-full lg:w-1/2 bg-white rounded-xl shadow p-6 sticky top-6 h-[1190px]">
+        <div className="w-full lg:w-3/5 p-6 flex flex-col gap-4 rounded-xl border border-white/30 shadow-md backdrop-blur-sm sticky top-6 h-[1190px]">
           <h2 className="font-bold text-3xl mb-4 flex items-center gap-3 text-[#090c64]">
             <ListMagnifyingGlass
               size={32}
