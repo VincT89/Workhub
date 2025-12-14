@@ -2,6 +2,7 @@ import Table from "../../components/Table";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useLanguage } from "../../context/LanguageContext";
 import FilterByCard from "../../components/Customer/FilterByCard";
 import AddCustomerForm from "../../components/Customer/AddCustomerForm";
 import {
@@ -13,6 +14,7 @@ import {
 const CustomersPage = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const { t } = useLanguage();
 
 	// Prendi i dati dallo stato Redux
 	const {
@@ -39,7 +41,7 @@ const CustomersPage = () => {
 
 	const handleAddCustomer = async (newCustomer) => {
 		if (!token) {
-			alert("Token non disponibile. Effettua il login.");
+			alert(t("tokenNonDisponibileEffettuaLogin"));
 			return;
 		}
 
@@ -81,12 +83,12 @@ const CustomersPage = () => {
 	};
 
 	const columnLabels = {
-		firstName: "Nome",
-		lastName: "Cognome",
-		email: "Email",
-		phoneNumber: "Telefono",
-		fiscalCode: "Codice Fiscale",
-		"affiliateProgram.name": "Tessera Fedeltà",
+		firstName: t("nome"),
+		lastName: t("cognome"),
+		email: t("email"),
+		phoneNumber: t("telefono"),
+		fiscalCode: t("cf"),
+		"affiliateProgram.name": t("tesseraFedelta"),
 	};
 
 	// Prepara i dati per la table
@@ -106,7 +108,7 @@ const CustomersPage = () => {
 	if (loading) {
 		return (
 			<div className="w-full min-h-screen p-8 flex justify-center items-center">
-				<div className="text-[#090c64]">Caricamento customers...</div>
+				<div className="text-[#090c64]">{t("caricamentoClienti")}</div>
 			</div>
 		);
 	}

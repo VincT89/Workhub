@@ -28,7 +28,7 @@ const TopBar = () => {
         w-full h-[60px]
         flex items-center justify-between
         px-6 md:px-8 py-2
-        rounded-xl border border-white/90 shadow-white
+        rounded-xl border border-white/80 shadow-white
         backdrop-blur-lg transition-colors duration-300
         ${theme === "dark" ? "bg-white/10 text-white" : "bg-white/10 text-[#090c64]"}
       `}
@@ -47,7 +47,7 @@ const TopBar = () => {
             ${theme === "dark" ? "text-white" : "text-[#090c64]"}
           `}
         >
-          {t("dashboard.benvenuto")} {user?.firstName || "Guest"}
+          {t("benvenuto")} {user?.firstName || "Guest"} {user?.lastName || ""}
         </span>
       </div>
 

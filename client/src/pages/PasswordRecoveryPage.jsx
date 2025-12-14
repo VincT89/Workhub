@@ -48,7 +48,7 @@ const PasswordRecoveryPage = () => {
         {/* HEADER */}
         <div className="flex items-center justify-between w-full mb-6">
           <h1 className={`text-3xl font-bold uppercase ${textColor}`}>
-            {t("auth.recover.recuperaPassword")}
+            {t("recuperaPassword")}
           </h1>
 
           <button
@@ -66,8 +66,8 @@ const PasswordRecoveryPage = () => {
         {/* CARD */}
         <section className="w-full p-6 rounded-[25px] shadow-md border border-white/90 bg-white/10 dark:bg-white/10 backdrop-blur-sm">
 
-          <h2 className={`${textColor} text-xl font-bold mb-4 pb-2 border-b border-[#090c64]`}>
-            {t("auth.recover.inserisciDati")}
+          <h2 className={`${textColor} text-xl font-bold mb-4 pb-2 border-b`}>
+            {t("inserisciDati")}
           </h2>
 
           {/* MESSAGGI */}
@@ -79,7 +79,7 @@ const PasswordRecoveryPage = () => {
 
           {recoveryMessage && (
             <p className="text-green-500 font-bold text-center mb-4">
-              {t("auth.recover.emailInviata")} {recoveryMessage.email}
+              {t("emailInviata")} {recoveryMessage.email}
             </p>
           )}
 
@@ -89,13 +89,13 @@ const PasswordRecoveryPage = () => {
             {/* Username */}
             <div>
               <label className={`${labelColor} text-[18px] font-bold mb-2`}>
-                {t("auth.recover.username")}
+                {t("username")}
               </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder={t("auth.recover.inserisciUsername")}
+                placeholder={t("inserisciUsername")}
                 className="w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 rounded-2xl px-4 shadow-md"
               />
             </div>
@@ -103,13 +103,13 @@ const PasswordRecoveryPage = () => {
             {/* Email */}
             <div>
               <label className={`${labelColor} text-[18px] font-bold mb-2`}>
-                {t("auth.recover.email")}
+                {t("email")}
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={t("auth.recover.inserisciEmail")}
+                placeholder={t("inserisciEmail")}
                 className="w-full h-[35px] bg-[rgba(217,217,217,0.3)] border border-white/30 rounded-2xl px-4 shadow-md"
               />
             </div>
@@ -118,18 +118,18 @@ const PasswordRecoveryPage = () => {
             <button
               type="submit"
               disabled={recoveryLoading}
-              className="w-full mt-4 py-3 font-bold rounded-2xl shadow-md bg-[#090c64] text-white hover:scale-[1.02] transition"
+              className="w-full mt-4 py-3 font-bold rounded-2xl shadow-md bg-[#090c64] text-white hover:scale-[1.02] transition custom-button"
             >
               {recoveryLoading
-                ? t("auth.recover.invioInCorso")
-                : t("auth.recover.inviaRichiesta")}
+                ? t("invioInCorso")
+                : t("inviaRichiesta")}
             </button>
 
             <Link
               to="/login"
               className={`text-center mt-3 ${textColor} font-semibold hover:underline`}
             >
-              {t("auth.recover.tornaLogin")}
+              {t("tornaLogin")}
             </Link>
           </form>
         </section>

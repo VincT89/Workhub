@@ -58,16 +58,16 @@ const Table = ({
 	}, [searchTerm, data, columns, sortAZ]);
 
 	return (
-		<div className="w-full rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-4 sm:p-6 shadow-md border border-white flex flex-col gap-4">
+		<div className="w-full rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-4 sm:p-6 shadow-md  flex flex-col gap-4 table-wrapper">
 			{/* TOOLBAR */}
 			<div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-between gap-3 mb-3">
 				{/* Left tools */}
 				<div className="flex flex-wrap gap-2 items-center">
 					<button
 						onClick={() => setSortAZ(!sortAZ)}
-						className="px-3 py-2 bg-[#090c64] text-white font-bold border border-white rounded-xl shadow-sm text-sm transition"
+						className="px-3 py-2 bg-[#090c64] text-white font-bold border border-white rounded-xl shadow-sm text-sm transition table-sort-btn"
 					>
-						{sortAZ ? t("dashboard.annullaOrdineAZ") : t("dashboard.ordinaAZ")}
+						{sortAZ ? t("annullaOrdineAZ") : t("ordinaAZ")}
 					</button>
 
 					{/* Custom toolbar from parent */}
@@ -77,17 +77,17 @@ const Table = ({
 				{/* Search */}
 				<input
 					type="text"
-					placeholder={t("dashboard.cerca")}
+					placeholder={t("cerca")}
 					value={searchTerm}
 					onChange={(e) => setSearchTerm(e.target.value)}
-					className="px-3 py-2 bg-white/70 border border-white rounded-xl shadow-sm text-sm w-full sm:w-60 focus:outline-none placeholder:text-gray-500"
+					className="px-3 py-2 bg-white/70 border border-white rounded-xl shadow-sm text-sm w-full sm:w-60 focus:outline-none placeholder:text-gray-500 table-search"
 				/>
 			</div>
 
 			{/* RESPONSIVE SCROLL WRAPPER */}
 			<div className="w-full overflow-x-auto rounded-xl">
 				<table className="w-full text-xs sm:text-sm text-[#090c64] border-auto">
-					<thead>
+					<thead className="font-bold bg-white/30">
 						<tr className="bg-white/60 text-[#090c64]">
 							{columns.map((item, idx) => (
 								<th
@@ -169,7 +169,7 @@ const Table = ({
 
 			{filteredData.length === 0 && (
 				<p className="text-center text-gray-500 italic mt-2">
-					{t("dashboard.nessunRisultatoTrovato")}
+					{t("nessunRisultatoTrovato")}
 				</p>
 			)}
 		</div>

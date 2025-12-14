@@ -4,7 +4,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 
 import bgLight from "../assets/bg/bg.jpg";
-import bgDark from "../assets/bg/bgScuro2.jpg";
+import bgDark from "../assets/bg/bgScuro.jpg";
 import Logo from "../assets/logo/LogoCompletoSenzaBG.png";
 import logoDark from "../assets/logo/logoVuoto.png";
 
@@ -46,7 +46,7 @@ const HomePage = () => {
          text-xl sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-normal 
         leading-normal whitespace-nowrap transition-colors duration-500 ${textColor}`}
       >
-        {t("dashboard.slogan")}        
+        {t("slogan")}        
       </h1>
 
       {/* Bottone di Benvenuto */}
@@ -60,7 +60,7 @@ const HomePage = () => {
         cursor-pointer transition-colors duration-300 ${textColor} 
         hover:bg-white/30 hover:backdrop-blur-sm hover:shadow-lg`}
       >
-        {t("dashboard.benvenuto")}      
+        {t("benvenuto")}      
       </Link>
     </main>
   );

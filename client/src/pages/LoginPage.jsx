@@ -21,7 +21,7 @@ const LoginPage = () => {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [token2fa, setToken2fa] = useState(""); // 👈 nuovo stato per il codice 2FA
+  const [token2fa, setToken2fa] = useState(""); 
   const [showPassword, setShowPassword] = useState(false);
 
   const backgroundImage = theme === "dark" ? bgDark : bgLight;
@@ -35,7 +35,7 @@ const LoginPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!username || !password) return;
-    dispatch(loginAsync({ username, password, token2fa })); // 👈 passa anche il token 2FA
+    dispatch(loginAsync({ username, password, token2fa }));
   };
 
   const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
@@ -76,13 +76,13 @@ const LoginPage = () => {
             <span
               className={`text-4xl font-bold font-nunito uppercase transition-colors duration-500 ${textColor}`}
             >
-              {t("auth.login.titolo")}
+              {t("loginTitolo")}
             </span>
             <br />
             <span
               className={`font-bold font-nunito text-sm transition-colors duration-500 ${textColor}`}
             >
-              {t("auth.login.credenzialiDemo")}
+              {t("credenzialiDemo")}
             </span>
           </div>
         </div>
@@ -100,7 +100,7 @@ const LoginPage = () => {
             htmlFor="username"
             className={`block text-[18px] font-bold font-nunito mb-2 ${textColor}`}
           >
-            {t("auth.login.username")}
+            {t("username")}
           </label>
           <input
             id="username"
@@ -120,7 +120,7 @@ const LoginPage = () => {
             htmlFor="password"
             className={`block text-[18px] font-bold font-nunito mb-2 ${textColor}`}
           >
-            {t("auth.login.password")}
+            {t("password")}
           </label>
           <input
             id="password"
@@ -159,7 +159,7 @@ const LoginPage = () => {
             htmlFor="token2fa"
             className={`block text-[18px] font-bold font-nunito mb-2 ${textColor}`}
           >
-            {t("auth.login.autenticazione2FA")}
+            {t("autenticazione2FA")}
           </label>
           <input
             id="token2fa"
@@ -169,7 +169,7 @@ const LoginPage = () => {
             className="custom-input w-full"
             value={token2fa}
             onChange={(e) => setToken2fa(e.target.value)}
-            placeholder={t("auth.login.inserisciCodice2FA")}
+            placeholder={t("inserisciCodice2FA")}
           />
         </div>
 
@@ -179,7 +179,7 @@ const LoginPage = () => {
             to="/forgot-password"
             className={`text-[14px] font-bold font-nunito transition ${textColor}`}
           >
-            {t("auth.login.dimenticato")}
+            {t("dimenticatoPassword")}
           </Link>
         </div>
 
@@ -191,11 +191,11 @@ const LoginPage = () => {
         >
           {loading ? (
             <span className="animate-pulse font-bold text-[18px] font-nunito">
-              {t("auth.login.accessoInCorso")}
+              {t("accessoInCorso")}
             </span>
           ) : (
             <span className="text-[20px] font-bold font-nunito">
-              {t("auth.login.bottoneAccedi")}
+              {t("login")}
             </span>
           )}
         </button>
