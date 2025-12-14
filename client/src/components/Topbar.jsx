@@ -47,7 +47,7 @@ const TopBar = () => {
             ${theme === "dark" ? "text-white" : "text-[#090c64]"}
           `}
         >
-          {t("dashboard.benvenuto")} {user?.firstName || "Guest"}
+          {t("benvenuto")} {user?.firstName || "Guest"} {user?.lastName || ""}
         </span>
       </div>
 

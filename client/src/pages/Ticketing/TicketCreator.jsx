@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createTicketAsync, fetchTickets, selectTickets } from "../../store/feature/ticketSlice";
+import { useLanguage } from "../../context/LanguageContext";
 
 const TicketCreator = ({ user }) => {
   const dispatch = useDispatch();
+  const { t } = useLanguage();
   const authUser = useSelector((state) => state.auth.user);
   const [newTitle, setNewTitle] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -87,7 +89,7 @@ const TicketCreator = ({ user }) => {
   return (
     <div className="p-4 bg-white/20 rounded-xl shadow-md w-full mx-auto">
 
-      <h2 className="font-bold text-xl mb-4">Crea Nuovo Ticket</h2>
+      <h2 className="font-bold text-xl mb-4">{t("creaTicket")}</h2>
 
       {/* Input Titolo Ticket */}
       <input
@@ -95,7 +97,7 @@ const TicketCreator = ({ user }) => {
         value={newTitle}
         onChange={(e) => setNewTitle(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && !isLoading && handleAddTicket()}
-        placeholder="Titolo del ticket (min. 3 caratteri)"
+        placeholder={t("titoloTicket")}
         className="border rounded-xl p-2 w-full mb-3 focus:outline-none focus:ring-2 focus:ring-[#090c64]"
         disabled={isLoading}
         maxLength={100}
@@ -124,25 +126,25 @@ const TicketCreator = ({ user }) => {
           isLoading || !newTitle.trim() ? "opacity-50 cursor-not-allowed" : "hover:bg-[#0a0d7a]"
         }`}
       >
-        {isLoading ? "Creando..." : "+ Crea Ticket"}
+        {isLoading ? t("creando") : "+ " + t("richiediTicket")}
       </button>
               
       {/* Status message */}
       {creatorStatus === "loading" && (
         <div className="mt-3 text-sm text-blue-600 bg-blue-50 p-2 rounded border border-blue-200">
-          Sincronizzazione con il server...
+          {t("sincronizzazioneInCorso")}
         </div>
       )}
 
       {/* Character counter */}
       <div className="mt-2 text-xs text-gray-500 text-right">
-        {newTitle.length}/100 caratteri
+        {newTitle.length}/100 {t("caratteri")}
       </div>
 
       <div className="mt-4">
-        <h3 className="font-semibold mb-2">I tuoi ticket</h3>
+        <h3 className="font-semibold mb-2">{t("iTuoiTicket")}</h3>
         {(!filteredTickets || filteredTickets.length === 0) ? (
-          <div className="text-sm text-gray-500">Nessun ticket trovato.</div>
+          <div className="text-sm text-gray-500">{t("nessunTicket")}</div>
         ) : (
           // Compute a dynamic maxHeight: itemHeight * count (with padding) and cap it
           (() => {

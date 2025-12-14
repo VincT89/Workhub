@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { enable2FAAsync } from "../store/feature/authSlice";
+import { useLanguage } from "../context/LanguageContext";
 
 const Enable2FA = () => {
   const dispatch = useDispatch();
@@ -10,6 +11,7 @@ const Enable2FA = () => {
 
   // Popup di conferma
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
+  const { t } = useLanguage();
 
   // Quando clicchi "Abilita 2FA" → apre popup
   const handleEnable = () => {
@@ -34,21 +36,21 @@ const Enable2FA = () => {
   return (
     <div className="p-6 relative">
 
-      <h2 className="text-xl font-bold mb-4">Abilita 2FA</h2>
+      <h2 className="text-xl font-bold mb-4">{t("abilita2FA")}</h2>
 
       <button
         onClick={handleEnable}
         disabled={twofaLoading}
         className="btn-login"
       >
-        {twofaLoading ? "Attivazione in corso..." : "Abilita 2FA"}
+        {twofaLoading ? t("attivazioneInCorso") : t("abilita2FA")}
       </button>
 
       {twofaError && <p className="text-red-500 mt-2">{twofaError}</p>}
 
       {twofaData && (
         <div className="mt-6">
-          <p>Scansiona questo QR con Google Authenticator</p>
+          <p>{t("scansiona")}</p>
           <img src={twofaData.qr} alt="QR Code 2FA" className="mt-4" />
         </div>
       )}
@@ -59,7 +61,7 @@ const Enable2FA = () => {
           <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl w-[300px] text-center">
 
             <h2 className="text-lg font-bold text-[#090c64] mb-4">
-              Sei sicuro di voler attivare il 2FA?
+              {t("sicuro2FA")}
             </h2>
 
            <div className="flex justify-around mt-4">

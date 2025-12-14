@@ -67,9 +67,9 @@ const BoardPage = () => {
 	const boardColumns = ["title", "date", "description"]; // colonne tabella bacheca
 
 	const columnLabels = {
-		title: t("dashboard.titolo"),
-		date: t("dashboard.data"),
-		description: t("dashboard.descrizione"),
+		title: t("titolo"),
+		date: t("data"),
+		description: t("descrizione"),
 	};
 
 	// State per il Drawer
@@ -118,7 +118,7 @@ const BoardPage = () => {
 		// elimina evento
 		if (
 			window.confirm(
-				` ${t("dashboard.seiSicuroEliminareEvento")}"${row.title}"?`
+				` ${t("seiSicuroEliminareEvento")}"${row.title}"?`
 			)
 		) {
 			dispatch(deleteEventAsync({ id: row._id, token }));
@@ -144,7 +144,7 @@ const BoardPage = () => {
 							weight="duotone"
 						/>
 						<span className="font-bold text-[14px]">
-							{t("dashboard.depositi")}
+							{t("depositi")}
 						</span>
 					</div>
 					<span
@@ -168,7 +168,7 @@ const BoardPage = () => {
 							weight="duotone"
 						/>
 						<span className="font-bold text-[14px]">
-							{t("dashboard.prodotti")}
+							{t("prodotti")}
 						</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
@@ -188,7 +188,7 @@ const BoardPage = () => {
 							weight="duotone"
 						/>
 						<span className="font-bold text-[14px]">
-							{t("dashboard.ordiniInUscita")}
+							{t("ordiniInUscita")}
 						</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
@@ -208,7 +208,7 @@ const BoardPage = () => {
 							weight="duotone"
 						/>
 						<span className="font-bold text-[14px]">
-							{t("dashboard.articoliSottoSoglia")}
+							{t("articoliSottoSoglia")}
 						</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
@@ -228,7 +228,7 @@ const BoardPage = () => {
 							weight="duotone"
 						/>
 						<span className="font-bold text-[14px] ">
-							{t("dashboard.personaleAttivo")}
+							{t("personaleAttivo")}
 						</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
@@ -254,7 +254,7 @@ const BoardPage = () => {
 						/>
 
 						<h3 className="text-[14px] font-bold font-nunito">
-							{t("dashboard.bacheca")}
+							{t("bacheca")}
 						</h3>
 
 						{(role === "supervisor" || role === "admin") && (
@@ -262,7 +262,7 @@ const BoardPage = () => {
 								onClick={openDrawerAdd}
 								className="custom-button ml-auto text-[14px]"
 							>
-								+ {t("dashboard.aggiungi")}
+								+ {t("aggiungi")}
 							</button>
 						)}
 					</div>
@@ -322,13 +322,13 @@ const BoardPage = () => {
 						/>
 
 						<h3 className="text-[14px] font-bold font-nunito">
-							{t("dashboard.prodottiInEsaurimento")}
+							{t("prodottiInEsaurimento")}
 						</h3>
 						<button
 							onClick={() => navigate("/warehouse")}
 							className="ml-auto px-4 py-2 bg-white dark:bg-[#090c64] text-[#090c64] dark:text-white shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[14px] font-bold cursor-pointer custom-button"
 						>
-							{t("dashboard.vediTutti")}
+							{t("vediTutti")}
 						</button>
 					</div>
 
@@ -342,9 +342,9 @@ const BoardPage = () => {
 							}))}
 							columns={["name", "stock", "pos"]}
 							columnLabels={{
-								name: t("dashboard.prodotto"),
-								stock: t("dashboard.giacenza"),
-								pos: t("dashboard.pos"),
+								name: t("prodotto"),
+								stock: t("giacenza"),
+								pos: t("pos"),
 							}}
 						/>
 					</div>
@@ -367,7 +367,7 @@ const BoardPage = () => {
 						<h3
 							className={`text-[14px] font-bold font-nunito ${textColor} mb-4`}
 						>
-							{t("dashboard.calendario")}
+							{t("calendario")}
 						</h3>
 					</div>
 
@@ -380,20 +380,20 @@ const BoardPage = () => {
 				onClose={() => setDrawerOpen(false)}
 				title={
 					editData && editData.title
-						? t("dashboard.modificaEvento")
-						: t("dashboard.aggiungiEvento")
+						? t("modificaEvento")
+						: t("aggiungiEvento")
 				}
 			>
 				{editData && (
 					<form onSubmit={handleSavePost} className="flex flex-col gap-4">
 						<div className="flex flex-col">
 							<label className="text-sm font-bold">
-								{t("dashboard.titolo")}
+								{t("titolo")}
 							</label>
 							<input
 								type="text"
 								value={editData.title}
-								placeholder={t("dashboard.aggiungiEvento")}
+								placeholder={t("aggiungiEvento")}
 								onChange={(e) =>
 									setEditData({ ...editData, title: e.target.value })
 								}
@@ -402,7 +402,7 @@ const BoardPage = () => {
 						</div>
 
 						<div className="flex flex-col">
-							<label className="text-sm font-bold">{t("dashboard.data")}</label>
+							<label className="text-sm font-bold">{t("data")}</label>
 							<input
 								type="date"
 								value={editData.date}
@@ -416,12 +416,12 @@ const BoardPage = () => {
 
 						<div className="flex flex-col">
 							<label className="text-sm font-bold">
-								{t("dashboard.descrizione")}
+								{t("descrizione")}
 							</label>
 							<input
 								type="text"
 								value={editData.description}
-								placeholder={t("dashboard.inserisciDescrizioneEvento")}
+								placeholder={t("inserisciDescrizioneEvento")}
 								onChange={(e) =>
 									setEditData({ ...editData, description: e.target.value })
 								}
@@ -435,11 +435,11 @@ const BoardPage = () => {
 								onClick={() => setDrawerOpen(false)}
 								className="custom-button-light"
 							>
-								{t("dashboard.annulla")}
+								{t("annulla")}
 							</button>
 
 							<button type="submit" className="custom-button">
-								{t("dashboard.salva")}
+								{t("salva")}
 							</button>
 						</div>
 					</form>

@@ -1,5 +1,6 @@
 // USEMEMO → PER MEMORIZZARE UN RISULTATO DI UN CALCOLO E NON FARLO TUTTE LE VOLTE
 import { useState, useMemo } from "react";
+import { useLanguage } from "../../context/LanguageContext.jsx";
 
 // Formattatore €
 const formatEuro = (value) => {
@@ -13,6 +14,7 @@ const formatEuro = (value) => {
 const OrdersTable = ({
 	data,
 	columns,
+	columnsLabels = {},
 	customToolbar,
 	actions,
 	actionLabel = null,
@@ -23,6 +25,8 @@ const OrdersTable = ({
 
 	// apre finestra dettaglio
 	const [openRowId, setOpenRowId] = useState(null);
+
+	const { t } = useLanguage();
 
 	// FILTRO + A-Z
 	const filteredData = useMemo(() => {
@@ -61,14 +65,14 @@ const OrdersTable = ({
 			<div className="flex flex-col gap-3 mb-3">
 				<div className="flex flex-wrap items-center gap-6">
 					<div className="flex items-center gap-3">
-						<h2 className="text-lg font-bold text-[#090c64]">Ordini</h2>
+						<h2 className="text-lg font-bold text-[#090c64]">{t("ordini")}</h2>
 
 						{/* bottone A-Z → solo ordinamento locale, non modifica i dati */}
 						<button
 							onClick={() => setSortAZ(!sortAZ)}
 							className="warehouse-btn font-bold"
 						>
-							{sortAZ ? "Annulla A-Z" : "Ordina A-Z"}
+							{sortAZ ? t("annullaAZ") : t("ordinaAZ")}
 						</button>
 					</div>
 
@@ -99,7 +103,8 @@ const OrdersTable = ({
 											isCentered ? "text-center" : "text-left"
 										}`}
 									>
-										{item.charAt(0).toUpperCase() + item.slice(1)}
+										{columnsLabels[item] ?? t(item)}
+
 									</th>
 								);
 							})}
@@ -224,7 +229,7 @@ const OrdersTable = ({
 														<div className="flex-1 flex flex-col justify-between gap-3 mt-1.5">
 															<div>
 																<h3 className="font-bold text-sm md:text-base">
-																	Dettagli prodotto
+																	{t("prodottoDettagli")}
 																</h3>
 
 																{/* Nome prodotto */}
@@ -242,7 +247,7 @@ const OrdersTable = ({
 
 															<div className="text-right flex flex-col items-end gap-2">
 																<p className="text-sm md:text-base font-semibold">
-																	Prezzo unitario:{" "}
+																	{t("prezzoUnitario")}:{" "}
 																	{row.prodottoDettaglio?.price
 																		? formatEuro(row.prodottoDettaglio.price)
 																		: "-"}
@@ -254,7 +259,7 @@ const OrdersTable = ({
 													{/* TITOLINO CLIENTI */}
 													<div className="flex items-center justify-between mt-2">
 														<h4 className="text-md font-semibold">
-															Dettagli clienti ({row.clienti.length})
+															{t("clienteDettagli")} ({row.clienti.length})
 														</h4>
 													</div>
 
@@ -276,7 +281,7 @@ const OrdersTable = ({
 																{/* TELEFONO */}
 																{cliente.phoneNumber && (
 																	<p className="text-xs md:text-sm">
-																		Tel: {cliente.phoneNumber}
+																		{t("tel")}: {cliente.phoneNumber}
 																	</p>
 																)}
 
@@ -316,7 +321,7 @@ const OrdersTable = ({
 																	</div> */}
 
 																	<div className="flex justify-between font-bold ">
-																		<span>Punti per questo ordine:</span>
+																		<span>{t("puntiOrdine")}:</span>
 																		<span>+{cliente.puntiOrdine ?? 0}</span>
 																	</div>
 																</div>
@@ -342,19 +347,19 @@ const OrdersTable = ({
 															<div className="mt-4 flex flex-wrap gap-4 justify-end text-md">
 																<div>
 																	<span className="font-semibold">
-																		Totale ordinato clienti:{" "}
+																		{t("totaleOrdinatoClienti")}:{" "}
 																	</span>
 																	<span>{totClientQty}</span>
 																</div>
 																<div>
 																	<span className="font-semibold">
-																		Quantità totale prodotto:{" "}
+																		{t("quantitaTotaleProdotto")}:{" "}
 																	</span>
 																	<span>{totalQuantity}</span>
 																</div>
 																<div>
 																	<span className="font-semibold">
-																		Giacenza:{" "}
+																		{t("giacenzaDisponibile")}:{" "}
 																	</span>
 																	<span>{giacenza}</span>
 																</div>

@@ -53,12 +53,12 @@ const AdminEmployeePage = () => {
 
   const stats = [
     {
-      label: t("employees.dipendentiAttivi"),
+      label: t("dipendentiAttivi"),
       value: employees.length,
       icon: <UsersThreeIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />,
     },
     {
-      label: t("employees.dipendentiInattivi"),
+      label: t("dipendentiInattivi"),
       value: 4,
       icon: <UserCircleMinusIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />,
     },
@@ -190,7 +190,7 @@ const AdminEmployeePage = () => {
 
     if (
       !window.confirm(
-        `${t("employees.vuoiEliminare")} ${employee.firstName} ${employee.lastName}?`
+        `${t("vuoiEliminare")} ${employee.firstName} ${employee.lastName}?`
       )
     )
       return;
@@ -223,7 +223,7 @@ const AdminEmployeePage = () => {
           className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 backdrop-blur-sm border border-white/90 shadow-md cursor-pointer font-bold bg-[#fafafa20] dark:bg-[#fafafa10]"
         >
           <span className="text-xl font-bold">+</span>
-          {t("employees.aggiungiDipendente")}
+          {t("aggiungiDipendente")}
         </div>
       </section>
 
@@ -231,14 +231,14 @@ const AdminEmployeePage = () => {
       {drawerOpen && (
         <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/30 shadow-md backdrop-blur-sm">
           <h3 className={`text-lg font-bold ${textColor}`}>
-            {t("employees.nuovoDipendente")}
+            {t("nuovoDipendente")}
           </h3>
 
           <form onSubmit={handleAddEmployee} className="grid grid-cols-2 gap-4">
             <input
               name="nome"
               type="text"
-              placeholder={t("employees.nomeCompleto")}
+              placeholder={t("nomeCompleto")}
               required
               className="p-2 border rounded-xl"
             />
@@ -246,7 +246,7 @@ const AdminEmployeePage = () => {
             <input
               name="ruolo"
               type="text"
-              placeholder={t("employees.ruolo")}
+              placeholder={t("ruolo")}
               required
               className="p-2 border rounded-xl"
             />
@@ -270,20 +270,20 @@ const AdminEmployeePage = () => {
             <input
               name="telefono"
               type="text"
-              placeholder={t("employees.telefono")}
+              placeholder={t("telefono")}
               className="p-2 border rounded-xl"
             />
 
             <input
               name="personnelNumber"
               type="number"
-              placeholder={t("employees.matricola")}
+              placeholder={t("matricola")}
               required
               className="p-2 border rounded-xl"
             />
 
             <select name="sede" required className="p-2 border rounded-xl">
-              <option value="">{t("employees.sedeLavorativa")}</option>
+              <option value="">{t("sedeLavorativa")}</option>
               {pointsOfSale.map((p) => (
                 <option key={p._id} value={p._id}>
                   {p.name} – {p.location?.city}
@@ -292,10 +292,10 @@ const AdminEmployeePage = () => {
             </select>
 
             <select name="contratto" className="p-2 border rounded-xl">
-              <option value="">{t("employees.tipoContratto")}</option>
-              <option value="indeterminato">{t("employees.indeterminato")}</option>
-              <option value="determinato">{t("employees.determinato")}</option>
-              <option value="part-time">{t("employees.partTime")}</option>
+              <option value="">{t("tipoContratto")}</option>
+              <option value="indeterminato">{t("indeterminato")}</option>
+              <option value="determinato">{t("determinato")}</option>
+              <option value="part-time">{t("partTime")}</option>
             </select>
 
             <input
@@ -305,7 +305,7 @@ const AdminEmployeePage = () => {
             />
 
             <select name="role" required className="p-2 border rounded-xl">
-              <option value="">{t("employees.ruoloAccount")}</option>
+              <option value="">{t("ruoloAccount")}</option>
               <option value="user">User</option>
               <option value="admin">Admin</option>
             </select>
@@ -313,7 +313,7 @@ const AdminEmployeePage = () => {
             <input
               value={generatedPassword}
               readOnly
-              placeholder={t("employees.passwordGenerata")}
+              placeholder={t("passwordGenerata")}
               className="p-2 border rounded-xl col-span-2 bg-gray-100"
             />
 
@@ -323,13 +323,13 @@ const AdminEmployeePage = () => {
                 onClick={() => setDrawerOpen(false)}
                 className="px-4 py-2 border rounded-xl"
               >
-                {t("employees.annulla")}
+                {t("annulla")}
               </button>
               <button
                 type="submit"
                 className="px-4 py-2 bg-[#090c64] text-white rounded-xl custom-button"
               >
-                {t("employees.crea")}
+                {t("crea")}
               </button>
             </div>
           </form>
@@ -346,7 +346,7 @@ const AdminEmployeePage = () => {
       <div className="flex items-center gap-2 mb-4">
         <input
           type="text"
-          placeholder={t("employees.cercaDipendente")}
+          placeholder={t("cercaDipendente")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="p-2 rounded-lg border flex-1 focus:outline-none focus:ring-2 focus:ring-[#090c64]"
@@ -355,26 +355,26 @@ const AdminEmployeePage = () => {
           onClick={() => setSortAsc(!sortAsc)}
           className="p-2 bg-[#090c64] text-white rounded-lg w-40 custom-button text-[14px]"
         >
-          {sortAsc ? " Ordina A-Z" : "Ordina Z-A"}
+          {sortAsc ? t("ordinaAZ") : t("ordinaZA")}
         </button>
       </div>
 
       {/* LISTA DIPENDENTI */}
       <div className="p-6 flex flex-col gap-4 h-full rounded-xl border border-white/30 shadow-md backdrop-blur-sm bg-[#fafafa20] dark:bg-[#fafafa10]">
         <h2 className={`text-lg font-bold ${textColor}`}>
-          {t("employees.listaDipendenti")}
+          {t("listaDipendenti")}
         </h2>
 
         <div className="overflow-y-auto h-full">
           <table className="min-w-full text-sm text-center">
             <thead className="font-bold bg-white/30">
               <tr>
-                <th>{t("employees.foto")}</th>
-                <th>{t("employees.nome")}</th>
-                <th>{t("employees.ruolo")}</th>
-                <th>{t("employees.email")}</th>
-                <th>{t("employees.matricola")}</th>
-                <th>{t("employees.azioni")}</th>
+                <th>{t("foto")}</th>
+                <th>{t("nome")}</th>
+                <th>{t("ruolo")}</th>
+                <th>{t("email")}</th>
+                <th>{t("matricola")}</th>
+                <th>{t("azioni")}</th>
               </tr>
             </thead>
 
@@ -416,7 +416,7 @@ const AdminEmployeePage = () => {
               {!loading && filteredEmployees.length === 0 && (
                 <tr>
                   <td colSpan={6} className="py-4 text-gray-500">
-                    Nessun dipendente trovato
+                    {t("nessunDipendenteTrovato")}
                   </td>
                 </tr>
               )}
@@ -435,7 +435,7 @@ const AdminEmployeePage = () => {
       <Drawer
         open={editDrawerOpen}
         onClose={handleEditCancel}
-        title="MODIFICA DIPENDENTE"
+        title={t("modificaDipendente")}
         width="w-[420px]"
       >
         {selectedEmployee && (
@@ -444,14 +444,14 @@ const AdminEmployeePage = () => {
               name="firstName"
               value={selectedEmployee.firstName}
               onChange={handleEditChange}
-              placeholder="Nome"
+              placeholder={t("nome")}
               className="p-2 border rounded"
             />
             <input
               name="lastName"
               value={selectedEmployee.lastName}
               onChange={handleEditChange}
-              placeholder="Cognome"
+              placeholder={t("cognome")}
               className="p-2 border rounded"
             />
 
@@ -459,7 +459,7 @@ const AdminEmployeePage = () => {
               name="username"
               value={selectedEmployee.username}
               onChange={handleEditChange}
-              placeholder="Username"
+              placeholder={t("username")}
               className="p-2 border rounded"
             />
 
@@ -467,7 +467,7 @@ const AdminEmployeePage = () => {
               name="email"
               value={selectedEmployee.email}
               onChange={handleEditChange}
-              placeholder="Email"
+              placeholder={t("email")}
               className="p-2 border rounded"
             />
 
@@ -475,7 +475,7 @@ const AdminEmployeePage = () => {
               name="phone"
               value={selectedEmployee.phone}
               onChange={handleEditChange}
-              placeholder="Telefono"
+              placeholder={t("telefono")}
               className="p-2 border rounded"
             />
 
@@ -483,7 +483,7 @@ const AdminEmployeePage = () => {
               name="department"
               value={selectedEmployee.department}
               onChange={handleEditChange}
-              placeholder="Reparto / Ruolo"
+              placeholder={t("ruolo")}
               className="p-2 border rounded"
             />
 
@@ -492,7 +492,7 @@ const AdminEmployeePage = () => {
               value={selectedEmployee.personnelNumber}
               onChange={handleEditChange}
               type="number"
-              placeholder="Matricola"
+              placeholder={t("matricola")}
               className="p-2 border rounded"
             />
 
@@ -502,7 +502,7 @@ const AdminEmployeePage = () => {
               onChange={handleEditChange}
               className="p-2 border rounded"
             >
-              <option value="">Sede lavorativa</option>
+              <option value="">{t("sedeLavorativa")}</option>
               {pointsOfSale.map((p) => (
                 <option key={p._id} value={p._id}>
                   {p.name} – {p.location?.city}
@@ -516,10 +516,10 @@ const AdminEmployeePage = () => {
               onChange={handleEditChange}
               className="p-2 border rounded"
             >
-              <option value="">Tipo di contratto</option>
-              <option value="indeterminato">Indeterminato</option>
-              <option value="determinato">Determinato</option>
-              <option value="part-time">Part-time</option>
+              <option value="">{t("tipoContratto")}</option>
+              <option value="indeterminato">{t("indeterminato")}</option>
+              <option value="determinato">{t("determinato")}</option>
+              <option value="part-time">{t("partTime")}</option>
             </select>
 
             <input
@@ -543,15 +543,15 @@ const AdminEmployeePage = () => {
             <div className="flex gap-4 mt-4">
               <button
                 onClick={handleEditCancel}
-                className="flex-1 py-2 bg-white text-[#090c64] border border-[#090c64] rounded-xl"
+                className="flex-1 py-2 bg-white text-[#090c64] font-bold border border-[#090c64] rounded-xl"
               >
-                Annulla
+                {t("annulla")}
               </button>
               <button
                 onClick={handleSave}
-                className="flex-1 py-2 bg-[#090c64] text-white rounded-xl"
+                className="flex-1 py-2 bg-[#090c64] text-white font-bold rounded-xl"
               >
-                Salva
+                {t("salva")}
               </button>
             </div>
           </div>

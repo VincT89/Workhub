@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { useLanguage } from "../../context/LanguageContext.jsx";
 import { useNavigate } from "react-router-dom";
 import DrawerSede from "../Warehouse/DrawerSede.jsx";
 
@@ -14,6 +15,7 @@ import {
 const WarehouseTable = ({ data, columns }) => {
 
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   //? ---------- STATE ----------
 
@@ -30,14 +32,14 @@ const WarehouseTable = ({ data, columns }) => {
   // normalizzare nomi thread tabella
   const columnLabels = {
     sku: "SKU",
-    product: "Prodotto",
-    category: "Categoria",
-    pointOfSales: "Punto vendita",
-    stock: "Disponibilità",
-    stockLimit: "Limite riordino",
-    promo: "Promo",
-    note: "Note",
-    stato: "Stato"
+    product: t("prodotto"),
+    category: t("categoria"),
+    pointOfSales: t("puntoVendita"),
+    stock: t("disponibilita"),
+    stockLimit: t("limiteRiordino"),
+    promo: t("promo"),
+    note: t("note"),
+    stato: t("stato")
   };
 
 
@@ -49,7 +51,7 @@ const WarehouseTable = ({ data, columns }) => {
     const names = data
       .map(p => p.product?.category?.name)
       .filter(Boolean); // rimuove null/undefined/vuoti
-    return ["Tutte le categorie", ...new Set(names)];
+    return [t("tutteCategorie"), ...new Set(names)];
   }, [data]);
   
 
@@ -71,7 +73,7 @@ const WarehouseTable = ({ data, columns }) => {
     }
 
     // Filtro per categoria
-    if (selectedCategory !== "Tutte le categorie") {
+    if (selectedCategory !== t("tutteCategorie")) {
       result = result.filter(p => p.product?.category?.name === selectedCategory);
     }
 
@@ -103,14 +105,14 @@ const WarehouseTable = ({ data, columns }) => {
 
       {/* ---------- TOOLBAR CON FILTRI ---------- */}
       <div className="flex flex-wrap items-center gap-3 mb-3">
-        <h2 className="text-lg font-bold"> Warehouse </h2>
+        <h2 className="text-lg font-bold"> {t("magazzino")} </h2>
 
         {/* Ordinamento A-Z */}
         <button
           onClick={() => dispatch(toggleSortAZ())}
           className="custom-button text-[14px]"
         >
-          {sortAZ ? " Ordina Z-A" : " Ordina A-Z"}
+          {sortAZ ? t("ordinaZA") : t("ordinaAZ")}
         </button>
 
         {/* Filtro categoria */}
@@ -127,7 +129,7 @@ const WarehouseTable = ({ data, columns }) => {
         {/* Ricerca per nome o codice prodotto */}
         <input
           type="text"
-          placeholder="Cerca codice id o nome"
+          placeholder={t("cercaIdNomeProdotto")}
           value={searchTerm}
           onChange={e => dispatch(setSearchTerm(e.target.value))}
           className="px-3 py-1.5 rounded-lg shadow-md border border-white/20 text-sm w-64 focus:outline-none bg-white"
@@ -138,7 +140,7 @@ const WarehouseTable = ({ data, columns }) => {
           onClick={() => dispatch(toggleLowStockFilter())}
           className="custom-button text-[14px]"
         >
-          {lowStockFilter ? "Mostra tutti" : "Articoli in esaurimento"}
+          {lowStockFilter ? t("mostraTutti") : t("articoliInEsaurimento")}
           {/* operatore ternario (ternary expression) --> condizione ? valore_se_vero : valore_se_falso 
           quindi se lowStockFilter è true "mostra tutti" se è false "articoli in esaurimento" */}
         </button>
@@ -148,7 +150,7 @@ const WarehouseTable = ({ data, columns }) => {
           onClick={() => setDrawerOpen(true)}
           className="custom-button text-[14px]"
         >
-          Disponibilità in altre sedi
+          {t("disponibilitaAltreSedi")}
         </button>
       </div>
 

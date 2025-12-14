@@ -220,7 +220,7 @@ UI dedicata con Drawer per aggiunta/modifica.
 
 ### Aggiornamenti
 1. DARK MODE - `COMPLETATO`
-2. MULTILINGUA - ` mancano solo clienti, magazzino, ticketing, ordini`  
+2. MULTILINGUA - `COMPLETATO`  
 3. Login e autenticazione JWT - `COMPLETATO`
 4. Autenticazione 2FA (opzionale) - `COMPLETATO`
 5. Gestione utenti e dipendenti - `COMPLETATO`

@@ -12,15 +12,15 @@ const Sidebar = () => {
   const location = useLocation();
 
   const routes = [
-    { to: "board", label: t("sidebar.overview") },
-    { to: "customers", label: t("sidebar.clienti") },
+    { to: "board", label: t("overview") },
+    { to: "customers", label: t("clienti") },
     {
       to: isUser ? "personale" : "personale",
-      label: isUser ? t("sidebar.profilo") : t("sidebar.personale"),
+      label: isUser ? t("profilo") : t("personale"),
     },
-    { to: "warehouse", label: t("sidebar.magazzino") },
-    { to: "ticket", label: t("sidebar.ticket") },
-    { to: "orders", label: t("sidebar.ordini") },
+    { to: "warehouse", label: t("magazzino") },
+    { to: "ticket", label: t("ticket") },
+    { to: "orders", label: t("ordini") },
   ];
 
   // funzione che decide se il link è attivo

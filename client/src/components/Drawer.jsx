@@ -59,7 +59,7 @@ const Drawer = ({ open, onClose, title, children, width = "w-[420px]" }) => {
             onClick={onClose}
             className="custom-button"
           >
-            {t("dashboard.chiudi")}
+            {t("chiudi")}
           </button>
         </header>
 

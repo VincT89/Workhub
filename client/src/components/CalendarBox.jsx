@@ -76,10 +76,10 @@ const CustomToolbar = ({ label, view, onView, onNavigate }) => {
 						className={`calendar-view-btn ${view === v ? "active" : ""}`}
 					>
 						{v === "month"
-							? t("dashboard.mese")
+							? t("mese")
 							: v === "week"
-							? t("dashboard.settimana")
-							: t("dashboard.giorno")}
+							? t("settimana")
+							: t("giorno")}
 					</button>
 				))}
 			</div>
@@ -452,14 +452,14 @@ const CalendarBox = () => {
 							onClick={() => setSelectedDepartments([...departments])}
 							className="custom-button text-[15px]"
 						>
-							{t("dashboard.selezionaTutti")}
+							{t("selezionaTutti")}
 						</button>
 
 						<button
 							onClick={() => setSelectedDepartments([])}
 							className="custom-button text-[15px]"
 						>
-							{t("dashboard.deselezionaTutti")}
+							{t("deselezionaTutti")}
 						</button>
 					</>
 				)}
@@ -470,8 +470,8 @@ const CalendarBox = () => {
 					onChange={(e) => setMode(e.target.value)}
 					className="calendar-select ml-auto text-[15px]"
 				>
-					<option value="turni">{t("dashboard.turni")}</option>
-					<option value="eventi">{t("dashboard.eventi")}</option>
+					<option value="turni">{t("turni")}</option>
+					<option value="eventi">{t("eventi")}</option>
 				</select>
 			</div>
 

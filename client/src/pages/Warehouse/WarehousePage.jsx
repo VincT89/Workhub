@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useLanguage } from "../../context/LanguageContext.jsx";
 import { fetchItems } from "../../store/feature/itemsSlice";
 import { addItem } from "../../store/feature/itemsSlice";
 import { useTheme } from "../../context/ThemeContext.jsx";
@@ -12,6 +13,7 @@ import { PlusCircleIcon } from "@phosphor-icons/react";
 const WarehousePage = () => {
 	//? Prendo dispatcher e items dal Redux store
 	const dispatch = useDispatch();
+	const { t } = useLanguage();
 	const items = useSelector((state) => state.items.list);
 	const status = useSelector((state) => state.items.status);
 	const userWorkplaceId = useSelector((state) => state.auth.user?.workplace?._id); // punti vendita associati all'utente
@@ -47,7 +49,7 @@ const WarehousePage = () => {
 	// Box riassuntivi
 	const summaryButtons = [
 		{
-			label: "Totale articoli",
+			label: t("totArticoli"),
 			number: items.length,
 			icon: (
 				<WarehouseIcon
@@ -60,7 +62,7 @@ const WarehousePage = () => {
 			clickable: false,
 		},
 		{
-			label: "Carica giacenza",
+			label: t("caricaGiacenza"),
 			icon: (
 				<PlusCircleIcon
 					size={32}

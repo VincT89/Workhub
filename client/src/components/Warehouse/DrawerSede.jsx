@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import { useLanguage } from "../../context/LanguageContext";
 import bgLight from "../../assets/bg/bg.jpg";
 
 const DrawerSede = ({ open, onClose, productData }) => {
   const [searchName, setSearchName] = useState(""); // nome prodotto
   const [results, setResults] = useState([]);       // risultati della ricerca
+  const { t } = useLanguage();
 
   // Chiude il drawer premendo ESC
   useEffect(() => {
@@ -47,19 +49,19 @@ const DrawerSede = ({ open, onClose, productData }) => {
         {/* HEADER */}
         <header className="sticky top-0 border-b border-white/60 px-6 py-4 flex items-center justify-between">
           <h2 className="text-base font-semibold text-[#090c64]">
-            Disponibilità in altre sedi
+           {t("disponibilitaAltreSedi")}
           </h2>
           <button
             onClick={onClose}
             className="px-4 py-2 border border-white/70 shadow-sm rounded-xl text-sm bg-[#090c64] text-white cursor-pointer"
           >
-            Chiudi
+            {t("chiudi")}
           </button>
         </header>
 
         {/* CONTENUTO */}
         <div className="p-6 text-[15px] text-[#090c64]">
-          <label className="block mb-2 font-semibold">Nome prodotto</label>
+          <label className="block mb-2 font-semibold">{t("nomeProdotto")}</label>
           <input
             type="text"
             placeholder="Es. BILLY Libreria"
@@ -72,12 +74,12 @@ const DrawerSede = ({ open, onClose, productData }) => {
             onClick={searchStores}
             className="px-4 py-2 border border-white/70 shadow-sm rounded-xl text-sm text-white bg-[#090c64] mb-6 cursor-pointer"
           >
-            Cerca disponibilità
+            {t("cercaDisponibilita")}
           </button>
 
           <div>
             {results.length === 0 && (
-              <p className="opacity-70">Nessuna ricerca effettuata.</p>
+              <p className="opacity-70">{t("nessunaRicercaEffettuata")}</p>
             )}
 
             {results.map((item, i) => {
@@ -93,16 +95,16 @@ const DrawerSede = ({ open, onClose, productData }) => {
                   key={i}
                   className="py-2 border-b border-white/40 flex flex-col gap-1"
                 >
-                  <span><strong>Prodotto:</strong> {item.product?.name}</span>
-                  <span><strong>Sede:</strong> {item.pointOfSales?.name}</span>
-                  <span><strong>Stock:</strong> {item.stock} pezzi</span>
-                  <span><strong>Stock limite:</strong> {item.stockLimit}</span>
+                  <span><strong>{t("prodotto")}:</strong> {item.product?.name}</span>
+                  <span><strong>{t("point")}:</strong> {item.pointOfSales?.name}</span>
+                  <span><strong>{t("stock")}:</strong> {item.stock} {t("pezzi")}</span>
+                  <span><strong>{t("stockLimit")}:</strong> {item.stockLimit}</span>
                   {item.promo?.isActive && (
                     <span>
-                      <strong>Promo:</strong> {item.promo.value} {item.promo.mode === "percentage" ? "%" : "€"}
+                      <strong>{t("promo")}:</strong> {item.promo.value} {item.promo.mode === "percentage" ? "%" : "€"}
                     </span>
                   )}
-                  {item.note && <span><strong>Note:</strong> {item.note}</span>}
+                  {item.note && <span><strong>{t("note")}:</strong> {item.note}</span>}
                 </div>
               );
             })}

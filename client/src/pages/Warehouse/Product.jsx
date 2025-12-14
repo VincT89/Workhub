@@ -5,11 +5,13 @@ import jsPDF from "jspdf";
 import { SignOutIcon, WarehouseIcon, NoteIcon, NotepadIcon, PaperclipIcon, FilePdfIcon } from "@phosphor-icons/react";
 
 import { useTheme } from "../../context/ThemeContext";
+import { useLanguage } from "../../context/LanguageContext";
 
 const Product = () => {
   const { id } = useParams();
 
   const { theme } = useTheme();
+  const { t } = useLanguage();
 
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -35,13 +37,13 @@ const Product = () => {
   if (!item) {
     return (
       <div className="w-full min-h-screen flex flex-col justify-center items-center bg-[#f0f4f8] text-[#090c]">
-        <h2 className="text-2xl font-bold mb-4">Prodotto non trovato</h2>
+        <h2 className="text-2xl font-bold mb-4">{t("prodottoNonTrovato")}</h2>
         <Link
           to="/warehouse"
           className="bg-[#fafafa]/50 text-[#090c64] font-semibold px-6 py-3 rounded-full shadow-md 
                     hover:bg-white/80 transition-all duration-200 text-center"
         >
-          Torna alla lista
+          {t("tornaAllaLista")}
         </Link>
       </div>
     );
@@ -106,11 +108,11 @@ const Product = () => {
           <div className="grid grid-cols-2 gap-6 items-start">
             <div className="flex flex-col gap-3 ">
               <div className="grid grid-cols-2 bg-white/40 rounded-lg p-2 shadow-sm">
-                <span>ID</span>
+                <span>{t("id")}</span>
                 <span className="break-all">{item._id}</span> {/* break-all per spezzare stringhe lunghe senza spazi */ }
               </div>
               <div className="grid grid-cols-2 bg-white/40 rounded-lg p-2 shadow-sm">
-                <span>Nome</span>
+                <span>{t("nomeProdotto")}</span>
                 <span>{item.product.name}</span>
               </div>
               <div className="grid grid-cols-2 bg-white/40 rounded-lg p-2 shadow-sm">
@@ -118,15 +120,15 @@ const Product = () => {
                 <span>{item.product.sku}</span>
               </div>
               <div className="grid grid-cols-2 bg-white/40 rounded-lg p-2 shadow-sm">
-                <span>Categoria</span>
+                <span>{t("categoria")}</span>
                 <span>{item.product.category?.name || "N/D"}</span>
               </div>
               <div className="grid grid-cols-2 bg-white/40 rounded-lg p-2 shadow-sm">
-                <span>Quantità</span>
+                <span>{t("quantita")}</span>
                 <span>{item.stock}</span>
               </div>
               <div className="grid grid-cols-2 bg-white/40 rounded-lg p-2 shadow-sm">
-                <span>Soglia riordino</span>
+                <span>{t("sogliaRiordino")}</span>
                 <span>{item.stockLimit}</span>
               </div>
             </div>
@@ -140,7 +142,7 @@ const Product = () => {
                 />
               ) : (
                 <div className="w-full h-80 rounded-2xl bg-white/30 flex items-center justify-center text-sm shadow-md">
-                  Nessuna immagine
+                  {t("nessunaImmagine")}
                 </div>
               )}
             </div>
@@ -152,11 +154,11 @@ const Product = () => {
           <div className="flex-1 rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md">
             <div className="flex items-center gap-2 mb-4">
               <WarehouseIcon size={32} 	color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-              <h3 className="text-[#090c64] text-lg font-bold">Disponibilità</h3>
+              <h3 className="text-[#090c64] text-lg font-bold">{t("disponibilita")}</h3>
             </div>
             <div className="grid grid-cols-6 bg-white/40 rounded-xl p-2 shadow-sm">
               <span className="col-span-6 w-full whitespace-nowrap overflow-hidden text-ellipsis">
-                {item.stock} pezzi
+                {item.stock} {t("pezzi")}
               </span>
             </div>
           </div>
@@ -167,7 +169,7 @@ const Product = () => {
               className="bg-[#fafafa]/50 font-semibold px-6 py-3 rounded-xl shadow-md hover:bg-white/80 transition-all duration-200 w-3/4 flex items-center justify-center gap-2"
             >
               <FilePdfIcon size={32}	color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-              <span> Esporta PDF </span>
+              <span> {t("esportaPDF")} </span>
             </button>
           </div>
         </div>
@@ -176,13 +178,13 @@ const Product = () => {
         <div className="rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md">
           <div className="flex items-center gap-2 mb-4">
             <NotepadIcon size={32} 	color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-            <h3 className="text-[#090c64] text-lg font-bold">Storico movimenti</h3>
+            <h3 className="text-[#090c64] text-lg font-bold">{t("storicoMovimenti")}</h3>
           </div>
 
           <div className="grid grid-cols-3 font-bold  text-sm mb-2">
-            <span>Data</span>
-            <span>Tipo</span>
-            <span>Quantità</span>
+            <span>{t("data")}</span>
+            <span>{t("tipo")}</span>
+            <span>{t("quantita")}</span>
           </div>
 
           {storico.map((m, i) => (
@@ -198,18 +200,18 @@ const Product = () => {
         <div className="rounded-2xl bg-[#fafafa]/10 backdrop-blur-sm p-6 shadow-md">
           <div className="flex items-center gap-2 mb-4">
             <NoteIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-            <h3 className="text-[#090c64] text-lg font-bold m-0 leading-none">Note e allegati</h3>
+            <h3 className="text-[#090c64] text-lg font-bold m-0 leading-none">{t("noteAllegati")}</h3>
           </div>
 
           <textarea
-            placeholder="Aggiungi una nota..."
+            placeholder={t("aggiungiNota")}
             className="w-full p-3 rounded-xl bg-white/40 text-[#090c64] shadow-sm mb-4"
             rows={4}
           ></textarea>
 
           <label className="flex items-center gap-2 cursor-pointer bg-[#fafafa]/50 text-[#090c64] font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-white/80 transition-all duration-200">
             <PaperclipIcon size={32} 	color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-            <input type="file" />
+            <input type="file" hidden /> {t("scegliFile")}
           </label>
         </div>
 

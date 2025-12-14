@@ -16,8 +16,10 @@ import { fetchPointsOfSalesAsync } from "../store/feature/pointOfSalesSlice";
 import { fetchCustomersAsync } from "../store/feature/customerSlice";
 import { TrashIcon } from "@phosphor-icons/react";
 import { useTheme } from "../context/ThemeContext";
+import { useLanguage } from "../context/LanguageContext";
 
 const OrderPage = () => {
+	const { t } = useLanguage();
 	// nomi delle colonne
 	const orderColumns = [
 		"prodotto",
@@ -27,6 +29,7 @@ const OrderPage = () => {
 		"corriere",
 		"totale",
 	];
+
 
 	// stato per il drawer "Nuovo ordine"
 	const [drawerOpen, setDrawerOpen] = useState(false);
@@ -43,6 +46,7 @@ const OrderPage = () => {
 	const [selectedPointOfSaleId, setSelectedPointOfSaleId] = useState("");
 
 	const { theme } = useTheme(); //dark mode
+
 
 	const products = useSelector((state) => state.products.list);
 	const pointOfSales = useSelector((state) => state.pos.list); //punti vendita
@@ -147,7 +151,7 @@ const OrderPage = () => {
 			{/* DRAWER NUOVO ORDINE */}
 			{drawerOpen && (
 				<div className="p-6 flex flex-col gap-4 rounded-xl border border-white/30 shadow-md backdrop-blur-sm bg-white/20 transition duration-500">
-					<h3 className="text-lg font-bold text-[#090c64]">Nuovo Ordine</h3>
+					<h3 className="text-lg font-bold text-[#090c64]">{t("nuovoOrdine")}</h3>
 
 					<form onSubmit={handleCreateOrder} className="grid grid-cols-2 gap-4">
 						{/* SELECT PUNTI VENDITA */}
@@ -158,7 +162,7 @@ const OrderPage = () => {
 							value={selectedPointOfSaleId}
 							onChange={(e) => setSelectedPointOfSaleId(e.target.value)}
 						>
-							<option value=""> Seleziona punto vendita</option>
+							<option value=""> {t("selezionaPuntoVendita")}</option>
 							{pointOfSales?.map((pv) => (
 								<option key={pv._id} value={pv._id}>
 									{pv.name}
@@ -174,7 +178,7 @@ const OrderPage = () => {
 							value={selectedProductId}
 							onChange={(e) => setSelectedProductId(e.target.value)}
 						>
-							<option value="">Seleziona prodotto</option>
+							<option value="">{t("selezionaProdotto")}</option>
 							{products?.map((p) => (
 								<option key={p._id} value={p._id}>
 									{p.name}
@@ -187,7 +191,7 @@ const OrderPage = () => {
 							name="totalQuantity"
 							type="number"
 							min="0"
-							placeholder="Quantità totale"
+							placeholder={t("quantitaTotale")}
 							required
 							className="p-2 border rounded-xl"
 						/>
@@ -195,14 +199,14 @@ const OrderPage = () => {
 						{/* SEZIONE CLIENTI */}
 						<div className="col-span-2 flex items-center justify-between mt-2">
 							<span className="text-sm font-semibold ">
-								Clienti e relative quantità
+								{t("clientiQuantita")}
 							</span>
 							<button
 								type="button"
 								onClick={handleAddClientRow}
 								className="px-3 py-1 text-xs bg-[#090c64] text-white rounded-lg cursor-pointer hover:bg-[#0c0f7a] transition custom-button text-[13px] "
 							>
-								Aggiungi cliente
+								{t("aggiungiCliente")}
 							</button>
 						</div>
 
@@ -215,7 +219,7 @@ const OrderPage = () => {
 									}
 									className="p-2 border rounded text-sm"
 								>
-									<option value="">Seleziona cliente</option>
+									<option value="">{t("selezionaCliente")}</option>
 									{customers?.map((c) => (
 										<option key={c._id} value={c._id}>
 											{c.firstName} {c.lastName} ({c.location?.city})
@@ -230,7 +234,7 @@ const OrderPage = () => {
 									onChange={(e) =>
 										handleClientChange(index, "qty", e.target.value)
 									}
-									placeholder="Quantità per questo cliente"
+									placeholder={t("quantitaCliente")}
 									className="p-2 border rounded text-sm"
 								/>
 							</div>
@@ -247,13 +251,13 @@ const OrderPage = () => {
 								}}
 								className="px-4 py-2 border rounded-xl cursor-pointer transition"
 							>
-								Annulla
+								{t("annulla")}
 							</button>
 							<button
 								type="submit"
 								className="px-4 py-2 bg-[#090c64] text-white rounded-xl cursor-pointer transition custom-button text-[14px] "
 							>
-								Crea
+								{t("crea")}
 							</button>
 						</div>
 					</form>
@@ -264,16 +268,26 @@ const OrderPage = () => {
 			<OrdersTable
 				data={ordersForTable}
 				columns={orderColumns}
+				columnsLabels={
+					{
+						prodotto: t("product"),
+						"quantità totale": t("totalQuantity"),
+						data: t("date"),
+						stato: t("status"),
+						corriere: t("courier"),
+						totale: t("total"),
+					}	
+				}
 				customToolbar={
 					<button
 						type="button"
 						onClick={() => setDrawerOpen((prev) => !prev)}
 						className=" bg-[#090c64] text-white rounded-xl shadow-md cursor-pointer hover:bg-[#0c0f7a] transition custom-button text-[14px]"
 					>
-						Nuovo Ordine
+						{t("nuovoOrdine")}
 					</button>
 				}
-				actionLabel="Azioni"
+				actionLabel={t("azioni")}
 				actions={[
 					{
 						name: "delete",

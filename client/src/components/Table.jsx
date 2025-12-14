@@ -67,7 +67,7 @@ const Table = ({
 						onClick={() => setSortAZ(!sortAZ)}
 						className="px-3 py-2 bg-[#090c64] text-white font-bold border border-white rounded-xl shadow-sm text-sm transition table-sort-btn"
 					>
-						{sortAZ ? t("dashboard.annullaOrdineAZ") : t("dashboard.ordinaAZ")}
+						{sortAZ ? t("annullaOrdineAZ") : t("ordinaAZ")}
 					</button>
 
 					{/* Custom toolbar from parent */}
@@ -77,7 +77,7 @@ const Table = ({
 				{/* Search */}
 				<input
 					type="text"
-					placeholder={t("dashboard.cerca")}
+					placeholder={t("cerca")}
 					value={searchTerm}
 					onChange={(e) => setSearchTerm(e.target.value)}
 					className="px-3 py-2 bg-white/70 border border-white rounded-xl shadow-sm text-sm w-full sm:w-60 focus:outline-none placeholder:text-gray-500 table-search"
@@ -169,7 +169,7 @@ const Table = ({
 
 			{filteredData.length === 0 && (
 				<p className="text-center text-gray-500 italic mt-2">
-					{t("dashboard.nessunRisultatoTrovato")}
+					{t("nessunRisultatoTrovato")}
 				</p>
 			)}
 		</div>

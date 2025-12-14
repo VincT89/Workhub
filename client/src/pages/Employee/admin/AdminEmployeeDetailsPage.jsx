@@ -67,12 +67,12 @@ const AdminEmployeeDetailsPage = () => {
 
 	// Giorni settimanali
 	const weekDays = [
-		{ key: "monday", label: "Lunedì" },
-		{ key: "tuesday", label: "Martedì" },
-		{ key: "wednesday", label: "Mercoledì" },
-		{ key: "thursday", label: "Giovedì" },
-		{ key: "friday", label: "Venerdì" },
-		{ key: "saturday", label: "Sabato" },
+		{ key: "monday", label: t("lunedi") },
+		{ key: "tuesday", label: t("martedi") },
+		{ key: "wednesday", label: t("mercoledi") },
+		{ key: "thursday", label: t("giovedi") },
+		{ key: "friday", label: t("venerdi") },
+		{ key: "saturday", label: t("sabato") },
 	];
 
 	// FETCH USER + POS + SHIFTS + LEAVE
@@ -165,7 +165,7 @@ const AdminEmployeeDetailsPage = () => {
 			userShifts?.shifts?.[dayKey]?.[period] === true ? true : false;
 
 		if (currentValue) {
-			showShiftMessage(t("employees.turnoPresente"));
+			showShiftMessage(t("turnoPresente"));
 			return;
 		}
 
@@ -179,10 +179,10 @@ const AdminEmployeeDetailsPage = () => {
 					token,
 				})
 			).unwrap();
-			showShiftMessage(t("employees.turnoCreato"));
+			showShiftMessage(t("turnoCreato"));
 		} catch (err) {
 			console.error("Errore creazione turno:", err);
-			showShiftMessage(t("employees.erroreCreazioneTurno"));
+			showShiftMessage(t("erroreCreazioneTurno"));
 		}
 	};
 
@@ -200,10 +200,10 @@ const AdminEmployeeDetailsPage = () => {
 					token,
 				})
 			).unwrap();
-			showShiftMessage(t("employees.turnoEliminato"));
+			showShiftMessage(t("turnoEliminato"));
 		} catch (err) {
 			console.error("Errore eliminazione turno:", err);
-			showShiftMessage(t("employees.erroreEliminazioneTurno"));
+			showShiftMessage(t("erroreEliminazioneTurno"));
 		}
 	};
 
@@ -303,25 +303,25 @@ const AdminEmployeeDetailsPage = () => {
 
 	// TOP BOX
 	const topButtons = [
-		{ label: t("employees.giorniLavorati"), number: giorniLavorati },
-		{ label: t("employees.ferieResidue"), number: leave?.vacationHours ?? 0 },
-		{ label: t("employees.permessiResidui"), number: leave?.leaveHours ?? 0 },
-		{ label: t("employees.richieste"), number: totalActivities },
+		{ label: t("giorniLavorati"), number: giorniLavorati },
+		{ label: t("ferieResidue"), number: leave?.vacationHours ?? 0 },
+		{ label: t("permessiResidui"), number: leave?.leaveHours ?? 0 },
+		{ label: t("richieste"), number: totalActivities },
 	];
 
 	if (!token) return null;
 
 	if (loading && !anagrafica)
-		return <p className="p-4">{t("employees.caricamentoDipendenti")}</p>;
+		return <p className="p-4">{t("caricamentoDipendenti")}</p>;
 
 	if (error && !anagrafica)
 		return (
 			<p className="p-4 text-red-500">
-				{t("employees.erroreCaricamentoDipendenti")}: {error}
+				{t("erroreCaricamentoDipendenti")}: {error}
 			</p>
 		);
 
-	if (!anagrafica) return <p className="p-4">{t("employees.nessunDipendenteTrovato")}</p>;
+	if (!anagrafica) return <p className="p-4">{t("nessunDipendenteTrovato")}</p>;
 	return (
 		<div className=" adminEmployee w-full h-full flex flex-col gap-8 overflow-y-auto p-4">
 			{/* TOP BOX */}
@@ -347,35 +347,35 @@ const AdminEmployeeDetailsPage = () => {
 					<div className="flex items-center gap-3 mb-4">
 						<UserCircleIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
 						<h2 className={`text-lg font-bold ${textColor}`}>
-							{t("employees.anagrafica")}
+							{t("anagrafica")}
 						</h2>
 					</div>
 
 					<div className={`flex flex-col gap-2 ${textColor}`}>
 						<div>
-							<strong>{t("employees.nome")}:</strong> {anagrafica.nome}
+							<strong>{t("nome")}:</strong> {anagrafica.nome}
 						</div>
 						<div>
-							<strong>{t("employees.ruolo")}:</strong> {anagrafica.ruolo}
+							<strong>{t("ruolo")}:</strong> {anagrafica.ruolo}
 						</div>
 						<div>
-							<strong>{t("employees.matricola")}:</strong>{" "}
+							<strong>{t("matricola")}:</strong>{" "}
 							{anagrafica.matricola}
 						</div>
 						<div>
-							<strong>{t("employees.email")}:</strong> {anagrafica.email}
+							<strong>{t("email")}:</strong> {anagrafica.email}
 						</div>
 						<div>
-							<strong>{t("employees.telefono")}:</strong> {anagrafica.telefono}
+							<strong>{t("telefono")}:</strong> {anagrafica.telefono}
 						</div>
 						<div>
-							<strong>{t("employees.sedeLavorativa")}:</strong> {anagrafica.sede}
+							<strong>{t("sedeLavorativa")}:</strong> {anagrafica.sede}
 						</div>
 						<div>
-							<strong>{t("employees.tipoContratto")}:</strong> {anagrafica.contratto}
+							<strong>{t("tipoContratto")}:</strong> {anagrafica.contratto}
 						</div>
 						<div>
-							<strong>{t("employees.dataAssunzione")}:</strong> {anagrafica.assunzione}
+							<strong>{t("dataAssunzione")}:</strong> {anagrafica.assunzione}
 						</div>
 					</div>
 				</div>
@@ -385,7 +385,7 @@ const AdminEmployeeDetailsPage = () => {
 					<div className="flex items-center gap-3 mb-2">
 						<CalendarCheckIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
 						<h2 className={`text-lg font-bold leading-none ${textColor}`}>
-							{t("employees.turniSettimanali")}
+							{t("turniSettimanali")}
 						</h2>
 					</div>
 
@@ -476,7 +476,7 @@ const AdminEmployeeDetailsPage = () => {
 				<div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md backdrop-blur-sm bg-white/20">
 					<div className="flex items-center gap-3 mb-4">
 						<h2 className={`text-lg font-bold leading-none ${textColor}`}>
-							{t("employees.richiestaFerie")}
+							{t("richiestaFerie")}
 						</h2>
 					</div>
 
@@ -487,8 +487,8 @@ const AdminEmployeeDetailsPage = () => {
 								className="flex items-center justify-between bg-white/40 dark:bg-white/20 rounded-xl p-2 shadow-sm"
 							>
 								<span className={`font-semibold ${textColor}`}>
-									{anagrafica.nome} - {t("employees.dal")} {formatDate(fe.from)}
-									, {t("employees.al")} {formatDate(fe.to)} ({fe.hours}h)
+									{anagrafica.nome} - {t("dal")} {formatDate(fe.from)}
+									, {t("al")} {formatDate(fe.to)} ({fe.hours}h)
 								</span>
 
 								<div className="flex items-center gap-5">
@@ -498,19 +498,19 @@ const AdminEmployeeDetailsPage = () => {
 										onClick={() => handleAccettaFerie(fe)}
 										className="bg-[#090c64] text-white text-sm px-3 py-1 rounded-xl cursor-pointer font-semibold transition"
 									>
-										{t("employees.accetta")}
+										{t("accetta")}
 									</button>
 									<button
 										onClick={() => handleRifiutaFerie(fe)}
 										className="bg-white/30 dark:bg-white/10 text-[#090c64] text-sm px-3 py-1 rounded-xl cursor-pointer font-semibold transition"
 									>
-										{t("employees.rifiuta")}
+										{t("rifiuta")}
 									</button>
 								</div>
 							</div>
 						))}
 						{ferie.length === 0 && (
-							<p className="text-sm opacity-70">{t("employees.nessunaRichiestaFerie")}</p>
+							<p className="text-sm opacity-70">{t("nessunaRichiestaFerie")}</p>
 						)}
 					</div>
 				</div>
@@ -519,7 +519,7 @@ const AdminEmployeeDetailsPage = () => {
 				<div className="flex-1 p-6 rounded-xl border border-white/30 shadow-md backdrop-blur-sm bg-white/20">
 					<div className="flex items-center gap-3 mb-4">
 						<h2 className={`text-lg font-bold leading-none ${textColor}`}>
-							{t("employees.richiestaPermessi")}
+							{t("richiestaPermessi")}
 						</h2>
 					</div>
 
@@ -541,19 +541,19 @@ const AdminEmployeeDetailsPage = () => {
 										onClick={() => handleAccettaPermesso(tu)}
 										className="bg-[#090c64] text-white text-sm px-3 py-1 rounded-xl cursor-pointer font-semibold transition"
 									>
-										{t("employees.accetta")}
+										{t("accetta")}
 									</button>
 									<button
 										onClick={() => handleRifiutaPermesso(tu)}
 										className="bg-white/30 dark:bg-white/10 text-[#090c64] text-sm px-3 py-1 rounded-xl cursor-pointer font-semibold transition"
 									>
-										{t("employees.rifiuta")}
+										{t("rifiuta")}
 									</button>
 								</div>
 							</div>
 						))}
 						{permessi.length === 0 && (
-							<p className="text-sm opacity-70">{t("employees.nessunaRichiestaPermessi")}</p>
+							<p className="text-sm opacity-70">{t("nessunaRichiestaPermessi")}</p>
 						)}
 					</div>
 				</div>

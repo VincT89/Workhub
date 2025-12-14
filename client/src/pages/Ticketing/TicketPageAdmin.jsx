@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "../../context/ThemeContext";
+import { useLanguage } from "../../context/LanguageContext";
 import {
 	fetchTickets,
 	updateTicketAsync,
@@ -44,6 +45,7 @@ const TicketPageAdmin = () => {
 	const [hiddenLines, setHiddenLines] = useState([]);
 
 	const { theme } = useTheme();
+	const { t } = useLanguage();
 
 	const [state, setState] = useState([
 		{
@@ -53,6 +55,12 @@ const TicketPageAdmin = () => {
 			key: "selection",
 		},
 	]);
+
+	const ticketSeries = [
+		{ key: "aperti", label: t("aperti") , color: "#3B82F6"},
+		{ key: "risolti", label: t("risolti"), color: "#F59E0B" },
+		{ key: "totale", label: t("totale"), color: "#111827" },
+	];
 
 	/* CARICAMENTO DATI (FAKE API) tramite Redux slice */
 
@@ -166,14 +174,14 @@ const TicketPageAdmin = () => {
 			{ticketsError && (
 				<div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 flex items-start justify-between">
 					<div>
-						<h3 className="font-bold">Errore nel caricamento</h3>
+						<h3 className="font-bold">{t("erroreCaricamento")}</h3>
 						<p className="text-sm mt-1">{ticketsError}</p>
 					</div>
 					<button
 						onClick={() => dispatch(fetchTickets())}
 						className="ml-4 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
 					>
-						Riprova
+						{t("riprova")}
 					</button>
 				</div>
 			)}
@@ -183,7 +191,7 @@ const TicketPageAdmin = () => {
 				<div className="flex items-center justify-center py-20">
 					<div className="text-center">
 						<div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#090c64]"></div>
-						<p className="mt-4 text-gray-600">Caricamento ticket...</p>
+						<p className="mt-4 text-gray-600">{t("caricamentoTicket")}</p>
 					</div>
 				</div>
 			)}
@@ -200,7 +208,7 @@ const TicketPageAdmin = () => {
 								color={theme === "dark" ? "white" : "#090c64"}
 								weight="duotone"
 							/>
-							Seleziona intervallo date
+							{t("selezionaIntervalloData")}
 						</h2>
 
 						<div className="border rounded-xl overflow-hidden bg-white/30 border-white/90 flex justify-center w-full h-full">
@@ -220,21 +228,21 @@ const TicketPageAdmin = () => {
 
 					{/* Grafico */}
 					<div className="bg-white/30 border border-white/90 rounded-xl shadow p-6">
-						<h2 className="font-bold text-2xl mb-4">Andamento Ticket</h2>
+						<h2 className="font-bold text-2xl mb-4">{t("andamentoTicket")}</h2>
 
 						{/* Legenda */}
 						<div className="flex flex-wrap gap-3 mb-6 font-bold">
-							{["aperti", "risolti", "totale"].map((key) => (
+							{ticketSeries.map(({ key, label }) => (
 								<button
 									key={key}
 									onClick={() => toggleLine(key)}
-									className={`px-4 py-1.5 rounded-xl custom-button text-sm border shadow-sm transition ${
+									className={`px-4 py-1.5 rounded-xl text-sm border shadow-sm transition ${
 										hiddenLines.includes(key)
 											? "opacity-40 bg-gray-100"
-											: "opacity-100 bg-white"
+											: "opacity-100 bg-white text-[#090c64]"
 									}`}
 								>
-									{key.charAt(0).toUpperCase() + key.slice(1)} ({totals[key]})
+									{t(label)} ({totals[key]})
 								</button>
 							))}
 						</div>
@@ -243,11 +251,11 @@ const TicketPageAdmin = () => {
 							dataset={lineChartData}
 							xAxis={[{ dataKey: "date", scaleType: "band" }]}
 							yAxis={[{ valueFormatter: (v) => v.toString() }]}
-							series={[
-								{ dataKey: "aperti", label: "Aperti", color: "#3B82F6" },
-								{ dataKey: "risolti", label: "Risolti", color: "#F59E0B" },
-								{ dataKey: "totale", label: "Totale", color: "#111" },
-							].filter((s) => !hiddenLines.includes(s.dataKey))}
+							series={ticketSeries.map(({ key, label, color }) => ({
+								dataKey: key,
+								label: t(label),
+								color,
+							})).filter((s) => !hiddenLines.includes(s.dataKey))}
 							height={500}
 							curve="monotoneX"
 							grid={{ vertical: false }}
@@ -287,7 +295,7 @@ const TicketPageAdmin = () => {
 							color={theme === "dark" ? "white" : "#090c64"}
 							weight="duotone"
 						/>
-						Ticket
+						{t("ticket")}
 					</h2>
 
 					{/* FILTRI */}
@@ -307,7 +315,7 @@ const TicketPageAdmin = () => {
 									type="text"
 									value={userSearch}
 									onChange={(e) => setUserSearch(e.target.value)}
-									placeholder="Cerca utente..."
+									placeholder={t("cercaUtente")}
 									className="w-full pl-16 pr-10 p-2 border rounded-lg bg-white text-gray-800 shadow-sm focus:ring focus:ring-blue-200 focus:outline-none"
 								/>
 								{userSearch.length > 0 && (
@@ -390,9 +398,9 @@ const TicketPageAdmin = () => {
 								onChange={(e) => setSelectedStatus(e.target.value)}
 								className="w-full pl-12 p-2 border rounded-lg bg-white text-gray-800 shadow-sm focus:ring focus:ring-blue-200 focus:outline-none"
 							>
-								<option value="">Tutti</option>
-								<option value="aperto">Aperti</option>
-								<option value="risolto">Risolti</option>
+								<option value="">{t("tutti")}</option>
+								<option value="aperto">{t("aperti")}</option>
+								<option value="risolto">{t("risolti")}</option>
 							</select>
 						</div>
 					</div>
@@ -464,7 +472,7 @@ const TicketPageAdmin = () => {
 				>
 					{selectedTicket && (
 						<>
-							<h3 className="font-semibold text-xl mb-4">Dettagli Ticket</h3>
+							<h3 className="font-semibold text-xl mb-4">{t("dettagliTicket")}</h3>
 
 							<div className="flex flex-col gap-3 mb-4 p-2 bg-gray-50 rounded-xl border border-gray-200">
 								<div className="flex items-center gap-3">
@@ -494,7 +502,7 @@ const TicketPageAdmin = () => {
 
 								<div className="mt-2 p-2 bg-white rounded-lg border border-gray-200">
 									<span className="font-semibold text-gray-800">
-										Descrizione:
+										{t("descrizione")}:
 									</span>
 									<p className="text-sm text-gray-700 mt-1">
 										{selectedTicket.description || selectedTicket.content}
@@ -524,7 +532,7 @@ const TicketPageAdmin = () => {
 										}
 									}}
 								>
-									Aperto
+									{t("aperti")}
 								</div>
 
 								<div
@@ -546,7 +554,7 @@ const TicketPageAdmin = () => {
 										}
 									}}
 								>
-									Risolto
+									{t("risolti")}
 								</div>
 							</div>
 
@@ -554,7 +562,7 @@ const TicketPageAdmin = () => {
 								onClick={() => setDrawerOpen(false)}
 								className="w-full bg-gray-300 text-gray-800 py-2 rounded-lg hover:bg-gray-400"
 							>
-								Chiudi
+								{t("chiudi")}
 							</button>
 						</>
 					)}

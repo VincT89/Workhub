@@ -78,17 +78,17 @@ const UserEmployeePage = () => {
 
   const topButtons = [
     {
-      label: t("employees.giorniLavorati"),
+      label: t("giorniLavorati"),
       number: 215,
       icon: <CalendarCheckIcon size={28} color={theme === "dark" ? "white" : "#090c64"}weight="duotone" />,
     },
     {
-      label: t("employees.ferieResidue"),
+      label: t("ferieResidue"),
       number: leave?.vacationHours ?? 0,
       icon: <BagIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />,
     },
     {
-      label: t("employees.permessi"),
+      label: t("permessi"),
       number: leave?.leaveHours ?? 0,
       icon: <CalendarBlankIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />,
     },
@@ -123,12 +123,12 @@ const UserEmployeePage = () => {
   }, [authUser, workplaceName]);
 
   const dayMap = {
-    monday: t("employees.lunedi") || "Lunedì",
-    tuesday: t("employees.martedi") || "Martedì",
-    wednesday: t("employees.mercoledi") || "Mercoledì",
-    thursday: t("employees.giovedi") || "Giovedì",
-    friday: t("employees.venerdi") || "Venerdì",
-    saturday: t("employees.sabato") || "Sabato",
+    monday: t("lunedi") || "Lunedì",
+    tuesday: t("martedi") || "Martedì",
+    wednesday: t("mercoledi") || "Mercoledì",
+    thursday: t("giovedi") || "Giovedì",
+    friday: t("venerdi") || "Venerdì",
+    saturday: t("sabato") || "Sabato",
   };
 
   const weekDays = [
@@ -286,37 +286,37 @@ const UserEmployeePage = () => {
           <div className="flex items-center gap-3 mb-4">
             <UserCircleIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
             <h2 className={`text-lg font-bold ${textColor}`}>
-              {t("employees.anagrafica")}
+              {t("anagrafica")}
             </h2>
           </div>
 
           <div className={`flex flex-col gap-2 ${textColor}`}>
             <div>
-              <strong>{t("employees.nome")}:</strong> {anagrafica.nome}
+              <strong>{t("nome")}:</strong> {anagrafica.nome}
             </div>
             <div>
-              <strong>{t("employees.ruolo")}:</strong> {anagrafica.ruolo}
+              <strong>{t("ruolo")}:</strong> {anagrafica.ruolo}
             </div>
             <div>
-              <strong>{t("employees.matricola")}:</strong>{" "}
+              <strong>{t("matricola")}:</strong>{" "}
               {anagrafica.matricola}
             </div>
             <div>
-              <strong>{t("employees.email")}:</strong> {anagrafica.email}
+              <strong>{t("email")}:</strong> {anagrafica.email}
             </div>
             <div>
-              <strong>{t("employees.telefono")}:</strong>{" "}
+              <strong>{t("telefono")}:</strong>{" "}
               {anagrafica.telefono}
             </div>
             <div>
-              <strong>{t("employees.sede")}:</strong> {anagrafica.sede}
+              <strong>{t("sedeLavorativa")}:</strong> {anagrafica.sede}
             </div>
             <div>
-              <strong>{t("employees.contratto")}:</strong>{" "}
+              <strong>{t("tipoContratto")}:</strong>{" "}
               {anagrafica.contratto}
             </div>
             <div>
-              <strong>{t("employees.dataAssunzione")}:</strong>{" "}
+              <strong>{t("dataAssunzione")}:</strong>{" "}
               {anagrafica.dataAssunzione}
             </div>
           </div>
@@ -327,17 +327,17 @@ const UserEmployeePage = () => {
           <div className="flex items-center gap-3 mb-4">
             <CalendarCheckIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
             <h2 className={`text-lg font-bold ${textColor}`}>
-              {t("employees.turniSettimanali")}
+              {t("turniSettimanali")}
             </h2>
           </div>
 
           <div className={`flex flex-col ${textColor}`}>
             {shiftsLoading && (
-              <p className="text-sm opacity-70">Caricamento turni...</p>
+              <p className="text-sm opacity-70">{t("caricamentoTurni")}</p>
             )}
 
             {!shiftsLoading && existingShifts.length === 0 && (
-              <p className="text-sm opacity-70">Nessun turno assegnato.</p>
+              <p className="text-sm opacity-70">{t("nessunTurnoAssegnato")}</p>
             )}
 
             {shiftsError && (
@@ -365,14 +365,14 @@ const UserEmployeePage = () => {
             <div className="flex items-center gap-3">
               <BagIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
               <h2 className={`text-lg font-bold ${textColor}`}>
-                {t("employees.ferie")}
+                {t("ferie")}
               </h2>
             </div>
             <button
               className="custom-button"
               onClick={() => setOpenFerieDrawer(true)}
             >
-              {t("employees.richiestaFerie")}
+              {t("richiestaFerie")}
             </button>
           </div>
 
@@ -400,14 +400,14 @@ const UserEmployeePage = () => {
             <div className="flex items-center gap-3">
               <CalendarCheckIcon size={32} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
               <h2 className={`text-lg font-bold ${textColor}`}>
-                {t("employees.permessi")}
+                {t("permessi")}
               </h2>
             </div>
             <button
               className="custom-button"
               onClick={() => setOpenPermessiDrawer(true)}
             >
-              {t("employees.richiestaPermessi")}
+              {t("richiestaPermessi")}
             </button>
           </div>
 
@@ -436,12 +436,12 @@ const UserEmployeePage = () => {
       <Drawer
         open={openFerieDrawer}
         onClose={() => setOpenFerieDrawer(false)}
-        title={t("employees.richiestaFerie")}
+        title={t("richiestaFerie")}
         width="w-[420px]"
       >
         <div className="flex flex-col gap-6">
           <div className="flex flex-col">
-            <label className="font-semibold">{t("employees.dal")}</label>
+            <label className="font-semibold">{t("dal")}</label>
             <input
               type="date"
               value={dal}
@@ -451,7 +451,7 @@ const UserEmployeePage = () => {
           </div>
 
           <div className="flex flex-col">
-            <label className="font-semibold">{t("employees.al")}</label>
+            <label className="font-semibold">{t("al")}</label>
             <input
               type="date"
               value={al}
@@ -464,7 +464,7 @@ const UserEmployeePage = () => {
             className= "custom-button w-full py-3"
             onClick={handleInviaFerie}
           >
-            {t("Invia Richiesta Ferie")}
+            {t("inviaRichiestaFerie")}
           </button>
         </div>
       </Drawer>
@@ -473,12 +473,12 @@ const UserEmployeePage = () => {
       <Drawer
         open={openPermessiDrawer}
         onClose={() => setOpenPermessiDrawer(false)}
-        title={t("employees.richiestaPermessi")}
+        title={t("richiestaPermessi")}
         width="w-[420px]"
       >
         <div className="flex flex-col gap-6">
           <div className="flex flex-col">
-            <label className="font-semibold">{t("employees.data")}</label>
+            <label className="font-semibold">{t("data")}</label>
             <input
               type="date"
               value={permessoData}
@@ -489,7 +489,7 @@ const UserEmployeePage = () => {
 
           <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
             <div className="flex-1 flex flex-col">
-              <label className="font-semibold">{t("Ora Inizio")}</label>
+              <label className="font-semibold">{t("oraInizio")}</label>
               <input
                 type="time"
                 value={oraInizio}
@@ -499,7 +499,7 @@ const UserEmployeePage = () => {
             </div>
 
             <div className="flex-1 flex flex-col">
-              <label className="font-semibold">{t("Ora Fine")}</label>
+              <label className="font-semibold">{t("oraFine")}</label>
               <input
                 type="time"
                 value={oraFine}
@@ -513,7 +513,7 @@ const UserEmployeePage = () => {
             className="custom-button w-full py-3"
             onClick={handleInviaPermesso}
           >
-            {t("Invia Richiesta Permessi")}
+            {t("inviaRichiestaPermessi")}
           </button>
         </div>
       </Drawer>

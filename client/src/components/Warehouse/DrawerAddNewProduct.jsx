@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"; // useState per stato locale, useEf
 import { useDispatch, useSelector } from "react-redux"; // Redux: dispatch per inviare azioni, useSelector per leggere lo stato
 import { updateItemQuantity } from "../../store/feature/itemsSlice"; // thunk per aggiornare stock
 import { useTheme } from "../../context/ThemeContext"; // contesto tema (chiaro/scuro)
+import { useLanguage } from "../../context/LanguageContext"; // contesto lingua
 import bgLight from "../../assets/bg/bg.jpg"; // immagine di sfondo del drawer
 import bgDark from "../../assets/bg/bgScuro.jpg"; // immagine di sfondo del drawer scuro
 
@@ -16,8 +17,9 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
   const [quantity, setQuantity] = useState(1); // quantità da aggiungere
 
   const { theme } = useTheme(); // tema attuale (chiaro/scuro)
-
-  // Chiude il drawer premendo "Escape"
+  const { t } = useLanguage(); // funzione di traduzione
+  
+  // Effetto per chiudere il drawer con il tasto ESC
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose?.(); // se premi ESC chiude il drawer
     if (open) document.addEventListener("keydown", onKey);
@@ -48,14 +50,14 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
 
   // Funzione per modificare la quantità di un prodotto specifico per id
   const handleAddStock = async (itemId) => {
-    if (!quantity || quantity === 0) return alert("Inserisci quantità valida");
+    if (!quantity || quantity === 0) return alert(t("inserisciQuantitaValida")); // controlla quantità valida
     try {
       const resultAction = await dispatch(updateItemQuantity({ id: itemId, quantityToAdd: Number(quantity) }));
 
 
       if (updateItemQuantity.fulfilled.match(resultAction)) {
         // successo: puoi mostrare toast o alert
-        alert(`Stock aggiornato: ${resultAction.payload.stock}`);
+        alert(`${t("stockAggiornato")} ${resultAction.payload.stock}`);
         // reset UI
         setQuantity(1);
         setSearch("");
@@ -64,11 +66,11 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
       } else {
         // errore
         const err = resultAction.payload || resultAction.error?.message;
-        alert("Errore: " + err);
+        alert(t("errore") + " " + err);
       }
     } catch (err) {
       console.error(err);
-      alert("Errore imprevisto");
+      alert(t("erroreImprevisto"));
     }
   };
 
@@ -92,20 +94,20 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
         {/* HEADER: titolo e bottone chiudi */}
         <header className="sticky top-0 border-b border-white/60 px-6 py-4 flex items-center justify-between">
           <h2 className="text-base font-semibold">
-            Aggiungi stock
+            {t("aggiungiStock")}
           </h2>
           <button
             onClick={onClose} // chiude il drawer
             className="px-4 py-2 border border-white/70 shadow-sm rounded-xl text-sm custom-button cursor-pointer"
           >
-            Chiudi
+            {t("chiudi")}
           </button>
         </header>
 
         {/* CONTENUTO PRINCIPALE */}
         <div className="p-6 text-[15px] ">
           {/* Input ricerca prodotto/SKU */}
-          <label className="block mb-2 font-semibold">Nome prodotto o SKU</label>
+          <label className="block mb-2 font-semibold">{t("nomeProdottoSku")}</label>
           <input
             type="text"
             placeholder="Es. BILLY Libreria o SKU1234"
@@ -115,7 +117,7 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
           />
 
           {/* Input quantità da aggiungere */}
-          <label className="block mb-2 font-semibold">Quantità da aggiungere</label>
+          <label className="block mb-2 font-semibold">{t("quantitaDaAggiungere")}</label>
           <input
             type="number"
             value={quantity}
@@ -129,14 +131,14 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
             onClick={searchItems}
             className="px-4 py-2 border border-white/70 shadow-sm rounded-xl text-sm custom-button mb-6 cursor-pointer"
           >
-            Cerca prodotto
+            {t("cercaProdotto")}
           </button>
 
           {/* RISULTATI DELLA RICERCA */}
           <div>
             {/* Messaggio predefinito se non ci sono risultati */}
             {results.length === 0 && (
-              <p className="opacity-70">Nessuna ricerca effettuata.</p>
+              <p className="opacity-70">{t("nessunaRicercaEffettuata")}</p>
             )}
 
             {/* Lista dei risultati */}
@@ -151,17 +153,17 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
                   key={i}
                   className="py-2 border-b border-white/40 flex flex-col gap-1"
                 >
-                  <span><strong>Prodotto:</strong> {item.product?.name}</span>
+                  <span><strong>{t("prodotto")}:</strong> {item.product?.name}</span>
                   <span><strong>SKU:</strong> {item.product?.sku}</span>
-                  <span><strong>Sede:</strong> {item.pointOfSales?.name}</span>
-                  <span><strong>Stock attuale:</strong> {item.stock}</span>
+                  <span><strong>{t("point")}:</strong> {item.pointOfSales?.name}</span>
+                  <span><strong>{t("stock")}:</strong> {item.stock}</span>
 
                   {/* Bottone aggiungi quantità */}
                   <button
                     onClick={() => handleAddStock(item._id)}
                     className="mt-2 px-3 py-1 border border-white/70 shadow-sm rounded-xl text-sm text-white bg-[#090c64] hover:bg-[#0a0f85]"
                   >
-                    Aggiungi {quantity} pezzi
+                    {t("aggiungi")} {quantity} {t("pezzi")}
                   </button>
                 </div>
               );
