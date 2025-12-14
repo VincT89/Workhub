@@ -15,7 +15,6 @@ const WarehousePage = () => {
 	const dispatch = useDispatch();
 	const { t } = useLanguage();
 	const items = useSelector((state) => state.items.list);
-	const status = useSelector((state) => state.items.status);
 	const userWorkplaceId = useSelector((state) => state.auth.user?.workplace?._id); // punti vendita associati all'utente
 	const { theme } = useTheme();
 	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
@@ -77,15 +76,23 @@ const WarehousePage = () => {
 	};
 
 	// funzione per filtrare i prodotti in base ai punti vendita dell'utente
-	const filteredItems = useMemo(() => {
-		// se user non è ancora pronto → mostra TUTTI gli items
-		if (!userWorkplaceId) return items;
+const filteredItems = useMemo(() => {
+	// se non ho ancora dati, NON filtrare
+	if (!items || items.length === 0) return [];
 
-		return items.filter(
-			(item) => String(item.pointOfSales?._id) === String(userWorkplaceId) // confronto come stringhe
+	let result = items;
+
+	// filtro punto vendita SOLO se esiste
+	if (userWorkplaceId) {
+		result = result.filter(
+			item =>
+				item.pointOfSales &&
+				String(item.pointOfSales._id) === String(userWorkplaceId)
 		);
-	}, [items, userWorkplaceId]);
-	
+	}
+
+	return result;
+}, [items, userWorkplaceId]);
 
 	return (
 		<div className="w-full min-h-screen flex justify-center items-start">
@@ -120,7 +127,7 @@ const WarehousePage = () => {
 				</div>
 
 				{/* TABELLA */}
-				<WarehouseTable data={filteredItems} columns={columns} />
+				<WarehouseTable data={filteredItems} allItems={items} columns={columns} />
 
 				{/* DRAWER AGGIUNGI PRODOTTO */}
 				<DrawerAddNewProduct
