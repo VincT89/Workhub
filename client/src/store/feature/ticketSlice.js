@@ -153,7 +153,7 @@ const ticketSlice = createSlice({
   },
 });
 
-// Selectors
+// Selectors  
 export const selectTickets = (state) => state.tickets.tickets;
 export const selectUsers = (state) => state.tickets.users;
 export const selectTicketStatus = (state) => state.tickets.status;

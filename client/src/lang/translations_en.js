@@ -271,6 +271,7 @@ export const en = {
 	iTuoiTicket: "Your Tickets",
 	risolto: "Resolved",
 	aperto: "Open",
+	tuttiUtenti: "All Users",
 
 	// Order Page
 	nuovoOrdine: "New Order",
