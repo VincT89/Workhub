@@ -19,8 +19,8 @@ export const login = async (req, res) => {
   const schema = Joi.object({
     username: Joi.string().required(),
     password: Joi.string().required(),
-    // token opzionale o vuoto
-    token: Joi.string().allow("", null).optional(),
+    // code opzionale o vuoto
+    code: Joi.string().allow("", null).optional(),
   });
 
   try {
@@ -31,7 +31,7 @@ export const login = async (req, res) => {
         .json(formatResponse(null, false, error.details[0].message));
     }
 
-    const { username, password, token } = value;
+    const { username, password, code } = value;
 
     const userDoc = await User.findOne({ username }).select("+password");
     if (!userDoc) {
@@ -54,18 +54,18 @@ export const login = async (req, res) => {
     }
 
     // Se 2FA è abilitato → token obbligatorio
-    if (userDoc.twofaEnabled) {
-      if (!token) {
+    if (userDoc.twofaEnabled) { // 2FA abilitato 
+      if (!code) {
         return res
-          .status(400)
-          .json(formatResponse(null, false, "2FA token required"));
+          .status(200)
+          .json(formatResponse({is2FARequired: true}, true, "2FA code required"));
       }
 
-      const result = verify2FAToken(userDoc.twofaSecret, token);
+      const result = verify2FAToken(userDoc.twofaSecret, code);
       if (!result || result.delta !== 0) {
         return res
           .status(401)
-          .json(formatResponse(null, false, "Invalid 2FA token"));
+          .json(formatResponse(null, false, "Invalid 2FA code"));
       }
     }
 

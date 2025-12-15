@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginAsync, setLoginData } from "../store/feature/authSlice";
+import { loginAsync, setIs2FARequired, setLoginData } from "../store/feature/authSlice";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -9,36 +9,31 @@ import bgLight from "../assets/bg/bg.jpg";
 import bgDark from "../assets/bg/bgScuro.jpg";
 import iconLogo from "../assets/logo/iconaLogo.png";
 import iconLogoDark from "../assets/logo/iconaLogoChiara.png";
-import { Eye, EyeSlash } from "@phosphor-icons/react";
 
-const LoginPage = () => {
+const TwoFA = () => {
   const { theme } = useTheme();
   const { t } = useLanguage();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { user, token, is2FARequired, loading, error } = useSelector((state) => state.auth);
-
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const { user, token, loginData: { username, password }, loading, error } = useSelector((state) => state.auth);
+  const [code, setCode] = useState("");
 
   const backgroundImage = theme === "dark" ? bgDark : bgLight;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!username || !password) return;
-    dispatch(loginAsync({ username, password, code: null }));
+    if (!username || !password) navigate("/login");
+    dispatch(loginAsync({ username, password, code })); // invio anche il codice 2FA
+    dispatch(setLoginData({ username: null, password: null })); // reset credenziali
+    dispatch(setIs2FARequired(false)); // reset flag 2FA richiesta
   };
 
    useEffect(() => {
-    if (token && user && !is2FARequired) {
+    if (token && user) {
       navigate("/board");
-    } else if (is2FARequired) {
-      dispatch(setLoginData({ username, password }));
-      navigate("/twofa");
-    }
-  }, [token, user, is2FARequired, navigate]);
+    } 
+  }, [token, user, navigate]);
 
   const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 
@@ -95,67 +90,7 @@ const LoginPage = () => {
             {error}
           </p>
         )}
-
-        {/* Username */}
-        <div className="m-4 w-full sm:w-[486px]">
-          <label
-            htmlFor="username"
-            className={`block text-[18px] font-bold font-nunito mb-2 ${textColor}`}
-          >
-            {t("username")}
-          </label>
-          <input
-            id="username"
-            name="username"
-            type="text"
-            autoComplete="username"
-            required
-            className="custom-input w-full"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-
-        {/* Password */}
-        <div className="relative m-2 w-full sm:w-[486px]">
-          <label
-            htmlFor="password"
-            className={`block text-[18px] font-bold font-nunito mb-2 ${textColor}`}
-          >
-            {t("password")}
-          </label>
-          <input
-            id="password"
-            name="password"
-            type={showPassword ? "text" : "password"}
-            autoComplete="current-password"
-            required
-            className="custom-input w-full"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword((s) => !s)}
-            className="absolute top-[75%] right-4 transform -translate-y-1/2 w-[30px] h-[30px] z-20 cursor-pointer flex items-center justify-center"
-          >
-            {showPassword ? (
-              <Eye
-                size={24}
-                color={theme === "dark" ? "#fff" : "#090c64"}
-                weight="duotone"
-              />
-            ) : (
-              <EyeSlash
-                size={24}
-                color={theme === "dark" ? "#fff" : "#090c64"}
-                weight="duotone"
-              />
-            )}
-          </button>
-        </div>
-
-        {/* Codice 2FA
+        {/* Codice 2FA */}
         <div className="m-4 w-full sm:w-[486px]">
           <label
             htmlFor="token2fa"
@@ -169,21 +104,11 @@ const LoginPage = () => {
             type="text"
             autoComplete="one-time-code"
             className="custom-input w-full"
-            value={token2fa}
-            onChange={(e) => setToken2fa(e.target.value)}
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
             placeholder={t("inserisciCodice2FA")}
           />
-        </div> */}
-
-        {/* Password dimenticata */}
-        <div className="w-[63%] flex justify-end">
-          <Link
-            to="/forgot-password"
-            className={`text-[14px] font-bold font-nunito transition ${textColor}`}
-          >
-            {t("dimenticatoPassword")}
-          </Link>
-        </div>
+        </div> 
 
         {/* Bottone Login */}
         <button
@@ -206,4 +131,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default TwoFA;
