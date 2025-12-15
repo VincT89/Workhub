@@ -229,4 +229,4 @@ UI dedicata con Drawer per aggiunta/modifica.
 8. Gestione magazzino - `COMPLETATO`
 9. Gestione clienti - `COMPLETATO - solo richiamare ordini per cliente`
 10. Gestione ticketing - `COMPLETATO`
-11. Gestione ordini - `COMPLETATO - funzionalita standard premium`
+11. Gestione ordini - `COMPLETATO `
