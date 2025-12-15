@@ -577,7 +577,7 @@ const TicketPageAdmin = () => {
          * 
          * STICKY: Rimane visibile quando si scrolla
          */}
-        <div className="w-full lg:w-3/5 flex flex-col gap-6 sticky top-6 h-fit">
+        <div className="w-full lg:w-3/5 flex flex-col gap-6 rounded-xl sticky top-6 h-fit" style={{ backgroundColor: theme === 'dark' ? '#4d4368' : 'transparent' }}>
 
           <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm h-[750px]">
                 <h2 className="font-bold text-2xl mb-4 text-[#090c64]">
@@ -636,6 +636,7 @@ const TicketPageAdmin = () => {
                   formatter: (item) => `${item.seriesLabel}: ${item.value}`,
                   }}
                   sx={{
+                    backgroundColor: theme === 'dark' ? '#4d4368' : 'transparent',
                     '.MuiChartsAxis-line': {
                       stroke: theme === 'dark' ? '#ffffff' : '#000000',
                     },
@@ -694,7 +695,7 @@ const TicketPageAdmin = () => {
          * 
          * STILE: Coerente con TicketCreator.jsx
          */}
-        <div className="w-full lg:w-2/5 p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm sticky top-6 h-[750px]">
+        <div className="w-full lg:w-2/5 p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm sticky top-6 h-[750px] " style={{ backgroundColor: theme === 'dark' ? '#4d4368' : 'transparent' }}>
           <h2 className="font-bold text-2xl mb-4 flex items-center gap-3 text-[#090c64]">
             <ListMagnifyingGlass
               size={28}
