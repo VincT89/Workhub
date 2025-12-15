@@ -283,6 +283,22 @@ const TicketPageAdmin = () => {
             <h1 className="font-bold text-xl text-[#090c64]">{t("ticket")}</h1>
           </div>
 
+          {/* ===== BOTTONE CALENDARIO ===== 
+           * 
+           * Apre un modal con il DateRangePicker per selezionare un intervallo di date
+           * I ticket vengono filtrati in base all'intervallo selezionato
+           * 
+           * RESPONSIVE: Mostra il testo completo su desktop, solo "Date" su mobile
+           */}
+          <button
+            onClick={() => setCalendarModalOpen(true)}
+            className="lg:w-auto px-5 py-2.5 bg-[#090c64] text-white rounded-lg shadow-md hover:bg-[#0a0d7a] transition-all flex items-center gap-2 font-semibold"
+          >
+            <CalendarDots size={24} weight="duotone" />
+            <span className="hidden lg:inline">{t("selezionaIntervalloData")}</span>
+            <span className="lg:hidden">Date</span>
+          </button>
+
           {/* ===== INPUT RICERCA UTENTE ===== 
            * 
            * Campo di testo per cercare gli utenti che hanno creato ticket
@@ -454,22 +470,6 @@ const TicketPageAdmin = () => {
               </div>
             )}
           </div>
-
-          {/* ===== BOTTONE CALENDARIO ===== 
-           * 
-           * Apre un modal con il DateRangePicker per selezionare un intervallo di date
-           * I ticket vengono filtrati in base all'intervallo selezionato
-           * 
-           * RESPONSIVE: Mostra il testo completo su desktop, solo "Date" su mobile
-           */}
-          <button
-            onClick={() => setCalendarModalOpen(true)}
-            className="lg:w-auto px-5 py-2.5 bg-[#090c64] text-white rounded-lg shadow-md hover:bg-[#0a0d7a] transition-all flex items-center gap-2 font-semibold"
-          >
-            <CalendarDots size={24} weight="duotone" />
-            <span className="hidden lg:inline">{t("selezionaIntervalloData")}</span>
-            <span className="lg:hidden">Date</span>
-          </button>
         </div>
       </nav>
 
