@@ -33,7 +33,7 @@ export const login = async (req, res) => {
 
     const { username, password, token } = value;
 
-    const userDoc = await User.findOne({ username });
+    const userDoc = await User.findOne({ username }).select("+password");
     if (!userDoc) {
       return res
         .status(401)
