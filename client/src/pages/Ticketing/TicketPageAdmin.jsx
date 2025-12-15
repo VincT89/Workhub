@@ -10,6 +10,9 @@ import {
   UserCircle 
 } from "@phosphor-icons/react";
 import bgLight from "../../assets/bg/bg.jpg";
+import bgDark from "../../assets/bg/bgScuro.jpg";
+import { useLanguage } from '../../context/LanguageContext.jsx';
+import { useTheme } from '../../context/ThemeContext.jsx';
 //Libreria per Grafico
 import { LineChart } from "@mui/x-charts/LineChart";
 //Libreria per calendario date
@@ -42,7 +45,9 @@ import "react-date-range/dist/theme/default.css";
  */
 const TicketPageAdmin = () => {
   /* ===== STATI PRINCIPALI =====*/
-  const dispatch = useDispatch();
+	const dispatch = useDispatch();
+	const { t } = useLanguage(); // Funzione di traduzione
+	const { theme } = useTheme(); // Tema corrente ("light" o "dark")
   
   // DATI DA REDUX (stato globale condiviso)
   const tickets = useSelector((state) => state.tickets.tickets);     // Array di tutti i ticket
@@ -250,7 +255,7 @@ const TicketPageAdmin = () => {
   /* UI / RENDER*/
 
   return (
-    <div class="p-6 flex flex-col gap-4 h-full rounded-xl border border-white/30 shadow-md backdrop-blur-sm">
+    <div class="p-6 flex flex-col gap-4 h-full">
       {/* ERROR BANNER */}
       {ticketsError && (
         <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 flex items-start justify-between">
@@ -262,7 +267,7 @@ const TicketPageAdmin = () => {
             onClick={() => dispatch(fetchTickets())}
             className="ml-4 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
           >
-            Riprova
+            {t("riprova")}
           </button>
         </div>
       )}
@@ -272,7 +277,7 @@ const TicketPageAdmin = () => {
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#090c64]"></div>
-            <p className="mt-4 text-gray-600">Caricamento ticket...</p>
+            <p className="mt-4 text-gray-600">{t("caricamentoTicket")}</p>
           </div>
         </div>
       )}
@@ -284,10 +289,10 @@ const TicketPageAdmin = () => {
         <div className="w-full lg:w-2/5 flex flex-col gap-6 sticky top-6 h-fit">
 
           {/*  Date */}
-                <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/30 shadow-md backdrop-blur-sm">
+                <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm">
                 <h2 className="font-bold text-xl mb-2 text-[#090c64] flex items-center gap-2">
                   <CalendarDots size={32} weight="duotone" />
-                  Seleziona intervallo date
+                  {t("selezionaIntervalloData")}
                 </h2>
 
                 <div className="border rounded-xl overflow-hidden">
@@ -306,9 +311,9 @@ const TicketPageAdmin = () => {
                 </div>
 
                 {/* Grafico */}
-                <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/30 shadow-md backdrop-blur-sm">
+                <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm">
                 <h2 className="font-bold text-2xl mb-4 text-[#090c64]">
-                  Andamento Ticket
+                  {t("andamentoTicket")}
                 </h2>
 
                 {/* Legenda */}
@@ -317,7 +322,7 @@ const TicketPageAdmin = () => {
                   <button
                     key={key}
                     onClick={() => toggleLine(key)}
-                    className={`px-4 py-1.5 rounded-full text-sm border shadow-sm transition ${hiddenLines.includes(key)
+                    className={`px-4 py-1.5 rounded-xl font-bold text-[#090c64] text-sm border shadow-sm transition ${hiddenLines.includes(key)
                     ? "opacity-40 bg-gray-100"
                     : "opacity-100 bg-white"
                     }`}
@@ -332,9 +337,9 @@ const TicketPageAdmin = () => {
                   xAxis={[{ dataKey: "date", scaleType: "band" }]}
                   yAxis={[{ valueFormatter: (v) => v.toString() }]}
                   series={[
-                  { dataKey: "aperti", label: "Aperti", color: "#3B82F6" },
-                  { dataKey: "risolti", label: "Risolti", color: "#F59E0B" },
-                  { dataKey: "totale", label: "Totale", color: "#111" }
+                  { dataKey: "aperti", label: t("aperti"), color: "#3B82F6" },
+                  { dataKey: "risolti", label: t("risolti"), color: "#F59E0B" },
+                  { dataKey: "totale", label: t("totale"), color: "#111" }
                   ].filter(s => !hiddenLines.includes(s.dataKey))}
                   height={500}
                   curve="monotoneX"
@@ -369,14 +374,13 @@ const TicketPageAdmin = () => {
         </div>
 
         {/* COLONNA DESTRA: LISTA TICKET*/}
-        <div className="w-full lg:w-3/5 p-6 flex flex-col gap-4 rounded-xl border border-white/30 shadow-md backdrop-blur-sm sticky top-6 h-[1190px]">
+        <div className="w-full lg:w-3/5 p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm sticky top-6 h-[1190px]">
           <h2 className="font-bold text-3xl mb-4 flex items-center gap-3 text-[#090c64]">
             <ListMagnifyingGlass
               size={32}
-              color="#090c64"
               weight="duotone"
             />
-            Ticket
+            {t("ticket")}
           </h2>
           {/* FILTRI */}
           <div className="bg-white/40 backdrop-blur-md border border-white/50 rounded-xl p-4 mb-6 flex flex-col lg:flex-row gap-4">
@@ -389,7 +393,6 @@ const TicketPageAdmin = () => {
               <div className="relative mt-1">
                 <UserList
                   size={32}
-                  color="#090c64"
                   weight="duotone"
                   className="absolute left-3 top-1/2 -translate-y-1/2"
                 />
@@ -397,8 +400,8 @@ const TicketPageAdmin = () => {
                   type="text"
                   value={userSearch}
                   onChange={(e) => setUserSearch(e.target.value)}
-                  placeholder="Cerca utente..."
-                  className="w-full pl-16 pr-10 p-2 border rounded-lg bg-white text-gray-800 shadow-sm focus:ring focus:ring-blue-200 focus:outline-none"
+                  placeholder={t("cercaUtente")}
+                  className="w-full pl-16 pr-10 p-2 border rounded-lg text-gray-800 shadow-sm focus:ring focus:ring-blue-200 focus:outline-none"
                 />
                 {userSearch.length > 0 && (
                   <button
@@ -415,13 +418,13 @@ const TicketPageAdmin = () => {
 
               {/* Lista filtrata */}
               {userSearch.length > 0 && (
-                <div className="absolute top-full mt-1 w-full bg-white border rounded-lg shadow-md max-h-60 overflow-y-auto z-20">
+                <div className="absolute top-full mt-1 w-full bg-white border rounded-xl shadow-md max-h-60 overflow-y-auto z-20">
                   {/* Tutti gli utenti */}
                   <div
                     onClick={() => { setSelectedUser(""); setUserSearch(""); }}
                     className="px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 cursor-pointer border-b"
                   >
-                    Tutti gli utenti
+                    {t("tuttiUtenti")}
                   </div>
 
                   {/* Nessun risultato */}
@@ -483,9 +486,9 @@ const TicketPageAdmin = () => {
                 onChange={(e) => setSelectedStatus(e.target.value)}
                 className="w-full pl-12 p-2 border rounded-lg bg-white text-gray-800 shadow-sm focus:ring focus:ring-blue-200 focus:outline-none"
               >
-                <option value="">Tutti</option>
-                <option value="aperto">Aperti</option>
-                <option value="risolto">Risolti</option>
+                <option value="">{t("tutti")}</option>
+                <option value="aperto">{t("aperti")}</option>
+                <option value="risolto">{t("risolti")}</option>
               </select>
             </div>
           </div>
@@ -542,7 +545,7 @@ const TicketPageAdmin = () => {
           {/* Drawer vera */}
           <aside
             className="absolute right-0 top-0 h-full w-[420px] border-l border-white/40 shadow-2xl transform transition-transform duration-300 translate-x-0 overflow-auto bg-cover bg-center"
-            style={{ backgroundImage: `url(${bgLight})` }}
+            style={{ backgroundImage: `url(${theme === 'light' ? bgLight : bgDark})` }}
             role="dialog"
             aria-modal="true"
             onClick={(e) => e.stopPropagation()}
@@ -550,7 +553,7 @@ const TicketPageAdmin = () => {
             {/* Header sticky con bordo */}
             <header className="sticky top-0 z-10 border-b border-white/60 px-6 py-4 flex items-center justify-between">
               <h2 className="text-base font-semibold text-[#090c64]">
-                Dettagli Ticket
+                {t("dettagliTicket")}
               </h2>
 
               {/* Bottone Chiudi */}
@@ -558,7 +561,7 @@ const TicketPageAdmin = () => {
                 onClick={() => setDrawerOpen(false)}
                 className="custom-button"
               >
-                Chiudi
+                {t("chiudi")}
               </button>
             </header>
 

@@ -22,6 +22,7 @@ import Product from "./pages/Warehouse/Product.jsx";
 import TicketPage from "./pages/Ticketing/TicketPage.jsx";
 import OrderPage from "./pages/OrderPage.jsx";
 import SettingsPage from "./pages/SettingsPage.jsx";
+import TwoFA from "./pages/TwoFA.jsx";
 
 function App() {
 	return (
@@ -30,6 +31,7 @@ function App() {
 			{/* ROTTE PUBBLICHE */}
 			<Route path="/" element={<HomePage />} />
 			<Route path="/login" element={<LoginPage />} />
+			<Route path="/twofa" element={<TwoFA />} />
 			<Route path="/forgot-password" element={<PasswordRecoveryPage />} />
 
 			{/* ROTTE PROTETTE */}

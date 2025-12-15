@@ -267,6 +267,7 @@ export const it = {
 	iTuoiTicket: "I tuoi ticket",
 	risolto: "Risolto",
 	aperto: "Aperto",
+	tuttiUtenti: "Tutti gli Utenti",
 
 	// Order Page
 	nuovoOrdine: "Nuovo Ordine",
