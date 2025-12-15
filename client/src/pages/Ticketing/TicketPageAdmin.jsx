@@ -608,12 +608,25 @@ const TicketPageAdmin = () => {
 
                 <LineChart
                   dataset={lineChartData}
-                  xAxis={[{ dataKey: "date", scaleType: "band" }]}
-                  yAxis={[{ valueFormatter: (v) => v.toString() }]}
+                  xAxis={[{ 
+                    dataKey: "date", 
+                    scaleType: "band",
+                    tickLabelStyle: {
+                      fill: theme === 'dark' ? '#ffffff' : '#000000',
+                      fontSize: 12
+                    }
+                  }]}
+                  yAxis={[{ 
+                    valueFormatter: (v) => v.toString(),
+                    tickLabelStyle: {
+                      fill: theme === 'dark' ? '#ffffff' : '#000000',
+                      fontSize: 12
+                    }
+                  }]}
                   series={[
                   { dataKey: "aperti", label: t("aperti"), color: "#3B82F6" },
                   { dataKey: "risolti", label: t("risolti"), color: "#F59E0B" },
-                  { dataKey: "totale", label: t("totale"), color: "#111" }
+                  { dataKey: "totale", label: t("totale"), color: theme === 'dark' ? '#ffffff' : '#111' }
                   ].filter(s => !hiddenLines.includes(s.dataKey))}
                   height={500}
                   curve="monotoneX"
@@ -621,6 +634,20 @@ const TicketPageAdmin = () => {
                   tooltip={{
                   trigger: "item",
                   formatter: (item) => `${item.seriesLabel}: ${item.value}`,
+                  }}
+                  sx={{
+                    '.MuiChartsAxis-line': {
+                      stroke: theme === 'dark' ? '#ffffff' : '#000000',
+                    },
+                    '.MuiChartsAxis-tick': {
+                      stroke: theme === 'dark' ? '#ffffff' : '#000000',
+                    },
+                    '.MuiChartsLegend-label': {
+                      fill: theme === 'dark' ? '#ffffff !important' : '#000000 !important',
+                    },
+                    '.MuiChartsLegend-series text': {
+                      fill: theme === 'dark' ? '#ffffff !important' : '#000000 !important',
+                    }
                   }}
                   onPointClick={(point) => {
                 const clickedDate = point.x;
