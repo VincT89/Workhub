@@ -20,6 +20,7 @@ import {
 import { fetchPointsOfSalesAsync } from "../../../store/feature/pointOfSalesSlice";
 
 import Drawer from "../../../components/Drawer";
+import { fetchAllShiftsAsync } from "../../../store/feature/shiftsSlice.js";
 
 const AdminEmployeePage = () => {
   const navigate = useNavigate();
@@ -34,7 +35,6 @@ const AdminEmployeePage = () => {
   const { list: pointsOfSale = [] } =
     useSelector((state) => state.pos || {}) || {};
   const { token } = useSelector((state) => state.auth || {});
-
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [generatedPassword, setGeneratedPassword] = useState("");
   const [toastMessage, setToastMessage] = useState("");
@@ -45,10 +45,16 @@ const AdminEmployeePage = () => {
   const [editDrawerOpen, setEditDrawerOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
+  const employeesWithStatus = employees.map((e) => ({
+    ...e,
+    status: e.onVacation ? "on_vacation" : "active",
+  }));
+
   useEffect(() => {
     if (!token) return;
     dispatch(fetchUsersAsync(token));
     dispatch(fetchPointsOfSalesAsync({ token }));
+    dispatch(fetchAllShiftsAsync({ token }));
   }, [dispatch, token]);
 
   const stats = [
@@ -59,7 +65,8 @@ const AdminEmployeePage = () => {
     },
     {
       label: t("dipendentiInattivi"),
-      value: 4,
+      value: employeesWithStatus.filter(e => e.status === "on_vacation")
+        .length,
       icon: <UserCircleMinusIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />,
     },
   ];

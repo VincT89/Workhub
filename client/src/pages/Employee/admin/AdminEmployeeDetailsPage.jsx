@@ -17,6 +17,7 @@ import {
 	fetchLeaveByUserIdAsync,
 	updateLeaveStatusAsync,
 } from "../../../store/feature/userLeave.js";
+import { useRef } from "react";
 
 const StatusDot = ({ status }) => {
 	const colors = {
@@ -59,6 +60,7 @@ const AdminEmployeeDetailsPage = () => {
 	const leave = useSelector((state) => state.leave.record);
 	const leaveLoading = useSelector((state) => state.leave.loading);
 	const leaveError = useSelector((state) => state.leave.error);
+	const prevIdRef = useRef(null);
 
 	const token = useSelector((state) => state.auth?.token);
 
@@ -78,9 +80,10 @@ const AdminEmployeeDetailsPage = () => {
 	// FETCH USER + POS + SHIFTS + LEAVE
 	useEffect(() => {
 		if (!id || !token) return;
+		if (prevIdRef.current === id) return;
+		prevIdRef.current = id;
 		dispatch(fetchUserByIdAsync({ id, token }));
 		dispatch(fetchPointsOfSalesAsync({ token }));
-		dispatch(fetchUserShiftsAsync({ userId: id, token }));
 		dispatch(fetchLeaveByUserIdAsync({ userId: id, token }));
 	}, [id, token, dispatch]);
 
@@ -322,6 +325,7 @@ const AdminEmployeeDetailsPage = () => {
 		);
 
 	if (!anagrafica) return <p className="p-4">{t("nessunDipendenteTrovato")}</p>;
+	if(leaveLoading) return <p className="p-4">{t("caricamentoRichieste")}</p>;
 	return (
 		<div className=" adminEmployee w-full h-full flex flex-col gap-8 overflow-y-auto p-4">
 			{/* TOP BOX */}

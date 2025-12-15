@@ -28,7 +28,7 @@ const Sidebar = () => {
     const path = location.pathname;
 
     if (itemTo === "customers") {
-      return path.startsWith("/customers");
+      return path.startsWith("/customers") || path.startsWith("/customer");
     }
 
     if (itemTo === "personale") {

@@ -30,7 +30,7 @@ export const authUser = async (req, res, next) => {
     }
 
     // Cerco l'utente nel DB e tolgo la password dal risultato
-    const user = await User.findById(decoded._id, "-password", { lean: true });
+    const user = await User.findById(decoded._id, "-password").lean();
 
     if (!user) {
       return res

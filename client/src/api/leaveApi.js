@@ -12,7 +12,7 @@ export const fetchLeaveRequest = async (token) => {
 
 /* ------------------- GET USER LEAVES BY USER ID (ADMIN) ------------------- */
 export const fetchLeaveByUserIdRequest = async ({ userId, token }) => {
-  const res = await fetch(`${API_URL}/leaves/user/${userId}`, {
+  const res = await fetch(`${API_URL}/leaves/${userId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
