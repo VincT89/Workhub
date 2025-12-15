@@ -490,20 +490,30 @@ const TicketPageAdmin = () => {
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={() => setCalendarModalOpen(false)}
           />
-          <div className="relative bg-white rounded-2xl shadow-2xl p-6 max-w-fit z-10">
+          <div 
+            className="relative rounded-2xl shadow-2xl p-6 max-w-fit z-10"
+            style={{ backgroundColor: theme === 'dark' ? '#1a1a2e' : '#ffffff' }}
+          >
             <div className="flex justify-between items-center mb-4">
-              <h2 className="font-bold text-xl text-[#090c64] flex items-center gap-2">
+              <h2 
+                className="font-bold text-xl flex items-center gap-2"
+                style={{ color: theme === 'dark' ? '#ffffff' : '#090c64' }}
+              >
                 <CalendarDots size={28} weight="duotone" />
                 {t("selezionaIntervalloData")}
               </h2>
               <button
                 onClick={() => setCalendarModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700 font-bold text-2xl leading-none"
+                className="font-bold text-2xl leading-none"
+                style={{ color: theme === 'dark' ? '#d1d5db' : '#6b7280' }}
               >
                 ✕
               </button>
             </div>
-            <div className="border rounded-xl overflow-hidden">
+            <div 
+              className="border rounded-xl overflow-hidden"
+              style={{ borderColor: theme === 'dark' ? '#374151' : '#e5e7eb' }}
+            >
               <DateRangePicker
                 onChange={(item) => {
                   setState([item.selection]);
@@ -519,7 +529,11 @@ const TicketPageAdmin = () => {
             <div className="mt-4 flex justify-end">
               <button
                 onClick={() => setCalendarModalOpen(false)}
-                className="px-6 py-2 bg-[#090c64] text-white rounded-lg hover:bg-[#0a0d7a] transition-all font-semibold"
+                className="px-6 py-2 rounded-lg transition-all font-semibold"
+                style={{ 
+                  backgroundColor: theme === 'dark' ? '#4d4368' : '#090c64',
+                  color: '#ffffff'
+                }}
               >
                 Applica
               </button>
@@ -611,6 +625,14 @@ const TicketPageAdmin = () => {
                   xAxis={[{ 
                     dataKey: "date", 
                     scaleType: "band",
+                    valueFormatter: (value) => {
+                      const date = new Date(value);
+                      const mesi = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+                      const giorno = date.getDate();
+                      const mese = mesi[date.getMonth()];
+                      const anno = date.getFullYear().toString().slice(-2);
+                      return `${giorno} ${mese} ${anno}`;
+                    },
                     tickLabelStyle: {
                       fill: theme === 'dark' ? '#ffffff' : '#000000',
                       fontSize: 12
