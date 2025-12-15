@@ -11,9 +11,6 @@ import orderRouter from "./routes/orderRoutes.js";
 import productRouter from "./routes/product.js";
 import itemsRouter from "./routes/items.js";
 import customersRouter from "./routes/customers.js";
-import ticketingRouter from "./routes/ticketing.js";
-
-
 
 const app = express.Router();
 
