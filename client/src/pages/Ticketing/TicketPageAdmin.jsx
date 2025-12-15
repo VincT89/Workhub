@@ -664,7 +664,6 @@ const TicketPageAdmin = () => {
                         color: theme === 'dark' ? '#ffffff !important' : '#4d4368 !important',
                         border: `1px solid ${theme === 'dark' ? '#4d4368' : '#e5e7eb'}`,
                         borderRadius: '8px',
-                        padding: '8px 12px',
                         fontSize: '14px',
                         boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
                       }

@@ -746,3 +746,36 @@ table tr {
 .rdrCalendarWrapper * {
   font-family: var(--font-nunito), 'Nunito', sans-serif !important;
 }
+
+/* ===== MUI CHARTS TOOLTIP DARK MODE ===== */
+/* Forzare gli stili del tooltip per assicurare visibilità */
+.MuiChartsTooltip-root {
+  font-family: var(--font-nunito), 'Nunito', sans-serif !important;
+  background-color: #ffffff !important;
+  color: #4d4368 !important;
+}
+
+.dark .MuiChartsTooltip-root {
+  background-color: #4d4368 !important;
+  color: #ffffff !important;
+}
+
+.MuiChartsTooltip-table {
+  background-color: #ffffff !important;
+  color: #4d4368 !important;
+}
+
+.dark .MuiChartsTooltip-table {
+  background-color: #4d4368 !important;
+  color: #ffffff !important;
+}
+
+.MuiChartsTooltip-labelCell,
+.MuiChartsTooltip-valueCell {
+  color: #4d4368 !important;
+}
+
+.dark .MuiChartsTooltip-labelCell,
+.dark .MuiChartsTooltip-valueCell {
+  color: #ffffff !important;
+}
