@@ -61,6 +61,7 @@ const TicketPageAdmin = () => {
   const [selectedUser, setSelectedUser] = useState("");  // Utente selezionato nel filtro
   const [userSearch, setUserSearch] = useState("");     // Testo di ricerca utente
   const [selectedStatus, setSelectedStatus] = useState(""); // Status selezionato nel filtro
+  const [statusDropdownOpen, setStatusDropdownOpen] = useState(false); // Dropdown status aperto/chiuso
 
   const [drawerOpen, setDrawerOpen] = useState(false);   // Drawer aperto/chiuso
   const [selectedTicket, setSelectedTicket] = useState(null); // Ticket selezionato nel drawer
@@ -79,6 +80,9 @@ const TicketPageAdmin = () => {
       key: "selection"
     }
   ]);
+
+  // STATO: Modal del calendario aperto/chiuso
+  const [calendarModalOpen, setCalendarModalOpen] = useState(false);
 
   /**
    * EFFETTO: Caricamento iniziale dei ticket
@@ -243,19 +247,287 @@ const TicketPageAdmin = () => {
    * - "risolto" → giallo (#FFD580)
    * - "aperto" (default) → blu (#A3B8E0)
    */
-  const getColor = (status) => {
+
+
+  /* ho deciso di non usarla più perché il codice è ora inline nella mappa dei ticket
+  
+    const getColor = (status) => {
     switch (status) {
       case "risolto":
         return "bg-[#FFD580] hover:bg-[#FFE8A0]";
       default:
         return "bg-[#A3B8E0] hover:bg-[#C3D2F0]";
     }
-  };
+  }; */
 
   /* UI / RENDER*/
 
   return (
     <div class="p-6 flex flex-col gap-4 h-full">
+      {/* ===== NAVBAR FILTRI ===== 
+       * 
+       * Barra di navigazione principale che contiene tutti i filtri per la ricerca ticket:
+       * - Input ricerca utente con dropdown autocomplete
+       * - Filtro per status (Tutti/Aperti/Risolti)
+       * - Bottone per aprire il calendario per la selezione date
+       * 
+       * Design: glassmorphism con sfondo semi-trasparente e sfocatura
+       */}
+      <nav className="bg-white/60 backdrop-blur-md border border-white/70 rounded-xl shadow-lg p-4 mb-4 relative z-50">
+        <div className="flex flex-col lg:flex-row gap-4 items-center">
+          {/* ===== TITOLO DELLA PAGINA ===== 
+           * Mostra l'icona e il titolo "Ticket" tradotto
+           */}
+          <div className="flex items-center gap-3 lg:w-1/4">
+            <ListMagnifyingGlass size={32} weight="duotone" className="text-[#090c64]" />
+            <h1 className="font-bold text-xl text-[#090c64]">{t("ticket")}</h1>
+          </div>
+
+          {/* ===== INPUT RICERCA UTENTE ===== 
+           * 
+           * Campo di testo per cercare gli utenti che hanno creato ticket
+           * 
+           * FUNZIONAMENTO:
+           * 1. L'utente digita nel campo di testo
+           * 2. Appare un dropdown con i risultati filtrati
+           * 3. Click su un risultato: filtra i ticket di quell'utente
+           * 4. Click sulla X: resetta la ricerca e mostra tutti gli utenti
+           * 
+           * FILTRAGGIO: Case-insensitive, cerca nel nome e cognome completo
+           */}
+          <div className="flex-1 relative">
+            {/* Icona utente posizionata a sinistra dell'input */}
+            <UserList
+              size={24}
+              weight="duotone"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#090c64]"
+            />
+            
+            {/* Campo input per digitare il nome utente */}
+            <input
+              type="text"
+              value={userSearch}
+              onChange={(e) => setUserSearch(e.target.value)}
+              placeholder={t("cercaUtente")}
+              className="w-full pl-12 pr-10 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-800 shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none transition-all cursor-pointer text-left"
+            />
+            
+            {/* Pulsante X per cancellare la ricerca (visibile solo se c'è testo) */}
+            {userSearch.length > 0 && (
+              <button
+                onClick={() => {
+                  setUserSearch("");
+                  setSelectedUser("");
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 font-bold"
+              >
+                ✕
+              </button>
+            )}
+            
+            {/* ===== DROPDOWN RISULTATI RICERCA ===== 
+             * Appare solo quando l'utente ha digitato qualcosa
+             * Mostra una lista filtrata di utenti che corrispondono alla ricerca
+             */}
+            {userSearch.length > 0 && (
+              <div className="absolute top-full mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto z-[100]">
+                {/* Opzione "Tutti gli utenti" per resettare il filtro */}
+                <div
+                  onClick={() => { setSelectedUser(""); setUserSearch(""); }}
+                  className="px-4 py-3 text-sm text-gray-600 hover:bg-blue-50 cursor-pointer border-b transition-colors"
+                >
+                  {t("tuttiUtenti")}
+                </div>
+
+                {/* Messaggio quando non ci sono risultati */}
+                {users.filter(u => {
+                  const firstName = u.nome || u.firstName || u.name || '';
+                  const lastName = u.cognome || u.lastName || '';
+                  const fullName = `${firstName} ${lastName}`.toLowerCase();
+                  return fullName.includes(userSearch.toLowerCase());
+                }).length === 0 && (
+                  <div className="px-4 py-3 text-sm text-gray-500">
+                    Nessun risultato
+                  </div>
+                )}
+
+                {/* Lista utenti filtrati - Mappa ogni utente che corrisponde alla ricerca */}
+                {users.filter(u => {
+                  const firstName = u.nome || u.firstName || u.name || '';
+                  const lastName = u.cognome || u.lastName || '';
+                  const fullName = `${firstName} ${lastName}`.toLowerCase();
+                  return fullName.includes(userSearch.toLowerCase());
+                }).map(u => {
+                  const userId = u._id || u.id;
+                  const firstName = u.nome || u.firstName || u.name || '';
+                  const lastName = u.cognome || u.lastName || '';
+                  
+                  return (
+                    <div
+                      key={userId}
+                      onClick={() => {
+                        setSelectedUser(userId);
+                        setUserSearch(`${firstName} ${lastName}`);
+                      }}
+                      className="px-4 py-3 flex items-center gap-3 hover:bg-blue-50 cursor-pointer transition-colors"
+                    >
+                      <UserCircle size={28} color="#090c64" weight="duotone" />
+                      <span className="text-sm text-gray-800">{firstName} {lastName}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* ===== FILTRO STATUS ===== 
+           * 
+           * Dropdown personalizzato per filtrare i ticket per status
+           * 
+           * OPZIONI:
+           * - Tutti: mostra tutti i ticket (nessun filtro)
+           * - Aperti: mostra solo ticket con status "aperto"
+           * - Risolti: mostra solo ticket con status "risolto"
+           * 
+           * IMPLEMENTAZIONE: Usa un button invece di <select> per avere più controllo sullo stile
+           */}
+          <div className="lg:w-48 relative">
+            {/* Icona cerchio a sinistra */}
+            <Circle
+              size={24}
+              color="#090c64"
+              weight="duotone"
+              className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none z-10"
+            />
+            
+            {/* Button che mostra lo status attualmente selezionato */}
+            <button
+              onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
+              className="w-full pl-12 pr-10 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-800 shadow-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:outline-none transition-all cursor-pointer text-left"
+            >
+              {selectedStatus === "" && t("tutti")}
+              {selectedStatus === "aperto" && t("aperti")}
+              {selectedStatus === "risolto" && t("risolti")}
+            </button>
+            
+            {/* Freccia che indica se il dropdown è aperto/chiuso */}
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
+              {statusDropdownOpen ? "▲" : "▼"}
+            </span>
+
+            {/* ===== DROPDOWN OPZIONI STATUS ===== 
+             * Appare quando l'utente clicca sul button
+             * Mostra le 3 opzioni con icone colorate
+             */}
+            {statusDropdownOpen && (
+              <div className="absolute top-full mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-[100]">
+                <div
+                  onClick={() => {
+                    setSelectedStatus("");
+                    setStatusDropdownOpen(false);
+                  }}
+                  className="px-4 py-3 text-sm text-gray-800 hover:bg-blue-50 cursor-pointer transition-colors flex items-center gap-3"
+                >
+                  <Circle size={20} color="#090c64" weight="duotone" />
+                  {t("tutti")}
+                </div>
+                <div
+                  onClick={() => {
+                    setSelectedStatus("aperto");
+                    setStatusDropdownOpen(false);
+                  }}
+                  className="px-4 py-3 text-sm text-gray-800 hover:bg-blue-50 cursor-pointer transition-colors flex items-center gap-3"
+                >
+                  <Circle size={20} color="#3B82F6" weight="fill" />
+                  {t("aperti")}
+                </div>
+                <div
+                  onClick={() => {
+                    setSelectedStatus("risolto");
+                    setStatusDropdownOpen(false);
+                  }}
+                  className="px-4 py-3 text-sm text-gray-800 hover:bg-blue-50 cursor-pointer transition-colors flex items-center gap-3"
+                >
+                  <Circle size={20} color="#F59E0B" weight="fill" />
+                  {t("risolti")}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* ===== BOTTONE CALENDARIO ===== 
+           * 
+           * Apre un modal con il DateRangePicker per selezionare un intervallo di date
+           * I ticket vengono filtrati in base all'intervallo selezionato
+           * 
+           * RESPONSIVE: Mostra il testo completo su desktop, solo "Date" su mobile
+           */}
+          <button
+            onClick={() => setCalendarModalOpen(true)}
+            className="lg:w-auto px-5 py-2.5 bg-[#090c64] text-white rounded-lg shadow-md hover:bg-[#0a0d7a] transition-all flex items-center gap-2 font-semibold"
+          >
+            <CalendarDots size={24} weight="duotone" />
+            <span className="hidden lg:inline">{t("selezionaIntervalloData")}</span>
+            <span className="lg:hidden">Date</span>
+          </button>
+        </div>
+      </nav>
+
+      {/* ===== MODAL CALENDARIO ===== 
+       * 
+       * Modal centrato che appare quando l'utente clicca sul bottone calendario
+       * 
+       * CONTENUTO:
+       * - DateRangePicker: calendario interattivo per selezionare intervallo di date
+       * - Bottone Applica: chiude il modal e applica il filtro
+       * - Bottone X: chiude il modal senza applicare modifiche
+       * 
+       * INTERAZIONE: Click sull'overlay scuro chiude il modal
+       */}
+      {calendarModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setCalendarModalOpen(false)}
+          />
+          <div className="relative bg-white rounded-2xl shadow-2xl p-6 max-w-fit z-10">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="font-bold text-xl text-[#090c64] flex items-center gap-2">
+                <CalendarDots size={28} weight="duotone" />
+                {t("selezionaIntervalloData")}
+              </h2>
+              <button
+                onClick={() => setCalendarModalOpen(false)}
+                className="text-gray-500 hover:text-gray-700 font-bold text-2xl leading-none"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="border rounded-xl overflow-hidden">
+              <DateRangePicker
+                onChange={(item) => {
+                  setState([item.selection]);
+                  setHighlightDate("");
+                }}
+                showSelectionPreview={true}
+                moveRangeOnFirstSelection={false}
+                months={2}
+                ranges={state}
+                direction="horizontal"
+              />
+            </div>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setCalendarModalOpen(false)}
+                className="px-6 py-2 bg-[#090c64] text-white rounded-lg hover:bg-[#0a0d7a] transition-all font-semibold"
+              >
+                Applica
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ERROR BANNER */}
       {ticketsError && (
         <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 flex items-start justify-between">
@@ -282,41 +554,43 @@ const TicketPageAdmin = () => {
         </div>
       )}
 
-      {/* LAYOUT DUE COLONNE (GRAFICO + LISTA)*/}
+      {/* ===== LAYOUT DUE COLONNE (GRAFICO + LISTA) ===== 
+       * 
+       * Layout principale diviso in due colonne:
+       * - SINISTRA (60%): Grafico con l'andamento dei ticket nel tempo
+       * - DESTRA (40%): Lista dei ticket filtrati
+       * 
+       * RESPONSIVE: Su mobile le colonne diventano una sotto l'altra
+       */}
       <div className="flex flex-col lg:flex-row gap-6">
 
-        {/* COLONNA SINISTRA: DATE + GRAFICO*/}
-        <div className="w-full lg:w-2/5 flex flex-col gap-6 sticky top-6 h-fit">
+        {/* ===== COLONNA SINISTRA: GRAFICO ===== 
+         * 
+         * Mostra un LineChart con 3 linee:
+         * - Aperti (blu)
+         * - Risolti (arancione)
+         * - Totale (nero)
+         * 
+         * INTERATTIVITÀ:
+         * - Click sui bottoni della legenda: nasconde/mostra le linee
+         * - Click su un punto del grafico: evidenzia quella data e apre il drawer del primo ticket
+         * 
+         * STICKY: Rimane visibile quando si scrolla
+         */}
+        <div className="w-full lg:w-3/5 flex flex-col gap-6 sticky top-6 h-fit">
 
-          {/*  Date */}
-                <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm">
-                <h2 className="font-bold text-xl mb-2 text-[#090c64] flex items-center gap-2">
-                  <CalendarDots size={32} weight="duotone" />
-                  {t("selezionaIntervalloData")}
-                </h2>
-
-                <div className="border rounded-xl overflow-hidden">
-                  <DateRangePicker
-                  onChange={(item) => {
-                    setState([item.selection]);
-                    setHighlightDate("");
-                  }}
-                  showSelectionPreview={true}
-                  moveRangeOnFirstSelection={false}
-                  months={1}
-                  ranges={state}
-                  direction="horizontal"
-                  />
-                </div>
-                </div>
-
-                {/* Grafico */}
-                <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm">
+          <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm h-[750px]">
                 <h2 className="font-bold text-2xl mb-4 text-[#090c64]">
                   {t("andamentoTicket")}
                 </h2>
 
-                {/* Legenda */}
+                {/* ===== LEGENDA INTERATTIVA ===== 
+                 * 
+                 * Bottoni per nascondere/mostrare le linee del grafico
+                 * Ogni bottone mostra il nome della linea e il totale tra parentesi
+                 * 
+                 * STATO: I bottoni diventano opachi quando la linea è nascosta
+                 */}
                 <div className="flex flex-wrap gap-3 mb-6">
                   {["aperti", "risolti", "totale"].map(key => (
                   <button
@@ -373,176 +647,135 @@ const TicketPageAdmin = () => {
           </div>
         </div>
 
-        {/* COLONNA DESTRA: LISTA TICKET*/}
-        <div className="w-full lg:w-3/5 p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm sticky top-6 h-[1190px]">
-          <h2 className="font-bold text-3xl mb-4 flex items-center gap-3 text-[#090c64]">
+        {/* ===== COLONNA DESTRA: LISTA TICKET ===== 
+         * 
+         * Lista scrollabile dei ticket filtrati in base ai criteri selezionati:
+         * - Intervallo di date (dal calendario)
+         * - Utente (dalla ricerca)
+         * - Status (dal dropdown)
+         * 
+         * VISUALIZZAZIONE: Ogni ticket mostra:
+         * - Titolo
+         * - Nome utente e data di creazione
+         * - Descrizione (troncata a 2 righe)
+         * - Badge colorato con lo status (Aperto/Risolto)
+         * - Icona matita per indicare che è modificabile
+         * 
+         * INTERATTIVITÀ:
+         * - Click su un ticket: apre il drawer con i dettagli completi
+         * - I ticket evidenziati (dal click sul grafico) hanno un bordo blu
+         * 
+         * STILE: Coerente con TicketCreator.jsx
+         */}
+        <div className="w-full lg:w-2/5 p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm sticky top-6 h-[750px]">
+          <h2 className="font-bold text-2xl mb-4 flex items-center gap-3 text-[#090c64]">
             <ListMagnifyingGlass
-              size={32}
+              size={28}
               weight="duotone"
             />
-            {t("ticket")}
+            Lista {t("ticket")}
           </h2>
-          {/* FILTRI */}
-          <div className="bg-white/40 backdrop-blur-md border border-white/50 rounded-xl p-4 mb-6 flex flex-col lg:flex-row gap-4">
 
-            {/* ------------------- FILTRO UTENTE ------------------- */}
-            <div className="flex flex-col w-full lg:w-2/4 relative">
-              <label className="text-sm font-semibold text-gray-700 mb-1"></label>
+          {/* Container scrollabile con la lista dei ticket */}
+          <div className="flex flex-col gap-2 max-h-[105vh] overflow-y-auto">
+            {/* Mappa ogni ticket filtrato in una card */}
+            {filteredTickets.map((ticket) => {
+              // Estrai l'ID del ticket (supporta sia _id che id)
+              const tid = ticket._id || ticket.id;
+              
+              // Determina lo status del ticket dalla mappa locale
+              const status = ticketStatus[tid];
+              
+              // Crea la label leggibile dello status
+              const statusLabel = status === 'aperto' ? 'Aperto' : status === 'risolto' ? 'Risolto' : status;
+              
+              // Classi CSS per colorare il badge dello status:
+              // - Risolto: giallo/arancione (#FFD580)
+              // - Aperto: blu (#A3B8E0)
+              const statusClass = status === 'risolto'
+                ? 'bg-[#FFD580] hover:bg-[#FFE8A0] text-[#663c00]'
+                : 'bg-[#A3B8E0] hover:bg-[#C3D2F0] text-[#06234a]';
+              
+              // Verifica se questo ticket è evidenziato (corrisponde alla data cliccata nel grafico)
+              const isHighlighted = (ticket.date || ticket.createdAt || ticket.updatedAt).split("T")[0] === highlightDate;
 
-              {/* Icona + Input */}
-              <div className="relative mt-1">
-                <UserList
-                  size={32}
-                  weight="duotone"
-                  className="absolute left-3 top-1/2 -translate-y-1/2"
-                />
-                <input
-                  type="text"
-                  value={userSearch}
-                  onChange={(e) => setUserSearch(e.target.value)}
-                  placeholder={t("cercaUtente")}
-                  className="w-full pl-16 pr-10 p-2 border rounded-lg text-gray-800 shadow-sm focus:ring focus:ring-blue-200 focus:outline-none"
-                />
-                {userSearch.length > 0 && (
-                  <button
-                    onClick={() => {
-                      setUserSearch("");
-                      setSelectedUser("");
-                    }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800 hover:text-gray-600"
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
-
-              {/* Lista filtrata */}
-              {userSearch.length > 0 && (
-                <div className="absolute top-full mt-1 w-full bg-white border rounded-xl shadow-md max-h-60 overflow-y-auto z-20">
-                  {/* Tutti gli utenti */}
-                  <div
-                    onClick={() => { setSelectedUser(""); setUserSearch(""); }}
-                    className="px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 cursor-pointer border-b"
-                  >
-                    {t("tuttiUtenti")}
+              return (
+                <div
+                  key={tid}
+                  ref={(el) => (itemRefs.current[tid] = el)}
+                  className={`p-3 bg-white/60 rounded-lg border border-gray-200 flex justify-between items-start cursor-pointer transition hover:bg-white/80 hover:shadow-md ${
+                    isHighlighted ? 'ring-2 ring-blue-100' : ''
+                  }`}
+                  onClick={() => {
+                    setSelectedTicket(ticket);
+                    setHighlightDate((ticket.date || ticket.createdAt || ticket.updatedAt).split("T")[0]);
+                    setDrawerOpen(true);
+                  }}
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold text-gray-900 truncate">
+                      {ticket.title || ticket.name}
+                    </div>
+                    <div className="text-xs text-gray-600 mt-1">
+                      {ticket.user?.nome || ticket.user?.firstName || ticket.user?.name}{' '}
+                      {ticket.user?.cognome || ticket.user?.lastName || ''} •{' '}
+                      {formatDateVisible(ticket.date || ticket.createdAt)}
+                    </div>
+                    {ticket.description || ticket.content ? (
+                      <p className="text-xs text-gray-700 mt-1 line-clamp-2">
+                        {ticket.description || ticket.content}
+                      </p>
+                    ) : null}
                   </div>
-
-                  {/* Nessun risultato */}
-                  {users.filter(u => {
-                    // Normalizza i nomi utente (supporta sia nome/cognome che firstName/lastName)
-                    const firstName = u.nome || u.firstName || u.name || '';
-                    const lastName = u.cognome || u.lastName || '';
-                    const fullName = `${firstName} ${lastName}`.toLowerCase();
-                    return fullName.includes(userSearch.toLowerCase());
-                  }).length === 0 && (
-                      <div className="px-3 py-2 text-sm text-gray-500">
-                        Nessun risultato (solo utenti con ticket)
-                      </div>
-                    )}
-
-                  {/* Lista risultati - Solo utenti che hanno creato ticket */}
-                  {users.filter(u => {
-                    const firstName = u.nome || u.firstName || u.name || '';
-                    const lastName = u.cognome || u.lastName || '';
-                    const fullName = `${firstName} ${lastName}`.toLowerCase();
-                    return fullName.includes(userSearch.toLowerCase());
-                  }).map(u => {
-                    // Normalizza ID e nomi
-                    const userId = u._id || u.id;
-                    const firstName = u.nome || u.firstName || u.name || '';
-                    const lastName = u.cognome || u.lastName || '';
-                    
-                    return (
-                      <div
-                        key={userId}
-                        onClick={() => {
-                          setSelectedUser(userId);
-                          setUserSearch(`${firstName} ${lastName}`);
-                        }}
-                        className="px-3 py-2 flex items-center gap-2 hover:bg-gray-100 cursor-pointer"
-                      >
-                        <UserCircle size={28} color="#090c64" weight="duotone" />
-                        <span className="text-sm">{firstName} {lastName}</span>
-                      </div>
-                    );
-                  })}
+                  <div className="flex flex-col items-end gap-2 ml-3">
+                    <span className={`text-xs px-3 py-1 rounded-lg font-medium ${statusClass}`}>
+                      {statusLabel}
+                    </span>
+                    <Pencil
+                      size={18}
+                      color="#090c64"
+                      weight="duotone"
+                      className="flex-shrink-0"
+                    />
+                  </div>
                 </div>
-              )}
-            </div>
-
-            {/* ------------------- FILTRO STATO ------------------- */}
-            <div className="flex flex-col w-full lg:w-1/4 relative">
-              <label className="text-sm font-semibold text-gray-700 mb-1"></label>
-
-              <Circle
-                size={32}
-                color="#090c64"
-                weight="duotone"
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-              />
-
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                className="w-full pl-12 p-2 border rounded-lg bg-white text-gray-800 shadow-sm focus:ring focus:ring-blue-200 focus:outline-none"
-              >
-                <option value="">{t("tutti")}</option>
-                <option value="aperto">{t("aperti")}</option>
-                <option value="risolto">{t("risolti")}</option>
-              </select>
-            </div>
-          </div>
-
-
-          <div className="flex flex-col gap-4 max-h-[105vh] overflow-y-auto">
-            {filteredTickets.map((ticket) => (
-              <div
-                key={ticket.id}
-                ref={(el) => (itemRefs.current[ticket._id || ticket.id] = el)}
-                className={`rounded-xl shadow p-4 flex flex-col cursor-pointer transition ${getColor(
-                  ticketStatus[ticket._id || ticket.id]
-                )} ${(ticket.date || ticket.createdAt || ticket.updatedAt).split("T")[0] === highlightDate ? 'ring-2 ring-blue-300' : ''}`}
-                onClick={() => {
-                  setSelectedTicket(ticket);
-                  setHighlightDate((ticket.date || ticket.createdAt || ticket.updatedAt).split("T")[0]);
-                  setDrawerOpen(true);
-                }}
-              >
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-lg">
-                    {ticket.title || ticket.name}
-                  </span>
-                  <Pencil
-                    size={20}
-                    color="#090c64"
-                    weight="duotone"
-                  />
-                </div>
-
-                <span className="text-sm text-gray-600 mt-1">
-                  {ticket.user?.nome || ticket.user?.firstName || ticket.user?.name} {ticket.user?.cognome || ticket.user?.lastName || ''} •{" "}
-                  {formatDateVisible(ticket.date || ticket.createdAt)}
-                </span>
-
-                <p className="text-sm text-gray-700 mt-2">
-                  {ticket.description || ticket.content}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* DRAWER LATERALE - Stile uguale a Drawer.jsx */}
+      {/* ===== DRAWER LATERALE ===== 
+       * 
+       * Pannello laterale che scivola da destra per mostrare i dettagli di un ticket
+       * 
+       * QUANDO SI APRE:
+       * - Click su un ticket nella lista
+       * - Click su un punto del grafico
+       * 
+       * CONTENUTO:
+       * - Informazioni utente (nome, ruolo, email) con avatar
+       * - Descrizione completa del ticket
+       * - Due pulsanti per cambiare lo status:
+       *   - "Aperto": segna il ticket come aperto (blu)
+       *   - "Risolto": segna il ticket come risolto (giallo)
+       * 
+       * FUNZIONALITÀ:
+       * - Aggiornamento ottimistico: l'UI si aggiorna immediatamente
+       * - Se la richiesta al server fallisce, lo status viene ripristinato
+       * - Dopo l'aggiornamento, ricarica tutti i ticket per sincronizzare con altri componenti
+       * 
+       * STILE: Sfondo con immagine (bgLight/bgDark) e glassmorphism
+       */}
       {drawerOpen && (
         <div className="fixed inset-0 z-50">
-          {/* Overlay scuro */}
+          {/* Overlay scuro semi-trasparente - Click per chiudere */}
           <div
             className="absolute inset-0 bg-black/30"
             onClick={() => setDrawerOpen(false)}
           />
 
-          {/* Drawer vera */}
+          {/* Drawer - Pannello laterale */}
           <aside
             className="absolute right-0 top-0 h-full w-[420px] border-l border-white/40 shadow-2xl transform transition-transform duration-300 translate-x-0 overflow-auto bg-cover bg-center"
             style={{ backgroundImage: `url(${theme === 'light' ? bgLight : bgDark})` }}
@@ -598,9 +831,24 @@ const TicketPageAdmin = () => {
                 </div>
               </div>
 
-              {/* AZIONI: Pulsanti per cambiare lo status del ticket */}
+              {/* ===== AZIONI: Pulsanti per cambiare lo status del ticket ===== 
+               * 
+               * Due pulsanti per modificare lo status:
+               * 
+               * FLUSSO DI AGGIORNAMENTO (Optimistic Update):
+               * 1. Click sul pulsante
+               * 2. Aggiornamento IMMEDIATO dell'UI (senza aspettare il server)
+               * 3. Invio richiesta al server per salvare il cambiamento
+               * 4. Ricarica di tutti i ticket per sincronizzare
+               * 5. Se la richiesta fallisce → ripristina lo stato precedente
+               * 
+               * VANTAGGI:
+               * - UI reattiva: l'utente vede il cambiamento immediatamente
+               * - Sincronizzazione: tutti i componenti (incluso TicketCreator) vedono il cambiamento
+               * - Fallback: se il server è offline, lo stato viene ripristinato
+               */}
               <div className="flex flex-col gap-2 mb-4">
-                {/* PULSANTE: Segna come APERTO */}
+                {/* PULSANTE: Segna come APERTO (Blu) */}
                 <div
                   className="p-2 flex justify-center items-center rounded-xl bg-[#A3B8E0]
                   border border-[#7A9CC6] cursor-pointer hover:bg-[#C3D2F0]"
@@ -612,10 +860,10 @@ const TicketPageAdmin = () => {
                     setTicketStatus((s) => ({ ...s, [id]: "aperto" }));
                     
                     try {
-                      // 2. AGGIORNA SUL SERVER: invia richiesta PUT
+                      // 2. AGGIORNA SUL SERVER: invia richiesta PUT con status='open'
                       await dispatch(updateTicketAsync({ id, payload: { status: 'open' } })).unwrap();
                       
-                      // 3. RICARICA TUTTI I TICKET: così anche TicketCreator vede il cambiamento
+                      // 3. RICARICA TUTTI I TICKET: sincronizza con Redux store
                       dispatch(fetchTickets());
                     } catch (err) {
                       // 4. SE FALLISCE: ripristina lo stato precedente
@@ -627,7 +875,7 @@ const TicketPageAdmin = () => {
                   Aperto
                 </div>
 
-                {/* PULSANTE: Segna come RISOLTO */}
+                {/* PULSANTE: Segna come RISOLTO (Giallo) */}
                 <div
                   className="p-2 flex justify-center items-center rounded-xl bg-[#FFD580]
                   border border-[#FFE8A0] cursor-pointer hover:bg-[#FFE8A0]"
@@ -635,11 +883,12 @@ const TicketPageAdmin = () => {
                     const id = selectedTicket._id || selectedTicket.id;
                     if (!id) return;
                     
+                    // Stesso flusso del pulsante "Aperto", ma con status='closed'
                     setTicketStatus((s) => ({ ...s, [id]: "risolto" }));
                     
                     try {
                       await dispatch(updateTicketAsync({ id, payload: { status: 'closed' } })).unwrap();
-                      dispatch(fetchTickets()); // Sincronizza con altri componenti
+                      dispatch(fetchTickets());
                     } catch (err) {
                       setTicketStatus((s) => ({ ...s, [id]: "aperto" }));
                       console.error('Update ticket failed', err);
