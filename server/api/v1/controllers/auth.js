@@ -293,41 +293,22 @@ export const enable2FA = async (req, res) => {
 		}
 
 		// genera QR
-		if (!code) {
-			const secret = await generate2FASecret(user.username);
 
-			user.twofaTempSecret = secret.secret;
-			user.twofaEnabled = false;
-			await user.save();
+		const secret = await generate2FASecret(user.username);
 
-			return res
-				.status(200)
-				.json(
-					formatResponse(
-						{ qr: secret.qr, uri: secret.uri },
-						true,
-						"Scan QR and insert code"
-					)
-				);
-		}
-
-		//  verifica codice
-		const result = verify2FAToken(user.twofaTempSecret, code);
-		if (!result || Math.abs(result.delta) > 1) {
-			return res
-				.status(401)
-				.json(formatResponse(null, false, "Invalid 2FA code"));
-		}
-
-		// promuovi secret
-		user.twofaSecret = user.twofaTempSecret;
-		user.twofaTempSecret = null;
+		user.twofaSecret = secret.secret;
 		user.twofaEnabled = true;
 		await user.save();
 
 		return res
 			.status(200)
-			.json(formatResponse(null, true, "2FA enabled successfully"));
+			.json(
+				formatResponse(
+					{ qr: secret.qr, uri: secret.uri },
+					true,
+					"Scan QR and insert code"
+				)
+			);
 	} catch (error) {
 		return handleRouteErrors(res, { error });
 	}
