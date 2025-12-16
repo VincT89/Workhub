@@ -1,6 +1,6 @@
 import { handleRouteErrors } from "../../../utils/error.js";
 import { formatResponse } from "../../../utils/format.js";
-import { AffiliateProgram, Client } from "../../../db/index.js";
+import { AffiliateProgram, Client, Order } from "../../../db/index.js";
 import { generateRandomCardNumber } from "../../../utils/random.js";
 import Joi from "joi";
 
@@ -51,12 +51,30 @@ export const getCustomerById = async (req, res) => {
       path: "affiliateProgram",
       select: "name points cardNumber"
     }).lean(); // lean() per ottenere un oggetto semplice
+    const orders = await Order.find({
+      clients: {
+        $elemMatch: {
+          client: customer._id,
+        }
+      }
+    }).populate(["product", "pointOfSales"]).lean();
 
     if (!customer) {
       return res
         .status(404)
         .json(formatResponse(null, false, "Customer not found"));
     }
+
+    customer.orders = orders.map(order => {
+      return {
+        _id: order._id,
+        pointOfSales: order.pointOfSales,
+        product: order.product,
+        quantity: (order.clients.find(client => client.client.toString() == customer._id.toString()))?.quantity,
+        createdAt: order.createdAt,
+        updatedAt: order.updatedAt
+    }
+    })  || [];
 
     return res
       .status(200)

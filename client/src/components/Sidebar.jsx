@@ -20,7 +20,7 @@ const Sidebar = () => {
     },
     { to: "warehouse", label: t("magazzino") },
     { to: "ticket", label: t("ticket") },
-    { to: "orders", label: t("ordini") },
+    { to: "orders", label: t("ordiniSidebar") },
   ];
 
   // funzione che decide se il link è attivo
@@ -28,7 +28,7 @@ const Sidebar = () => {
     const path = location.pathname;
 
     if (itemTo === "customers") {
-      return path.startsWith("/customers");
+      return path.startsWith("/customers") || path.startsWith("/customer");
     }
 
     if (itemTo === "personale") {

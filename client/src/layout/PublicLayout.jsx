@@ -80,7 +80,6 @@ const PublicLayout = () => {
           transition-all duration-500 ease-in-out 
           ${sidebarOpen ? "ml-[220px] md:ml-[215px]" : "ml-20 md:ml-[90px]"}
           mt-6 mb-6
-          min-h-screen
           overflow-y-auto
           pr-4 pl-4 md:pr-8 md:pl-8
           z-10

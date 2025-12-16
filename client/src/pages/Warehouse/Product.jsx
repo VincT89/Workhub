@@ -57,12 +57,12 @@ const Product = () => {
 
   const handleExportPDF = () => {
     if (!item || !item.product) return;
-
+  
     const doc = new jsPDF();
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
     doc.text("Scheda prodotto", 20, 20);
-
+  
     doc.setFont("helvetica", "normal");
     doc.setFontSize(12);
     doc.text(`ID Item: ${item._id}`, 20, 40);
@@ -72,18 +72,25 @@ const Product = () => {
     doc.text(`Quantità: ${item.stock}`, 20, 80);
     doc.text(`Soglia riordino: ${item.stockLimit}`, 20, 90);
     doc.text(`Note: ${item.note || "-"}`, 20, 100);
-
-    if (storico.length > 0) {
-      doc.text("Storico movimenti:", 20, 110);
-      let y = 120;
-      storico.forEach(m => {
-        doc.text(`- ${m.tipo}, ${m.quantita}, ${m.data}`, 25, y);
-        y += 10;
-      });
+  
+    // Aggiungi immagine se esiste
+    if (item.product.image) {
+      const img = new Image();
+      img.src = item.product.image;
+      img.onload = () => {
+        // Parametri: immagine, formato (JPEG o PNG), x, y, larghezza, altezza
+        doc.addImage(img, "JPEG", 20, 110, 60, 60); 
+        doc.save(`Scheda_${item.product.name}.pdf`);
+      };
+      img.onerror = () => {
+        console.error("Errore nel caricamento dell'immagine per il PDF");
+        doc.save(`Scheda_${item.product.name}.pdf`);
+      };
+    } else {
+      doc.save(`Scheda_${item.product.name}.pdf`);
     }
-
-    doc.save(`Scheda_${item.product.name}.pdf`);
   };
+  
 
   return (
     <div className="w-full min-h-screen flex justify-center items-start p-8">

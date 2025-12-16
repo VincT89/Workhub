@@ -8,6 +8,9 @@ import { calculateAffiliatePoints } from "../../../utils/orders.js";
 import Joi from "joi";
 import mongoose from "mongoose";
 
+// Costante per l'upgrade a Premium dopo un certo numero di ordini
+const PREMIUM_AFTER_ORDERS = 10;
+
 // -----------------------------
 // VALIDATORE OBJECTID
 // -----------------------------
@@ -86,9 +89,8 @@ const updateOrderSchema = Joi.object({
  */
 export const createOrder = async (req, res) => {
   try {
-    // Validazione dei dati in input usando lo schema Joi
     const { error } = createOrderSchema.validate(req.body, {
-      abortEarly: false, // Raccoglie tutti gli errori di validazione
+      abortEarly: false,
     });
 
     if (error) {
@@ -98,11 +100,9 @@ export const createOrder = async (req, res) => {
       });
     }
 
-    // Creazione e salvataggio dell'ordine nel database
     const order = new OrderModel(req.body);
     await order.save();
 
-    // Recupero del prodotto per ottenere il prezzo unitario
     const product = await ProductsModel.findById(order.product);
     if (!product) {
       return res.status(404).json({ error: "Prodotto non trovato" });
@@ -110,54 +110,69 @@ export const createOrder = async (req, res) => {
 
     const prezzoUnitario = Number(product.price) || 0;
 
-    // Calcolo e assegnazione punti affiliazione per ogni cliente 
+    // Assegna punti affiliazione ai clienti
+    const premiumProgram = await AffiliateProgramModel.findOne({
+      name: "Premium",
+    });
+
     if (Array.isArray(req.body.clients) && req.body.clients.length > 0) {
       await Promise.all(
         req.body.clients.map(async (item) => {
-          // Recupero dati del cliente
           const client = await ClientModel.findById(item.client);
-          if (!client || !client.affiliateProgram) return; // Skip se cliente non ha programma affiliato
+          if (!client || !client.affiliateProgram) return;
 
-          // Recupero del programma di affiliazione
           const affiliateProgram = await AffiliateProgramModel.findById(
             client.affiliateProgram
           );
           if (!affiliateProgram) return;
 
-          // Calcolo dell'importo dell'ordine per questo cliente
           const orderAmount = item.quantity * prezzoUnitario;
 
-          // Calcolo dei punti affiliazione basati sull'importo e tipo di programma - la regola per i punti e' 2 punti per ogni 10 euro spesi per i clienti standard, 4 punti per ogni 10 euro spesi per i clienti premium
           const points = calculateAffiliatePoints(
             orderAmount,
             affiliateProgram.name
           );
 
-          // Aggiornamento punti nel database solo se maggiori di 0
           if (points > 0) {
             await AffiliateProgramModel.findByIdAndUpdate(
               affiliateProgram._id,
-              { $inc: { points } }, // Incrementa i punti esistenti - $inc operatore di MongoDB che incrementa un campo numerico
-              { new: true }
+              { $inc: { points } }
             );
+          }
+
+          // Verifica se il cliente deve essere aggiornato a Premium
+          if (
+            premiumProgram &&
+            affiliateProgram.name === "Standard"
+          ) {
+            const ordiniTotali = await OrderModel.countDocuments({
+              "clients.client": client._id,
+            });
+
+            if (ordiniTotali >= PREMIUM_AFTER_ORDERS) {
+              await ClientModel.findByIdAndUpdate(client._id, {
+                affiliateProgram: premiumProgram._id,
+              });
+            }
           }
         })
       );
     }
 
-    // Popolamento dell'ordine con i dati correlati per la risposta
     const populatedOrder = await order.populate([
       "pointOfSales",
       "product",
       "clients.client",
     ]);
 
-		return res.status(201).json(populatedOrder);
-	} catch (err) {
-		console.error("CREATE ORDER ERROR:", err);
-		return res.status(500).json({ error: err.message });
-	}
+    return res.status(201).json(populatedOrder);
+
+  } catch (err) {
+    console.error("CREATE ORDER ERROR:", err);
+    return res.status(500).json({ error: err.message });
+  }
 };
+
 
 // =====================================================================
 //                              READ ALL
@@ -169,9 +184,12 @@ export const createOrder = async (req, res) => {
  * - Restituisce la lista formattata
  */
 export const getOrders = async (req, res) => {
+  const customer = req.query.customer || null;
+  const findObj = {};
+  if (customer) findObj.customer = customer;
   try {
     // Recupero di tutti gli ordini con dati correlati popolati
-    const orders = await OrderModel.find()
+    const orders = await OrderModel.find(findObj)
       .populate("pointOfSales")
       .populate("product")
       .populate("clients.client");

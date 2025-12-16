@@ -257,7 +257,7 @@ const BoardPage = () => {
 							{t("bacheca")}
 						</h3>
 
-						{(role === "supervisor" || role === "admin") && (
+						{(role === "admin") && (
 							<button
 								onClick={openDrawerAdd}
 								className="custom-button ml-auto text-[14px]"

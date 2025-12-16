@@ -1,70 +1,68 @@
 // Import principali
-import { useState, useEffect } from "react"; // useState per stato locale, useEffect per effetti collaterali
-import { useDispatch, useSelector } from "react-redux"; // Redux: dispatch per inviare azioni, useSelector per leggere lo stato
-import { updateItemQuantity } from "../../store/feature/itemsSlice"; // thunk per aggiornare stock
-import { useTheme } from "../../context/ThemeContext"; // contesto tema (chiaro/scuro)
-import { useLanguage } from "../../context/LanguageContext"; // contesto lingua
-import bgLight from "../../assets/bg/bg.jpg"; // immagine di sfondo del drawer
-import bgDark from "../../assets/bg/bgScuro.jpg"; // immagine di sfondo del drawer scuro
+import { useState, useEffect } from "react"; 
+import { useDispatch, useSelector } from "react-redux"; 
+import { updateItemQuantity } from "../../store/feature/itemsSlice"; 
+import { useTheme } from "../../context/ThemeContext"; 
+import { useLanguage } from "../../context/LanguageContext"; 
+import bgLight from "../../assets/bg/bg.jpg"; 
+import bgDark from "../../assets/bg/bgScuro.jpg"; 
 
 const DrawerAddNewProduct = ({ open, onClose }) => {
-  const dispatch = useDispatch(); // funzione per inviare azioni a Redux
-  const items = useSelector(state => state.items.list); // lista di prodotti dallo store Redux
+  const dispatch = useDispatch(); 
+  const items = useSelector(state => state.items.list); 
 
-  // Stati locali
-  const [search, setSearch] = useState(""); // stringa di ricerca per nome prodotto o SKU
-  const [results, setResults] = useState([]); // risultati della ricerca
-  const [quantity, setQuantity] = useState(1); // quantità da aggiungere
+  const [search, setSearch] = useState(""); 
+  const [results, setResults] = useState([]); 
+  const [quantity, setQuantity] = useState(1); 
 
-  const { theme } = useTheme(); // tema attuale (chiaro/scuro)
-  const { t } = useLanguage(); // funzione di traduzione
+  const { theme } = useTheme(); 
+  const { t } = useLanguage(); 
   
-  // Effetto per chiudere il drawer con il tasto ESC
   useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && onClose?.(); // se premi ESC chiude il drawer
+    const onKey = (e) => e.key === "Escape" && onClose?.(); 
     if (open) document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  // Funzione per cercare prodotti nello store locale
-  const searchItems = () => {
-    if (!search.trim()) return; // esce se la ricerca è vuota
+  // Reset della ricerca e quantità quando il drawer si chiude
+useEffect(() => {
+  if (!open) {
+    setSearch("");
+    setResults([]);
+    setQuantity(1);
+  }
+}, [open]);
 
-    // Filtra i prodotti con nome o SKU che contiene la stringa di ricerca (case-insensitive)
+
+  const searchItems = () => {
+    if (!search.trim()) return;
+
     const filtered = items.filter(
       (item) =>
         item.product?.name.toLowerCase().includes(search.toLowerCase()) ||
         item.product?.sku.toLowerCase().includes(search.toLowerCase())
     );
 
-    // Se non trova niente, mostra messaggio di errore
     if (filtered.length === 0) {
       setResults([{ error: "Prodotto non trovato" }]);
       return;
     }
 
-    // Ordina i risultati per stock decrescente
     filtered.sort((a, b) => b.stock - a.stock);
-    setResults(filtered); // aggiorna lo stato con i risultati
+    setResults(filtered);
   };
 
-  // Funzione per modificare la quantità di un prodotto specifico per id
   const handleAddStock = async (itemId) => {
-    if (!quantity || quantity === 0) return alert(t("inserisciQuantitaValida")); // controlla quantità valida
+    if (!quantity || quantity === 0) return alert(t("inserisciQuantitaValida"));
     try {
       const resultAction = await dispatch(updateItemQuantity({ id: itemId, quantityToAdd: Number(quantity) }));
-
-
       if (updateItemQuantity.fulfilled.match(resultAction)) {
-        // successo: puoi mostrare toast o alert
         alert(`${t("stockAggiornato")} ${resultAction.payload.stock}`);
-        // reset UI
         setQuantity(1);
         setSearch("");
         setResults([]);
         onClose();
       } else {
-        // errore
         const err = resultAction.payload || resultAction.error?.message;
         alert(t("errore") + " " + err);
       }
@@ -74,39 +72,28 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
     }
   };
 
-
-  // Se il drawer non è aperto, non renderizza nulla
   if (!open) return null;
-
 
   return (
     <div className="fixed inset-0 z-50">
-      {/* Sfondo scuro semi-trasparente */}
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
-
-      {/* Drawer vero e proprio */}
       <aside
         className="absolute right-0 top-0 w-[420px] h-full border-l border-white/40 shadow-2xl overflow-auto bg-cover bg-center"
         role="dialog"
         aria-modal="true"
-       style={{ backgroundImage: `url(${theme === "dark" ? bgDark : bgLight})` }}
+        style={{ backgroundImage: `url(${theme === "dark" ? bgDark : bgLight})` }}
       >
-        {/* HEADER: titolo e bottone chiudi */}
         <header className="sticky top-0 border-b border-white/60 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-base font-semibold">
-            {t("aggiungiStock")}
-          </h2>
+          <h2 className="text-base font-semibold">{t("aggiungiStock")}</h2>
           <button
-            onClick={onClose} // chiude il drawer
+            onClick={onClose}
             className="px-4 py-2 border border-white/70 shadow-sm rounded-xl text-sm custom-button cursor-pointer"
           >
             {t("chiudi")}
           </button>
         </header>
 
-        {/* CONTENUTO PRINCIPALE */}
-        <div className="p-6 text-[15px] ">
-          {/* Input ricerca prodotto/SKU */}
+        <div className="p-6 text-[15px]">
           <label className="block mb-2 font-semibold">{t("nomeProdottoSku")}</label>
           <input
             type="text"
@@ -116,7 +103,6 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
             className="w-full mb-4 px-3 py-2 border rounded-xl"
           />
 
-          {/* Input quantità da aggiungere */}
           <label className="block mb-2 font-semibold">{t("quantitaDaAggiungere")}</label>
           <input
             type="number"
@@ -126,7 +112,6 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
             min={1}
           />
 
-          {/* Bottone per cercare */}
           <button
             onClick={searchItems}
             className="px-4 py-2 border border-white/70 shadow-sm rounded-xl text-sm custom-button mb-6 cursor-pointer"
@@ -134,14 +119,12 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
             {t("cercaProdotto")}
           </button>
 
-          {/* RISULTATI DELLA RICERCA */}
-          <div>
-            {/* Messaggio predefinito se non ci sono risultati */}
+          {/* RISULTATI */}
+          <div className="flex flex-col gap-4">
             {results.length === 0 && (
               <p className="opacity-70">{t("nessunaRicercaEffettuata")}</p>
             )}
 
-            {/* Lista dei risultati */}
             {results.map((item, i) => {
               if (item.error)
                 return (
@@ -151,14 +134,13 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
               return (
                 <div
                   key={i}
-                  className="py-2 border-b border-white/40 flex flex-col gap-1"
+                  className="w-full rounded-2xl bg-[rgba(255,255,255,0.15)] border border-white/20 backdrop-blur-lg p-4 shadow-sm text-sm md:text-base flex flex-col gap-1"
                 >
                   <span><strong>{t("prodotto")}:</strong> {item.product?.name}</span>
                   <span><strong>SKU:</strong> {item.product?.sku}</span>
                   <span><strong>{t("point")}:</strong> {item.pointOfSales?.name}</span>
                   <span><strong>{t("stock")}:</strong> {item.stock}</span>
 
-                  {/* Bottone aggiungi quantità */}
                   <button
                     onClick={() => handleAddStock(item._id)}
                     className="mt-2 px-3 py-1 border border-white/70 shadow-sm rounded-xl text-sm text-white bg-[#090c64] hover:bg-[#0a0f85]"
@@ -175,5 +157,4 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
   );
 };
 
-// Export normale
 export default DrawerAddNewProduct;

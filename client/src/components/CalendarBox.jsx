@@ -374,25 +374,34 @@ const CalendarBox = () => {
 			);
 		}
 
-		return (
-			<div className="flex flex-col gap-1 select-none">
-				<div className="flex items-center gap-2">
-					<div className="w-10 h-7 rounded-xl flex items-center justify-center text-[12px] font-bold bg-black/20">
-						{event.title}
-					</div>
-				</div>
+		 return (
+    <div className="flex flex-col gap-1 select-none w-full overflow-hidden">
+      <div className="flex items-center gap-2">
+        {/* PALLINO SOLO TURNI */}
+        {event.type === "shift" && (
+          <div className="w-8 min-w-8 h-7 rounded-xl flex items-center justify-center text-[12px] font-bold bg-black/20">
+            {event.title}
+          </div>
+        )}
 
-				{expanded && (
-					<div className="text-[12px] opacity-90">
-						<div className="italic font-bold">{event.fullName}</div>
-						<div className="italic">{event.department}</div>
-						{event.orario && <div>{event.orario}</div>}
-					</div>
-				)}
-			</div>
-		);
-	};
+        {/* TITOLO SOLO EVENTI */}
+        {event.type === "event" && (
+          <div className="font-semibold text-[13px] truncate">
+            {event.title}
+          </div>
+        )}
+      </div>
 
+      {expanded && (
+        <div className="text-[12px] opacity-90 w-full overflow-hidden">
+          <div className="italic font-bold truncate">{event.fullName}</div>
+          <div className="italic truncate">{event.department}</div>
+          {event.orario && <div className="truncate">{event.orario}</div>}
+        </div>
+      )}
+    </div>
+  );
+};
 	/* RENDER */
 	return (
 		<div ref={wrapperRef} className="w-full flex flex-col">

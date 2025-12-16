@@ -12,7 +12,7 @@ export const fetchCustomersAsync = createAsyncThunk( //createAsyncThunk() è una
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,  // bearer -> schema di autenticazione standard per HTTP. indica che stiamo usando un token bearer
-        },  
+        },
       });
 
       const data = await response.json();
@@ -184,18 +184,32 @@ const customerSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
+      /* UPDATE */
       .addCase(updateCustomerAsync.fulfilled, (state, action) => {
         state.loading = false;
-        // Aggiorna nella lista
+
+        // ==============================
+        // Aggiorna il customer nella lista
+        // ==============================
         const index = state.list.findIndex(c => c._id === action.payload._id);
         if (index !== -1) {
-          state.list[index] = action.payload;
+          state.list[index] = {
+            ...state.list[index],
+            ...action.payload
+          };
         }
-        // Aggiorna il selected se è lo stesso customer
+
+        // ==========================================
+        // Aggiorna il selected SENZA perdere relazioni
+        // ==========================================
         if (state.selected?._id === action.payload._id) {
-          state.selected = action.payload;
+          state.selected = {
+            ...state.selected,   // mantiene orders, affiliateProgram, ecc.
+            ...action.payload    // aggiorna solo i campi modificati
+          };
         }
       })
+
       .addCase(updateCustomerAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;

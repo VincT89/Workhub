@@ -85,6 +85,9 @@ export const en = {
 	nota: "Note",
 	programmaAssegnato:
 		"The loyalty program will be assigned automatically upon customer creation.",
+	alRaggiungimentoDei: " ⓘ Upon reaching ",
+	ordini: " orders ",
+	laTesseraPassaAutomaticamenteDa: "the card will automatically upgrade from ",
 
 	// Warehouse
 	listaProdotti: "Product List",
@@ -167,6 +170,7 @@ export const en = {
 	rifiuta: "Reject",
 	giorniLavorati: "Days Worked",
 	ferieResidue: "Remaining Leave",
+	permessiResidui: "Remaining Permissions",
 	permessi: "Permissions",
 	attivita: "Activities",
 	dal: "From",
@@ -237,6 +241,7 @@ export const en = {
 	profilo: "Profile",
 	role: "Role",
 	magazzino: "Warehouse",
+	ordiniSidebar: "Orders",
 	tokenNonDisponibileEffettuaLogin: "Token not available. Please log in.",
 	inserisciDati: "Enter details to recover your password",
 	emailInviata: "Email sent to",
@@ -272,6 +277,7 @@ export const en = {
 	risolto: "Resolved",
 	aperto: "Open",
 	tuttiUtenti: "All Users",
+	listaTicket: "Ticket List",
 
 	// Order Page
 	nuovoOrdine: "New Order",

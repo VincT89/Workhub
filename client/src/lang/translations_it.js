@@ -81,6 +81,9 @@ export const it = {
 	nota: "Nota",
 	programmaAssegnato:
 		"Il programma fedeltà verrà assegnato automaticamente alla creazione del cliente.",
+	alRaggiungimentoDei: " ⓘ Al raggiungimento dei ",
+	ordini: " ordini ",
+	laTesseraPassaAutomaticamenteDa: "la tessera passerà automaticamente da ",
 
 	// Warehouse
 	listaProdotti: "Lista Prodotti",
@@ -163,6 +166,7 @@ export const it = {
 	rifiuta: "Rifiuta",
 	giorniLavorati: "Giorni Lavorati",
 	ferieResidue: "Ferie Residue",
+	permessiResidui: "Permessi Residui",
 	permessi: "Permessi",
 	attivita: "Attività",
 	dal: "Dal",
@@ -233,6 +237,7 @@ export const it = {
 	personale: "Personale",
 	profilo: "Profilo",
 	role: "Ruolo",
+	ordiniSidebar: "Ordini",
 	magazzino: "Magazzino",
 	tokenNonDisponibileEffettuaLogin: "Token non disponibile. Effettua il login.",
 	inserisciDati: "Inserisci i dati per recuperare la password",
@@ -268,6 +273,7 @@ export const it = {
 	risolto: "Risolto",
 	aperto: "Aperto",
 	tuttiUtenti: "Tutti gli Utenti",
+	listaTicket: "Lista Ticket",
 
 	// Order Page
 	nuovoOrdine: "Nuovo Ordine",
