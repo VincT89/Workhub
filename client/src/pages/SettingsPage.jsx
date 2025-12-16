@@ -131,7 +131,7 @@ const SettingsPage = () => {
 		}
 
 		// SUCCESS
-		setMessage(t("settings.modificheSalvate"));
+		setMessage(t("modificheSalvate"));
 		setMessageType("success");
 
 		// RESET
@@ -471,14 +471,14 @@ const SettingsPage = () => {
 					<button
 						type="submit"
 						onClick={handleSave}
-						className="w-full sm:w-[200px] py-3 font-bold rounded-2xl shadow-md border bg-[#090c64] text-white hover:bg-[#090c64]/80"
+						className="w-full sm:w-[200px] py-3 font-bold rounded-2xl shadow-md border bg-[#090c64] text-white hover:bg-[#090c64]/80 custom-button"
 					>
 						{t("salvaModifiche")}
 					</button>
 
 					<Link
 						to="/login"
-						className="w-full sm:w-[200px] py-3 text-center font-bold rounded-2xl shadow-md border bg-[#090c64] text-white hover:bg-[#090c64]/80"
+						className="w-full sm:w-[200px] py-3 text-center font-bold rounded-2xl shadow-md border bg-[#090c64] text-white hover:bg-[#090c64]/80 custom-button"
 					>
 						{t("esci")}
 					</Link>

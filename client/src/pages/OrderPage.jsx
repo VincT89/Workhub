@@ -30,7 +30,6 @@ const OrderPage = () => {
 		"totale",
 	];
 
-
 	// stato per il drawer "Nuovo ordine"
 	const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -47,11 +46,12 @@ const OrderPage = () => {
 
 	const { theme } = useTheme(); //dark mode
 
-
 	const products = useSelector((state) => state.products.list);
 	const pointOfSales = useSelector((state) => state.pos.list); //punti vendita
 	const customers = useSelector((state) => state.customers.list);
 	const orders = useSelector((state) => state.orders.items);
+
+	const [totalQuantity, setTotalQuantity] = useState(0);
 
 	const dispatch = useDispatch();
 	const token = useSelector((state) => state.auth.token);
@@ -65,17 +65,40 @@ const OrderPage = () => {
 		dispatch(fetchCustomersAsync(token));
 	}, [dispatch, token]);
 
-	//→ Aggiunge una nuova riga alla lista clientRows
+	// Aggiunge una nuova riga alla lista clientRows
 	const handleAddClientRow = () => {
 		setClientRows((prev) => [...prev, { customerId: "", qty: "" }]);
 	};
 
-	//→ serve per modificare una singola riga dei clienti
+	// serve per modificare una singola riga dei clienti
 	const handleClientChange = (index, field, value) => {
 		setClientRows((prev) =>
 			prev.map((row, i) => (i === index ? { ...row, [field]: value } : row))
 		);
 	};
+
+	// calcolo quantità totale clienti
+	const totalClientQty = useMemo(() => {
+		return clientRows.reduce((sum, row) => sum + (Number(row.qty) || 0), 0);
+	}, [clientRows]);
+
+	// controllo clienti duplicati
+	const hasDuplicateClients = useMemo(() => {
+		// Verifica se ci sono clienti duplicati
+		const ids = clientRows // estrae gli ID dei clienti
+			.map((r) => r.customerId) // mappa per ottenere gli ID
+			.filter(Boolean);
+		return new Set(ids).size !== ids.length; // confronta la dimensione del Set con la lunghezza originale
+	}, [clientRows]);
+
+	const isQtyExceeded = totalClientQty > totalQuantity; // Verifica se la quantità totale dei clienti supera la quantità totale dell'ordine
+
+	// controllo form invalido  - se isQtyExceeded è true o ci sono clienti duplicati o quantità totale ≤ 0 o nessun cliente aggiunto disabilita il pulsante di invio
+	const isFormInvalid =
+		isQtyExceeded ||
+		hasDuplicateClients ||
+		totalQuantity <= 0 ||
+		clientRows.length === 0;
 
 	// DATI ADATTATI PER LA TABELLA (DAL BACKEND) - useMemo in modo che venga ricalcolato solo quando "orders" cambia
 	const ordersForTable = useMemo(() => {
@@ -151,7 +174,9 @@ const OrderPage = () => {
 			{/* DRAWER NUOVO ORDINE */}
 			{drawerOpen && (
 				<div className="p-6 flex flex-col gap-4 rounded-xl border border-white/30 shadow-md backdrop-blur-sm bg-white/20 transition duration-500">
-					<h3 className="text-lg font-bold text-[#090c64]">{t("nuovoOrdine")}</h3>
+					<h3 className="text-lg font-bold text-[#090c64]">
+						{t("nuovoOrdine")}
+					</h3>
 
 					<form onSubmit={handleCreateOrder} className="grid grid-cols-2 gap-4">
 						{/* SELECT PUNTI VENDITA */}
@@ -194,6 +219,7 @@ const OrderPage = () => {
 							placeholder={t("quantitaTotale")}
 							required
 							className="p-2 border rounded-xl"
+							onChange={(e) => setTotalQuantity(Number(e.target.value) || 0)}
 						/>
 
 						{/* SEZIONE CLIENTI */}
@@ -220,11 +246,23 @@ const OrderPage = () => {
 									className="p-2 border rounded text-sm"
 								>
 									<option value="">{t("selezionaCliente")}</option>
-									{customers?.map((c) => (
-										<option key={c._id} value={c._id}>
-											{c.firstName} {c.lastName} ({c.location?.city})
-										</option>
-									))}
+									{customers?.map((c) => {
+										const isAlreadySelected = clientRows.some(
+											(r) =>
+												r.customerId === c._id &&
+												r.customerId !== row.customerId
+										);
+
+										return (
+											<option
+												key={c._id}
+												value={c._id}
+												disabled={isAlreadySelected}
+											>
+												{c.firstName} {c.lastName} ({c.location?.city})
+											</option>
+										);
+									})}
 								</select>
 
 								<input
@@ -239,6 +277,21 @@ const OrderPage = () => {
 								/>
 							</div>
 						))}
+
+						<div className="col-span-2 space-y-1">
+							{hasDuplicateClients && (
+								<p className="text-sm text-red-600 font-semibold">
+									Lo stesso cliente non può essere inserito più volte
+								</p>
+							)}
+
+							{isQtyExceeded && (
+								<p className="text-sm text-red-600 font-semibold">
+									Quantità clienti ({totalClientQty}) superiore alla quantità
+									ordine ({totalQuantity})
+								</p>
+							)}
+						</div>
 
 						<div className="col-span-2 flex justify-end gap-2 mt-2">
 							<button
@@ -255,6 +308,7 @@ const OrderPage = () => {
 							</button>
 							<button
 								type="submit"
+								disabled={isFormInvalid}
 								className="px-4 py-2 bg-[#090c64] text-white rounded-xl cursor-pointer transition custom-button text-[14px] "
 							>
 								{t("crea")}
@@ -268,16 +322,14 @@ const OrderPage = () => {
 			<OrdersTable
 				data={ordersForTable}
 				columns={orderColumns}
-				columnsLabels={
-					{
-						prodotto: t("product"),
-						"quantità totale": t("totalQuantity"),
-						data: t("date"),
-						stato: t("status"),
-						corriere: t("courier"),
-						totale: t("total"),
-					}	
-				}
+				columnsLabels={{
+					prodotto: t("product"),
+					"quantità totale": t("totalQuantity"),
+					data: t("date"),
+					stato: t("status"),
+					corriere: t("courier"),
+					totale: t("total"),
+				}}
 				customToolbar={
 					<button
 						type="button"

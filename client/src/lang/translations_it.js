@@ -84,6 +84,7 @@ export const it = {
 	alRaggiungimentoDei: " ⓘ Al raggiungimento dei ",
 	ordini: " ordini ",
 	laTesseraPassaAutomaticamenteDa: "la tessera passerà automaticamente da ",
+	modificheSalvate: "Modifiche salvate con successo.",
 
 	// Warehouse
 	listaProdotti: "Lista Prodotti",
@@ -301,4 +302,5 @@ export const it = {
 	status: "Stato",
 	courier: "Corriere",
 	total: "Totale",
+	ordiniTitolo: "Ordini",
 };

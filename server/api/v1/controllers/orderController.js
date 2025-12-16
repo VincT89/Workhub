@@ -93,6 +93,28 @@ export const createOrder = async (req, res) => {
       abortEarly: false,
     });
 
+    // controllo quantita clienti non superi quantita totale
+    const { clients, totalQuantity } = req.body;
+    const totalClientQuantity = clients.reduce(
+      (sum, item) => sum + Number(item.quantity || 0), 0
+    );
+    if (totalClientQuantity > totalQuantity) {
+      return res.status(400).json({
+        error: "Validation error",
+        message: "La somma delle quantità dei clienti supera la quantità totale",
+      });
+    }
+
+    // controllo clienti duplicati
+    const clientIds = clients.map((item) => item.client);
+    const uniqueClientIds = new Set(clientIds);
+    if (uniqueClientIds.size < clientIds.length) {
+      return res.status(400).json({
+        error: "Validation error",
+        message: "Ci sono clienti duplicati nella lista",
+      });
+    }
+
     if (error) {
       return res.status(400).json({
         error: "Validation error",

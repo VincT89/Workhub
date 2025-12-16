@@ -116,11 +116,7 @@ const BoardPage = () => {
 
 	const handleDelete = (row) => {
 		// elimina evento
-		if (
-			window.confirm(
-				` ${t("seiSicuroEliminareEvento")}"${row.title}"?`
-			)
-		) {
+		if (window.confirm(` ${t("seiSicuroEliminareEvento")}"${row.title}"?`)) {
 			dispatch(deleteEventAsync({ id: row._id, token }));
 		}
 	};
@@ -143,9 +139,7 @@ const BoardPage = () => {
 							color={theme === "dark" ? "white" : "#090c64"}
 							weight="duotone"
 						/>
-						<span className="font-bold text-[14px]">
-							{t("depositi")}
-						</span>
+						<span className="font-bold text-[14px]">{t("depositi")}</span>
 					</div>
 					<span
 						className={`text-sm opacity-70 leading-none font-semibold ${
@@ -167,9 +161,7 @@ const BoardPage = () => {
 							color={theme === "dark" ? "white" : "#090c64"}
 							weight="duotone"
 						/>
-						<span className="font-bold text-[14px]">
-							{t("prodotti")}
-						</span>
+						<span className="font-bold text-[14px]">{t("prodotti")}</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
 						{products?.list?.length ?? 0}
@@ -187,9 +179,7 @@ const BoardPage = () => {
 							color={theme === "dark" ? "white" : "#090c64"}
 							weight="duotone"
 						/>
-						<span className="font-bold text-[14px]">
-							{t("ordiniInUscita")}
-						</span>
+						<span className="font-bold text-[14px]">{t("ordiniInUscita")}</span>
 					</div>
 					<span className="text-sm opacity-70 leading-none font-semibold">
 						{orders?.items?.length ?? 0}
@@ -241,9 +231,9 @@ const BoardPage = () => {
 			<div className="grid grid-cols-2 gap-6 mb-6 w-full transition-colors duration-500">
 				<div
 					className={`flex flex-col gap-4 p-4 
-  bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-  border border-white/30 dark:border-white/80 rounded-xl shadow-md 
-  ${textColor}`}
+	bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
+	border border-white/30 dark:border-white/80 rounded-xl shadow-md 
+	${textColor}`}
 				>
 					{/* HEADER BACHECA */}
 					<div className="flex items-start gap-4 w-full">
@@ -257,7 +247,7 @@ const BoardPage = () => {
 							{t("bacheca")}
 						</h3>
 
-						{(role === "admin") && (
+						{role === "admin" && (
 							<button
 								onClick={openDrawerAdd}
 								className="custom-button ml-auto text-[14px]"
@@ -309,9 +299,9 @@ const BoardPage = () => {
 
 				<div
 					className={`flex flex-col gap-4 p-4 
-  bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-  border border-white/30 dark:border-white/80 rounded-xl shadow-md 
-  ${textColor}`}
+	bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
+	border border-white/30 dark:border-white/80 rounded-xl shadow-md 
+	${textColor}`}
 				>
 					{/* HEADER */}
 					<div className="flex items-center gap-4">
@@ -333,7 +323,7 @@ const BoardPage = () => {
 					</div>
 
 					{/* TABELLA */}
-					<div className="w-full overflow-hidden h-full mt-3">
+					<div className="w-full overflow-hidden h-full ">
 						<Table
 							data={lowStockProducts.slice(0, 3).map((item) => ({
 								name: item.product.name,
@@ -354,7 +344,7 @@ const BoardPage = () => {
 			{/* Riga 3: 1 box - Calendario */}
 			<div
 				className="bg-[#fafafa20] dark:bg-[#fafafa20] backdrop-blur-sm border border-white/30 dark:border-white/80
-  rounded-xl p-6 shadow-md flex items-start gap-4 mb-2 min-h-[700px]"
+	rounded-xl p-6 shadow-md flex items-start gap-4 mb-2 min-h-[700px]"
 			>
 				{/* Contenuto */}
 				<div className="flex-1 flex flex-col">
@@ -379,17 +369,13 @@ const BoardPage = () => {
 				open={drawerOpen}
 				onClose={() => setDrawerOpen(false)}
 				title={
-					editData && editData.title
-						? t("modificaEvento")
-						: t("aggiungiEvento")
+					editData && editData._id ? t("modificaEvento") : t("aggiungiEvento")
 				}
 			>
 				{editData && (
 					<form onSubmit={handleSavePost} className="flex flex-col gap-4">
 						<div className="flex flex-col">
-							<label className="text-sm font-bold">
-								{t("titolo")}
-							</label>
+							<label className="text-sm font-bold">{t("titolo")}</label>
 							<input
 								type="text"
 								value={editData.title}
@@ -415,9 +401,7 @@ const BoardPage = () => {
 						</div>
 
 						<div className="flex flex-col">
-							<label className="text-sm font-bold">
-								{t("descrizione")}
-							</label>
+							<label className="text-sm font-bold">{t("descrizione")}</label>
 							<input
 								type="text"
 								value={editData.description}

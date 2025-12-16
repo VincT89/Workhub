@@ -66,7 +66,7 @@ const OrdersTable = ({
 			<div className="flex flex-col gap-3 mb-3">
 				<div className="flex flex-wrap items-center gap-6">
 					<div className="flex items-center gap-3">
-						<h2 className="text-lg font-bold text-[#090c64]">{t("ordini")}</h2>
+						<h2 className="text-lg font-bold text-[#090c64]">{t("ordiniTitolo")}</h2>
 
 						{/* bottone A-Z → solo ordinamento locale, non modifica i dati */}
 						<button

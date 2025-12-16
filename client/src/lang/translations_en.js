@@ -88,6 +88,7 @@ export const en = {
 	alRaggiungimentoDei: " ⓘ Upon reaching ",
 	ordini: " orders ",
 	laTesseraPassaAutomaticamenteDa: "the card will automatically upgrade from ",
+	modificheSalvate: "Changes saved successfully",
 
 	// Warehouse
 	listaProdotti: "Product List",
@@ -305,4 +306,5 @@ export const en = {
 	status: "Status",
 	courier: "Courier",
 	total: "Total",
+	ordiniTitolo: "Orders",
 };

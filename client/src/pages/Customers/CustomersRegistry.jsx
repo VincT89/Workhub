@@ -175,7 +175,7 @@ const CustomersRegistry = () => {
 
                 {showSaved && (
                     <div className="absolute top-3 right-3 bg-green-200 text-green-900 px-4 py-2 rounded-xl shadow-md text-sm">
-                        ✔️ {t("Le modifiche sono state salvate correttamente")}
+                        ✔️ {t("modificheSalvate")}
                     </div>
                 )}
 
@@ -194,7 +194,7 @@ const CustomersRegistry = () => {
                             <button
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="flex items-center gap-1 px-3 py-1 bg-green-200 rounded-xl border border-white shadow-sm disabled:opacity-50 cursor-pointer"
+                                className="flex items-center gap-1 px-3 py-1 bg-green-200 rounded-xl border border-white shadow-sm disabled:opacity-50 cursor-pointer dark:text-[#090c64]"
                             >
                                 <FloppyDiskIcon size={20} /> {t("salva")}
                             </button>
@@ -203,7 +203,7 @@ const CustomersRegistry = () => {
                                     setEditedCustomer(customer);
                                     setIsEditing(false);
                                 }}
-                                className="flex items-center gap-1 px-3 py-1 bg-red-200 rounded-xl border border-white shadow-sm cursor-pointer"
+                                className="flex items-center gap-1 px-3 py-1 bg-red-200 rounded-xl border border-white shadow-sm cursor-pointer dark:text-[#090c64]"
                             >
                                 <XCircleIcon size={20} /> {t("annulla")}
                             </button>
