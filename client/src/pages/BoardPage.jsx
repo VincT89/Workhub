@@ -304,7 +304,7 @@ const BoardPage = () => {
 	${textColor}`}
 				>
 					{/* HEADER */}
-					<div className="flex items-center gap-4">
+					<div className="flex items-start gap-4">
 						<ShoppingCartSimpleIcon
 							size={28}
 							color={theme === "dark" ? "white" : "#090c64"}
