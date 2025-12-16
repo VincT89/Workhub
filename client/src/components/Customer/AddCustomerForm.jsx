@@ -147,7 +147,7 @@ const AddCustomerForm = ({ onAdd }) => {
 
                         {/* 🔹 Codice Fiscale (fiscalCode) */}
                         <div>
-                            <label className="text-sm block mb-1">{t("codiceFiscale")}*</label>
+                            <label className="text-sm block mb-1">{t("cf")}*</label>
                             <input 
                                 name="fiscalCode" 
                                 value={newCustomer.fiscalCode} 
