@@ -868,7 +868,7 @@ const TicketPageAdmin = () => {
 
               <div className="flex flex-col gap-3 mb-4 p-2 bg-gray-50 rounded-xl border border-gray-200">
                 <div className="flex items-center gap-3">
-                  <UserCircle size={48} color="#090c64" weight="duotone" />
+                  <UserCircleIcon size={48} color="#090c64" weight="duotone" />
 
                   <div className="flex flex-col">
                     <span className="font-semibold text-gray-800">
