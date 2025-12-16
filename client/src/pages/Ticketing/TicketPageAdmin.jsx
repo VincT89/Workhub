@@ -594,7 +594,7 @@ const TicketPageAdmin = () => {
          */}
         <div className="w-full lg:w-3/5 flex flex-col gap-6 rounded-xl sticky top-6 h-fit" style={{ backgroundColor: theme === 'dark' ? '#4d4368' : 'transparent' }}>
 
-          <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm h-[750px]">
+          <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm h-[580px]">
                 <h2 className="font-bold text-2xl mb-4 text-[#090c64]">
                   {t("andamentoTicket")}
                 </h2>
@@ -651,7 +651,7 @@ const TicketPageAdmin = () => {
                   { dataKey: "risolti", label: t("risolti"), color: "#F59E0B" },
                   { dataKey: "totale", label: t("totale"), color: theme === 'dark' ? '#ffffff' : '#111' }
                   ].filter(s => !hiddenLines.includes(s.dataKey))}
-                  height={500}
+                  height={380}
                   curve="monotoneX"
                   grid={{ vertical: false }}
                   tooltip={{
@@ -730,7 +730,7 @@ const TicketPageAdmin = () => {
          * 
          * STILE: Coerente con TicketCreator.jsx
          */}
-        <div className="w-full lg:w-2/5 p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm sticky top-6 h-[750px] " style={{ backgroundColor: theme === 'dark' ? '#4d4368' : 'transparent' }}>
+        <div className="w-full lg:w-2/5 p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm sticky top-6 h-[580px] " style={{ backgroundColor: theme === 'dark' ? '#4d4368' : 'transparent' }}>
           <h2 className="font-bold text-2xl mb-4 flex items-center gap-3 text-[#090c64]">
             <ListMagnifyingGlassIcon
               size={28}
@@ -740,7 +740,7 @@ const TicketPageAdmin = () => {
           </h2>
 
           {/* Container scrollabile con la lista dei ticket */}
-          <div className="flex flex-col gap-2 max-h-[105vh] overflow-y-auto">
+          <div className="flex flex-col gap-2 max-h-[90vh] overflow-y-auto">
             {/* Mappa ogni ticket filtrato in una card */}
             {filteredTickets.map((ticket) => {
               // Estrai l'ID del ticket (supporta sia _id che id)
