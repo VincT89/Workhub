@@ -88,7 +88,7 @@ const UserEmployeePage = () => {
       icon: <BagIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />,
     },
     {
-      label: t("permessi"),
+      label: t("permessiResidui"),
       number: leave?.leaveHours ?? 0,
       icon: <CalendarBlankIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />,
     },

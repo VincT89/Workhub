@@ -163,6 +163,7 @@ export const it = {
 	rifiuta: "Rifiuta",
 	giorniLavorati: "Giorni Lavorati",
 	ferieResidue: "Ferie Residue",
+	permessiResidui: "Permessi Residui",
 	permessi: "Permessi",
 	attivita: "Attività",
 	dal: "Dal",

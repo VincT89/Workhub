@@ -167,6 +167,7 @@ export const en = {
 	rifiuta: "Reject",
 	giorniLavorati: "Days Worked",
 	ferieResidue: "Remaining Leave",
+	permessiResidui: "Remaining Permissions",
 	permessi: "Permissions",
 	attivita: "Activities",
 	dal: "From",
