@@ -279,6 +279,7 @@ export const en = {
 	aperto: "Open",
 	tuttiUtenti: "All Users",
 	listaTicket: "Ticket List",
+	nessunRisultatoTrovato: "No results found.",
 
 	// Order Page
 	nuovoOrdine: "New Order",

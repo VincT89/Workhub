@@ -275,6 +275,7 @@ export const it = {
 	aperto: "Aperto",
 	tuttiUtenti: "Tutti gli Utenti",
 	listaTicket: "Lista Ticket",
+	nessunRisultatoTrovato: "Nessun risultato trovato.",
 
 	// Order Page
 	nuovoOrdine: "Nuovo Ordine",
