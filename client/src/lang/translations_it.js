@@ -38,6 +38,8 @@ export const it = {
 	giacenza: "Giacenza",
 	pos: "Sede",
 	vediTutti: "Vedi Tutti",
+	aggiungiEvento: "Aggiungi Evento",
+	modificaEvento: "Modifica Evento",
 
 	// Customers
 	listaClienti: "Lista Clienti",

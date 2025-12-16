@@ -42,6 +42,8 @@ export const en = {
 	giacenza: "Stock",
 	pos: "Location",
 	vediTutti: "View All",
+	aggiungiEvento: "Add Event",
+	modificaEvento: "Edit Event",
 
 	// Customers
 	listaClienti: "Customer List",
@@ -253,7 +255,6 @@ export const en = {
 	aspetto: "Appearance",
 	salvaModifiche: "Save Changes",
 	esci: "Exit",
-
 
 	// Ticketing
 	selezionaIntervalloData: "Select Date Range",
