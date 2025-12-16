@@ -281,14 +281,13 @@ const OrderPage = () => {
 						<div className="col-span-2 space-y-1">
 							{hasDuplicateClients && (
 								<p className="text-sm text-red-600 font-semibold">
-									Lo stesso cliente non può essere inserito più volte
+									{t("stessoClienteErrore")}
 								</p>
 							)}
 
 							{isQtyExceeded && (
 								<p className="text-sm text-red-600 font-semibold">
-									Quantità clienti ({totalClientQty}) superiore alla quantità
-									ordine ({totalQuantity})
+									{t("quantitaClientiErrore")} ({totalClientQty}) {t("superaTotaleOrdine")} ({totalQuantity})
 								</p>
 							)}
 						</div>

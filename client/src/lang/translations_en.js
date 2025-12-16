@@ -307,4 +307,7 @@ export const en = {
 	courier: "Courier",
 	total: "Total",
 	ordiniTitolo: "Orders",
+	stessoClienteErrore: "The same client cannot be added more than once.",
+	quantitaClientiErrore: "Clients' quantity",
+	superaTotaleOrdine: "exceeds the total order quantity.",
 };
