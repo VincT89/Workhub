@@ -169,7 +169,7 @@ const CustomersRegistry = () => {
         <div className="w-full h-auto mt-20 flex gap-6 px-8 pb-8">
 
             {/* ================= SINISTRA — ANAGRAFICA ================= */}
-            <div className=" w-1/2 h-[560px] bg-white/20 p-8 rounded-xl shadow-md border border-white relative">
+            <div className=" w-1/2 h-auto bg-white/20 p-8 rounded-xl shadow-md border border-white relative">
 
                 {/* FEEDBACK SALVATAGGIO */}
 
@@ -196,7 +196,7 @@ const CustomersRegistry = () => {
                                 disabled={saving}
                                 className="flex items-center gap-1 px-3 py-1 bg-green-200 rounded-xl border border-white shadow-sm disabled:opacity-50 cursor-pointer"
                             >
-                                <FloppyDiskIcon size={20} /> Salva
+                                <FloppyDiskIcon size={20} /> {t("salva")}
                             </button>
                             <button
                                 onClick={() => {
@@ -205,7 +205,7 @@ const CustomersRegistry = () => {
                                 }}
                                 className="flex items-center gap-1 px-3 py-1 bg-red-200 rounded-xl border border-white shadow-sm cursor-pointer"
                             >
-                                <XCircleIcon size={20} /> Annulla
+                                <XCircleIcon size={20} /> {t("annulla")}
                             </button>
                         </div>
                     )}
@@ -408,15 +408,15 @@ const CustomersRegistry = () => {
                     {customer.orders?.length ? (
                         customer.orders.map((order, idx) => (
                             <div key={idx} className="bg-white/20 p-3 rounded-xl mb-2">
-                                <strong>Prodotto:</strong> {order.product?.name || "N/D"} <br />
-                                <strong>Prezzo:</strong>{" "}
+                                <strong>{t("prodotto")}:</strong> {order.product?.name || "N/D"} <br />
+                                <strong>{t("prezzo")}:</strong>{" "}
                                 {order.product?.price
                                     ? `${order.product.price} €`
                                     : "N/D"} <br />
-                                <strong>Quantità:</strong> {order.quantity || 0} <br />
-                                <strong>Punto vendita:</strong>{" "}
+                                <strong>{t("quantità")}:</strong> {order.quantity || 0} <br />
+                                <strong>{t("puntoVendita")}:</strong>{" "}
                                 {order.pointOfSales?.name || "N/D"} <br />
-                                <strong>Data:</strong>{" "}
+                                <strong>{t("data")}:</strong>{" "}
                                 {order.createdAt
                                     ? new Date(order.createdAt).toLocaleDateString()
                                     : "N/D"}
@@ -447,8 +447,7 @@ const CustomersRegistry = () => {
                         </div>
                         {customer.affiliateProgram.name === "standard" && (
                             <div className="bg-white/80 text-[#134a7b] p-3 rounded-xl text-sm">
-                                ⓘ Al raggiungimento dei <strong>10 ordini</strong>, la tessera
-                                passerà automaticamente da <strong>Standard</strong> a <strong>Premium</strong>.
+                               {t("alRaggiungimentoDei")} <strong>10 {t("ordini")}</strong>, {t("laTesseraPassaAutomaticamenteDa")} <strong>Standard</strong> a <strong>Premium</strong>.
                             </div>
                         )}
 

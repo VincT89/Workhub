@@ -85,6 +85,9 @@ export const en = {
 	nota: "Note",
 	programmaAssegnato:
 		"The loyalty program will be assigned automatically upon customer creation.",
+	alRaggiungimentoDei: " ⓘ Upon reaching ",
+	ordini: " orders ",
+	laTesseraPassaAutomaticamenteDa: "the card will automatically upgrade from ",
 
 	// Warehouse
 	listaProdotti: "Product List",

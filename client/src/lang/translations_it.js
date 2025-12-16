@@ -81,6 +81,9 @@ export const it = {
 	nota: "Nota",
 	programmaAssegnato:
 		"Il programma fedeltà verrà assegnato automaticamente alla creazione del cliente.",
+	alRaggiungimentoDei: " ⓘ Al raggiungimento dei ",
+	ordini: " ordini ",
+	laTesseraPassaAutomaticamenteDa: "la tessera passerà automaticamente da ",
 
 	// Warehouse
 	listaProdotti: "Lista Prodotti",
