@@ -282,7 +282,7 @@ table thead th {
 
 /* Body tabella (senza bordi, solo padding) */
 table tbody td {
-  padding: 12px;
+  padding: 10px;
   text-align: center;
 }
 

@@ -241,6 +241,7 @@ export const en = {
 	profilo: "Profile",
 	role: "Role",
 	magazzino: "Warehouse",
+	ordiniSidebar: "Orders",
 	tokenNonDisponibileEffettuaLogin: "Token not available. Please log in.",
 	inserisciDati: "Enter details to recover your password",
 	emailInviata: "Email sent to",

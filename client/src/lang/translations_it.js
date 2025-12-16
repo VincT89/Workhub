@@ -237,6 +237,7 @@ export const it = {
 	personale: "Personale",
 	profilo: "Profilo",
 	role: "Ruolo",
+	ordiniSidebar: "Ordini",
 	magazzino: "Magazzino",
 	tokenNonDisponibileEffettuaLogin: "Token non disponibile. Effettua il login.",
 	inserisciDati: "Inserisci i dati per recuperare la password",
