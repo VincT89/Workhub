@@ -273,23 +273,14 @@ const TicketPageAdmin = () => {
        * 
        * Design: glassmorphism con sfondo semi-trasparente e sfocatura
        */}
-<<<<<<< HEAD
-      <nav className="bg-white/60 backdrop-blur-md border border-white/70 rounded-xl shadow-lg p-4 mb-4 relative z-50">
-=======
       <nav className="bg-white/30 backdrop-blur-md border border-white/90 rounded-xl shadow-lg p-4 mb-4 relative z-50">
->>>>>>> development
         <div className="flex flex-col lg:flex-row gap-4 items-center">
           {/* ===== TITOLO DELLA PAGINA ===== 
            * Mostra l'icona e il titolo "Ticket" tradotto
            */}
           <div className="flex items-center gap-3 lg:w-1/4">
-<<<<<<< HEAD
-            <ListMagnifyingGlass size={32} weight="duotone" className="text-[#090c64]" />
-            <h1 className="font-bold text-xl text-[#090c64]">{t("ticket")}</h1>
-=======
             <ListMagnifyingGlassIcon size={32} weight="duotone" color={theme === "dark" ? "white" : "#090c64"} />
             <h1 className="font-bold text-xl">{t("ticket")}</h1>
->>>>>>> development
           </div>
 
           {/* ===== BOTTONE CALENDARIO ===== 
@@ -301,15 +292,9 @@ const TicketPageAdmin = () => {
            */}
           <button
             onClick={() => setCalendarModalOpen(true)}
-<<<<<<< HEAD
-            className="lg:w-auto px-5 py-2.5 bg-[#090c64] text-white rounded-lg shadow-md hover:bg-[#0a0d7a] transition-all flex items-center gap-2 font-semibold"
-          >
-            <CalendarDots size={24} weight="duotone" />
-=======
             className="lg:w-auto px-5 py-2.5 bg-[#090c64] text-white rounded-lg shadow-md hover:bg-[#0a0d7a] transition-all flex items-center gap-2 font-semibold custom-button"
           >
             <CalendarDotsIcon size={24} weight="duotone"/>
->>>>>>> development
             <span className="hidden lg:inline">{t("selezionaIntervalloData")}</span>
             <span className="lg:hidden">Date</span>
           </button>
@@ -328,18 +313,11 @@ const TicketPageAdmin = () => {
            */}
           <div className="flex-1 relative">
             {/* Icona utente posizionata a sinistra dell'input */}
-<<<<<<< HEAD
-            <UserList
-              size={24}
-              weight="duotone"
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#090c64]"
-=======
             <UserListIcon
               size={24}
               weight="duotone"
               color={theme === "dark" ? "white" : "#090c64"}
               className="absolute left-3 top-1/2 -translate-y-1/2"
->>>>>>> development
             />
             
             {/* Campo input per digitare il nome utente */}
@@ -369,11 +347,7 @@ const TicketPageAdmin = () => {
              * Mostra una lista filtrata di utenti che corrispondono alla ricerca
              */}
             {userSearch.length > 0 && (
-<<<<<<< HEAD
-              <div className="absolute top-full mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto z-[100]">
-=======
               <div className="absolute top-full mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto z-100">
->>>>>>> development
                 {/* Opzione "Tutti gli utenti" per resettare il filtro */}
                 <div
                   onClick={() => { setSelectedUser(""); setUserSearch(""); }}
@@ -414,11 +388,7 @@ const TicketPageAdmin = () => {
                       }}
                       className="px-4 py-3 flex items-center gap-3 hover:bg-blue-50 cursor-pointer transition-colors"
                     >
-<<<<<<< HEAD
-                      <UserCircle size={28} color="#090c64" weight="duotone" />
-=======
                       <UserCircleIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
->>>>>>> development
                       <span className="text-sm text-gray-800">{firstName} {lastName}</span>
                     </div>
                   );
@@ -440,11 +410,7 @@ const TicketPageAdmin = () => {
            */}
           <div className="lg:w-48 relative">
             {/* Icona cerchio a sinistra */}
-<<<<<<< HEAD
-            <Circle
-=======
             <CircleIcon
->>>>>>> development
               size={24}
               color="#090c64"
               weight="duotone"
@@ -471,11 +437,7 @@ const TicketPageAdmin = () => {
              * Mostra le 3 opzioni con icone colorate
              */}
             {statusDropdownOpen && (
-<<<<<<< HEAD
-              <div className="absolute top-full mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-[100]">
-=======
               <div className="absolute top-full mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-100">
->>>>>>> development
                 <div
                   onClick={() => {
                     setSelectedStatus("");
@@ -483,11 +445,7 @@ const TicketPageAdmin = () => {
                   }}
                   className="px-4 py-3 text-sm text-gray-800 hover:bg-blue-50 cursor-pointer transition-colors flex items-center gap-3"
                 >
-<<<<<<< HEAD
-                  <Circle size={20} color="#090c64" weight="duotone" />
-=======
                   <CircleIcon size={20} color="#090c64" weight="duotone" />
->>>>>>> development
                   {t("tutti")}
                 </div>
                 <div
@@ -497,11 +455,7 @@ const TicketPageAdmin = () => {
                   }}
                   className="px-4 py-3 text-sm text-gray-800 hover:bg-blue-50 cursor-pointer transition-colors flex items-center gap-3"
                 >
-<<<<<<< HEAD
-                  <Circle size={20} color="#3B82F6" weight="fill" />
-=======
                   <CircleIcon size={20} color="#3B82F6" weight="fill" />
->>>>>>> development
                   {t("aperti")}
                 </div>
                 <div
@@ -511,11 +465,7 @@ const TicketPageAdmin = () => {
                   }}
                   className="px-4 py-3 text-sm text-gray-800 hover:bg-blue-50 cursor-pointer transition-colors flex items-center gap-3"
                 >
-<<<<<<< HEAD
-                  <Circle size={20} color="#F59E0B" weight="fill" />
-=======
                   <CircleIcon size={20} color="#F59E0B" weight="fill" />
->>>>>>> development
                   {t("risolti")}
                 </div>
               </div>
@@ -550,11 +500,7 @@ const TicketPageAdmin = () => {
                 className="font-bold text-xl flex items-center gap-2"
                 style={{ color: theme === 'dark' ? '#ffffff' : '#090c64' }}
               >
-<<<<<<< HEAD
-                <CalendarDots size={28} weight="duotone" />
-=======
                 <CalendarDotsIcon size={28} color={theme === 'dark' ? 'white' : '#090c64'} weight="duotone" />
->>>>>>> development
                 {t("selezionaIntervalloData")}
               </h2>
               <button
@@ -648,11 +594,7 @@ const TicketPageAdmin = () => {
          */}
         <div className="w-full lg:w-3/5 flex flex-col gap-6 rounded-xl sticky top-6 h-fit" style={{ backgroundColor: theme === 'dark' ? '#4d4368' : 'transparent' }}>
 
-<<<<<<< HEAD
-          <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm h-[750px]">
-=======
           <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm h-[580px]">
->>>>>>> development
                 <h2 className="font-bold text-2xl mb-4 text-[#090c64]">
                   {t("andamentoTicket")}
                 </h2>
@@ -788,19 +730,6 @@ const TicketPageAdmin = () => {
          * 
          * STILE: Coerente con TicketCreator.jsx
          */}
-<<<<<<< HEAD
-        <div className="w-full lg:w-2/5 p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm sticky top-6 h-[750px] " style={{ backgroundColor: theme === 'dark' ? '#4d4368' : 'transparent' }}>
-          <h2 className="font-bold text-2xl mb-4 flex items-center gap-3 text-[#090c64]">
-            <ListMagnifyingGlass
-              size={28}
-              weight="duotone"
-            />
-            Lista {t("ticket")}
-          </h2>
-
-          {/* Container scrollabile con la lista dei ticket */}
-          <div className="flex flex-col gap-2 max-h-[105vh] overflow-y-auto">
-=======
         <div className="w-full lg:w-2/5 p-6 flex flex-col gap-4 rounded-xl border border-white/90 shadow-md backdrop-blur-sm sticky top-6 h-[580px] " style={{ backgroundColor: theme === 'dark' ? '#4d4368' : 'transparent' }}>
           <h2 className="font-bold text-2xl mb-4 flex items-center gap-3 text-[#090c64]">
             <ListMagnifyingGlassIcon
@@ -812,7 +741,6 @@ const TicketPageAdmin = () => {
 
           {/* Container scrollabile con la lista dei ticket */}
           <div className="flex flex-col gap-2 max-h-[90vh] overflow-y-auto">
->>>>>>> development
             {/* Mappa ogni ticket filtrato in una card */}
             {filteredTickets.map((ticket) => {
               // Estrai l'ID del ticket (supporta sia _id che id)
@@ -866,19 +794,11 @@ const TicketPageAdmin = () => {
                     <span className={`text-xs px-3 py-1 rounded-lg font-medium ${statusClass}`}>
                       {statusLabel}
                     </span>
-<<<<<<< HEAD
-                    <Pencil
-                      size={18}
-                      color="#090c64"
-                      weight="duotone"
-                      className="flex-shrink-0"
-=======
                     <PencilIcon
                       size={18}
                       color="#090c64"
                       weight="duotone"
                       className="shrink-0"
->>>>>>> development
                     />
                   </div>
                 </div>
