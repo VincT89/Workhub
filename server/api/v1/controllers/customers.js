@@ -116,7 +116,6 @@ export const createCustomer = async (req, res) => {
     const { affiliateProgram: { name: affiliateProgramName }, ...customerData } = await schema.validateAsync(req.body);
 
     const cardNumber = generateRandomCardNumber(6, true);
-    console.log("CardNumber:", cardNumber);
 
     // CREA IL PROGRAMMA FEDELTÀ 
     const affiliateProgram = new AffiliateProgram({
