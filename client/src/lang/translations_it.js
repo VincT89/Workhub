@@ -272,6 +272,7 @@ export const it = {
 	risolto: "Risolto",
 	aperto: "Aperto",
 	tuttiUtenti: "Tutti gli Utenti",
+	listaTicket: "Lista Ticket",
 
 	// Order Page
 	nuovoOrdine: "Nuovo Ordine",

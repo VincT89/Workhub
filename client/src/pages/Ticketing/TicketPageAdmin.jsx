@@ -736,7 +736,7 @@ const TicketPageAdmin = () => {
               size={28}
               weight="duotone"
             />
-            Lista {t("ticket")}
+            {t("listaTicket")}
           </h2>
 
           {/* Container scrollabile con la lista dei ticket */}

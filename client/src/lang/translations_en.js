@@ -276,6 +276,7 @@ export const en = {
 	risolto: "Resolved",
 	aperto: "Open",
 	tuttiUtenti: "All Users",
+	listaTicket: "Ticket List",
 
 	// Order Page
 	nuovoOrdine: "New Order",
