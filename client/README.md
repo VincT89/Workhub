@@ -227,6 +227,6 @@ UI dedicata con Drawer per aggiunta/modifica.
 6. Calendario turni ed eventi con react-big-calendar - `COMPLETATO`
 7. Bacheca eventi aziendali - `COMPLETATO` 
 8. Gestione magazzino - `COMPLETATO`
-9. Gestione clienti - `COMPLETATO - solo richiamare ordini per cliente`
+9. Gestione clienti - `COMPLETATO`
 10. Gestione ticketing - `COMPLETATO`
-11. Gestione ordini - `COMPLETATO `
+11. Gestione ordini - `COMPLETATO`
