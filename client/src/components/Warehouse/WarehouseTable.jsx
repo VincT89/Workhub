@@ -141,7 +141,7 @@ const WarehouseTable = ({ data, allItems, columns }) => {
 					onClick={() => dispatch(toggleSortAZ())}
 					className="custom-button text-[14px]"
 				>
-					{sortAZ ? t("ordinaZA") : t("ordinaAZ")}
+					{sortAZ ? t("annullaAZ") : t("ordinaAZ")}
 				</button>
 
 				{/* Filtro categoria */}

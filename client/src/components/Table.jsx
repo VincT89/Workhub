@@ -67,7 +67,7 @@ const Table = ({
 						onClick={() => setSortAZ(!sortAZ)}
 						className="px-3 py-2 bg-[#090c64] text-white font-bold border border-white rounded-xl shadow-sm text-sm transition table-sort-btn"
 					>
-						{sortAZ ? t("annullaOrdineAZ") : t("ordinaAZ")}
+						{sortAZ ? t("annullaAZ") : t("ordinaAZ")}
 					</button>
 
 					{/* Custom toolbar from parent */}

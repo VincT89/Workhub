@@ -362,7 +362,7 @@ const AdminEmployeePage = () => {
           onClick={() => setSortAsc(!sortAsc)}
           className="p-2 bg-[#090c64] text-white rounded-lg w-40 custom-button text-[14px]"
         >
-          {sortAsc ? t("ordinaAZ") : t("ordinaZA")}
+          {sortAsc ? t("ordinaAZ") : t("annullaAZ")}
         </button>
       </div>
 
