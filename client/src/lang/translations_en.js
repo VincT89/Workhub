@@ -146,6 +146,8 @@ export const en = {
 	pezzi: "pieces",
 	nomeProdotto: "Product Name",
 	cercaDisponibilita: "Search Availability",
+	prodottoNonPresenteNellaTuaSede:
+		"Product not available in your location.",
 
 	// Employees
 	dipendentiAttivi: "Active Employees",

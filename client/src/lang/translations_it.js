@@ -142,6 +142,9 @@ export const it = {
 	pezzi: "pezzi",
 	nomeProdotto: "Nome Prodotto",
 	cercaDisponibilita: "Cerca Disponibilità",
+	prodottoNonPresenteNellaTuaSede:
+		"Il prodotto non è presente nella tua sede.",
+	
 
 	// Employees
 	dipendentiAttivi: "Dipendenti Attivi",
