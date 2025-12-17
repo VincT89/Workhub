@@ -247,14 +247,14 @@ const BoardPage = () => {
 							{t("bacheca")}
 						</h3>
 
-						{role === "admin" && (
-							<button
-								onClick={openDrawerAdd}
-								className="custom-button ml-auto text-[14px]"
-							>
-								+ {t("aggiungi")}
-							</button>
-						)}
+						<button
+							onClick={role === "admin" ? openDrawerAdd : undefined}
+							className={`custom-button ml-auto text-[14px] ${
+								role === "user" ? "invisible pointer-events-none" : ""
+							}`}
+						>
+							+ {t("aggiungi")}
+						</button>
 					</div>
 
 					{/* TABELLA */}

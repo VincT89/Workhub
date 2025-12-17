@@ -232,7 +232,7 @@ export const it = {
 	annulla: "Annulla",
 	passwordAttuale: "Password Attuale",
 	nuovaPassword: "Nuova Password",
-	confermaNuovaPassword: "Conferma Nuova Password",
+	confermaPassword: "Conferma Nuova Password",
 	tema: "Tema",
 	lingua: "Lingua",
 	italiano: "Italiano",
