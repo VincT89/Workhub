@@ -83,6 +83,7 @@ export const login = async (req, res) => {
 		const jwtToken = generateAccessToken({
 			_id: userDoc._id.toString(),
 			role: user.role,
+			twofaVerified: userDoc.twofaEnabled ? true : false,
 		});
 
 		return res.status(200).json(

@@ -85,6 +85,7 @@ const AdminEmployeeDetailsPage = () => {
 		dispatch(fetchUserByIdAsync({ id, token }));
 		dispatch(fetchPointsOfSalesAsync({ token }));
 		dispatch(fetchLeaveByUserIdAsync({ userId: id, token }));
+		dispatch(fetchUserShiftsAsync({ userId: id, token }));
 	}, [id, token, dispatch]);
 
 	// Imposta nome sede lavorativa
