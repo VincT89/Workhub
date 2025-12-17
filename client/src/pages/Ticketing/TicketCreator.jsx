@@ -86,12 +86,13 @@ const TicketCreator = ({ user }) => {
     }
   };
 
+  // ===== RENDER DEL COMPONENTE =====
   return (
     <div className="p-4 bg-white/20 rounded-xl shadow-md w-full mx-auto">
 
       <h2 className="font-bold text-xl mb-4">{t("creaTicket")}</h2>
 
-      {/* Input Titolo Ticket */}
+      {/* INPUT: Campo di testo per il titolo del ticket */}
       <input
         type="text"
         value={newTitle}
@@ -157,7 +158,13 @@ const TicketCreator = ({ user }) => {
                 className="space-y-2 overflow-auto"
                 style={{ maxHeight: `${desired}px`, transition: 'max-height 180ms ease' }}
               >
-                {filteredTickets.map((t) => {
+                {filteredTickets
+                  .sort((a, b) => {
+                    const dateA = new Date(a.date || a.createdAt || a.updatedAt || a._id);
+                    const dateB = new Date(b.date || b.createdAt || b.updatedAt || b._id);
+                    return dateB - dateA; // Ordina dalla data più recente alla più vecchia
+                  })
+                  .map((t) => {
                   const rawStatus = t.status || '';
                   const statusKey = rawStatus === 'open' ? 'aperto' : rawStatus === 'closed' ? 'risolto' : (rawStatus || '').toLowerCase();
                   const statusLabel = statusKey === 'aperto' ? 'Aperto' : statusKey === 'risolto' ? 'Risolto' : rawStatus;
