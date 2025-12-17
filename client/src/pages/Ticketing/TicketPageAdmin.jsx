@@ -742,7 +742,13 @@ const TicketPageAdmin = () => {
           {/* Container scrollabile con la lista dei ticket */}
           <div className="flex flex-col gap-2 max-h-[90vh] overflow-y-auto">
             {/* Mappa ogni ticket filtrato in una card */}
-            {filteredTickets.map((ticket) => {
+            {filteredTickets
+              .sort((a, b) => {
+                const dateA = new Date(a.date || a.createdAt || a.updatedAt);
+                const dateB = new Date(b.date || b.createdAt || b.updatedAt);
+                return dateB - dateA; // Ordina dalla data più recente alla più vecchia
+              })
+              .map((ticket) => {
               // Estrai l'ID del ticket (supporta sia _id che id)
               const tid = ticket._id || ticket.id;
               
