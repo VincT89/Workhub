@@ -44,6 +44,7 @@ export const en = {
 	vediTutti: "View All",
 	aggiungiEvento: "Add Event",
 	modificaEvento: "Edit Event",
+	inserisciDescrizioneEvento: "Enter event description...",
 
 	// Customers
 	listaClienti: "Customer List",

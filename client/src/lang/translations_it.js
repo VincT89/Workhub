@@ -40,6 +40,7 @@ export const it = {
 	vediTutti: "Vedi Tutti",
 	aggiungiEvento: "Aggiungi Evento",
 	modificaEvento: "Modifica Evento",
+	inserisciDescrizioneEvento: "Inserisci descrizione evento...",
 
 	// Customers
 	listaClienti: "Lista Clienti",
