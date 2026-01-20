@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
 import {
   fetchPointsOfSalesRequest,
   createPointOfSaleRequest,
@@ -7,37 +6,35 @@ import {
   deletePointOfSaleRequest,
 } from "../../api/pointsApi";
 
-// === FETCH ALL POS ===
+// Fetch all points of sale
 export const fetchPointsOfSalesAsync = createAsyncThunk(
   "points/fetchAll",
   async ({ token }, { rejectWithValue }) => {
     try {
       const { res, data } = await fetchPointsOfSalesRequest({ token });
-
       if (!res.ok) return rejectWithValue(data.message);
-      return data.data; // array POS
+      return data.data;
     } catch {
-      return rejectWithValue("Errore di rete.");
+      return rejectWithValue("Network error");
     }
   }
 );
 
-// === CREATE POS ===
+// Create a new point of sale
 export const createPointOfSaleAsync = createAsyncThunk(
   "points/create",
   async ({ newPos, token }, { rejectWithValue }) => {
     try {
       const { res, data } = await createPointOfSaleRequest({ newPos, token });
-
       if (!res.ok) return rejectWithValue(data.message);
       return data.data;
     } catch {
-      return rejectWithValue("Errore di rete.");
+      return rejectWithValue("Network error");
     }
   }
 );
 
-// === UPDATE POS ===
+// Update an existing point of sale
 export const updatePointOfSaleAsync = createAsyncThunk(
   "points/update",
   async ({ id, updates, token }, { rejectWithValue }) => {
@@ -47,32 +44,31 @@ export const updatePointOfSaleAsync = createAsyncThunk(
         updates,
         token,
       });
-
       if (!res.ok) return rejectWithValue(data.message);
       return data.data;
     } catch {
-      return rejectWithValue("Errore di rete.");
+      return rejectWithValue("Network error");
     }
   }
 );
 
-// === DELETE POS ===
+// Delete a point of sale
 export const deletePointOfSaleAsync = createAsyncThunk(
   "points/delete",
   async ({ id, token }, { rejectWithValue }) => {
     try {
       const { res, data } = await deletePointOfSaleRequest({ id, token });
-
       if (!res.ok) return rejectWithValue(data.message);
       return id;
     } catch {
-      return rejectWithValue("Errore di rete.");
+      return rejectWithValue("Network error");
     }
   }
 );
 
 const pointOfSalesSlice = createSlice({
   name: "points",
+
   initialState: {
     list: [],
     loading: false,
@@ -83,8 +79,7 @@ const pointOfSalesSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-
-      /** FETCH ALL **/
+      // Fetch all
       .addCase(fetchPointsOfSalesAsync.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -98,22 +93,26 @@ const pointOfSalesSlice = createSlice({
         state.error = action.payload;
       })
 
-      /** CREATE **/
+      // Create
       .addCase(createPointOfSaleAsync.fulfilled, (state, action) => {
         state.list.push(action.payload);
       })
 
-      /** UPDATE **/
+      // Update
       .addCase(updatePointOfSaleAsync.fulfilled, (state, action) => {
         const index = state.list.findIndex(
           (pos) => pos._id === action.payload._id
         );
-        if (index !== -1) state.list[index] = action.payload;
+        if (index !== -1) {
+          state.list[index] = action.payload;
+        }
       })
 
-      /** DELETE **/
+      // Delete
       .addCase(deletePointOfSaleAsync.fulfilled, (state, action) => {
-        state.list = state.list.filter((pos) => pos._id !== action.payload);
+        state.list = state.list.filter(
+          (pos) => pos._id !== action.payload
+        );
       });
   },
 });

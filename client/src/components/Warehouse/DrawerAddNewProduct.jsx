@@ -8,13 +8,16 @@ import bgDark from "../../assets/bg/bgScuro.jpg";
 
 const DrawerAddNewProduct = ({ open, onClose }) => {
   const dispatch = useDispatch();
+
+  // Items list from redux store
   const items = useSelector((state) => state.items.list);
 
-  // sede dell’utente loggato 
+  // Logged user's workplace ID
   const userWorkplaceId = useSelector(
     (state) => state.auth.user?.workplace?._id
   );
 
+  // Local UI state
   const [search, setSearch] = useState("");
   const [results, setResults] = useState([]);
   const [quantity, setQuantity] = useState("");
@@ -22,13 +25,17 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
   const { theme } = useTheme();
   const { t } = useLanguage();
 
+  // Closes drawer on ESC key press
   useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && onClose?.();
-    if (open) document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") onClose?.();
+    };
+
+    if (open) document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
 
-  // Reset quando chiudi
+  // Resets local state when drawer closes
   useEffect(() => {
     if (!open) {
       setSearch("");
@@ -37,28 +44,38 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
     }
   }, [open]);
 
-  // numero quantità (sempre coerente)
+  // Parsed numeric quantity value
   const qty = useMemo(() => Number(quantity), [quantity]);
 
+  // Searches items belonging to the user's workplace
   const searchItems = () => {
     if (!search.trim()) return;
 
-    // filtra SOLO item della sede dell’utente loggato
     const filtered = items.filter((item) => {
       if (!item?.product) return false;
 
       const sameWorkplace =
         String(item.pointOfSales?._id) === String(userWorkplaceId);
 
-      const matchSearch =
-        item.product?.name?.toLowerCase().includes(search.toLowerCase()) ||
-        item.product?.sku?.toLowerCase().includes(search.toLowerCase());
+      const matchesSearch =
+        item.product?.name
+          ?.toLowerCase()
+          .includes(search.toLowerCase()) ||
+        item.product?.sku
+          ?.toLowerCase()
+          .includes(search.toLowerCase());
 
-      return sameWorkplace && matchSearch;
+      return sameWorkplace && matchesSearch;
     });
 
     if (filtered.length === 0) {
-      setResults([{ error: t("prodottoNonPresenteNellaTuaSede") || "Prodotto non presente nella tua sede" }]);
+      setResults([
+        {
+          error:
+            t("prodottoNonPresenteNellaTuaSede") ||
+            "Product not available in your workplace",
+        },
+      ]);
       return;
     }
 
@@ -66,8 +83,12 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
     setResults(filtered);
   };
 
+  // Adds stock quantity to selected item
   const handleAddStock = async (itemId) => {
-    if (!qty || qty <= 0) return alert(t("inserisciQuantitaValida"));
+    if (!qty || qty <= 0) {
+      alert(t("inserisciQuantitaValida"));
+      return;
+    }
 
     try {
       const resultAction = await dispatch(
@@ -82,7 +103,7 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
         onClose?.();
       } else {
         const err = resultAction.payload || resultAction.error?.message;
-        alert(t("errore") + " " + err);
+        alert(`${t("errore")} ${err}`);
       }
     } catch (err) {
       console.error(err);
@@ -97,56 +118,61 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
 
       <aside
-        className="absolute right-0 top-0 w-[420px] h-full border-l border-white/40 shadow-2xl overflow-auto bg-cover bg-center"
+        className="drawer-panel"
         role="dialog"
         aria-modal="true"
-        style={{ backgroundImage: `url(${theme === "dark" ? bgDark : bgLight})` }}
+        style={{
+          backgroundImage: `url(${theme === "dark" ? bgDark : bgLight})`,
+        }}
       >
-        <header className="sticky top-0 border-b border-white/60 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-base font-semibold">{t("aggiungiStock")}</h2>
-          <button
-            onClick={onClose}
-            className="px-4 py-2 border border-white/70 shadow-sm rounded-xl text-sm custom-button cursor-pointer"
-          >
+        <header className="drawer-header">
+          <h2 className="text-base font-semibold">
+            {t("aggiungiStock")}
+          </h2>
+
+          <button onClick={onClose} className="custom-button text-sm">
             {t("chiudi")}
           </button>
         </header>
 
-        <div className="p-6 text-[15px]">
-          <label className="block mb-2 font-semibold">
+        <div className="drawer-content">
+          <label className="drawer-label">
             {t("nomeProdottoSku")}
           </label>
+
           <input
             type="text"
             placeholder="Es. BILLY Libreria o SKU1234"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full mb-4 px-3 py-2 border rounded-xl"
+            className="drawer-input"
           />
 
-          <label className="block mb-2 font-semibold">
+          <label className="drawer-label">
             {t("quantitaDaAggiungere")}
           </label>
+
           <input
             type="number"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
-            className="w-full mb-4 px-3 py-2 border rounded-xl"
+            className="drawer-input"
             min={1}
             placeholder="Es. 5"
           />
 
           <button
             onClick={searchItems}
-            className="px-4 py-2 border border-white/70 shadow-sm rounded-xl text-sm custom-button mb-6 cursor-pointer"
+            className="custom-button text-sm mb-6"
           >
             {t("cercaProdotto")}
           </button>
 
-          {/* RISULTATI */}
           <div className="flex flex-col gap-4">
             {results.length === 0 && (
-              <p className="opacity-70">{t("nessunaRicercaEffettuata")}</p>
+              <p className="opacity-70">
+                {t("nessunaRicercaEffettuata")}
+              </p>
             )}
 
             {results.map((item, i) => {
@@ -159,27 +185,31 @@ const DrawerAddNewProduct = ({ open, onClose }) => {
               }
 
               return (
-                <div
-                  key={item._id} 
-                  className="w-full rounded-2xl bg-[rgba(255,255,255,0.15)] border border-white/20 backdrop-blur-lg p-4 shadow-sm text-sm md:text-base flex flex-col gap-1"
-                >
+                <div key={item._id} className="glass-card">
                   <span>
-                    <strong>{t("prodotto")}:</strong> {item.product?.name}
+                    <strong>{t("prodotto")}:</strong>{" "}
+                    {item.product?.name}
                   </span>
+
                   <span>
-                    <strong>SKU:</strong> {item.product?.sku}
+                    <strong>SKU:</strong>{" "}
+                    {item.product?.sku}
                   </span>
+
                   <span>
-                    <strong>{t("point")}:</strong> {item.pointOfSales?.name}
+                    <strong>{t("point")}:</strong>{" "}
+                    {item.pointOfSales?.name}
                   </span>
+
                   <span>
-                    <strong>{t("stock")}:</strong> {item.stock}
+                    <strong>{t("stock")}:</strong>{" "}
+                    {item.stock}
                   </span>
 
                   <button
                     onClick={() => handleAddStock(item._id)}
                     disabled={!qty || qty <= 0}
-                    className="mt-2 px-3 py-1 border border-white/70 shadow-sm rounded-xl text-sm text-white bg-[#090c64] hover:bg-[#0a0f85] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="custom-button text-sm mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {t("aggiungi")}
                     {quantity ? ` ${quantity} ${t("pezzi")}` : ""}

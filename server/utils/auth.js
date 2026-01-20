@@ -1,57 +1,50 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const getPrivateKey = () => process.env.SERVER_PRIVATE_KEY; // Chiave segreta per JWT, da .env
+// Returns the JWT private key from environment variables
+const getPrivateKey = () => process.env.SERVER_PRIVATE_KEY;
 
-/**
- * Hash password  con bcrypt
- */
+// Hash a plain text password using bcrypt
 export const hashPassword = async (password) => {
   return bcrypt.hash(password, 10);
 };
 
-/**
- * Confronta password con hash bcrypt
- */
+// Compare a plain text password with a bcrypt hash
 export const comparePassword = async (password, hashed) => {
-  return bcrypt.compare(password, hashed); // Restituisce true la password corrisponde all'hash, altrimenti false
+  return bcrypt.compare(password, hashed);
 };
 
-/**
- * Genera token JWT
- */
-export const generateAccessToken = (payload, expiresIn = "8h") => { // il token scade in 8 ore di default, si rigenera effettuando di nuovo il login
+// Generate a signed JWT access token
+export const generateAccessToken = (payload, expiresIn = "8h") => {
   const key = getPrivateKey();
 
   if (!key) {
-    throw new Error("SERVER_PRIVATE_KEY non definita nelle env");
+    throw new Error("SERVER_PRIVATE_KEY is not defined in environment variables");
   }
 
-  return jwt.sign(payload, key, { expiresIn }); // Genera il token con il payload e la chiave segreta
+  return jwt.sign(payload, key, { expiresIn });
 };
 
-/**
- * Verifica token
- */
+// Verify and decode a JWT access token
 export const verifyAccessToken = (token) => {
   const key = getPrivateKey();
 
   if (!key) {
-    throw new Error("SERVER_PRIVATE_KEY non definita nelle env");
+    throw new Error("SERVER_PRIVATE_KEY is not defined in environment variables");
   }
 
   return jwt.verify(token, key);
 };
 
-/**
- * Password temporanea generata casualmente che include lettere maiuscole, minuscole, numeri e simboli e ha una lunghezza di 10 caratteri di default, poi può essere cambiata dall'utente
- */
+// Generate a random temporary password
 export const generateTempPassword = (length = 10) => {
   const chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$";
-  let pwd = "";
+  let password = "";
+
   for (let i = 0; i < length; i++) {
-    pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
   }
-  return pwd;
+
+  return password;
 };

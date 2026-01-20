@@ -1,62 +1,69 @@
 import { API_URL } from "../config/api";
 
-// Funzione GET per ottenere tutti gli eventi
+// Fetch all events (GET)
 export const fetchEvents = async (token) => {
-    const response = await fetch(`${API_URL}/events`, {
-        headers: {
-            "Authorization": `Bearer ${token}`,
-        },
-    });
-    if (!response.ok) {
-        throw new Error("Errore nel recupero degli eventi");
-    }
-    const json = await response.json();
-    return json.data;
+  const response = await fetch(`${API_URL}/events`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch events");
+  }
+
+  const json = await response.json();
+  return json.data;
 };
 
-// Funzione POST per creare un nuovo evento
+// Create a new event (POST)
 export const createEvent = async (data, token) => {
-    const response = await fetch(`${API_URL}/events`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-    });
-    if (!response.ok) {
-        throw new Error("Errore nella creazione dell'evento");
-    }
-    const json = await response.json();
-    return json.data;
+  const response = await fetch(`${API_URL}/events`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create event");
+  }
+
+  const json = await response.json();
+  return json.data;
 };
 
-// Funzione PUT per aggiornare un evento esistente
+// Update an existing event (PUT)
 export const updateEvent = async (id, data, token) => {
-    const response = await fetch(`${API_URL}/events/${id}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-    });
-    if (!response.ok) {
-        throw new Error("Errore nell'aggiornamento dell'evento");
-    }
-    const json = await response.json();
-    return json.data;
+  const response = await fetch(`${API_URL}/events/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update event");
+  }
+
+  const json = await response.json();
+  return json.data;
 };
 
-// Funzione DELETE per eliminare un evento
+// Delete an event by ID (DELETE)
 export const deleteEvent = async (id, token) => {
-    const response = await fetch(`${API_URL}/events/${id}`, {
-        method: "DELETE",
-        headers: {
-            "Authorization": `Bearer ${token}`,
-        },
-    });
-    if (!response.ok) {
-        throw new Error("Errore nell'eliminazione dell'evento");
-    }
+  const response = await fetch(`${API_URL}/events/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete event");
+  }
 };

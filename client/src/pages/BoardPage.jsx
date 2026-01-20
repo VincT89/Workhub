@@ -1,436 +1,370 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 import CalendarBox from "../components/CalendarBox";
-import {
-	WarehouseIcon,
-	ShoppingCartSimpleIcon,
-	UserCircleCheckIcon,
-	ChalkboardSimpleIcon,
-	PackageIcon,
-	WarningOctagonIcon,
-	CalendarIcon,
-	NotePencilIcon,
-	TrashIcon,
-} from "@phosphor-icons/react";
-import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-	fetchEventsAsync,
-	createEventAsync,
-	updateEventAsync,
-	deleteEventAsync,
-} from "../store/feature/eventsSlice.js";
-import { fetchProducts } from "../store/feature/productsSlice.js";
-import { fetchItems } from "../store/feature/itemsSlice.js";
-import { fetchOrders } from "../store/feature/orderSlice.js";
 import Table from "../components/Table";
 import Drawer from "../components/Drawer";
 
+import {
+  WarehouseIcon,
+  ShoppingCartSimpleIcon,
+  UserCircleCheckIcon,
+  ChalkboardSimpleIcon,
+  PackageIcon,
+  WarningOctagonIcon,
+  CalendarIcon,
+  NotePencilIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
+
+import {
+  fetchEventsAsync,
+  createEventAsync,
+  updateEventAsync,
+  deleteEventAsync,
+} from "../store/feature/eventsSlice";
+import { fetchProducts } from "../store/feature/productsSlice";
+import { fetchItems } from "../store/feature/itemsSlice";
+import { fetchOrders } from "../store/feature/orderSlice";
+
 const BoardPage = () => {
-	const { theme } = useTheme();
-	const { t } = useLanguage();
-	const navigate = useNavigate();
-	const { role } = useSelector((state) => state.auth.user);
-	const token = useSelector((state) => state.auth.token);
-	const users = useSelector((state) => state.users); // per richiamare i dati del personale (nelle box in alto)
-	const pointOfSales = useSelector((state) => state.pos); // per richiamare i dati dei depositi (nelle box in alto)
-	const products = useSelector((state) => state.products); // per richiamare i dati dei prodotti (nelle box in alto)
-	const orders = useSelector((state) => state.orders); // per richiamare i dati degli ordini (nelle box in alto)
-	const items = useSelector((state) => state.items);
-	const lowStockProducts =
-		items?.list?.filter((item) => item.stock <= item.stockLimit) || [];
+  const { theme } = useTheme();
+  const { t } = useLanguage();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-	const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
+  // Auth and role data
+  const { role } = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.token);
 
-	const dispatch = useDispatch();
+  // Global redux data
+  const users = useSelector((state) => state.users);
+  const pointOfSales = useSelector((state) => state.pos);
+  const products = useSelector((state) => state.products);
+  const orders = useSelector((state) => state.orders);
+  const items = useSelector((state) => state.items);
+  const events = useSelector((state) => state.events.events);
 
-	const events = useSelector((state) => state.events.events); // tutti gli eventi
+  // Products below stock threshold
+  const lowStockProducts =
+    items?.list?.filter((item) => item.stock <= item.stockLimit) || [];
 
-	useEffect(() => {
-		if (token) {
-			dispatch(fetchEventsAsync({ token })); // carica tutti gli eventi
-			dispatch(fetchProducts(token)); // carica tutti i prodotti
-			dispatch(fetchItems(token)); // carica tutti gli items
-			dispatch(fetchOrders({ token })); // carica tutti gli ordini
-		}
-	}, [dispatch, token]);
+  const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 
-	const boardPosts = events.map((event) => ({
-		// dati per la tabella bacheca
-		_id: event._id,
-		title: event.title,
-		date: event.startDate ? event.startDate.slice(0, 10) : "",
-		description: event.description || "",
-	}));
+  // Initial data fetch on mount
+  useEffect(() => {
+    if (!token) return;
 
-	const boardColumns = ["title", "date", "description"]; // colonne tabella bacheca
+    dispatch(fetchEventsAsync({ token }));
+    dispatch(fetchProducts(token));
+    dispatch(fetchItems(token));
+    dispatch(fetchOrders({ token }));
+  }, [dispatch, token]);
 
-	const columnLabels = {
-		title: t("titolo"),
-		date: t("data"),
-		description: t("descrizione"),
-	};
+  // Board posts mapped for table component
+  const boardPosts = events.map((event) => ({
+    _id: event._id,
+    title: event.title,
+    date: event.startDate ? event.startDate.slice(0, 10) : "",
+    description: event.description || "",
+  }));
 
-	// State per il Drawer
-	const [drawerOpen, setDrawerOpen] = useState(false);
-	const [editData, setEditData] = useState(null);
+  const boardColumns = ["title", "date", "description"];
 
-	// Apre drawer in modalità modifica
-	const openDrawerEdit = (row) => {
-		setEditData({
-			_id: row._id,
-			title: row.title,
-			date: row.date,
-			description: row.description || "",
-		});
-		setDrawerOpen(true);
-	};
+  const columnLabels = {
+    title: t("titolo"),
+    date: t("data"),
+    description: t("descrizione"),
+  };
 
-	// Apre drawer per aggiungere
-	const openDrawerAdd = () => {
-		setEditData({ _id: null, title: "", date: "", description: "" });
-		setDrawerOpen(true);
-	};
+  // Drawer state
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [editData, setEditData] = useState(null);
 
-	// Salva (sia nuovo che modifica)
-	const handleSavePost = (e) => {
-		e.preventDefault();
+  // Open drawer in edit mode
+  const openDrawerEdit = (row) => {
+    setEditData({
+      _id: row._id,
+      title: row.title,
+      date: row.date,
+      description: row.description || "",
+    });
+    setDrawerOpen(true);
+  };
 
-		const payload = {
-			title: editData.title,
-			startDate: editData.date,
-			endDate: editData.date,
-			description: editData.description,
-		};
+  // Open drawer in create mode
+  const openDrawerAdd = () => {
+    setEditData({ _id: null, title: "", date: "", description: "" });
+    setDrawerOpen(true);
+  };
 
-		if (editData._id) {
-			dispatch(updateEventAsync({ id: editData._id, data: payload, token }));
-		} else {
-			dispatch(createEventAsync({ data: payload, token }));
-		}
+  // Create or update board event
+  const handleSavePost = (e) => {
+    e.preventDefault();
 
-		setDrawerOpen(false);
-		setEditData(null);
-	};
+    const payload = {
+      title: editData.title,
+      startDate: editData.date,
+      endDate: editData.date,
+      description: editData.description,
+    };
 
-	const handleDelete = (row) => {
-		// elimina evento
-		if (window.confirm(` ${t("seiSicuroEliminareEvento")}"${row.title}"?`)) {
-			dispatch(deleteEventAsync({ id: row._id, token }));
-		}
-	};
+    if (editData._id) {
+      dispatch(updateEventAsync({ id: editData._id, data: payload, token }));
+    } else {
+      dispatch(createEventAsync({ data: payload, token }));
+    }
 
-	return (
-		<div
-			className="w-full h-full flex flex-col gap-8 overflow-y-auto 
-			[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-		>
-			{/* Riga 1: i 5 box - con un div che li contiene tutti, e a seguire i singoli box-div */}
-			<div className="grid grid-cols-5 gap-4 mb-2 w-full transition-colors duration-500">
-				<div
-					className={`flex items-center justify-between rounded-xl px-3 py-2 shadow  mt-2
-					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-					border border-white/30 dark:border-white/80 ${textColor}`}
-				>
-					<div className="flex items-center gap-2">
-						<WarehouseIcon
-							size={28}
-							color={theme === "dark" ? "white" : "#090c64"}
-							weight="duotone"
-						/>
-						<span className="font-bold text-[14px]">{t("depositi")}</span>
-					</div>
-					<span
-						className={`text-sm opacity-70 leading-none font-semibold ${
-							theme === "dark" ? "text-white" : "text-[#090c64]"
-						}`}
-					>
-						{pointOfSales?.list?.length ?? 0}
-					</span>
-				</div>
+    setDrawerOpen(false);
+    setEditData(null);
+  };
 
-				<div
-					className={`flex items-center justify-between rounded-xl px-3 py-2 shadow  mt-2
-					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-					border border-white/30 dark:border-white/80 ${textColor}`}
-				>
-					<div className="flex items-center gap-2">
-						<ShoppingCartSimpleIcon
-							size={28}
-							color={theme === "dark" ? "white" : "#090c64"}
-							weight="duotone"
-						/>
-						<span className="font-bold text-[14px]">{t("prodotti")}</span>
-					</div>
-					<span className="text-sm opacity-70 leading-none font-semibold">
-						{products?.list?.length ?? 0}
-					</span>
-				</div>
+  // Delete board event
+  const handleDelete = (row) => {
+    if (window.confirm(`${t("seiSicuroEliminareEvento")} "${row.title}"?`)) {
+      dispatch(deleteEventAsync({ id: row._id, token }));
+    }
+  };
 
-				<div
-					className={`flex items-center justify-between rounded-xl px-3 py-2 shadow  mt-2
-					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-					border border-white/30 dark:border-white/80 ${textColor}`}
-				>
-					<div className="flex items-center gap-2">
-						<PackageIcon
-							size={28}
-							color={theme === "dark" ? "white" : "#090c64"}
-							weight="duotone"
-						/>
-						<span className="font-bold text-[14px]">{t("ordiniInUscita")}</span>
-					</div>
-					<span className="text-sm opacity-70 leading-none font-semibold">
-						{orders?.items?.length ?? 0}
-					</span>
-				</div>
+  return (
+    <div
+      className="w-full h-full flex flex-col gap-8 overflow-y-auto
+      [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+    >
+      {/* Top statistics */}
+      <div className="grid grid-cols-5 gap-4 w-full">
+        {[
+          {
+            icon: WarehouseIcon,
+            label: t("depositi"),
+            value: pointOfSales?.list?.length ?? 0,
+          },
+          {
+            icon: ShoppingCartSimpleIcon,
+            label: t("prodotti"),
+            value: products?.list?.length ?? 0,
+          },
+          {
+            icon: PackageIcon,
+            label: t("ordiniInUscita"),
+            value: orders?.items?.length ?? 0,
+          },
+          {
+            icon: WarningOctagonIcon,
+            label: t("articoliSottoSoglia"),
+            value: lowStockProducts.length,
+          },
+          {
+            icon: UserCircleCheckIcon,
+            label: t("personaleAttivo"),
+            value: users?.list?.length ?? 0,
+          },
+        ].map(({ icon: Icon, label, value }) => (
+          <div
+            key={label}
+            className={`flex items-center justify-between rounded-xl px-3 py-2 shadow
+            bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm
+            border border-white/30 dark:border-white/80 ${textColor}`}
+          >
+            <div className="flex items-center gap-2">
+              <Icon
+                size={28}
+                color={theme === "dark" ? "white" : "#090c64"}
+                weight="duotone"
+              />
+              <span className="font-bold text-[14px]">{label}</span>
+            </div>
+            <span className="text-sm opacity-70 font-semibold">{value}</span>
+          </div>
+        ))}
+      </div>
 
-				<div
-					className={`flex items-center justify-between rounded-xl px-3 py-2 shadow  mt-2
-					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-					border border-white/30 dark:border-white/80 ${textColor}`}
-				>
-					<div className="flex items-center gap-2">
-						<WarningOctagonIcon
-							size={28}
-							color={theme === "dark" ? "white" : "#090c64"}
-							weight="duotone"
-						/>
-						<span className="font-bold text-[14px]">
-							{t("articoliSottoSoglia")}
-						</span>
-					</div>
-					<span className="text-sm opacity-70 leading-none font-semibold">
-						{lowStockProducts?.length ?? 0}
-					</span>
-				</div>
+      {/* Board and low stock sections */}
+      <div className="grid grid-cols-2 gap-6 w-full">
+        {/* Board */}
+        <div
+          className={`flex flex-col gap-4 p-4
+          bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm
+          border border-white/30 dark:border-white/80 rounded-xl shadow-md
+          ${textColor}`}
+        >
+          <div className="flex items-start gap-4">
+            <ChalkboardSimpleIcon
+              size={28}
+              color={theme === "dark" ? "white" : "#090c64"}
+              weight="duotone"
+            />
+            <h3 className="text-[14px] font-bold">{t("bacheca")}</h3>
 
-				<div
-					className={`flex items-center justify-between rounded-xl px-3 py-2 shadow  mt-2
-					bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-					border border-white/30 dark:border-white/80 ${textColor}`}
-				>
-					<div className="flex items-center gap-2">
-						<UserCircleCheckIcon
-							size={28}
-							color={theme === "dark" ? "white" : "#090c64"}
-							weight="duotone"
-						/>
-						<span className="font-bold text-[14px] ">
-							{t("personaleAttivo")}
-						</span>
-					</div>
-					<span className="text-sm opacity-70 leading-none font-semibold">
-						{users?.list?.length ?? 0}
-					</span>
-				</div>
-			</div>
+            <button
+              onClick={role === "admin" ? openDrawerAdd : undefined}
+              className={`custom-button ml-auto text-[14px] ${
+                role === "user" ? "invisible pointer-events-none" : ""
+              }`}
+            >
+              + {t("aggiungi")}
+            </button>
+          </div>
 
-			{/* Riga 2: 2 box - con un div che li contiene tutti, e a seguire i singoli box-div  */}
-			<div className="grid grid-cols-2 gap-6 mb-6 w-full transition-colors duration-500">
-				<div
-					className={`flex flex-col gap-4 p-4 
-	bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-	border border-white/30 dark:border-white/80 rounded-xl shadow-md 
-	${textColor}`}
-				>
-					{/* HEADER BACHECA */}
-					<div className="flex items-start gap-4 w-full">
-						<ChalkboardSimpleIcon
-							size={28}
-							color={theme === "dark" ? "white" : "#090c64"}
-							weight="duotone"
-						/>
+          <Table
+            data={boardPosts}
+            columns={boardColumns}
+            columnLabels={columnLabels}
+            actionLabel="Actions"
+            actions={
+              role === "admin"
+                ? [
+                    {
+                      name: "edit",
+                      icon: (
+                        <NotePencilIcon
+                          size={28}
+                          color={theme === "dark" ? "white" : "#090c64"}
+                          weight="duotone"
+                          className="mr-4"
+                        />
+                      ),
+                      onClick: openDrawerEdit,
+                    },
+                    {
+                      name: "delete",
+                      icon: (
+                        <TrashIcon
+                          size={28}
+                          color="#ff0000"
+                          weight="duotone"
+                        />
+                      ),
+                      onClick: handleDelete,
+                    },
+                  ]
+                : []
+            }
+          />
+        </div>
 
-						<h3 className="text-[14px] font-bold font-nunito">
-							{t("bacheca")}
-						</h3>
+        {/* Low stock products */}
+        <div
+          className={`flex flex-col gap-4 p-4
+          bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm
+          border border-white/30 dark:border-white/80 rounded-xl shadow-md
+          ${textColor}`}
+        >
+          <div className="flex items-start gap-4">
+            <ShoppingCartSimpleIcon
+              size={28}
+              color={theme === "dark" ? "white" : "#090c64"}
+              weight="duotone"
+            />
+            <h3 className="text-[14px] font-bold">
+              {t("prodottiInEsaurimento")}
+            </h3>
 
-						<button
-							onClick={role === "admin" ? openDrawerAdd : undefined}
-							className={`custom-button ml-auto text-[14px] ${
-								role === "user" ? "invisible pointer-events-none" : ""
-							}`}
-						>
-							+ {t("aggiungi")}
-						</button>
-					</div>
+            <button
+              onClick={() => navigate("/warehouse")}
+              className="ml-auto custom-button text-[14px]"
+            >
+              {t("vediTutti")}
+            </button>
+          </div>
 
-					{/* TABELLA */}
-					<div className="w-full h-full overflow-hidden">
-						<Table
-							data={boardPosts}
-							columns={boardColumns}
-							columnLabels={columnLabels}
-							actionLabel={"Actions"}
-							actions={
-								role === "admin"
-									? [
-											{
-												name: "edit",
-												icon: (
-													<NotePencilIcon
-														size={28}
-														color={theme === "dark" ? "white" : "#090c64"}
-														weight="duotone"
-														className="mr-4"
-													/>
-												),
-												onClick: openDrawerEdit,
-											},
-											{
-												name: "delete",
-												icon: (
-													<TrashIcon
-														size={28}
-														color={theme === "dark" ? "#ff4d4d" : "#ff0000"}
-														weight="duotone"
-													/>
-												),
-												onClick: handleDelete,
-											},
-									  ]
-									: []
-							}
-						/>
-					</div>
-				</div>
+          <Table
+            data={lowStockProducts.slice(0, 3).map((item) => ({
+              name: item.product.name,
+              stock: item.stock,
+              pos: item.pointOfSales.name,
+            }))}
+            columns={["name", "stock", "pos"]}
+            columnLabels={{
+              name: t("prodotto"),
+              stock: t("giacenza"),
+              pos: t("pos"),
+            }}
+          />
+        </div>
+      </div>
 
-				<div
-					className={`flex flex-col gap-4 p-4
-	bg-[#fafafa20] dark:bg-[#fafafa10] backdrop-blur-sm 
-	border border-white/30 dark:border-white/80 rounded-xl shadow-md 
-	${textColor}`}
-				>
-					{/* HEADER */}
-					<div className="flex items-start gap-4">
-						<ShoppingCartSimpleIcon
-							size={28}
-							color={theme === "dark" ? "white" : "#090c64"}
-							weight="duotone"
-						/>
+      {/* Calendar section */}
+      <div
+        className="bg-[#fafafa20] dark:bg-[#fafafa20] backdrop-blur-sm
+        border border-white/30 dark:border-white/80
+        rounded-xl p-6 shadow-md flex gap-4 min-h-[700px]"
+      >
+        <CalendarIcon
+          size={28}
+          color={theme === "dark" ? "white" : "#090c64"}
+          weight="duotone"
+        />
+        <div className="flex-1 flex flex-col">
+          <h3 className={`text-[14px] font-bold mb-4 ${textColor}`}>
+            {t("calendario")}
+          </h3>
+          <CalendarBox />
+        </div>
+      </div>
 
-						<h3 className="text-[14px] font-bold font-nunito">
-							{t("prodottiInEsaurimento")}
-						</h3>
-						<button
-							onClick={() => navigate("/warehouse")}
-							className="ml-auto px-4 py-2 bg-white dark:bg-[#090c64] text-[#090c64] dark:text-white shadow-md border border-white/20 transition-all duration-500 rounded-xl text-[14px] font-bold cursor-pointer custom-button"
-						>
-							{t("vediTutti")}
-						</button>
-					</div>
+      {/* Drawer for board events */}
+      <Drawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        title={
+          editData && editData._id
+            ? t("modificaEvento")
+            : t("aggiungiEvento")
+        }
+      >
+        {editData && (
+          <form onSubmit={handleSavePost} className="flex flex-col gap-4">
+            <input
+              className="custom-input"
+              placeholder={t("titolo")}
+              value={editData.title}
+              onChange={(e) =>
+                setEditData({ ...editData, title: e.target.value })
+              }
+            />
 
-					{/* TABELLA */}
-					<div className="w-full overflow-hidden h-full">
-						<Table
-							data={lowStockProducts.slice(0, 3).map((item) => ({
-								name: item.product.name,
-								stock: item.stock,
-								pos: item.pointOfSales.name,
-							}))}
-							columns={["name", "stock", "pos"]}
-							columnLabels={{
-								name: t("prodotto"),
-								stock: t("giacenza"),
-								pos: t("pos"),
-							}}
-						/>
-					</div>
-				</div>
-			</div>
+            <input
+              type="date"
+              className="custom-input"
+              value={editData.date}
+              onChange={(e) =>
+                setEditData({ ...editData, date: e.target.value })
+              }
+            />
 
-			{/* Riga 3: 1 box - Calendario */}
-			<div
-				className="bg-[#fafafa20] dark:bg-[#fafafa20] backdrop-blur-sm border border-white/30 dark:border-white/80
-	rounded-xl p-6 shadow-md flex items-start gap-4 mb-2 min-h-[700px]"
-			>
-				{/* Contenuto */}
-				<div className="flex-1 flex flex-col">
-					<div className="flex gap-4 justify-start items-start">
-						<CalendarIcon
-							size={28}
-							color={theme === "dark" ? "white" : "#090c64"}
-							weight="duotone"
-						/>
-						<h3
-							className={`text-[14px] font-bold font-nunito ${textColor} mb-4`}
-						>
-							{t("calendario")}
-						</h3>
-					</div>
+            <input
+              className="custom-input"
+              placeholder={t("descrizione")}
+              value={editData.description}
+              onChange={(e) =>
+                setEditData({
+                  ...editData,
+                  description: e.target.value,
+                })
+              }
+            />
 
-					<CalendarBox />
-				</div>
-			</div>
-
-			<Drawer
-				open={drawerOpen}
-				onClose={() => setDrawerOpen(false)}
-				title={
-					editData && editData._id ? t("modificaEvento") : t("aggiungiEvento")
-				}
-			>
-				{editData && (
-					<form onSubmit={handleSavePost} className="flex flex-col gap-4">
-						<div className="flex flex-col">
-							<label className="text-sm font-bold">{t("titolo")}</label>
-							<input
-								type="text"
-								value={editData.title}
-								placeholder={t("aggiungiEvento")}
-								onChange={(e) =>
-									setEditData({ ...editData, title: e.target.value })
-								}
-								className="custom-input"
-							/>
-						</div>
-
-						<div className="flex flex-col">
-							<label className="text-sm font-bold">{t("data")}</label>
-							<input
-								type="date"
-								value={editData.date}
-								placeholder="dd/mm/yyyy"
-								onChange={(e) =>
-									setEditData({ ...editData, date: e.target.value })
-								}
-								className="custom-input"
-							/>
-						</div>
-
-						<div className="flex flex-col">
-							<label className="text-sm font-bold">{t("descrizione")}</label>
-							<input
-								type="text"
-								value={editData.description}
-								placeholder={t("inserisciDescrizioneEvento")}
-								onChange={(e) =>
-									setEditData({ ...editData, description: e.target.value })
-								}
-								className="custom-input"
-							/>
-						</div>
-
-						<div className="flex justify-end gap-3 mt-4">
-							<button
-								type="button"
-								onClick={() => setDrawerOpen(false)}
-								className="custom-button-light"
-							>
-								{t("annulla")}
-							</button>
-
-							<button type="submit" className="custom-button">
-								{t("salva")}
-							</button>
-						</div>
-					</form>
-				)}
-			</Drawer>
-		</div>
-	);
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setDrawerOpen(false)}
+                className="custom-button-light"
+              >
+                {t("annulla")}
+              </button>
+              <button type="submit" className="custom-button">
+                {t("salva")}
+              </button>
+            </div>
+          </form>
+        )}
+      </Drawer>
+    </div>
+  );
 };
 
 export default BoardPage;

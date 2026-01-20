@@ -4,19 +4,26 @@ import {
   getItemById,
   createTickets,
   updateTickets,
-  deliteTickets,
+  deleteTickets,
 } from "../controllers/ticketing.js";
-import { requireAdmin } from "../middleware/roles.js";
 import { authUser } from "../middleware/auth.js";
+import { requireAdmin } from "../middleware/roles.js";
 
-// Router per ticketing
-const ticketingRouter = express.Router();
+const router = express.Router();
 
-// CRUD routes
-ticketingRouter.post("/", authUser, createTickets);
-ticketingRouter.get("/", authUser, getAllTickets);
-ticketingRouter.get("/:id",authUser, getItemById);
-ticketingRouter.put("/:id", authUser, requireAdmin, updateTickets);
-ticketingRouter.delete("/:id", authUser, requireAdmin, deliteTickets);
+// Create a new ticket (authenticated users)
+router.post("/", authUser, createTickets);
 
-export default ticketingRouter;
+// Get all tickets (authenticated users)
+router.get("/", authUser, getAllTickets);
+
+// Get a single ticket by ID (authenticated users)
+router.get("/:id", authUser, getItemById);
+
+// Update a ticket by ID (admin only)
+router.put("/:id", authUser, requireAdmin, updateTickets);
+
+// Delete a ticket by ID (admin only)
+router.delete("/:id", authUser, requireAdmin, deleteTickets);
+
+export default router;

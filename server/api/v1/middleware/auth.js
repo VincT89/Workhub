@@ -3,47 +3,47 @@ import { verifyAccessToken } from "../../../utils/auth.js";
 import { handleRouteErrors } from "../../../utils/error.js";
 import { formatResponse } from "../../../utils/format.js";
 
-/**
- * Middleware di autenticazione JWT
- * Controlla header Authorization: Bearer <token>
- */
+// JWT authentication middleware
 export const authUser = async (req, res, next) => {
   try {
-    const bearerToken = req.headers.authorization;
+    const authHeader = req.headers.authorization;
 
-    if (!bearerToken || !bearerToken.startsWith("Bearer ")) {
+    // Check Authorization header format
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res
         .status(401)
-        .json(formatResponse(null, false, "Not Authorized"));
+        .json(formatResponse(null, false, "Not authorized"));
     }
 
-    const token = bearerToken.split(" ")[1]; // Prendo il token dopo "Bearer " 
+    // Extract token from header
+    const token = authHeader.split(" ")[1];
 
-    let decoded; // Payload decodificato
+    let decoded;
     try {
-      decoded = verifyAccessToken(token); // Verifica e decodifica il token
-    } catch (err) {
-      // Token scaduto o non valido
+      // Verify and decode JWT
+      decoded = verifyAccessToken(token);
+    } catch {
       return res
         .status(401)
         .json(formatResponse(null, false, "Invalid or expired token"));
     }
 
-    // Cerco l'utente nel DB e tolgo la password dal risultato
+    // Load authenticated user without password
     const user = await User.findById(decoded._id, "-password").lean();
 
     if (!user) {
       return res
         .status(401)
-        .json(formatResponse(null, false, "Not Authorized"));
+        .json(formatResponse(null, false, "Not authorized"));
     }
 
-    // Metto l'utente sulla request per i controller successivi
+    // Attach auth data to request
     req.user = user;
     req.token = {
       accessToken: token,
       decoded,
-    }
+    };
+
     next();
   } catch (error) {
     return handleRouteErrors(res, { error });

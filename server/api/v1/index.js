@@ -12,63 +12,42 @@ import itemsRouter from "./routes/items.js";
 import customersRouter from "./routes/customers.js";
 import ticketingRouter from "./routes/ticketing.js";
 
-
-
 const app = express.Router();
 
-/**
- * /api/v1/users
- */
+// User management routes
 app.use("/users", userRouter);
 
-/**
- * /api/v1/auth
- */
+// Authentication routes
 app.use("/auth", authRouter);
 
-/**
- * /api/v1/me
- */
+// Logged-in user profile routes
 app.use("/me", meRouter);
 
-/** /api/v1/pointsofsales
- */
+// Points of sale routes
 app.use("/pointsofsales", pointOfSalesRouter);
 
-/** /api/v1/userShift
- */
+// User shift management routes
 app.use("/shifts", userShiftRouter);
 
-/** /api/v1/leaves
-*/
+// User leave management routes
 app.use("/leaves", userLeaveRouter);
 
-/**
- * /api/v1/events
- */
-app.use("/events", eventRouter); 
+// Event management routes
+app.use("/events", eventRouter);
 
-/** /api/v1/orders
- */
-app.use("/orders", orderRouter)
+// Order management routes
+app.use("/orders", orderRouter);
 
-/** /api/v1/products
- */
+// Product catalog routes
 app.use("/products", productRouter);
 
-/**
- * /api/v1/items
- */
-app.use("/items", itemsRouter); 
+// Warehouse item routes
+app.use("/items", itemsRouter);
 
-/**
- * /api/v1/customers
- */
+// Customer management routes
 app.use("/customers", customersRouter);
 
-/** /api/v1/ticketing
-*/
+// Ticketing system routes
 app.use("/ticketing", ticketingRouter);
-
 
 export default app;

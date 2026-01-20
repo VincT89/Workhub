@@ -9,37 +9,21 @@ import {
 import { authUser } from "../middleware/auth.js";
 import { requireAdmin } from "../middleware/roles.js";
 
-const app = express.Router();
+const router = express.Router();
 
-/**
- * PATCH /api/v1/users/password
- * Cambia la password del PROPRIO account
- */
-app.patch("/password", authUser, changePasswordByEmail); // middleware authUser per autenticare l'utente e poi controller changePasswordByEmail
+// Change password of the authenticated user
+router.patch("/password", authUser, changePasswordByEmail);
 
-/**
- * GET /api/v1/users
- * Solo admin
- */
-app.get("/", authUser, requireAdmin, listUsers); // solo admin dopo il path ci sono i middleware authUser e requireAdmin e poi il controller listUsers
+// Get all users (admin only)
+router.get("/", authUser, requireAdmin, listUsers);
 
-/**
- * GET /api/v1/users/:id
- * Solo admin
- */
-app.get("/:id", authUser, requireAdmin, getUserById); // solo admin dopo il path ci sono i middleware authUser e requireAdmin e poi il controller getUserById
+// Get user by ID (admin only)
+router.get("/:id", authUser, requireAdmin, getUserById);
 
-/**
- * PATCH /api/v1/users/:id
- * Solo admin (per ora)
- */
-app.patch("/:id", authUser, updateUser); // solo admin dopo il path ci sono i middleware authUser e requireAdmin e poi il controller updateUser
+// Update user by ID (admin only)
+router.patch("/:id", authUser, requireAdmin, updateUser);
 
-/**
- * DELETE /api/v1/users/:id
- * Solo admin
- */
-app.delete("/:id", authUser, requireAdmin, deleteUser); // solo admin dopo il path ci sono i middleware authUser e requireAdmin e poi il controller deleteUser
+// Delete user by ID (admin only)
+router.delete("/:id", authUser, requireAdmin, deleteUser);
 
-
-export default app;
+export default router;

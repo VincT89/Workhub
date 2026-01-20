@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-// Import models
+
 import UserModel from './models/User.js';
 import PointOfSalesModel from './models/PointOfSales.js';
 import ItemModel from './models/Item.js';

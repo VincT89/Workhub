@@ -1,6 +1,6 @@
 import { API_URL } from "../config/api";
 
-/* CREATE (auth/register) */
+// Create a new user (auth/register)
 export const createUserRequest = async ({ newUser, token }) => {
   const response = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
@@ -15,27 +15,31 @@ export const createUserRequest = async ({ newUser, token }) => {
   return { response, data };
 };
 
-/* GET ALL USERS */
+// Fetch all users
 export const fetchUsersRequest = async (token) => {
   const response = await fetch(`${API_URL}/users`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   const data = await response.json();
   return { response, data };
 };
 
-/* GET USER BY ID */
+// Fetch user by ID
 export const fetchUserByIdRequest = async ({ id, token }) => {
   const response = await fetch(`${API_URL}/users/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   const data = await response.json();
   return { response, data };
 };
 
-/* UPDATE USER */
+// Update user by ID
 export const updateUserRequest = async ({ id, updates, token }) => {
   const response = await fetch(`${API_URL}/users/${id}`, {
     method: "PATCH",
@@ -50,11 +54,13 @@ export const updateUserRequest = async ({ id, updates, token }) => {
   return { response, data };
 };
 
-/* DELETE USER */
+// Delete user by ID
 export const deleteUserRequest = async ({ id, token }) => {
   const response = await fetch(`${API_URL}/users/${id}`, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   const data = await response.json();

@@ -1,8 +1,11 @@
 import { API_URL } from "../config/api";
 
-// === FETCH ALL POS ===
+// Base Points Of Sales endpoint
+const POS_URL = `${API_URL}/pointsofsales`;
+
+// Fetch all points of sale (GET)
 export const fetchPointsOfSalesRequest = async ({ token }) => {
-  const res = await fetch(`${API_URL}/pointsofsales`, {
+  const res = await fetch(POS_URL, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -12,9 +15,9 @@ export const fetchPointsOfSalesRequest = async ({ token }) => {
   return { res, data };
 };
 
-// === CREATE POS ===
+// Create a new point of sale (POST)
 export const createPointOfSaleRequest = async ({ newPos, token }) => {
-  const res = await fetch(`${API_URL}/pointsofsales`, {
+  const res = await fetch(POS_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -27,9 +30,9 @@ export const createPointOfSaleRequest = async ({ newPos, token }) => {
   return { res, data };
 };
 
-// === UPDATE POS ===
+// Update an existing point of sale (PATCH)
 export const updatePointOfSaleRequest = async ({ id, updates, token }) => {
-  const res = await fetch(`${API_URL}/pointsofsales/${id}`, {
+  const res = await fetch(`${POS_URL}/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -42,9 +45,9 @@ export const updatePointOfSaleRequest = async ({ id, updates, token }) => {
   return { res, data };
 };
 
-// === DELETE POS ===
+// Delete a point of sale by ID (DELETE)
 export const deletePointOfSaleRequest = async ({ id, token }) => {
-  const res = await fetch(`${API_URL}/pointsofsales/${id}`, {
+  const res = await fetch(`${POS_URL}/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,

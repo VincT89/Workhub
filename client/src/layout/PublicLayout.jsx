@@ -9,23 +9,28 @@ import iconLogo from "../assets/logo/logoVuoto.png";
 import iconLogo2 from "../assets/logo/LogoCompletoSenzaBg.png";
 import iconChiusa from "../assets/logo/iconaLogo.png";
 import iconChiusaDark from "../assets/logo/iconaLogoChiara.png";
+
 import Topbar from "../components/Topbar";
 import Sidebar from "../components/Sidebar";
 
 const PublicLayout = () => {
   const { theme } = useTheme();
+
+  // Background image based on theme
   const bgImage = theme === "dark" ? bgDark : bgLight;
+
+  // Sidebar open / close state
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
     <>
-      {/* ===== BACKGROUND ===== */}
+      {/* Background layer */}
       <div
         className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10 transition-opacity duration-700"
         style={{ backgroundImage: `url(${bgImage})` }}
       />
 
-      {/* ===== SIDEBAR ===== */}
+      {/* Sidebar */}
       {sidebarOpen && (
         <aside
           className={`
@@ -40,7 +45,7 @@ const PublicLayout = () => {
             flex flex-col w-[200px] md:w-[220px] py-2 px-4
           `}
         >
-          {/* LOGO */}
+          {/* Sidebar logo (click to close) */}
           <div
             className="flex flex-col items-center gap-3 cursor-pointer mb-8"
             onClick={() => setSidebarOpen(false)}
@@ -52,18 +57,20 @@ const PublicLayout = () => {
             />
           </div>
 
-          {/* NAVIGATION */}
+          {/* Sidebar navigation */}
           <div className="flex-1 w-full">
             <Sidebar />
           </div>
         </aside>
       )}
 
-      {/* ===== LOGO QUANDO SIDEBAR CHIUSA ===== */}
+      {/* Floating logo when sidebar is closed */}
       {!sidebarOpen && (
         <div
-          className="fixed top-6 left-6 z-50 cursor-pointer transition-transform duration-500 hover:scale-105 
-          border border-white/90 backdrop-blur-sm rounded-full bg-white/10 shadow-md"
+          className="fixed top-6 left-6 z-50 cursor-pointer
+            transition-transform duration-500 hover:scale-105
+            border border-white/90 backdrop-blur-sm
+            rounded-full bg-white/10 shadow-md"
           onClick={() => setSidebarOpen(true)}
         >
           <img
@@ -74,10 +81,10 @@ const PublicLayout = () => {
         </div>
       )}
 
-      {/* ===== CONTENUTO CENTRALE (SCROLLABILE) ===== */}
+      {/* Main content area */}
       <section
         className={`
-          transition-all duration-500 ease-in-out 
+          transition-all duration-500 ease-in-out
           ${sidebarOpen ? "ml-[220px] md:ml-[215px]" : "ml-20 md:ml-[90px]"}
           mt-6 mb-6
           overflow-y-auto
@@ -86,12 +93,12 @@ const PublicLayout = () => {
           ${theme === "dark" ? "text-white" : "text-[#090c64]"}
         `}
       >
-        {/* TOPBAR sopra al contenuto, scorre con la pagina */}
+        {/* Topbar (scrolls with content) */}
         <div className="mb-6">
           <Topbar />
         </div>
 
-        {/* CONTENUTO DELLE PAGINE */}
+        {/* Routed page content */}
         <Outlet />
       </section>
     </>

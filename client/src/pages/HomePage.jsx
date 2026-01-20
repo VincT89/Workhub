@@ -12,6 +12,7 @@ const HomePage = () => {
   const { theme } = useTheme();
   const { t } = useLanguage();
 
+  // Theme-based assets and text color
   const backgroundImage = theme === "dark" ? bgDark : bgLight;
   const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 
@@ -20,19 +21,19 @@ const HomePage = () => {
       className="w-full min-h-screen flex justify-center items-center relative overflow-hidden 
       bg-white dark:bg-black transition-colors duration-500"
     >
-      {/* Background */}
+      {/* Background image */}
       <img
         className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
         alt="Background gradient"
         src={backgroundImage}
       />
 
-      {/* Liquid Glass Overlay */}
+      {/* Glass overlay container */}
       <div
         className="absolute top-[5%] left-[10%] w-[80%] max-w-[90%] h-[90%] transition-all duration-500"
       />
 
-      {/* Logo */}
+      {/* Main logo */}
       <img
         className="absolute top-[32%] sm:top-[34%] md:top-[27%] left-1/2 md:left-[45%] transform -translate-x-1/2 
         w-[70%] sm:w-[60%] md:w-[45%] lg:w-[35%] max-w-[599px] h-auto aspect-[1.82] object-cover"
@@ -40,16 +41,16 @@ const HomePage = () => {
         src={theme === "dark" ? logoDark : Logo}
       />
 
-      {/* Frase */}
+      {/* Slogan text */}
       <h1
         className={`absolute top-[54%] sm:top-[58%] left-1/2 transform -translate-x-1/2 text-center
-         text-xl sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-normal 
+        text-xl sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-normal 
         leading-normal whitespace-nowrap transition-colors duration-500 ${textColor}`}
       >
-        {t("slogan")}        
+        {t("slogan")}
       </h1>
 
-      {/* Bottone di Benvenuto */}
+      {/* Welcome button */}
       <Link
         to="/login"
         role="button"
@@ -60,12 +61,10 @@ const HomePage = () => {
         cursor-pointer transition-colors duration-300 ${textColor} 
         hover:bg-white/30 hover:backdrop-blur-sm hover:shadow-lg`}
       >
-        {t("benvenuto")}      
+        {t("benvenuto")}
       </Link>
     </main>
   );
 };
-
-      
 
 export default HomePage;

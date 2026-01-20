@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
+
 import { loginAsync, setLoginData } from "../store/feature/authSlice";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 
 import bgLight from "../assets/bg/bg.jpg";
 import bgDark from "../assets/bg/bgScuro.jpg";
-import iconLogo from "../assets/logo/iconaLogo.png";
-import iconLogoDark from "../assets/logo/iconaLogoChiara.png";
-import { Eye, EyeSlash } from "@phosphor-icons/react";
+import logoLight from "../assets/logo/iconaLogo.png";
+import logoDark from "../assets/logo/iconaLogoChiara.png";
 
 const LoginPage = () => {
   const { theme } = useTheme();
@@ -17,63 +18,92 @@ const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { user, token, is2FARequired, loading, error } = useSelector((state) => state.auth);
+  // Auth state from redux
+  const { user, token, is2FARequired, loading, error } = useSelector(
+    (state) => state.auth
+  );
 
+  // Local form state
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const backgroundImage = theme === "dark" ? bgDark : bgLight;
+  // Theme-based assets and styles
+  const isDark = theme === "dark";
+  const backgroundImage = isDark ? bgDark : bgLight;
+  const logo = isDark ? logoDark : logoLight;
+  const textColor = isDark ? "text-white" : "text-[#090c64]";
 
+  // Submit login credentials
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!username || !password) return;
     dispatch(loginAsync({ username, password, code: null }));
   };
 
-   useEffect(() => {
+  // Handle authentication flow and redirects
+  useEffect(() => {
     if (token && user && !is2FARequired) {
       navigate("/board");
-    } else if (is2FARequired) {
+      return;
+    }
+
+    if (is2FARequired) {
       dispatch(setLoginData({ username, password }));
       navigate("/twofa");
     }
-  }, [token, user, is2FARequired, navigate]);
-
-  const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
+  }, [
+    token,
+    user,
+    is2FARequired,
+    navigate,
+    dispatch,
+    username,
+    password,
+  ]);
 
   return (
-    <main className="w-full min-h-screen flex justify-center items-center relative overflow-hidden 
-      bg-white dark:bg-black transition-colors duration-500 ">
-      {/* Background */}
+    <main
+      className="w-full min-h-screen flex justify-center items-center relative overflow-hidden
+      bg-white dark:bg-black transition-colors duration-500"
+    >
+      {/* Background image */}
       <img
-        className="absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-700"
-        alt="Background"
         src={backgroundImage}
+        alt="Background"
+        className="absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-700"
       />
 
-      {/* Overlay */}
+      {/* Glass overlay */}
       <div
-        className="absolute w-[822px] h-[659px] lg:w-[60vw] lg:h-[90vh] md:w-[90vw] md:h-[70vh]  
-        bg-white/20 dark:bg-white/10 backdrop-blur-sm
-        border border-white/30 dark:border-white/90 rounded-[25px] shadow-md
-        transition-all duration-700"
+        className="
+          absolute w-[822px] h-[659px]
+          lg:w-[60vw] lg:h-[90vh]
+          md:w-[90vw] md:h-[70vh]
+          bg-white/20 dark:bg-white/10 backdrop-blur-sm
+          border border-white/30 dark:border-white/90
+          rounded-[25px] shadow-md
+          transition-all duration-700
+        "
       />
 
-      {/* Form */}
+      {/* Login form */}
       <form
         onSubmit={handleSubmit}
-        className="relative flex flex-col items-center z-20 w-full max-w-[822px] px-6 py-10"
+        className="relative z-20 w-full max-w-[822px] px-6 py-10
+        flex flex-col items-center"
       >
-        {/* Logo + Titolo */}
+        {/* Logo and title */}
         <div className="flex items-center justify-center gap-8 mb-8">
           <Link to="/">
             <img
-              className="w-[120px] h-[114px] drop-shadow-lg transition-transform duration-300 hover:scale-105"
+              src={logo}
               alt="Logo"
-              src={theme === "dark" ? iconLogoDark : iconLogo}
+              className="w-[120px] h-[114px] drop-shadow-lg
+              transition-transform duration-300 hover:scale-105"
             />
           </Link>
+
           <div className="text-center">
             <span
               className={`text-4xl font-bold font-nunito uppercase transition-colors duration-500 ${textColor}`}
@@ -82,21 +112,21 @@ const LoginPage = () => {
             </span>
             <br />
             <span
-              className={`font-bold font-nunito text-sm transition-colors duration-500 ${textColor}`}
+              className={`text-sm font-bold font-nunito transition-colors duration-500 ${textColor}`}
             >
               {t("credenzialiDemo")}
             </span>
           </div>
         </div>
 
-        {/* Messaggio di errore */}
+        {/* Error feedback */}
         {error && (
           <p className="text-[#DC2626] font-bold mt-3 mb-2 animate-pulse text-center">
             {error}
           </p>
         )}
 
-        {/* Username */}
+        {/* Username input */}
         <div className="m-4 w-full sm:w-[486px]">
           <label
             htmlFor="username"
@@ -104,19 +134,19 @@ const LoginPage = () => {
           >
             {t("username")}
           </label>
+
           <input
             id="username"
-            name="username"
             type="text"
             autoComplete="username"
             required
-            className="custom-input w-full"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            className="custom-input w-full"
           />
         </div>
 
-        {/* Password */}
+        {/* Password input */}
         <div className="relative m-2 w-full sm:w-[486px]">
           <label
             htmlFor="password"
@@ -124,58 +154,40 @@ const LoginPage = () => {
           >
             {t("password")}
           </label>
+
           <input
             id="password"
-            name="password"
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
             required
-            className="custom-input w-full"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className="custom-input w-full"
           />
+
           <button
             type="button"
-            onClick={() => setShowPassword((s) => !s)}
-            className="absolute top-[75%] right-4 transform -translate-y-1/2 w-[30px] h-[30px] z-20 cursor-pointer flex items-center justify-center"
+            onClick={() => setShowPassword((v) => !v)}
+            className="absolute top-[75%] right-4 -translate-y-1/2
+            w-[30px] h-[30px] flex items-center justify-center cursor-pointer"
           >
             {showPassword ? (
-              <Eye
+              <EyeIcon
                 size={24}
-                color={theme === "dark" ? "#fff" : "#090c64"}
+                color={isDark ? "#fff" : "#090c64"}
                 weight="duotone"
               />
             ) : (
-              <EyeSlash
+              <EyeSlashIcon
                 size={24}
-                color={theme === "dark" ? "#fff" : "#090c64"}
+                color={isDark ? "#fff" : "#090c64"}
                 weight="duotone"
               />
             )}
           </button>
         </div>
 
-        {/* Codice 2FA
-        <div className="m-4 w-full sm:w-[486px]">
-          <label
-            htmlFor="token2fa"
-            className={`block text-[18px] font-bold font-nunito mb-2 ${textColor}`}
-          >
-            {t("autenticazione2FA")}
-          </label>
-          <input
-            id="token2fa"
-            name="token2fa"
-            type="text"
-            autoComplete="one-time-code"
-            className="custom-input w-full"
-            value={token2fa}
-            onChange={(e) => setToken2fa(e.target.value)}
-            placeholder={t("inserisciCodice2FA")}
-          />
-        </div> */}
-
-        {/* Password dimenticata */}
+        {/* Password recovery link */}
         <div className="w-[63%] flex justify-end">
           <Link
             to="/forgot-password"
@@ -185,7 +197,7 @@ const LoginPage = () => {
           </Link>
         </div>
 
-        {/* Bottone Login */}
+        {/* Submit button */}
         <button
           type="submit"
           disabled={loading}

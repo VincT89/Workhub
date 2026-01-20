@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginAsync, setIs2FARequired, setLoginData } from "../store/feature/authSlice";
+import {
+  loginAsync,
+  setIs2FARequired,
+  setLoginData,
+} from "../store/feature/authSlice";
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -16,38 +20,54 @@ const TwoFA = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { user, token, loginData: { username, password }, loading, error } = useSelector((state) => state.auth);
+  // Authentication state with temporary login credentials
+  const {
+    user,
+    token,
+    loading,
+    error,
+    loginData: { username, password },
+  } = useSelector((state) => state.auth);
+
+  // 2FA code input state
   const [code, setCode] = useState("");
 
+  // Theme-based UI values
   const backgroundImage = theme === "dark" ? bgDark : bgLight;
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!username || !password) navigate("/login");
-    dispatch(loginAsync({ username, password, code })); // invio anche il codice 2FA
-    dispatch(setLoginData({ username: null, password: null })); // reset credenziali
-    dispatch(setIs2FARequired(false)); // reset flag 2FA richiesta
-  };
-
-   useEffect(() => {
-    if (token && user) {
-      navigate("/board");
-    } 
-  }, [token, user, navigate]);
-
   const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 
+  // Handles 2FA form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!username || !password) {
+      navigate("/login");
+      return;
+    }
+
+    dispatch(loginAsync({ username, password, code }));
+    dispatch(setLoginData({ username: null, password: null }));
+    dispatch(setIs2FARequired(false));
+  };
+
+  // Redirects user after successful authentication
+  useEffect(() => {
+    if (token && user) {
+      navigate("/board");
+    }
+  }, [token, user, navigate]);
+
   return (
-    <main className="w-full min-h-screen flex justify-center items-center relative overflow-hidden 
-      bg-white dark:bg-black transition-colors duration-500 ">
-      {/* Background */}
+    <main
+      className="w-full min-h-screen flex justify-center items-center relative overflow-hidden 
+      bg-white dark:bg-black transition-colors duration-500"
+    >
       <img
         className="absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-700"
         alt="Background"
         src={backgroundImage}
       />
 
-      {/* Overlay */}
       <div
         className="absolute w-[822px] h-[659px] lg:w-[60vw] lg:h-[90vh] md:w-[90vw] md:h-[70vh]  
         bg-white/20 dark:bg-white/10 backdrop-blur-sm
@@ -55,12 +75,10 @@ const TwoFA = () => {
         transition-all duration-700"
       />
 
-      {/* Form */}
       <form
         onSubmit={handleSubmit}
         className="relative flex flex-col items-center z-20 w-full max-w-[822px] px-6 py-10"
       >
-        {/* Logo + Titolo */}
         <div className="flex items-center justify-center gap-8 mb-8">
           <Link to="/">
             <img
@@ -69,6 +87,7 @@ const TwoFA = () => {
               src={theme === "dark" ? iconLogoDark : iconLogo}
             />
           </Link>
+
           <div className="text-center">
             <span
               className={`text-4xl font-bold font-nunito uppercase transition-colors duration-500 ${textColor}`}
@@ -84,13 +103,12 @@ const TwoFA = () => {
           </div>
         </div>
 
-        {/* Messaggio di errore */}
         {error && (
           <p className="text-[#DC2626] font-bold mt-3 mb-2 animate-pulse text-center">
             {error}
           </p>
         )}
-        {/* Codice 2FA */}
+
         <div className="m-4 w-full sm:w-[486px]">
           <label
             htmlFor="token2fa"
@@ -98,9 +116,9 @@ const TwoFA = () => {
           >
             {t("autenticazione2FA")}
           </label>
+
           <input
             id="token2fa"
-            name="token2fa"
             type="text"
             autoComplete="one-time-code"
             className="custom-input w-full"
@@ -108,9 +126,8 @@ const TwoFA = () => {
             onChange={(e) => setCode(e.target.value)}
             placeholder={t("inserisciCodice2FA")}
           />
-        </div> 
+        </div>
 
-        {/* Bottone Login */}
         <button
           type="submit"
           disabled={loading}

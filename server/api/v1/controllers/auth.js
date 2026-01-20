@@ -1,30 +1,30 @@
-import Joi from "joi";
-import { handleRouteErrors } from "../../../utils/error.js";
+import Joi from "joi"; 
+import { handleRouteErrors } from "../../../utils/error.js"; 
 import { formatResponse } from "../../../utils/format.js";
 import {
-	comparePassword,
-	generateAccessToken,
-	hashPassword,
-	generateTempPassword,
+	comparePassword, 
+	generateAccessToken, 
+	hashPassword, 
+	generateTempPassword, 
 } from "../../../utils/auth.js";
 import { User } from "../../../db/index.js";
-import { generate2FASecret, verify2FAToken } from "../services/twofa.js";
+import { generate2FASecret, verify2FAToken } from "../services/twofa.js"; 
 
 /**
- * LOGIN dipendente
+ * LOGIN employee
  * POST /api/v1/auth/login
  * body: { username, password, token? }
+ * Authenticates a user, checks credentials, and handles 2FA if enabled.
  */
 export const login = async (req, res) => {
 	const schema = Joi.object({
-		username: Joi.string().required(),
-		password: Joi.string().required(),
-		// code opzionale o vuoto
+		username: Joi.string().required(), 
+		password: Joi.string().required(), 
 		code: Joi.string().allow("", null).optional(),
 	});
 
 	try {
-		const { value, error } = schema.validate(req.body);
+		const { value, error } = schema.validate(req.body); 
 		if (error) {
 			return res
 				.status(400)
@@ -33,7 +33,7 @@ export const login = async (req, res) => {
 
 		const { username, password, code } = value;
 
-		const userDoc = await User.findOne({ username }).select("+password");
+		const userDoc = await User.findOne({ username }).select("+password"); 
 		if (!userDoc) {
 			return res
 				.status(401)
@@ -46,16 +46,16 @@ export const login = async (req, res) => {
 				.json(formatResponse(null, false, "User is disabled"));
 		}
 
-		const isValid = await comparePassword(password, userDoc.password);
+		const isValid = await comparePassword(password, userDoc.password); 
 		if (!isValid) {
 			return res
 				.status(401)
 				.json(formatResponse(null, false, "Invalid credentials"));
 		}
 
-		// Se 2FA è abilitato → token obbligatorio
+		// If 2FA is enabled, require code
 		if (userDoc.twofaEnabled) {
-			// 2FA abilitato
+			// 2FA enabled
 			if (!code) {
 				return res
 					.status(200)
@@ -64,7 +64,7 @@ export const login = async (req, res) => {
 					);
 			}
 
-			const result = verify2FAToken(userDoc.twofaSecret, code);
+			const result = verify2FAToken(userDoc.twofaSecret, code); // Verify 2FA code
 			if (!result || Math.abs(result.delta) > 1) {
 				return res
 					.status(401)
@@ -75,16 +75,16 @@ export const login = async (req, res) => {
 		await userDoc.populate({
 			path: "workplace",
 			select: "name location",
-		});
+		}); 
 
 		const user = userDoc.toObject();
-		delete user.password;
+		delete user.password; 
 
 		const jwtToken = generateAccessToken({
 			_id: userDoc._id.toString(),
 			role: user.role,
 			twofaVerified: userDoc.twofaEnabled ? true : false,
-		});
+		}); 
 
 		return res.status(200).json(
 			formatResponse(
@@ -97,31 +97,32 @@ export const login = async (req, res) => {
 			)
 		);
 	} catch (error) {
-		return handleRouteErrors(res, { error });
+		return handleRouteErrors(res, { error }); 
 	}
 };
 
 /**
- * REGISTER nuovo utente (solo ADMIN)
+ * REGISTER new user (ADMIN only)
  * POST /api/v1/auth/register
+ * Registers a new user, only accessible by admin.
  */
 export const register = async (req, res) => {
 	const schema = Joi.object({
 		email: Joi.string().email().required(),
-		username: Joi.string().min(3).required(),
-		firstName: Joi.string().required(),
-		lastName: Joi.string().required(),
-		role: Joi.string().valid("admin", "user").default("user"),
-		department: Joi.string().optional(),
-		password: Joi.string().min(6).optional(),
-		isGeneratedPassword: Joi.boolean().optional(),
-		personnelNumber: Joi.number().required(),
-		phone: Joi.number().optional(),
-		workplace: Joi.string().required(),
+		username: Joi.string().min(3).required(), 
+		firstName: Joi.string().required(), 
+		lastName: Joi.string().required(), 
+		role: Joi.string().valid("admin", "user").default("user"), 
+		department: Joi.string().optional(), 
+		password: Joi.string().min(6).optional(), 
+		isGeneratedPassword: Joi.boolean().optional(), 
+		personnelNumber: Joi.number().required(), 
+		phone: Joi.number().optional(), 
+		workplace: Joi.string().required(), 
 		contractType: Joi.string()
 			.valid("indeterminato", "determinato", "part-time")
-			.optional(),
-		hireDate: Joi.date().optional(),
+			.optional(), 
+		hireDate: Joi.date().optional(), 
 	});
 
 	try {
@@ -149,7 +150,7 @@ export const register = async (req, res) => {
 
 		const existing = await User.findOne({
 			$or: [{ email }, { username }, { personnelNumber }],
-		});
+		}); 
 
 		if (existing) {
 			return res
@@ -176,7 +177,7 @@ export const register = async (req, res) => {
 		}
 
 		const plainPassword = password || generateTempPassword(10);
-		const hashedPassword = await hashPassword(plainPassword);
+		const hashedPassword = await hashPassword(plainPassword); 
 
 		const newUserDoc = await User.create({
 			email,
@@ -192,10 +193,10 @@ export const register = async (req, res) => {
 			workplace,
 			contractType,
 			hireDate,
-		});
+		}); 
 
 		const newUser = newUserDoc.toObject();
-		delete newUser.password;
+		delete newUser.password; 
 
 		return res.status(201).json(
 			formatResponse(
@@ -208,22 +209,23 @@ export const register = async (req, res) => {
 			)
 		);
 	} catch (error) {
-		return handleRouteErrors(res, { error });
+		return handleRouteErrors(res, { error }); 
 	}
 };
 
 /**
  * RECOVER PASSWORD
  * POST /api/v1/auth/recover
+ * Generates a temporary password for the user and updates their account.
  */
 export const recoverPassword = async (req, res) => {
 	const schema = Joi.object({
-		email: Joi.string().email().allow(null, ""),
-		username: Joi.string().allow(null, ""),
+		email: Joi.string().email().allow(null, ""), 
+		username: Joi.string().allow(null, ""), 
 	});
 
 	try {
-		const { value, error } = schema.validate(req.body);
+		const { value, error } = schema.validate(req.body); 
 		if (error) {
 			return res
 				.status(400)
@@ -237,15 +239,15 @@ export const recoverPassword = async (req, res) => {
 				.json(formatResponse(null, false, "Provide email or username"));
 		}
 
-		const userDoc = await User.findOne({ $or: [{ email }, { username }] });
+		const userDoc = await User.findOne({ $or: [{ email }, { username }] }); 
 		if (!userDoc) {
 			return res
 				.status(404)
 				.json(formatResponse(null, false, "User not found"));
 		}
 
-		const tempPassword = generateTempPassword(10);
-		const hashedPassword = await hashPassword(tempPassword);
+		const tempPassword = generateTempPassword(10); 
+		const hashedPassword = await hashPassword(tempPassword); 
 
 		userDoc.password = hashedPassword;
 		userDoc.isGeneratedPassword = true;
@@ -262,22 +264,22 @@ export const recoverPassword = async (req, res) => {
 			)
 		);
 	} catch (error) {
-		return handleRouteErrors(res, { error });
+		return handleRouteErrors(res, { error }); 
 	}
 };
 
 /**
  * ENABLE 2FA
  * PATCH /api/v1/auth/enable-2fa
+ * Enables two-factor authentication for the user and returns QR code info.
  */
-
 export const enable2FA = async (req, res) => {
 	const schema = Joi.object({
-		code: Joi.string().optional(),
+		code: Joi.string().optional(), // Optional code
 	});
 
 	try {
-		const { value, error } = schema.validate(req.body || {});
+		const { value, error } = schema.validate(req.body || {}); 
 		if (error) {
 			return res
 				.status(400)
@@ -286,20 +288,19 @@ export const enable2FA = async (req, res) => {
 
 		const { code } = value;
 
-		const user = await User.findById(req.user._id);
+		const user = await User.findById(req.user._id); 
 		if (!user) {
 			return res
 				.status(404)
 				.json(formatResponse(null, false, "User not found"));
 		}
 
-		// genera QR
-
+		// Generate QR code and secret for 2FA
 		const secret = await generate2FASecret(user.username);
 
 		user.twofaSecret = secret.secret;
 		user.twofaEnabled = true;
-		await user.save();
+		await user.save(); 
 
 		return res
 			.status(200)
@@ -311,17 +312,18 @@ export const enable2FA = async (req, res) => {
 				)
 			);
 	} catch (error) {
-		return handleRouteErrors(res, { error });
+		return handleRouteErrors(res, { error }); 
 	}
 };
 
 /**
  * DISABLE 2FA
  * PATCH /api/v1/auth/disable-2fa
+ * Disables two-factor authentication for the user.
  */
 export const disable2FA = async (req, res) => {
 	try {
-		const user = await User.findById(req.user._id);
+		const user = await User.findById(req.user._id); 
 		if (!user) {
 			return res
 				.status(404)
@@ -330,7 +332,7 @@ export const disable2FA = async (req, res) => {
 
 		user.twofaSecret = null;
 		user.twofaEnabled = false;
-		await user.save();
+		await user.save(); 
 
 		return res
 			.status(200)

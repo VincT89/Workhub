@@ -1,43 +1,29 @@
 import express from "express";
 import {
   getUserLeaves,
+  getUserLeavesByAdmin,
   createLeaveRequest,
   updateLeaveStatus,
   initUserLeave,
-  getUserLeavesByAdmin,
 } from "../controllers/userLeave.js";
 import { authUser } from "../middleware/auth.js";
 import { requireAdmin } from "../middleware/roles.js";
 
-const app = express.Router();
+const router = express.Router();
 
-/**
- * GET /api/v1/leaves
- * Restituisce il record ferie/permessi dell’utente autenticato
- */
-app.get("/", authUser, getUserLeaves);
+// Get leave record of the authenticated user
+router.get("/", authUser, getUserLeaves);
 
-/** GET /api/v1/leaves/:userId
- * Restituisce il record ferie/permessi di un utente specifico (solo admin)
- */
-app.get("/:userId", authUser, requireAdmin, getUserLeavesByAdmin);
+// Get leave record of a specific user (admin only)
+router.get("/:userId", authUser, requireAdmin, getUserLeavesByAdmin);
 
-/**
- * POST /api/v1/leaves/request
- * Crea una richiesta ferie/permesso
- */
-app.post("/request", authUser, createLeaveRequest);
+// Create a new leave request (authenticated user)
+router.post("/request", authUser, createLeaveRequest);
 
-/**
- * PATCH /api/v1/leaves/:requestId/status
- * Aggiorna lo stato della richiesta
- */
-app.patch("/:requestId/status", authUser, requireAdmin, updateLeaveStatus);
+// Update leave request status (admin only)
+router.patch("/:requestId/status", authUser, requireAdmin, updateLeaveStatus);
 
-/**
- * POST /api/v1/leaves/init/:userId
- * Inizializza record UserLeave per utenti già esistenti
- */
-app.post("/init/:userId", authUser, initUserLeave);
+// Initialize leave record for an existing user (admin only)
+router.post("/init/:userId", authUser, requireAdmin, initUserLeave);
 
-export default app;
+export default router;

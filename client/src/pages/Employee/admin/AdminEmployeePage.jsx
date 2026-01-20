@@ -1,14 +1,13 @@
 import { useTheme } from "../../../context/ThemeContext.jsx";
 import { useLanguage } from "../../../context/LanguageContext.jsx";
 import {
-  UserCircleIcon,
-  NotePencilIcon,
   UsersThreeIcon,
   UserCircleMinusIcon,
+  NotePencilIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
-import { useMemo, useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -18,9 +17,10 @@ import {
   deleteUserAsync,
 } from "../../../store/feature/userSlice";
 import { fetchPointsOfSalesAsync } from "../../../store/feature/pointOfSalesSlice";
+import { fetchAllShiftsAsync } from "../../../store/feature/shiftsSlice";
 
 import Drawer from "../../../components/Drawer";
-import { fetchAllShiftsAsync } from "../../../store/feature/shiftsSlice.js";
+import Table from "../../../components/Table";
 
 const AdminEmployeePage = () => {
   const navigate = useNavigate();
@@ -30,26 +30,23 @@ const AdminEmployeePage = () => {
 
   const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 
-  const { list: employees = [], loading, error } =
-    useSelector((state) => state.users || {}) || {};
-  const { list: pointsOfSale = [] } =
-    useSelector((state) => state.pos || {}) || {};
+  // Redux state
+  const { list: employees = [], loading, error } = useSelector(
+    (state) => state.users || {}
+  );
+  const { list: pointsOfSale = [] } = useSelector(
+    (state) => state.pos || {}
+  );
   const { token } = useSelector((state) => state.auth || {});
-  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // UI state
+  const [createDrawerOpen, setCreateDrawerOpen] = useState(false);
+  const [editDrawerOpen, setEditDrawerOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [generatedPassword, setGeneratedPassword] = useState("");
   const [toastMessage, setToastMessage] = useState("");
 
-  const [search, setSearch] = useState("");
-  const [sortAsc, setSortAsc] = useState(true);
-
-  const [editDrawerOpen, setEditDrawerOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
-
-  const employeesWithStatus = employees.map((e) => ({
-    ...e,
-    status: e.onVacation ? "on_vacation" : "active",
-  }));
-
+  // Fetch initial data
   useEffect(() => {
     if (!token) return;
     dispatch(fetchUsersAsync(token));
@@ -57,57 +54,70 @@ const AdminEmployeePage = () => {
     dispatch(fetchAllShiftsAsync({ token }));
   }, [dispatch, token]);
 
+  // Stats
   const stats = [
     {
       label: t("dipendentiAttivi"),
       value: employees.length,
-      icon: <UsersThreeIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />,
+      icon: (
+        <UsersThreeIcon
+          size={28}
+          color={theme === "dark" ? "white" : "#090c64"}
+          weight="duotone"
+        />
+      ),
     },
     {
       label: t("dipendentiInattivi"),
-      value: employeesWithStatus.filter(e => e.status === "on_vacation")
-        .length,
-      icon: <UserCircleMinusIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />,
+      value: employees.filter((e) => e.onVacation).length,
+      icon: (
+        <UserCircleMinusIcon
+          size={28}
+          color={theme === "dark" ? "white" : "#090c64"}
+          weight="duotone"
+        />
+      ),
     },
   ];
 
-  const filteredEmployees = useMemo(() => {
-    const s = search.toLowerCase();
-    return employees
-      .filter((u) => {
-        const fullName = `${u.firstName || ""} ${u.lastName || ""}`.toLowerCase();
-        return (
-          fullName.includes(s) ||
-          (u.username || "").toLowerCase().includes(s) ||
-          (u.email || "").toLowerCase().includes(s) ||
-          (u.department || "").toLowerCase().includes(s) ||
-          String(u.personnelNumber || "").includes(s)
-        );
-      })
-      .sort((a, b) => {
-        const nameA = `${a.firstName || ""} ${a.lastName || ""}`.toLowerCase();
-        const nameB = `${b.firstName || ""} ${b.lastName || ""}`.toLowerCase();
-        return sortAsc ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
-      });
-  }, [employees, search, sortAsc]);
+  // Prepare table data
+  const tableData = useMemo(() => {
+    return employees.map((e) => ({
+      _id: e._id,
+      name: `${e.firstName} ${e.lastName}`,
+      department: e.department,
+      email: e.email,
+      personnelNumber: e.personnelNumber,
+      contractType: e.contractType || "-",
+      raw: e,
+    }));
+  }, [employees]);
 
+  const columns = ["name", "department",  "email", "personnelNumber", "contractType"];
+  const columnLabels = {
+    name: t("nome"),
+    department: t("ruolo"),
+    email: t("email"),
+    personnelNumber: t("matricola"),
+    contractType: t("tipoContratto"),
+  };
+
+  // Navigation
   const openEmployeeDetails = (employee) => {
     navigate(`/personale/${employee._id}`);
   };
 
+  // Create employee
   const handleAddEmployee = async (e) => {
     e.preventDefault();
     if (!token) return;
 
     const form = e.target;
-
-    const fullName = form.nome.value.trim();
-    const [firstName, ...rest] = fullName.split(" ");
-    const lastName = rest.join(" ");
+    const [firstName, ...rest] = form.nome.value.trim().split(" ");
 
     const newUser = {
       firstName,
-      lastName,
+      lastName: rest.join(" "),
       username: form.username.value.trim(),
       email: form.email.value.trim(),
       phone: form.telefono.value.trim() || undefined,
@@ -122,30 +132,24 @@ const AdminEmployeePage = () => {
     };
 
     try {
-      const payload = await dispatch(
+      const res = await dispatch(
         createUserAsync({ newUser, token })
       ).unwrap();
 
-      setGeneratedPassword(payload.tempPassword || "");
-
-      setToastMessage("Dipendente creato con successo!");
+      setGeneratedPassword(res.tempPassword || "");
+      setToastMessage(t("dipendenteCreato"));
       setTimeout(() => setToastMessage(""), 3000);
-
       form.reset();
-    } catch (err) {
-      console.error(err);
-      setToastMessage("Errore nella creazione del dipendente");
+    } catch {
+      setToastMessage(t("erroreCreazioneDipendente"));
       setTimeout(() => setToastMessage(""), 3000);
     }
   };
 
+  // Edit employee
   const openEditDrawer = (employee) => {
     setSelectedEmployee({
       ...employee,
-      phone: employee.phone || "",
-      contractType: employee.contractType || "",
-      department: employee.department || "",
-      workplace: employee.workplace || "",
       hireDate: employee.hireDate
         ? new Date(employee.hireDate).toISOString().slice(0, 10)
         : "",
@@ -163,32 +167,20 @@ const AdminEmployeePage = () => {
     setSelectedEmployee(null);
   };
 
-  const handleSave = async () => {
+  const handleSaveEdit = async () => {
     if (!selectedEmployee || !token) return;
-
-    const updates = {
-      firstName: selectedEmployee.firstName.trim(),
-      lastName: selectedEmployee.lastName.trim(),
-      username: selectedEmployee.username.trim(),
-      email: selectedEmployee.email.trim(),
-      phone: selectedEmployee.phone || undefined,
-      department: selectedEmployee.department,
-      workplace: selectedEmployee.workplace,
-      personnelNumber: Number(selectedEmployee.personnelNumber),
-      role: selectedEmployee.role,
-      contractType: selectedEmployee.contractType || "",
-      hireDate: selectedEmployee.hireDate
-        ? new Date(selectedEmployee.hireDate)
-        : null,
-    };
 
     try {
       await dispatch(
-        updateUserAsync({ id: selectedEmployee._id, updates, token })
+        updateUserAsync({
+          id: selectedEmployee._id,
+          updates: selectedEmployee,
+          token,
+        })
       ).unwrap();
       handleEditCancel();
     } catch (err) {
-      console.error("Errore aggiornamento utente:", err);
+      console.error(err);
     }
   };
 
@@ -202,243 +194,134 @@ const AdminEmployeePage = () => {
     )
       return;
 
-    try {
-      await dispatch(deleteUserAsync({ id: employee._id, token })).unwrap();
-    } catch (err) {
-      console.error("Errore eliminazione:", err);
-    }
+    dispatch(deleteUserAsync({ id: employee._id, token }));
   };
 
   return (
-    <div className="adminEmployee w-full h-full flex flex-col gap-8 overflow-y-auto p-4">
-      {/* STATISTICHE + AGGIUNGI DIPENDENTE */}
-      <section className="grid grid-cols-3 gap-6 mb-2 w-full items-center">
-        {stats.map((stat, i) => (
+    <div className="w-full h-full flex flex-col gap-8 overflow-y-auto p-4">
+      {/* STATS + ADD EMPLOYEE */}
+      <section className="grid grid-cols-3 gap-6 items-center">
+        {stats.map((s, i) => (
           <div
             key={i}
-            className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 backdrop-blur-sm border border-white/90 shadow-md ${textColor} bg-[#fafafa20] dark:bg-[#fafafa10]`}
+            className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 border border-white/90 shadow-md bg-[#fafafa20] dark:bg-[#fafafa10] ${textColor}`}
           >
-            {stat.icon}
+            {s.icon}
             <span className="font-bold">
-              {stat.label}: {stat.value}
+              {s.label}: {s.value}
             </span>
           </div>
         ))}
 
         <div
-          onClick={() => setDrawerOpen(!drawerOpen)}
-          className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 backdrop-blur-sm border border-white/90 shadow-md cursor-pointer font-bold bg-[#fafafa20] dark:bg-[#fafafa10]"
+          onClick={() => setCreateDrawerOpen(true)}
+          className="flex items-center justify-center gap-2 rounded-xl px-4 py-3 border border-white/90 shadow-md cursor-pointer font-bold bg-[#fafafa20] dark:bg-[#fafafa10]"
         >
-          <span className="text-xl font-bold">+</span>
+          <span className="text-xl">+</span>
           {t("aggiungiDipendente")}
         </div>
       </section>
 
-      {/* FORM CREAZIONE DIPENDENTE */}
-      {drawerOpen && (
-        <div className="p-6 flex flex-col gap-4 rounded-xl border border-white/30 shadow-md backdrop-blur-sm">
-          <h3 className={`text-lg font-bold ${textColor}`}>
-            {t("nuovoDipendente")}
-          </h3>
+      {/* EMPLOYEE TABLE */}
+      <Table
+        data={tableData}
+        columns={columns}
+        columnLabels={columnLabels}
+        onRowClick={(row) => openEmployeeDetails(row.raw)}
+        actionLabel={t("azioni")}
+        actions={[
+          {
+            name: "edit",
+            icon: (
+              <NotePencilIcon
+                size={26}
+                color={theme === "dark" ? "white" : "#090c64"}
+                weight="duotone"
+              />
+            ),
+            onClick: (row) => openEditDrawer(row.raw),
+          },
+          {
+            name: "delete",
+            icon: (
+              <TrashIcon
+                size={26}
+                color={theme === "dark" ? "#ff4d4d" : "#ff0000"}
+                weight="duotone"
+              />
+            ),
+            onClick: (row) => handleDeleteUser(row.raw),
+          },
+        ]}
+      />
 
-          <form onSubmit={handleAddEmployee} className="grid grid-cols-2 gap-4">
-            <input
-              name="nome"
-              type="text"
-              placeholder={t("nomeCompleto")}
-              required
-              className="p-2 border rounded-xl"
-            />
+      {/* CREATE DRAWER */}
+      <Drawer
+        open={createDrawerOpen}
+        onClose={() => setCreateDrawerOpen(false)}
+        title={t("nuovoDipendente")}
+      >
+        <form onSubmit={handleAddEmployee} className="flex flex-col gap-4">
+          <input name="nome" placeholder={t("nomeCompleto")} required className="p-2 border rounded-xl" />
+          <input name="ruolo" placeholder={t("ruolo")} required className="p-2 border rounded-xl" />
+          <input name="username" placeholder="Username" required className="p-2 border rounded-xl" />
+          <input name="email" type="email" placeholder="Email" required className="p-2 border rounded-xl" />
+          <input name="telefono" placeholder={t("telefono")} className="p-2 border rounded-xl" />
+          <input name="personnelNumber" type="number" placeholder={t("matricola")} required className="p-2 border rounded-xl" />
 
-            <input
-              name="ruolo"
-              type="text"
-              placeholder={t("ruolo")}
-              required
-              className="p-2 border rounded-xl"
-            />
+          <select name="sede" required className="p-2 border rounded-xl">
+            <option value="">{t("sedeLavorativa")}</option>
+            {pointsOfSale.map((p) => (
+              <option key={p._id} value={p._id}>
+                {p.name} – {p.location?.city}
+              </option>
+            ))}
+          </select>
 
-            <input
-              name="username"
-              type="text"
-              placeholder="Username"
-              required
-              className="p-2 border rounded-xl"
-            />
+          <select name="contratto" className="p-2 border rounded-xl">
+            <option value="">{t("tipoContratto")}</option>
+            <option value="indeterminato">{t("indeterminato")}</option>
+            <option value="determinato">{t("determinato")}</option>
+            <option value="part-time">{t("partTime")}</option>
+          </select>
 
-            <input
-              name="email"
-              type="email"
-              placeholder="Email"
-              required
-              className="p-2 border rounded-xl"
-            />
+          <input name="dataAssunzione" type="date" className="p-2 border rounded-xl" />
 
-            <input
-              name="telefono"
-              type="text"
-              placeholder={t("telefono")}
-              className="p-2 border rounded-xl"
-            />
+          <select name="role" required className="p-2 border rounded-xl">
+            <option value="">{t("ruoloAccount")}</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
 
-            <input
-              name="personnelNumber"
-              type="number"
-              placeholder={t("matricola")}
-              required
-              className="p-2 border rounded-xl"
-            />
+          <input
+            value={generatedPassword}
+            readOnly
+            placeholder={t("passwordGenerata")}
+            className="p-2 border rounded-xl col-span-2 bg-gray-100"
+          />
 
-            <select name="sede" required className="p-2 border rounded-xl">
-              <option value="">{t("sedeLavorativa")}</option>
-              {pointsOfSale.map((p) => (
-                <option key={p._id} value={p._id}>
-                  {p.name} – {p.location?.city}
-                </option>
-              ))}
-            </select>
+          <div className="col-span-2 flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => setCreateDrawerOpen(false)}
+              className="px-4 py-2 border rounded-xl"
+            >
+              {t("annulla")}
+            </button>
+            <button type="submit" className="px-4 py-2 custom-button">
+              {t("crea")}
+            </button>
+          </div>
+        </form>
 
-            <select name="contratto" className="p-2 border rounded-xl">
-              <option value="">{t("tipoContratto")}</option>
-              <option value="indeterminato">{t("indeterminato")}</option>
-              <option value="determinato">{t("determinato")}</option>
-              <option value="part-time">{t("partTime")}</option>
-            </select>
+        {toastMessage && (
+          <div className="mt-3 p-2 text-center rounded-xl bg-green-500 text-white">
+            {toastMessage}
+          </div>
+        )}
+      </Drawer>
 
-            <input
-              name="dataAssunzione"
-              type="date"
-              className="p-2 border rounded-xl"
-            />
-
-            <select name="role" required className="p-2 border rounded-xl">
-              <option value="">{t("ruoloAccount")}</option>
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
-            </select>
-
-            <input
-              value={generatedPassword}
-              readOnly
-              placeholder={t("passwordGenerata")}
-              className="p-2 border rounded-xl col-span-2 bg-gray-100"
-            />
-
-            <div className="col-span-2 flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setDrawerOpen(false)}
-                className="px-4 py-2 border rounded-xl"
-              >
-                {t("annulla")}
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-[#090c64] text-white rounded-xl custom-button"
-              >
-                {t("crea")}
-              </button>
-            </div>
-          </form>
-
-          {toastMessage && (
-            <div className="mt-2 p-2 bg-green-500 text-white rounded-xl text-center">
-              {toastMessage}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* BARRA DI RICERCA */}
-      <div className="flex items-center gap-2 mb-4">
-        <input
-          type="text"
-          placeholder={t("cercaDipendente")}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="p-2 rounded-lg border flex-1 focus:outline-none focus:ring-2 focus:ring-[#090c64]"
-        />
-        <button
-          onClick={() => setSortAsc(!sortAsc)}
-          className="p-2 bg-[#090c64] text-white rounded-lg w-40 custom-button text-[14px]"
-        >
-          {sortAsc ? t("ordinaAZ") : t("annullaAZ")}
-        </button>
-      </div>
-
-      {/* LISTA DIPENDENTI */}
-      <div className="p-6 flex flex-col gap-4 h-full rounded-xl border border-white/30 shadow-md backdrop-blur-sm bg-[#fafafa20] dark:bg-[#fafafa10]">
-        <h2 className={`text-lg font-bold ${textColor}`}>
-          {t("listaDipendenti")}
-        </h2>
-
-        <div className="overflow-y-auto h-full">
-          <table className="min-w-full text-sm text-center">
-            <thead className="font-bold bg-white/30">
-              <tr>
-                <th>{t("foto")}</th>
-                <th>{t("nome")}</th>
-                <th>{t("ruolo")}</th>
-                <th>{t("email")}</th>
-                <th>{t("matricola")}</th>
-                <th>{t("azioni")}</th>
-              </tr>
-            </thead>
-
-            <tbody >
-              {filteredEmployees.map((e) => (
-                <tr
-                  key={e._id}
-                  className="bg-white/20 hover:bg-white/20 transition rounded-xl"
-                >
-                  <td className="py-2 flex justify-center">
-                    <UserCircleIcon size={34} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-                  </td>
-
-                  <td
-                    className="truncate cursor-pointer"
-                    onClick={() => openEmployeeDetails(e)}
-                  >
-                    {e.firstName} {e.lastName}
-                  </td>
-
-                  <td className="truncate">{e.department}</td>
-                  <td className="truncate">{e.email}</td>
-                  <td>{e.personnelNumber}</td>
-
-                  <td>
-                    <div className="flex justify-center gap-3">
-                      <button onClick={() => openEditDrawer(e)}>
-                        <NotePencilIcon size={28} color={theme === "dark" ? "white" : "#090c64"} weight="duotone" />
-                      </button>
-
-                      <button onClick={() => handleDeleteUser(e)}>
-                        <TrashIcon size={28} color={theme === "dark" ? "#ff4d4d" : "#ff0000"} weight="duotone" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-
-              {!loading && filteredEmployees.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="py-4 text-gray-500">
-                    {t("nessunDipendenteTrovato")}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-
-          {error && (
-            <p className="mt-2 text-sm text-red-500 text-center">
-              {error}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* DRAWER MODIFICA */}
+      {/* EDIT DRAWER */}
       <Drawer
         open={editDrawerOpen}
         onClose={handleEditCancel}
@@ -447,68 +330,20 @@ const AdminEmployeePage = () => {
       >
         {selectedEmployee && (
           <div className="flex flex-col gap-4">
-            <input
-              name="firstName"
-              value={selectedEmployee.firstName}
-              onChange={handleEditChange}
-              placeholder={t("nome")}
-              className="p-2 border rounded"
-            />
-            <input
-              name="lastName"
-              value={selectedEmployee.lastName}
-              onChange={handleEditChange}
-              placeholder={t("cognome")}
-              className="p-2 border rounded"
-            />
-
-            <input
-              name="username"
-              value={selectedEmployee.username}
-              onChange={handleEditChange}
-              placeholder={t("username")}
-              className="p-2 border rounded"
-            />
-
-            <input
-              name="email"
-              value={selectedEmployee.email}
-              onChange={handleEditChange}
-              placeholder={t("email")}
-              className="p-2 border rounded"
-            />
-
-            <input
-              name="phone"
-              value={selectedEmployee.phone}
-              onChange={handleEditChange}
-              placeholder={t("telefono")}
-              className="p-2 border rounded"
-            />
-
-            <input
-              name="department"
-              value={selectedEmployee.department}
-              onChange={handleEditChange}
-              placeholder={t("ruolo")}
-              className="p-2 border rounded"
-            />
-
-            <input
-              name="personnelNumber"
-              value={selectedEmployee.personnelNumber}
-              onChange={handleEditChange}
-              type="number"
-              placeholder={t("matricola")}
-              className="p-2 border rounded"
-            />
-
-            <select
-              name="workplace"
-              value={selectedEmployee.workplace}
-              onChange={handleEditChange}
-              className="p-2 border rounded"
-            >
+            <input name="firstName" value={selectedEmployee.firstName} onChange={handleEditChange} className="p-2 border rounded" />
+            <input name="lastName" value={selectedEmployee.lastName} onChange={handleEditChange} className="p-2 border rounded" />
+            <input name="department" value={selectedEmployee.department} onChange={handleEditChange} className="p-2 border rounded" />
+            <input name="email" value={selectedEmployee.email} onChange={handleEditChange} className="p-2 border rounded" />
+            <input name="phone" value={selectedEmployee.phone || ""} onChange={handleEditChange} className="p-2 border rounded" />
+            <input name="personnelNumber" type="number" value={selectedEmployee.personnelNumber} onChange={handleEditChange} className="p-2 border rounded" />
+            <input name="hireDate" type="date" value={selectedEmployee.hireDate} onChange={handleEditChange} className="p-2 border rounded" />
+            <select name="contractType" value={selectedEmployee.contractType || ""} onChange={handleEditChange} className="p-2 border rounded">
+              <option value="">{t("tipoContratto")}</option>
+              <option value="indeterminato">{t("indeterminato")}</option>
+              <option value="determinato">{t("determinato")}</option>
+              <option value="part-time">{t("partTime")}</option>
+            </select>
+            <select name="workplace" value={selectedEmployee.workplace} onChange={handleEditChange} className="p-2 border rounded">
               <option value="">{t("sedeLavorativa")}</option>
               {pointsOfSale.map((p) => (
                 <option key={p._id} value={p._id}>
@@ -516,54 +351,28 @@ const AdminEmployeePage = () => {
                 </option>
               ))}
             </select>
-
-            <select
-              name="contractType"
-              value={selectedEmployee.contractType}
-              onChange={handleEditChange}
-              className="p-2 border rounded"
-            >
-              <option value="">{t("tipoContratto")}</option>
-              <option value="indeterminato">{t("indeterminato")}</option>
-              <option value="determinato">{t("determinato")}</option>
-              <option value="part-time">{t("partTime")}</option>
-            </select>
-
-            <input
-              name="hireDate"
-              type="date"
-              value={selectedEmployee.hireDate || ""}
-              onChange={handleEditChange}
-              className="p-2 border rounded"
-            />
-
-            <select
-              name="role"
-              value={selectedEmployee.role}
-              onChange={handleEditChange}
-              className="p-2 border rounded"
-            >
+            <select name="role" value={selectedEmployee.role} onChange={handleEditChange} className="p-2 border rounded">
               <option value="user">User</option>
               <option value="admin">Admin</option>
             </select>
 
             <div className="flex gap-4 mt-4">
-              <button
-                onClick={handleEditCancel}
-                className="flex-1 py-2 bg-white text-[#090c64] font-bold border border-[#090c64] rounded-xl"
-              >
+              <button onClick={handleEditCancel} className="flex-1 custom-button-light">
                 {t("annulla")}
               </button>
-              <button
-                onClick={handleSave}
-                className="flex-1 py-2 bg-[#090c64] text-white font-bold rounded-xl"
-              >
+              <button onClick={handleSaveEdit} className="flex-1 custom-button">
                 {t("salva")}
               </button>
             </div>
           </div>
         )}
       </Drawer>
+
+      {error && (
+        <p className="text-red-500 text-center mt-2">
+          {error}
+        </p>
+      )}
     </div>
   );
 };

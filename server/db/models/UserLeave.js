@@ -4,7 +4,7 @@ const UserLeaveSchema = new Schema(
   {
     user: {
       type: Schema.Types.ObjectId,
-      ref: "User", // assicurati che corrisponda
+      ref: "User", 
       required: true,
     },
     vacationHours: {

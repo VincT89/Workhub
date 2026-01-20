@@ -7,15 +7,13 @@ import {
   deleteOrderRequest,
 } from "../../api/ordersApi";
 
-/* ===========================
-   CREATE ORDER
-=========================== */
+// Create order
 export const createOrder = createAsyncThunk(
   "orders/createOrder",
   async ({ orderData, token }, { rejectWithValue }) => {
     try {
       const { res, data } = await createOrderRequest({ orderData, token });
-      if (!res.ok) throw new Error("Errore nella creazione ordine");
+      if (!res.ok) throw new Error("Order creation failed");
       return data;
     } catch (err) {
       return rejectWithValue(err.message);
@@ -23,15 +21,13 @@ export const createOrder = createAsyncThunk(
   }
 );
 
-/* ===========================
-   FETCH ALL
-=========================== */
+// Fetch all orders
 export const fetchOrders = createAsyncThunk(
   "orders/fetchOrders",
   async ({ token }, { rejectWithValue }) => {
     try {
       const { res, data } = await fetchOrdersRequest({ token });
-      if (!res.ok) throw new Error("Errore nel recupero ordini");
+      if (!res.ok) throw new Error("Orders fetch failed");
       return data.data;
     } catch (err) {
       return rejectWithValue(err.message);
@@ -39,15 +35,13 @@ export const fetchOrders = createAsyncThunk(
   }
 );
 
-/* ===========================
-   FETCH ONE
-=========================== */
+// Fetch single order
 export const fetchOrderById = createAsyncThunk(
   "orders/fetchOrderById",
   async ({ id, token }, { rejectWithValue }) => {
     try {
       const { res, data } = await fetchOrderByIdRequest({ id, token });
-      if (!res.ok) throw new Error("Ordine non trovato");
+      if (!res.ok) throw new Error("Order not found");
       return data;
     } catch (err) {
       return rejectWithValue(err.message);
@@ -55,9 +49,7 @@ export const fetchOrderById = createAsyncThunk(
   }
 );
 
-/* ===========================
-   UPDATE ORDER
-=========================== */
+// Update order
 export const updateOrder = createAsyncThunk(
   "orders/updateOrder",
   async ({ id, data, token }, { rejectWithValue }) => {
@@ -67,7 +59,7 @@ export const updateOrder = createAsyncThunk(
         data,
         token,
       });
-      if (!res.ok) throw new Error("Errore nell’aggiornamento ordine");
+      if (!res.ok) throw new Error("Order update failed");
       return updated;
     } catch (err) {
       return rejectWithValue(err.message);
@@ -75,15 +67,13 @@ export const updateOrder = createAsyncThunk(
   }
 );
 
-/* ===========================
-   DELETE ORDER
-=========================== */
+// Delete order
 export const deleteOrder = createAsyncThunk(
   "orders/deleteOrder",
   async ({ id, token }, { rejectWithValue }) => {
     try {
       const { res } = await deleteOrderRequest({ id, token });
-      if (!res.ok) throw new Error("Errore nell’eliminazione ordine");
+      if (!res.ok) throw new Error("Order deletion failed");
       return id;
     } catch (err) {
       return rejectWithValue(err.message);
@@ -91,25 +81,26 @@ export const deleteOrder = createAsyncThunk(
   }
 );
 
-/* ===========================
-   SLICE
-=========================== */
 const orderSlice = createSlice({
   name: "orders",
+
   initialState: {
     items: [],
     selectedOrder: null,
     loading: false,
     error: null,
   },
+
   reducers: {
+    // Clear selected order
     clearSelectedOrder: (state) => {
       state.selectedOrder = null;
     },
   },
+
   extraReducers: (builder) => {
     builder
-      // CREATE
+      // Create
       .addCase(createOrder.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -123,7 +114,7 @@ const orderSlice = createSlice({
         state.error = action.payload;
       })
 
-      // FETCH ALL
+      // Fetch all
       .addCase(fetchOrders.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -137,7 +128,7 @@ const orderSlice = createSlice({
         state.error = action.payload;
       })
 
-      // FETCH ONE
+      // Fetch one
       .addCase(fetchOrderById.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -151,19 +142,22 @@ const orderSlice = createSlice({
         state.error = action.payload;
       })
 
-      // UPDATE
+      // Update
       .addCase(updateOrder.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(updateOrder.fulfilled, (state, action) => {
         state.loading = false;
+
         const index = state.items.findIndex(
           (o) => o._id === action.payload._id
         );
+
         if (index !== -1) {
           state.items[index] = action.payload;
         }
+
         if (
           state.selectedOrder &&
           state.selectedOrder._id === action.payload._id
@@ -176,7 +170,7 @@ const orderSlice = createSlice({
         state.error = action.payload;
       })
 
-      // DELETE
+      // Delete
       .addCase(deleteOrder.pending, (state) => {
         state.loading = true;
         state.error = null;

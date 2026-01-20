@@ -3,18 +3,13 @@ import { formatResponse } from "../../../utils/format.js";
 import { User } from "../../../db/index.js";
 import { comparePassword, hashPassword } from "../../../utils/auth.js";
 
-/**
- * GET /api/v1/users
- * Solo admin
- * Restituisce tutti gli utenti senza password
- */
+// Get all users without passwords (admin only)
 export const listUsers = async (req, res) => {
   try {
-    const users = await User.find({}, "-password", { lean: true })
-      .populate({
-        path: "workplace",
-        select: "name location"
-      });
+    const users = await User.find({}, "-password", { lean: true }).populate({
+      path: "workplace",
+      select: "name location",
+    });
 
     return res
       .status(200)
@@ -24,27 +19,24 @@ export const listUsers = async (req, res) => {
   }
 };
 
-/**
- * GET /api/v1/users/:id
- * Solo admin
- * Restituisce un singolo utente per ID
- */
+// Get a single user by ID (admin only)
 export const getUserById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; // User ID
 
-    // Validazione ID (formato ObjectId) in modo semplice per MongoDB per evitare errori di formato
+    // Validate ObjectId format
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
       return res
         .status(400)
         .json(formatResponse(null, false, "Invalid user ID"));
     }
 
-    // Cerco utente, escludo password
-    const user = await User.findById(id, "-password").populate({
-      path: "workplace",
-      select: "name location"
-    }).lean(); // lean() per ottenere un oggetto semplice
+    const user = await User.findById(id, "-password")
+      .populate({
+        path: "workplace",
+        select: "name location",
+      })
+      .lean();
 
     if (!user) {
       return res
@@ -60,35 +52,30 @@ export const getUserById = async (req, res) => {
   }
 };
 
-/**
- * UPDATE USER
- * PATCH /api/v1/users/:id
- * Solo admin
- */
+// Update user data excluding password (admin only)
 export const updateUser = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; // User ID
 
-    // Validazione ID
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) { // controllo formato ObjectId
+    // Validate ObjectId format
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
       return res
         .status(400)
         .json(formatResponse(null, false, "Invalid user ID"));
     }
 
-    // Impedisce aggiornamento password qui
+    // Prevent password update through this endpoint
     if (req.body.password) {
       delete req.body.password;
     }
 
-    // Aggiornamento
-    const updated = await User.findByIdAndUpdate(id, req.body, { // aggiorna con i dati nel body della richiesta con findByIdAndUpdate poi restituisce il documento aggiornato
+    const updated = await User.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,
       select: "-password",
     }).populate({
       path: "workplace",
-      select: "name location"
+      select: "name location",
     });
 
     if (!updated) {
@@ -105,23 +92,19 @@ export const updateUser = async (req, res) => {
   }
 };
 
-/**
- * DELETE USER
- * DELETE /api/v1/users/:id
- * Solo admin
- */
+// Delete a user by ID (admin only)
 export const deleteUser = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; // User ID
 
-    // Validazione ID
+    // Validate ObjectId format
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
       return res
         .status(400)
         .json(formatResponse(null, false, "Invalid user ID"));
     }
 
-    const deleted = await User.findByIdAndDelete(id); // elimina l'utente per ID
+    const deleted = await User.findByIdAndDelete(id);
 
     if (!deleted) {
       return res
@@ -137,22 +120,18 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-/**
- * CHANGE PASSWORD (by email)
- * PATCH /api/v1/users/password
- * Body: { email, oldPassword, newPassword }
- */
+// Change password for the authenticated user using email
 export const changePasswordByEmail = async (req, res) => {
   try {
-    const { email, oldPassword, newPassword } = req.body;
+    const { email, oldPassword, newPassword } = req.body; // Password payload
 
+    // Validate required fields
     if (!email || !oldPassword || !newPassword) {
       return res
         .status(400)
         .json(formatResponse(null, false, "Missing required fields"));
     }
 
-    // Recupera utente tramite email
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -161,14 +140,15 @@ export const changePasswordByEmail = async (req, res) => {
         .json(formatResponse(null, false, "User not found"));
     }
 
-    // L’utente può cambiare SOLO la sua password
+    // Ensure users can change only their own password
     if (req.user.email !== email) {
       return res
         .status(403)
-        .json(formatResponse(null, false, "Cannot change another user's password"));
+        .json(
+          formatResponse(null, false, "Cannot change another user's password")
+        );
     }
 
-    // Verifica old password
     const isValid = await comparePassword(oldPassword, user.password);
 
     if (!isValid) {
@@ -177,10 +157,7 @@ export const changePasswordByEmail = async (req, res) => {
         .json(formatResponse(null, false, "Old password is incorrect"));
     }
 
-    // Hash nuova password
-    const hashed = await hashPassword(newPassword);
-
-    user.password = hashed;
+    user.password = await hashPassword(newPassword);
     user.isGeneratedPassword = false;
 
     await user.save();
@@ -192,4 +169,3 @@ export const changePasswordByEmail = async (req, res) => {
     return handleRouteErrors(res, { error });
   }
 };
-

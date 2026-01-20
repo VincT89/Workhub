@@ -1,17 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const API_URL = "http://localhost:3030/api/v1"; // URL backend
+const API_URL = "http://localhost:3030/api/v1";
 
-/* GET ALL CUSTOMERS */
-export const fetchCustomersAsync = createAsyncThunk( //createAsyncThunk() è una funzione di redux toolkit che crea automaticamente le tre azioni di pending e poi di fullfilled o rejected
-  "customers/fetchAll", //identifico l'azione, per convenzione feature/action
-  async (token, { rejectWithValue }) => { // token -> JWT che si ottiene dopo il login e serve per autenticarci
-    // rejectWithValue() è una funzione di redux toolkit che ci perfette di restituire un errore personalizzato. quindi possiamo restituire messaggi di errore specifici invece che generici
+// Fetch all customers
+export const fetchCustomersAsync = createAsyncThunk(
+  "customers/fetchAll",
+  async (token, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}/customers`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,  // bearer -> schema di autenticazione standard per HTTP. indica che stiamo usando un token bearer
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -20,12 +19,12 @@ export const fetchCustomersAsync = createAsyncThunk( //createAsyncThunk() è una
 
       return data.data;
     } catch {
-      return rejectWithValue("Errore di rete.");
+      return rejectWithValue("Network error.");
     }
   }
 );
 
-/* GET CUSTOMER BY ID */
+// Fetch customer by ID
 export const fetchCustomerByIdAsync = createAsyncThunk(
   "customers/fetchById",
   async ({ id, token }, { rejectWithValue }) => {
@@ -33,7 +32,7 @@ export const fetchCustomerByIdAsync = createAsyncThunk(
       const response = await fetch(`${API_URL}/customers/${id}`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -42,18 +41,18 @@ export const fetchCustomerByIdAsync = createAsyncThunk(
 
       return data.data;
     } catch {
-      return rejectWithValue("Errore di rete.");
+      return rejectWithValue("Network error.");
     }
   }
 );
 
-/* CREATE CUSTOMER */
+// Create new customer
 export const createCustomerAsync = createAsyncThunk(
   "customers/create",
   async ({ newCustomer, token }, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}/customers`, {
-        method: "POST", //non essendo chiamata GET, ma POST, specifico il method
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -66,12 +65,12 @@ export const createCustomerAsync = createAsyncThunk(
 
       return data.data;
     } catch {
-      return rejectWithValue("Errore di rete.");
+      return rejectWithValue("Network error.");
     }
   }
 );
 
-/* UPDATE CUSTOMER */
+// Update existing customer
 export const updateCustomerAsync = createAsyncThunk(
   "customers/update",
   async ({ id, updates, token }, { rejectWithValue }) => {
@@ -90,12 +89,12 @@ export const updateCustomerAsync = createAsyncThunk(
 
       return data.data;
     } catch {
-      return rejectWithValue("Errore di rete.");
+      return rejectWithValue("Network error.");
     }
   }
 );
 
-/* DELETE CUSTOMER */
+// Delete customer
 export const deleteCustomerAsync = createAsyncThunk(
   "customers/delete",
   async ({ id, token }, { rejectWithValue }) => {
@@ -110,7 +109,7 @@ export const deleteCustomerAsync = createAsyncThunk(
 
       return id;
     } catch {
-      return rejectWithValue("Errore di rete.");
+      return rejectWithValue("Network error.");
     }
   }
 );
@@ -119,26 +118,28 @@ const customerSlice = createSlice({
   name: "customers",
 
   initialState: {
-    list: [], //array vuoto per tutti i customers
-    selected: null, // customer selezionato per la pagina di dettaglio, inizialmente null perchè nessun customer è selezionato
-    loading: false, // caricamento dei dati, diventa true quando inizia la chiamata API
-    error: null, // errore null se non ce ne sono, o contiene una stringa se ci sono errori
+    list: [],
+    selected: null,
+    loading: false,
+    error: null,
   },
 
-  reducers: { //sono funzioni che gestiscono azioni sincrone (non chiamano API, gestiscono azioni create da me)
-    clearSelected(state) { //usiamo questo reducer per uscire dalla pagina del dettaglio del customer
+  reducers: {
+    // Clear selected customer
+    clearSelected(state) {
       state.selected = null;
     },
-    clearError(state) { // usiamo questo reducer per nascondere un messaggio di errore
+
+    // Clear error message
+    clearError(state) {
       state.error = null;
     },
   },
 
-  extraReducers: (builder) => { // extraReducers -> sono funzioni che gestiscono azioni asincrone (gestiscono azioni create da createAsyncThunk())
-    // builder -> è l'oggetto che ci permette di costruire gli extraReducers
+  extraReducers: (builder) => {
     builder
-      /* CREATE */
-      .addCase(createCustomerAsync.pending, (state) => { // addCase() aggiunge un case (o caso) per gestire una sepcifica azione
+      // Create customer
+      .addCase(createCustomerAsync.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
@@ -151,7 +152,7 @@ const customerSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* READ ALL */
+      // Fetch all customers
       .addCase(fetchCustomersAsync.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -165,7 +166,7 @@ const customerSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* READ ONE */
+      // Fetch single customer
       .addCase(fetchCustomerByIdAsync.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -179,45 +180,43 @@ const customerSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* UPDATE */
+      // Update customer
       .addCase(updateCustomerAsync.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      /* UPDATE */
       .addCase(updateCustomerAsync.fulfilled, (state, action) => {
         state.loading = false;
 
-        // ==============================
-        // Aggiorna il customer nella lista
-        // ==============================
-        const index = state.list.findIndex(c => c._id === action.payload._id);
+        // Update customer in list
+        const index = state.list.findIndex(
+          (c) => c._id === action.payload._id
+        );
         if (index !== -1) {
           state.list[index] = {
             ...state.list[index],
-            ...action.payload
+            ...action.payload,
           };
         }
 
-        // ==========================================
-        // Aggiorna il selected SENZA perdere relazioni
-        // ==========================================
+        // Update selected customer while preserving relations
         if (state.selected?._id === action.payload._id) {
           state.selected = {
-            ...state.selected,   // mantiene orders, affiliateProgram, ecc.
-            ...action.payload    // aggiorna solo i campi modificati
+            ...state.selected,
+            ...action.payload,
           };
         }
       })
-
       .addCase(updateCustomerAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      /* DELETE */
+      // Delete customer
       .addCase(deleteCustomerAsync.fulfilled, (state, action) => {
-        state.list = state.list.filter(c => c._id !== action.payload);
+        state.list = state.list.filter(
+          (c) => c._id !== action.payload
+        );
         if (state.selected?._id === action.payload) {
           state.selected = null;
         }

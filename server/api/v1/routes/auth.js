@@ -1,38 +1,29 @@
 import express from "express";
-import { login, register, recoverPassword, enable2FA, disable2FA } from "../controllers/auth.js";
+import {
+  login,
+  register,
+  recoverPassword,
+  enable2FA,
+  disable2FA,
+} from "../controllers/auth.js";
 import { authUser } from "../middleware/auth.js";
 import { requireAdmin } from "../middleware/roles.js";
 
-const app = express.Router();
+const router = express.Router();
 
-/**
- * POST /api/v1/auth/login
- * Pubblica
- */
-app.post("/login", login); // pubblica, non richiede autenticazione dopo il path ci sono direttamente i controller
+// Public login endpoint
+router.post("/login", login);
 
-/**
- * POST /api/v1/auth/register
- * Protetta → solo admin
- */
-app.post("/register", authUser, requireAdmin, register); // solo admin dopo il path ci sono i middleware authUser e requireAdmin e poi il controller register
+// Admin-only user registration
+router.post("/register", authUser, requireAdmin, register);
 
-/**
- * POST /api/v1/auth/recover
- * Pubblica (non richiede autenticazione)
- */
-app.post("/recover", recoverPassword); // pubblica, non richiede autenticazione dopo il path ci sono direttamente i controller
+// Public password recovery
+router.post("/recover", recoverPassword);
 
-/**
- * PATCH /api/v1/auth/enable-2fa
- * Protetta → l'utente deve essere autenticato
- */
-app.patch("/enable-2fa", authUser, enable2FA);
+// Enable 2FA for authenticated user
+router.patch("/enable-2fa", authUser, enable2FA);
 
-/**
- * PATCH /api/v1/auth/disable-2fa
- * Protetta → l'utente deve essere autenticato
- */
-app.patch("/disable-2fa", authUser, disable2FA);
+// Disable 2FA for authenticated user
+router.patch("/disable-2fa", authUser, disable2FA);
 
-export default app;
+export default router;

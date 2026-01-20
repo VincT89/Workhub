@@ -5,20 +5,22 @@ import { useLanguage } from "../context/LanguageContext";
 
 const Enable2FA = () => {
   const dispatch = useDispatch();
+  const { t } = useLanguage();
+
+  // 2FA-related redux state
   const { twofaData, twofaLoading, twofaError } = useSelector(
     (state) => state.auth
   );
 
-  // Popup di conferma
+  // Confirmation modal visibility
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
-  const { t } = useLanguage();
 
-  // Quando clicchi "Abilita 2FA" → apre popup
+  // Open confirmation dialog
   const handleEnable = () => {
     setShowConfirmPopup(true);
   };
 
-  // Conferma: chiama l’API
+  // Confirm and trigger 2FA activation
   const confirmEnable = () => {
     setShowConfirmPopup(false);
 
@@ -28,61 +30,69 @@ const Enable2FA = () => {
     dispatch(enable2FAAsync({ token: auth.token }));
   };
 
-  // Annulla popup
+  // Close confirmation dialog without action
   const cancelEnable = () => {
     setShowConfirmPopup(false);
   };
 
   return (
     <div className="p-6 relative">
-
-      <h2 className="text-xl font-bold mb-4">{t("abilita2FA")}</h2>
+      <h2 className="text-xl font-bold mb-4">
+        {t("abilita2FA")}
+      </h2>
 
       <button
         onClick={handleEnable}
         disabled={twofaLoading}
         className="btn-login"
       >
-        {twofaLoading ? t("attivazioneInCorso") : t("abilita2FA")}
+        {twofaLoading
+          ? t("attivazioneInCorso")
+          : t("abilita2FA")}
       </button>
 
-      {twofaError && <p className="text-red-500 mt-2">{twofaError}</p>}
+      {/* Error feedback */}
+      {twofaError && (
+        <p className="text-red-500 mt-2">
+          {twofaError}
+        </p>
+      )}
 
+      {/* QR code display */}
       {twofaData && (
         <div className="mt-6">
           <p>{t("scansiona")}</p>
-          <img src={twofaData.qr} alt="QR Code 2FA" className="mt-4" />
+          <img
+            src={twofaData.qr}
+            alt="2FA QR Code"
+            className="mt-4 mx-auto"
+          />
         </div>
       )}
 
-      {/* POPUP CONFERMA */}
+      {/* Confirmation modal */}
       {showConfirmPopup && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl w-[300px] text-center">
-
             <h2 className="text-lg font-bold text-[#090c64] mb-4">
               {t("sicuro2FA")}
             </h2>
 
-           <div className="flex justify-around mt-4">
-  <button
-    onClick={cancelEnable}
-    className="px-4 py-2 bg-gray-400 text-white rounded-xl 
-               transition-transform duration-200 hover:scale-110"
-  >
-    No
-  </button>
+            <div className="flex justify-around mt-4">
+              <button
+                onClick={cancelEnable}
+                className="custom-button-light transition-transform duration-200 hover:scale-110"
+              >
+                No
+              </button>
 
-  <button
-    onClick={confirmEnable}
-    className="px-4 py-2 bg-[#090c64] text-white rounded-xl 
-               transition-transform duration-200 hover:scale-110"
-  >
-    Sì
-  </button>
-</div>
-
-
+              <button
+                onClick={confirmEnable}
+                className="custom-button transition-transform duration-200 hover:scale-110"
+              >
+                Sì
+              </button>
+            </div>
           </div>
         </div>
       )}

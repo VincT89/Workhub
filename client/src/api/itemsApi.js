@@ -1,19 +1,20 @@
-// src/store/feature/itemsAPI.js
-
 import { API_URL } from "../config/api.js";
 
+// Fetch all warehouse items (GET)
 export async function fetchItems() {
-	const token = JSON.parse(localStorage.getItem("auth")).token; // il token salvato al login
-	const res = await fetch(`${API_URL}/items`, {
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token}`, // token JWT necessario
-		},
-	});
+  // Retrieve JWT token from localStorage
+  const token = JSON.parse(localStorage.getItem("auth"))?.token;
 
-	if (!res.ok) {
-		throw new Error("Errore nel fetch degli items");
-	}
+  const response = await fetch(`${API_URL}/items`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-	return res.json();
+  if (!response.ok) {
+    throw new Error("Failed to fetch items");
+  }
+
+  return response.json();
 }

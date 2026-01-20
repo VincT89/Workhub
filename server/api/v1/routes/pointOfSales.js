@@ -4,26 +4,26 @@ import {
   getPointOfSaleById,
   createPointOfSale,
   updatePointOfSale,
-  deletePointOfSale
+  deletePointOfSale,
 } from "../controllers/pointOfSales.js";
 import { authUser } from "../middleware/auth.js";
 import { requireAdmin } from "../middleware/roles.js";
 
-const app = express.Router();
+const router = express.Router();
 
-/* LIST */
-app.get("/", authUser, listPointsOfSales);
+// Get all points of sale (authenticated users)
+router.get("/", authUser, listPointsOfSales);
 
-/* GET ONE */
-app.get("/:id", authUser, requireAdmin, getPointOfSaleById);
+// Get a single point of sale by ID (admin only)
+router.get("/:id", authUser, requireAdmin, getPointOfSaleById);
 
-/* CREATE */
-app.post("/", authUser, requireAdmin, createPointOfSale);
+// Create a new point of sale (admin only)
+router.post("/", authUser, requireAdmin, createPointOfSale);
 
-/* UPDATE */
-app.patch("/:id", authUser, requireAdmin, updatePointOfSale);
+// Update a point of sale by ID (admin only)
+router.patch("/:id", authUser, requireAdmin, updatePointOfSale);
 
-/* DELETE */
-app.delete("/:id", authUser, requireAdmin, deletePointOfSale);
+// Delete a point of sale by ID (admin only)
+router.delete("/:id", authUser, requireAdmin, deletePointOfSale);
 
-export default app;
+export default router;

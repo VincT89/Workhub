@@ -3,14 +3,13 @@ import { handleRouteErrors } from "../../../utils/error.js";
 import { formatResponse } from "../../../utils/format.js";
 import UserShiftModel from "../../../db/models/UserShift.js";
 
-/* -------------------------- GET ALL -------------------------- */
+// Get all shift documents (admin)
 export const getAllShifts = async (req, res) => {
   try {
     const shifts = await UserShiftModel.find()
       .populate({
         path: "user",
-        select:
-          "firstName lastName email personnelNumber department workplace",
+        select: "firstName lastName email personnelNumber department workplace",
       })
       .lean();
 
@@ -22,11 +21,12 @@ export const getAllShifts = async (req, res) => {
   }
 };
 
-/* -------------------------- GET BY USER -------------------------- */
+// Get or create shifts for a specific user
 export const getShiftsByUser = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { userId } = req.params; // User ID
 
+    // Validate ObjectId format
     if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
       return res
         .status(400)
@@ -35,7 +35,7 @@ export const getShiftsByUser = async (req, res) => {
 
     let userShift = await UserShiftModel.findOne({ user: userId }).lean();
 
-    // Se non esiste → lo creo automaticamente
+    // Auto-create shift document if missing
     if (!userShift) {
       const created = await UserShiftModel.create({ user: userId });
       userShift = created.toObject();
@@ -49,10 +49,11 @@ export const getShiftsByUser = async (req, res) => {
   }
 };
 
-/* -------------------------- UPDATE SINGLE DAY/PERIOD -------------------------- */
+// Update a single day/period value
 export const updateShift = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params; // Shift document ID
 
+  // Validate ObjectId format
   if (!id.match(/^[0-9a-fA-F]{24}$/)) {
     return res
       .status(400)
@@ -67,7 +68,7 @@ export const updateShift = async (req, res) => {
         "wednesday",
         "thursday",
         "friday",
-        "saturday",
+        "saturday"
       )
       .required(),
     period: Joi.string().valid("morning", "afternoon").required(),
@@ -77,13 +78,13 @@ export const updateShift = async (req, res) => {
   try {
     const { value, error } = schema.validate(req.body);
 
-    if (error)
+    if (error) {
       return res
         .status(400)
         .json(formatResponse(null, false, error.details[0].message));
+    }
 
     const { day, period, value: boolValue } = value;
-
     const path = `shifts.${day}.${period}`;
 
     const updated = await UserShiftModel.findByIdAndUpdate(
@@ -92,10 +93,11 @@ export const updateShift = async (req, res) => {
       { new: true, runValidators: true }
     ).lean();
 
-    if (!updated)
+    if (!updated) {
       return res
         .status(404)
         .json(formatResponse(null, false, "Shift document not found"));
+    }
 
     return res
       .status(200)
@@ -105,10 +107,11 @@ export const updateShift = async (req, res) => {
   }
 };
 
-/* -------------------------- DELETE FULL SHIFT DOCUMENT -------------------------- */
+// Delete an entire shift document
 export const deleteShift = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params; // Shift document ID
 
+  // Validate ObjectId format
   if (!id.match(/^[0-9a-fA-F]{24}$/)) {
     return res
       .status(400)
@@ -118,10 +121,11 @@ export const deleteShift = async (req, res) => {
   try {
     const deleted = await UserShiftModel.findByIdAndDelete(id);
 
-    if (!deleted)
+    if (!deleted) {
       return res
         .status(404)
         .json(formatResponse(null, false, "Shift document not found"));
+    }
 
     return res
       .status(200)

@@ -2,14 +2,10 @@ import ProductModel from "../../../db/models/Product.js";
 import { handleRouteErrors } from "../../../utils/error.js";
 import { formatResponse } from "../../../utils/format.js";
 
-/**
- * GET /api/v1/products
- * Lista dei prodotti
- * Accesso: user, admin
- */
+// Retrieve all products (accessible by user and admin)
 export const listProducts = async (req, res) => {
   try {
-    const products = await ProductModel.find().lean();
+    const products = await ProductModel.find().lean(); // Fetch all products as plain JavaScript objects
 
     return res
       .status(200)
@@ -19,23 +15,21 @@ export const listProducts = async (req, res) => {
   }
 };
 
-/**
- * GET /api/v1/products/:id
- * Dettaglio prodotto
- * Accesso: user, admin
- */
+// Retrieve a single product by ID (accessible by user and admin)
 export const getProductById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; // Extract product ID from route parameters
 
+    // Validate MongoDB ObjectId format
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
       return res
         .status(400)
         .json(formatResponse(null, false, "Invalid product ID"));
     }
 
-    const product = await ProductModel.findById(id).lean();
+    const product = await ProductModel.findById(id).lean(); // Fetch product by ID
 
+    // Handle product not found
     if (!product) {
       return res
         .status(404)

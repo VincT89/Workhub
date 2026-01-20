@@ -8,12 +8,10 @@ import { calculateAffiliatePoints } from "../../../utils/orders.js";
 import Joi from "joi";
 import mongoose from "mongoose";
 
-// Costante per l'upgrade a Premium dopo un certo numero di ordini
+// Orders required to upgrade a client to Premium
 const PREMIUM_AFTER_ORDERS = 10;
 
-// -----------------------------
-// VALIDATORE OBJECTID
-// -----------------------------
+// Joi custom validator for MongoDB ObjectId
 const objectId = (value, helpers) => {
   if (!mongoose.Types.ObjectId.isValid(value)) {
     return helpers.error("any.invalid");
@@ -21,97 +19,69 @@ const objectId = (value, helpers) => {
   return value;
 };
 
-// -----------------------------
-// SCHEMA CREATE
-// -----------------------------
-/**
- * Schema di validazione per la creazione di un nuovo ordine
- * Definisce tutti i campi obbligatori e le loro regole di validazione
- */
+// Validation schema for order creation
 const createOrderSchema = Joi.object({
-  pointOfSales: Joi.string().custom(objectId).required(), // Punto vendita (ObjectId obbligatorio)
-  product: Joi.string().custom(objectId).required(), // Prodotto (ObjectId obbligatorio)
-  totalQuantity: Joi.number().min(1).required(), // Quantità totale (minimo 1)
-
-  // Array di clienti con le rispettive quantità
+  pointOfSales: Joi.string().custom(objectId).required(),
+  product: Joi.string().custom(objectId).required(),
+  totalQuantity: Joi.number().min(1).required(),
   clients: Joi.array()
     .items(
       Joi.object({
-        client: Joi.string().custom(objectId).required(), // Cliente (ObjectId obbligatorio)
-        quantity: Joi.number().min(1).required(), // Quantità per cliente (minimo 1)
+        client: Joi.string().custom(objectId).required(),
+        quantity: Joi.number().min(1).required(),
       })
     )
-    .min(1) // Almeno un cliente
+    .min(1)
     .required(),
-
-  // Stato dell'ordine con valori predefiniti
   stato: Joi.string()
     .valid("Inviato", "In lavorazione", "Consegnato")
     .default("Inviato"),
+  corriere: Joi.string().default("Bartolini"),
+  note: Joi.string().allow("").optional(),
+}).unknown(false);
 
-  corriere: Joi.string().default("Bartolini"), // Corriere di default
-  note: Joi.string().allow("").optional(), // Note opzionali
-}).unknown(false); // Non permette campi aggiuntivi
-
-// -----------------------------
-// SCHEMA UPDATE
-// -----------------------------
-/**
- * Schema di validazione per l'aggiornamento di un ordine
- * Tutti i campi sono opzionali per permettere aggiornamenti parziali
- */
+// Validation schema for order update
 const updateOrderSchema = Joi.object({
   pointOfSales: Joi.string().custom(objectId),
   product: Joi.string().custom(objectId),
   totalQuantity: Joi.number().min(1),
-
   clients: Joi.array().items(
     Joi.object({
       client: Joi.string().custom(objectId),
       quantity: Joi.number().min(1),
     })
   ),
-
   stato: Joi.string().valid("Inviato", "In lavorazione", "Consegnato"),
   corriere: Joi.string(),
   note: Joi.string().allow(""),
 }).unknown(false);
 
-// =====================================================================
-//                              CREATE
-// =====================================================================
-/**
- * Controller per creare un nuovo ordine
- * - Valida i dati in input
- * - Crea l'ordine nel database
- * - Calcola e assegna punti affiliazione ai clienti
- * - Restituisce l'ordine popolato con i dati correlati
- */
+// Create a new order and handle affiliate points logic
 export const createOrder = async (req, res) => {
   try {
-    const { error } = createOrderSchema.validate(req.body, {
-      abortEarly: false,
-    });
+    const { error } = createOrderSchema.validate(req.body, { abortEarly: false });
 
-    // controllo quantita clienti non superi quantita totale
     const { clients, totalQuantity } = req.body;
+
+    // Ensure client quantities do not exceed total quantity
     const totalClientQuantity = clients.reduce(
-      (sum, item) => sum + Number(item.quantity || 0), 0
+      (sum, item) => sum + Number(item.quantity || 0),
+      0
     );
+
     if (totalClientQuantity > totalQuantity) {
       return res.status(400).json({
         error: "Validation error",
-        message: "La somma delle quantità dei clienti supera la quantità totale",
+        message: "Client quantities exceed total quantity",
       });
     }
 
-    // controllo clienti duplicati
-    const clientIds = clients.map((item) => item.client);
-    const uniqueClientIds = new Set(clientIds);
-    if (uniqueClientIds.size < clientIds.length) {
+    // Prevent duplicate clients in the order
+    const clientIds = clients.map((c) => c.client);
+    if (new Set(clientIds).size < clientIds.length) {
       return res.status(400).json({
         error: "Validation error",
-        message: "Ci sono clienti duplicati nella lista",
+        message: "Duplicate clients detected",
       });
     }
 
@@ -127,59 +97,56 @@ export const createOrder = async (req, res) => {
 
     const product = await ProductsModel.findById(order.product);
     if (!product) {
-      return res.status(404).json({ error: "Prodotto non trovato" });
+      return res.status(404).json({ error: "Product not found" });
     }
 
-    const prezzoUnitario = Number(product.price) || 0;
+    const unitPrice = Number(product.price) || 0;
 
-    // Assegna punti affiliazione ai clienti
     const premiumProgram = await AffiliateProgramModel.findOne({
       name: "Premium",
     });
 
-    if (Array.isArray(req.body.clients) && req.body.clients.length > 0) {
-      await Promise.all(
-        req.body.clients.map(async (item) => {
-          const client = await ClientModel.findById(item.client);
-          if (!client || !client.affiliateProgram) return;
+    // Assign affiliate points to each client
+    await Promise.all(
+      clients.map(async ({ client, quantity }) => {
+        const clientDoc = await ClientModel.findById(client);
+        if (!clientDoc?.affiliateProgram) return;
 
-          const affiliateProgram = await AffiliateProgramModel.findById(
-            client.affiliateProgram
+        const affiliateProgram = await AffiliateProgramModel.findById(
+          clientDoc.affiliateProgram
+        );
+        if (!affiliateProgram) return;
+
+        const orderAmount = quantity * unitPrice;
+        const points = calculateAffiliatePoints(
+          orderAmount,
+          affiliateProgram.name
+        );
+
+        if (points > 0) {
+          await AffiliateProgramModel.findByIdAndUpdate(
+            affiliateProgram._id,
+            { $inc: { points } }
           );
-          if (!affiliateProgram) return;
+        }
 
-          const orderAmount = item.quantity * prezzoUnitario;
+        // Upgrade client to Premium if conditions are met
+        if (
+          premiumProgram &&
+          affiliateProgram.name === "Standard"
+        ) {
+          const totalOrders = await OrderModel.countDocuments({
+            "clients.client": clientDoc._id,
+          });
 
-          const points = calculateAffiliatePoints(
-            orderAmount,
-            affiliateProgram.name
-          );
-
-          if (points > 0) {
-            await AffiliateProgramModel.findByIdAndUpdate(
-              affiliateProgram._id,
-              { $inc: { points } }
-            );
-          }
-
-          // Verifica se il cliente deve essere aggiornato a Premium
-          if (
-            premiumProgram &&
-            affiliateProgram.name === "Standard"
-          ) {
-            const ordiniTotali = await OrderModel.countDocuments({
-              "clients.client": client._id,
+          if (totalOrders >= PREMIUM_AFTER_ORDERS) {
+            await ClientModel.findByIdAndUpdate(clientDoc._id, {
+              affiliateProgram: premiumProgram._id,
             });
-
-            if (ordiniTotali >= PREMIUM_AFTER_ORDERS) {
-              await ClientModel.findByIdAndUpdate(client._id, {
-                affiliateProgram: premiumProgram._id,
-              });
-            }
           }
-        })
-      );
-    }
+        }
+      })
+    );
 
     const populatedOrder = await order.populate([
       "pointOfSales",
@@ -188,78 +155,54 @@ export const createOrder = async (req, res) => {
     ]);
 
     return res.status(201).json(populatedOrder);
-
   } catch (err) {
     console.error("CREATE ORDER ERROR:", err);
     return res.status(500).json({ error: err.message });
   }
 };
 
-
-// =====================================================================
-//                              READ ALL
-// =====================================================================
-/**
- * Controller per recuperare tutti gli ordini
- * - Recupera tutti gli ordini con dati popolati
- * - Arricchisce ogni cliente con informazioni aggiuntive (punti ordine, punti totali, ordini totali)
- * - Restituisce la lista formattata
- */
+// Retrieve all orders with enriched client data
 export const getOrders = async (req, res) => {
-  const customer = req.query.customer || null;
-  const findObj = {};
-  if (customer) findObj.customer = customer;
   try {
-    // Recupero di tutti gli ordini con dati correlati popolati
-    const orders = await OrderModel.find(findObj)
+    const orders = await OrderModel.find()
       .populate("pointOfSales")
       .populate("product")
       .populate("clients.client");
 
-    // Arricchimento degli ordini con informazioni aggiuntive sui clienti
     const enrichedOrders = await Promise.all(
       orders.map(async (order) => {
-        // Elaborazione di ogni cliente nell'ordine
         const enrichedClients = await Promise.all(
           order.clients.map(async (c) => {
-            let puntiOrdine = 0; // Punti guadagnati con questo ordine
-            let puntiTotali = 0; // Punti totali nel programma affiliazione
-            let ordiniTotali = 0; // Numero totale di ordini del cliente
+            let puntiOrdine = 0;
+            let puntiTotali = 0;
+            let ordiniTotali = 0;
 
-            // Calcolo informazioni se il cliente ha un programma di affiliazione
             if (c.client?.affiliateProgram) {
               const affiliateProgram = await AffiliateProgramModel.findById(
                 c.client.affiliateProgram
               );
 
               if (affiliateProgram) {
-                // Calcolo dell'importo totale dell'ordine
-                const totalOrderAmount =
+                const totalAmount =
                   Number(order.product?.price || 0) *
                   Number(order.totalQuantity || 1);
 
-                // Calcolo del prezzo unitario reale
-                const unitPriceReal = totalOrderAmount / order.totalQuantity;
-                // Importo specifico per questo cliente
-                const clientAmount = unitPriceReal * c.quantity;
+                const unitPrice = totalAmount / order.totalQuantity;
+                const clientAmount = unitPrice * c.quantity;
 
-                // Calcolo punti per questo ordine
                 puntiOrdine = calculateAffiliatePoints(
                   clientAmount,
                   affiliateProgram.name
                 );
 
-                // Punti totali nel programma
                 puntiTotali = affiliateProgram.points;
 
-                // Conteggio ordini totali del cliente
                 ordiniTotali = await OrderModel.countDocuments({
                   "clients.client": c.client._id,
                 });
               }
             }
 
-            // Restituzione dell'oggetto cliente arricchito
             return {
               ...c.toObject(),
               puntiOrdine,
@@ -269,7 +212,6 @@ export const getOrders = async (req, res) => {
           })
         );
 
-        // Restituzione dell'ordine con clienti arricchiti
         return {
           ...order.toObject(),
           clients: enrichedClients,
@@ -277,100 +219,75 @@ export const getOrders = async (req, res) => {
       })
     );
 
-		res.status(200).json(formatResponse(enrichedOrders));
-	} catch (err) {
-		res.status(500).json(formatResponse({ error: err.message }, false));
-	}
+    return res.status(200).json(formatResponse(enrichedOrders));
+  } catch (err) {
+    return res
+      .status(500)
+      .json(formatResponse({ error: err.message }, false));
+  }
 };
 
-// =====================================================================
-//                              READ ONE
-// =====================================================================
-/**
- * Controller per recuperare un singolo ordine tramite ID
- * - Cerca l'ordine per ID
- * - Popola i dati correlati
- * - Restituisce l'ordine o errore 404 se non trovato
- */
+// Retrieve a single order by ID
 export const getOrderById = async (req, res) => {
   try {
-    // Ricerca dell'ordine per ID con dati correlati popolati
     const order = await OrderModel.findById(req.params.id)
       .populate("pointOfSales")
       .populate("product")
       .populate("clients.client");
 
-    // Verifica se l'ordine esiste
     if (!order) {
-      return res.status(404).json({ error: "Ordine non trovato" });
+      return res.status(404).json({ error: "Order not found" });
     }
 
-		res.status(200).json(order);
-	} catch (err) {
-		res.status(500).json({ error: err.message });
-	}
+    return res.status(200).json(order);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
 };
 
-// =====================================================================
-//                              UPDATE
-// =====================================================================
-/**
- * Controller per aggiornare un ordine esistente
- * - Valida i dati in input
- * - Aggiorna l'ordine nel database
- * - Restituisce l'ordine aggiornato con dati popolati
- */
+// Update an existing order
 export const updateOrder = async (req, res) => {
   try {
-    // Validazione dei dati in input per l'aggiornamento
     const { error } = updateOrderSchema.validate(req.body, {
       abortEarly: false,
     });
 
-		if (error) {
-			return res.status(400).json({
-				error: "Validation error",
-				details: error.details.map((d) => d.message),
-			});
-		}
-
-    // Aggiornamento dell'ordine nel database
-    const order = await OrderModel.findByIdAndUpdate(req.params.id, req.body, {
-      new: true, // Restituisce il documento aggiornato
-      runValidators: true, // Esegue le validazioni del modello
-    }).populate(["pointOfSales", "product", "clients.client"]);
-
-    // Verifica se l'ordine esiste
-    if (!order) {
-      return res.status(404).json({ error: "Ordine non trovato" });
+    if (error) {
+      return res.status(400).json({
+        error: "Validation error",
+        details: error.details.map((d) => d.message),
+      });
     }
 
-		res.status(200).json(order);
-	} catch (err) {
-		res.status(400).json({ error: err.message });
-	}
+    const order = await OrderModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    ).populate(["pointOfSales", "product", "clients.client"]);
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    return res.status(200).json(order);
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
+  }
 };
 
-// =====================================================================
-//                              DELETE
-// =====================================================================
-/**
- * Controller per eliminare un ordine
- * - Cerca e elimina l'ordine per ID
- * - Restituisce messaggio di conferma o errore 404
- */
+// Delete an order by ID
 export const deleteOrder = async (req, res) => {
   try {
-    // Eliminazione dell'ordine dal database
     const order = await OrderModel.findByIdAndDelete(req.params.id);
 
-    // Verifica se l'ordine esisteva
     if (!order) {
-      return res.status(404).json({ error: "Ordine non trovato" });
+      return res.status(404).json({ error: "Order not found" });
     }
 
-		res.status(200).json({ message: "Ordine eliminato con successo" });
-	} catch (err) {
-		res.status(500).json({ error: err.message });
-	}
+    return res
+      .status(200)
+      .json({ message: "Order deleted successfully" });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
 };

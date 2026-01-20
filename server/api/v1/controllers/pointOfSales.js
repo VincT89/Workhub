@@ -2,13 +2,11 @@ import PointOfSalesModel from "../../../db/models/PointOfSales.js";
 import { handleRouteErrors } from "../../../utils/error.js";
 import { formatResponse } from "../../../utils/format.js";
 
-/**
- * GET ALL — /api/v1/pointsofsales
- * Solo admin
- */
+// Retrieve all points of sale (admin only)
 export const listPointsOfSales = async (req, res) => {
   try {
-    const list = await PointOfSalesModel.find().lean();
+    const list = await PointOfSalesModel.find().lean(); // Fetch all POS as plain objects
+
     return res
       .status(200)
       .json(formatResponse(list, true, "Points of sale list"));
@@ -17,21 +15,19 @@ export const listPointsOfSales = async (req, res) => {
   }
 };
 
-/**
- * GET BY ID — /api/v1/pointsofsales/:id
- * Solo admin
- */
+// Retrieve a single point of sale by ID (admin only)
 export const getPointOfSaleById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; // Extract POS ID from route params
 
+    // Validate MongoDB ObjectId format
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
       return res
         .status(400)
         .json(formatResponse(null, false, "Invalid PointOfSale ID"));
     }
 
-    const pos = await PointOfSalesModel.findById(id).lean();
+    const pos = await PointOfSalesModel.findById(id).lean(); // Fetch POS by ID
 
     if (!pos) {
       return res
@@ -47,13 +43,10 @@ export const getPointOfSaleById = async (req, res) => {
   }
 };
 
-/**
- * CREATE — /api/v1/pointsofsales
- * Solo admin
- */
+// Create a new point of sale (admin only)
 export const createPointOfSale = async (req, res) => {
   try {
-    const newPOS = await PointOfSalesModel.create(req.body);
+    const newPOS = await PointOfSalesModel.create(req.body); // Create POS from request body
 
     return res
       .status(201)
@@ -63,24 +56,23 @@ export const createPointOfSale = async (req, res) => {
   }
 };
 
-/**
- * UPDATE — /api/v1/pointsofsales/:id
- * Solo admin
- */
+// Update an existing point of sale (admin only)
 export const updatePointOfSale = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; // Extract POS ID from route params
 
+    // Validate MongoDB ObjectId format
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
       return res
         .status(400)
         .json(formatResponse(null, false, "Invalid PointOfSale ID"));
     }
 
-    const updated = await PointOfSalesModel.findByIdAndUpdate(id, req.body, {
-      new: true,
-      runValidators: true,
-    }).lean();
+    const updated = await PointOfSalesModel.findByIdAndUpdate(
+      id,
+      req.body,
+      { new: true, runValidators: true } // Return updated document and enforce schema validation
+    ).lean();
 
     if (!updated) {
       return res
@@ -96,21 +88,19 @@ export const updatePointOfSale = async (req, res) => {
   }
 };
 
-/**
- * DELETE — /api/v1/pointsofsales/:id
- * Solo admin
- */
+// Delete a point of sale by ID (admin only)
 export const deletePointOfSale = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; // Extract POS ID from route params
 
+    // Validate MongoDB ObjectId format
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
       return res
         .status(400)
         .json(formatResponse(null, false, "Invalid PointOfSale ID"));
     }
 
-    const deleted = await PointOfSalesModel.findByIdAndDelete(id);
+    const deleted = await PointOfSalesModel.findByIdAndDelete(id); // Remove POS from database
 
     if (!deleted) {
       return res

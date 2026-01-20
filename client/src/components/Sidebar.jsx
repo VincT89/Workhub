@@ -7,10 +7,14 @@ import { useSelector } from "react-redux";
 const Sidebar = () => {
   const { theme } = useTheme();
   const { t } = useLanguage();
+
+  // Current user role
   const role = useSelector((state) => state.auth.user?.role);
   const isUser = role === "user";
+
   const location = useLocation();
 
+  // Sidebar navigation routes
   const routes = [
     { to: "board", label: t("overview") },
     { to: "customers", label: t("clienti") },
@@ -23,7 +27,7 @@ const Sidebar = () => {
     { to: "orders", label: t("ordiniSidebar") },
   ];
 
-  // funzione che decide se il link è attivo
+  // Determines whether a route should be marked as active
   const isRouteActive = (itemTo) => {
     const path = location.pathname;
 
@@ -36,11 +40,11 @@ const Sidebar = () => {
     }
 
     if (itemTo === "warehouse") {
-      // warehouse attivo sia su /warehouse che su /product/:id
-      return path.startsWith("/warehouse") || path.startsWith("/product");
+      return (
+        path.startsWith("/warehouse") || path.startsWith("/product")
+      );
     }
 
-    // per gli altri (board, ticket, orders) match esatto
     return path === `/${itemTo}`;
   };
 
@@ -55,7 +59,7 @@ const Sidebar = () => {
         return (
           <NavLink
             key={item.to}
-            to={`/${item.to}`} // percorso assoluto
+            to={`/${item.to}`}
             className={`
               relative flex items-center justify-center text-center font-bold text-[16px] 
               tracking-wide py-1 rounded-xl mx-2 select-none
@@ -65,7 +69,7 @@ const Sidebar = () => {
                     ? "border-violet-500/60 border-2 text-white scale-105"
                     : "border-violet-500/60 border-2 bg-white scale-105 text-[#090c64]"
                   : theme === "dark"
-                  ? "bg-violet/60  text-[white]/80 hover:bg-violet/40 "
+                  ? "bg-violet/60 text-[white]/80 hover:bg-violet/40"
                   : "text-white hover:border-2 hover:border-violet-400/20"
               }
             `}

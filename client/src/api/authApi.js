@@ -1,6 +1,6 @@
 import { API_URL } from "../config/api";
 
-// LOGIN - prende username e password, restituisce token e dati utente
+// Authenticate user and return auth payload
 export const loginRequest = async ({ username, password }) => {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
@@ -12,8 +12,13 @@ export const loginRequest = async ({ username, password }) => {
   return { ok: response.ok, data };
 };
 
-// CAMBIO PASSWORD - prende email, vecchia e nuova password e restituisce successo/fallimento
-export const changePasswordRequest = async ({ email, oldPassword, newPassword, token }) => {
+// Update user password using authenticated token
+export const changePasswordRequest = async ({
+  email,
+  oldPassword,
+  newPassword,
+  token,
+}) => {
   const response = await fetch(`${API_URL}/users/password`, {
     method: "PATCH",
     headers: {
@@ -27,7 +32,7 @@ export const changePasswordRequest = async ({ email, oldPassword, newPassword, t
   return { ok: response.ok, data };
 };
 
-// RECUPERO PASSWORD - prende email o username e restituisce successo/fallimento
+// Trigger password recovery via email or username
 export const recoverPasswordRequest = async ({ email, username }) => {
   const response = await fetch(`${API_URL}/auth/recover`, {
     method: "POST",

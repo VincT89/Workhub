@@ -1,10 +1,9 @@
-import { API_URL } from "../config/api"; // es: http://localhost:3030/api/v1
+import { API_URL } from "../config/api";
 
+// Base orders endpoint
 const ORDERS_URL = `${API_URL}/orders`;
 
-/* ===========================
-   CREATE ORDER
-=========================== */
+// Create a new order (POST)
 export const createOrderRequest = async ({ orderData, token }) => {
   const res = await fetch(ORDERS_URL, {
     method: "POST",
@@ -19,9 +18,7 @@ export const createOrderRequest = async ({ orderData, token }) => {
   return { res, data };
 };
 
-/* ===========================
-   FETCH ALL ORDERS
-=========================== */
+// Fetch all orders (GET)
 export const fetchOrdersRequest = async ({ token }) => {
   const res = await fetch(ORDERS_URL, {
     headers: {
@@ -34,9 +31,7 @@ export const fetchOrdersRequest = async ({ token }) => {
   return { res, data };
 };
 
-/* ===========================
-   FETCH ONE ORDER
-=========================== */
+// Fetch a single order by ID (GET)
 export const fetchOrderByIdRequest = async ({ id, token }) => {
   const res = await fetch(`${ORDERS_URL}/${id}`, {
     headers: {
@@ -48,9 +43,7 @@ export const fetchOrderByIdRequest = async ({ id, token }) => {
   return { res, data };
 };
 
-/* ===========================
-   UPDATE ORDER
-=========================== */
+// Update an existing order (PUT)
 export const updateOrderRequest = async ({ id, data, token }) => {
   const res = await fetch(`${ORDERS_URL}/${id}`, {
     method: "PUT",
@@ -65,9 +58,7 @@ export const updateOrderRequest = async ({ id, data, token }) => {
   return { res, data: json };
 };
 
-/* ===========================
-   DELETE ORDER
-=========================== */
+// Delete an order by ID (DELETE)
 export const deleteOrderRequest = async ({ id, token }) => {
   const res = await fetch(`${ORDERS_URL}/${id}`, {
     method: "DELETE",
@@ -76,6 +67,7 @@ export const deleteOrderRequest = async ({ id, token }) => {
     },
   });
 
+  // Safely parse response body if present
   const data = await res.json().catch(() => ({}));
   return { res, data };
 };

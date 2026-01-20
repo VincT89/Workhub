@@ -14,7 +14,7 @@ const UserShiftSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true, // un solo documento turni per utente
+      unique: true, 
     },
 
     shifts: {

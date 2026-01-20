@@ -1,143 +1,143 @@
-import Table from "../../components/Table";
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useLanguage } from "../../context/LanguageContext";
+
+import Table from "../../components/Table";
 import FilterByCard from "../../components/Customer/FilterByCard";
 import AddCustomerForm from "../../components/Customer/AddCustomerForm";
+
+import { useLanguage } from "../../context/LanguageContext";
 import {
-	fetchCustomersAsync,
-	createCustomerAsync,
-	clearError,
+  fetchCustomersAsync,
+  createCustomerAsync,
+  clearError,
 } from "../../store/feature/customerSlice";
 
 const CustomersPage = () => {
-	const navigate = useNavigate();
-	const dispatch = useDispatch();
-	const { t } = useLanguage();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { t } = useLanguage();
 
-	// Prendi i dati dallo stato Redux
-	const {
-		list: customers,
-		loading,
-		error,
-	} = useSelector((state) => state.customers); // list: customers -> creo un alias di list e lo chiamo customers
-	const token =
-		useSelector((state) => state.auth?.token) || localStorage.getItem("token"); // cerco prima il token di autenticazione nello stato di Redux, se non lo trovo e quindi  il valore è falsy, allora lo cerco nel localStorage
+  /* REDUX STATE */
+  const { list: customers = [], loading, error } = useSelector(
+    (state) => state.customers
+  );
 
-	const [cardFilter, setCardFilter] = useState("");
+  const token =
+    useSelector((state) => state.auth?.token) ||
+    localStorage.getItem("token");
 
-	// Carica i customers all'avvio
-	useEffect(() => {
-		if (token) {
-			dispatch(fetchCustomersAsync(token)); //con dispatch invio l'azione per caricare customers
-		}
-	}, [dispatch, token]); //quando una di queste dipendenze cambia, riesegue lo useEffect
+  /* LOCAL STATE */
+  const [cardFilter, setCardFilter] = useState("");
 
-	// Filtra i customers per livello della tessera
-	const filteredCustomers = customers.filter((c) =>
-		cardFilter ? c.affiliateProgram?.name === cardFilter : true
-	);
+  /* INITIAL FETCH */
+  useEffect(() => {
+    if (!token) return;
+    dispatch(fetchCustomersAsync(token));
+  }, [dispatch, token]);
 
-	const handleAddCustomer = async (newCustomer) => {
-		if (!token) {
-			alert(t("tokenNonDisponibileEffettuaLogin"));
-			return;
-		}
+  /* ERROR HANDLING */
+  useEffect(() => {
+    if (!error) return;
+    console.error("Customers error:", error);
+    dispatch(clearError());
+  }, [error, dispatch]);
 
-		try {
-			// Il form deve ora passare i dati nel formato backend
-			await dispatch(
-				createCustomerAsync({
-					newCustomer: newCustomer,
-					token,
-				})
-			).unwrap();
-		} catch (err) {
-			console.error("Errore creazione customer:", err);
-		}
-	};
+  /* FILTERED DATA */
+  const filteredCustomers = useMemo(() => {
+    if (!cardFilter) return customers;
+    return customers.filter(
+      (c) => c.affiliateProgram?.name === cardFilter
+    );
+  }, [customers, cardFilter]);
 
-	// Gestione errori
-	useEffect(() => {
-		if (error) {
-			console.error("Errore customers:", error);
-			// Puoi mostrare un alert o un toast
-			dispatch(clearError());
-		}
-	}, [error, dispatch]);
+  /* TABLE CONFIG */
+  const columns = useMemo(() => {
+    if (filteredCustomers.length === 0) return [];
+    return [
+      "firstName",
+      "lastName",
+      "email",
+      "phoneNumber",
+      "fiscalCode",
+      "affiliateProgram.name",
+    ];
+  }, [filteredCustomers]);
 
-	// Prepara le colonne per la table in base alla struttura backend
-	const getTableColumns = () => {
-		if (customers.length === 0) return [];
+  const columnLabels = {
+    firstName: t("nome"),
+    lastName: t("cognome"),
+    email: t("email"),
+    phoneNumber: t("telefono"),
+    fiscalCode: t("cf"),
+    "affiliateProgram.name": t("tesseraFedelta"),
+  };
 
-		// Colonne base che vogliamo mostrare
-		return [
-			"firstName",
-			"lastName",
-			"email",
-			"phoneNumber",
-			"fiscalCode",
-			"affiliateProgram.name",
-		];
-	};
+  const tableData = useMemo(
+    () =>
+      filteredCustomers.map((c) => ({
+        _id: c._id,
+        firstName: c.firstName,
+        lastName: c.lastName,
+        email: c.email,
+        phoneNumber: c.phoneNumber,
+        fiscalCode: c.fiscalCode,
+        "affiliateProgram.name": c.affiliateProgram?.name || "—",
+      })),
+    [filteredCustomers]
+  );
 
-	const columnLabels = {
-		firstName: t("nome"),
-		lastName: t("cognome"),
-		email: t("email"),
-		phoneNumber: t("telefono"),
-		fiscalCode: t("cf"),
-		"affiliateProgram.name": t("tesseraFedelta"),
-	};
+  /* CREATE CUSTOMER */
+  const handleAddCustomer = async (newCustomer) => {
+    if (!token) {
+      alert(t("tokenNonDisponibileEffettuaLogin"));
+      return;
+    }
 
-	// Prepara i dati per la table
-	const getTableData = () => {
-		return filteredCustomers.map((customer) => ({
-			// Mostriamo solo i campi rilevanti nella table
-			_id: customer._id,
-			firstName: customer.firstName,
-			lastName: customer.lastName,
-			email: customer.email,
-			phoneNumber: customer.phoneNumber,
-			fiscalCode: customer.fiscalCode,
-			"affiliateProgram.name": customer.affiliateProgram?.name || "Nessuno",
-		}));
-	};
+    try {
+      await dispatch(
+        createCustomerAsync({
+          newCustomer,
+          token,
+        })
+      ).unwrap();
+    } catch (err) {
+      console.error("Customer creation error:", err);
+    }
+  };
 
-	if (loading) {
-		return (
-			<div className="w-full min-h-screen p-8 flex justify-center items-center">
-				<div className="text-[#090c64]">{t("caricamentoClienti")}</div>
-			</div>
-		);
-	}
+  /* LOADING STATE */
+  if (loading) {
+    return (
+      <div className="w-full min-h-screen flex items-center justify-center">
+        <span className="text-[#090c64]">
+          {t("caricamentoClienti")}
+        </span>
+      </div>
+    );
+  }
 
-	return (
-		<div className="w-full min-h-screen p-8 text-[#090c64]">
-			{error && (
-				<div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-					Errore: {error}
-				</div>
-			)}
-
-			<Table
-				data={getTableData()}
-        columns={getTableColumns()}
+  return (
+    <div className="w-full min-h-screen p-8">
+      {/* CUSTOMERS TABLE*/}
+      <Table
+        data={tableData}
+        columns={columns}
         columnLabels={columnLabels}
-				customToolbar={() => (
-					<>
-						<FilterByCard onFilter={setCardFilter} />
-						<AddCustomerForm onAdd={handleAddCustomer} />
-					</>
-				)}
-				onRowClick={(row) => navigate(`/customer/${row._id}`)}
-				sortLogic={(a, b) => {
-					return a.firstName.localeCompare(b.firstName);
-				}}
-			/>
-		</div>
-	);
+        onRowClick={(row) => navigate(`/customer/${row._id}`)}
+        sortLogic={(a, b) => a.firstName.localeCompare(b.firstName)}
+        customToolbar={() => (
+          <>
+            {/* Filter by loyalty card */}
+            <FilterByCard onFilter={setCardFilter} />
+
+            {/* Create new customer */}
+            <AddCustomerForm onAdd={handleAddCustomer} />
+          </>
+        )}
+      />
+    </div>
+  );
 };
 
 export default CustomersPage;

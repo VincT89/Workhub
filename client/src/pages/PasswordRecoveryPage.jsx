@@ -1,58 +1,64 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { SunIcon, MoonIcon } from "@phosphor-icons/react";
+
 import { useTheme } from "../context/ThemeContext";
 import { useLanguage } from "../context/LanguageContext";
-import { useDispatch, useSelector } from "react-redux";
-
 import { recoverPasswordAsync } from "../store/feature/authSlice";
 
 import bgLight from "../assets/bg/bg.jpg";
 import bgDark from "../assets/bg/bgScuro.jpg";
-import { SunIcon, MoonIcon } from "@phosphor-icons/react";
 
 const PasswordRecoveryPage = () => {
   const { theme, setTheme } = useTheme();
   const { t } = useLanguage();
   const dispatch = useDispatch();
 
+  // Password recovery state from redux
   const { recoveryLoading, recoveryError, recoveryMessage } = useSelector(
     (state) => state.auth
   );
 
+  // Local form state
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
 
+  // Theme-based UI values
   const backgroundImage = theme === "dark" ? bgDark : bgLight;
+  const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
 
+  // Submits password recovery request
   const handleRecovery = (e) => {
     e.preventDefault();
     dispatch(recoverPasswordAsync({ email, username }));
   };
 
-  // MOSTRA LA PASSWORD TEMP IN CONSOLE
+  // Logs temporary password for development purposes
   useEffect(() => {
     if (recoveryMessage?.tempPassword) {
-      console.log("PASSWORD TEMPORANEA:", recoveryMessage.tempPassword);
+      console.log("TEMP PASSWORD:", recoveryMessage.tempPassword);
     }
   }, [recoveryMessage]);
 
-  const textColor = theme === "dark" ? "text-white" : "text-[#090c64]";
-  const labelColor = textColor;
-
   return (
     <main className="w-full min-h-screen flex justify-center items-center relative overflow-hidden transition-colors duration-500">
-      <img className="absolute inset-0 w-full h-full object-cover z-0" src={backgroundImage} />
+      <img
+        className="absolute inset-0 w-full h-full object-cover z-0"
+        src={backgroundImage}
+        alt="Background"
+      />
 
       <div className="relative z-20 w-full sm:w-[480px] flex flex-col items-center px-6 py-10 space-y-8">
-
-        {/* HEADER */}
         <div className="flex items-center justify-between w-full mb-6">
           <h1 className={`text-3xl font-bold uppercase ${textColor}`}>
             {t("recuperaPassword")}
           </h1>
 
           <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            onClick={() =>
+              setTheme(theme === "dark" ? "light" : "dark")
+            }
             className="p-2 rounded-xl border border-white/30 hover:bg-[#1C62A0]/10"
           >
             {theme === "dark" ? (
@@ -63,14 +69,13 @@ const PasswordRecoveryPage = () => {
           </button>
         </div>
 
-        {/* CARD */}
-        <section className="w-full p-6 rounded-[25px] shadow-md border border-white/90 bg-white/10 dark:bg-white/10 backdrop-blur-sm">
-
-          <h2 className={`${textColor} text-xl font-bold mb-4 pb-2 border-b`}>
+        <section className="w-full p-6 rounded-[25px] shadow-md border border-white/90 bg-white/10 backdrop-blur-sm">
+          <h2
+            className={`${textColor} text-xl font-bold mb-4 pb-2 border-b`}
+          >
             {t("inserisciDati")}
           </h2>
 
-          {/* MESSAGGI */}
           {recoveryError && (
             <p className="text-red-500 font-bold text-center mb-4">
               {recoveryError}
@@ -83,12 +88,11 @@ const PasswordRecoveryPage = () => {
             </p>
           )}
 
-          {/* FORM */}
           <form onSubmit={handleRecovery} className="flex flex-col gap-5">
-
-            {/* Username */}
             <div>
-              <label className={`${labelColor} text-[18px] font-bold mb-2`}>
+              <label
+                className={`${textColor} text-[18px] font-bold mb-2`}
+              >
                 {t("username")}
               </label>
               <input
@@ -100,9 +104,10 @@ const PasswordRecoveryPage = () => {
               />
             </div>
 
-            {/* Email */}
             <div>
-              <label className={`${labelColor} text-[18px] font-bold mb-2`}>
+              <label
+                className={`${textColor} text-[18px] font-bold mb-2`}
+              >
                 {t("email")}
               </label>
               <input
@@ -114,11 +119,10 @@ const PasswordRecoveryPage = () => {
               />
             </div>
 
-            {/* BUTTON */}
             <button
               type="submit"
               disabled={recoveryLoading}
-              className="w-full mt-4 py-3 font-bold rounded-2xl shadow-md bg-[#090c64] text-white hover:scale-[1.02] transition custom-button"
+              className="w-full mt-4 py-3 font-bold rounded-2xl shadow-md bg-[#090c64] text-white transition custom-button hover:scale-[1.02]"
             >
               {recoveryLoading
                 ? t("invioInCorso")

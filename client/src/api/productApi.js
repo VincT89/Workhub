@@ -1,6 +1,6 @@
 import { API_URL } from "../config/api";
 
-// GET ALL PRODUCTS
+// Fetch all products (GET)
 export const fetchProductsRequest = async (token) => {
   const res = await fetch(`${API_URL}/products`, {
     headers: {
@@ -13,7 +13,7 @@ export const fetchProductsRequest = async (token) => {
   return { res, data };
 };
 
-// GET PRODUCT BY ID
+// Fetch product by ID (GET)
 export const fetchProductByIdRequest = async (id, token) => {
   const res = await fetch(`${API_URL}/products/${id}`, {
     headers: {

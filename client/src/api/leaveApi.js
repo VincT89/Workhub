@@ -1,26 +1,30 @@
 import { API_URL } from "../config/api";
 
-/* ------------------- GET USER LEAVES ------------------- */
+// Fetch current user's leave requests
 export const fetchLeaveRequest = async (token) => {
   const res = await fetch(`${API_URL}/leaves`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   const data = await res.json();
   return { res, data };
 };
 
-/* ------------------- GET USER LEAVES BY USER ID (ADMIN) ------------------- */
+// Fetch leave requests by user ID (admin only)
 export const fetchLeaveByUserIdRequest = async ({ userId, token }) => {
   const res = await fetch(`${API_URL}/leaves/${userId}`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   const data = await res.json();
   return { res, data };
 };
 
-/* ------------------- CREATE REQUEST ------------------- */
+// Create a new leave request
 export const createLeaveRequestRequest = async ({ payload, token }) => {
   const res = await fetch(`${API_URL}/leaves/request`, {
     method: "POST",
@@ -35,7 +39,7 @@ export const createLeaveRequestRequest = async ({ payload, token }) => {
   return { res, data };
 };
 
-/* ------------------- UPDATE STATUS (ADMIN) ------------------- */
+// Update leave request status (admin only)
 export const updateLeaveStatusRequest = async ({
   requestId,
   status,
@@ -54,11 +58,13 @@ export const updateLeaveStatusRequest = async ({
   return { res, data };
 };
 
-/* ------------------- INIT USER LEAVE (ADMIN) ------------------- */
+// Initialize leave record for a user (admin only)
 export const initLeaveRecordRequest = async ({ userId, token }) => {
   const res = await fetch(`${API_URL}/leaves/init/${userId}`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   const data = await res.json();
